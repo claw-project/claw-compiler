@@ -12,6 +12,7 @@ import claw.tatsu.primitive.Function;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.Xscope;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
@@ -73,6 +74,9 @@ public class Serialize extends ClawTransformation {
                         Transformation other)
   {
     writeIn(xcodeml);
+    readIn(xcodeml);
+    perturbIn(xcodeml);
+
     writeOut(xcodeml);
   }
 
@@ -86,11 +90,12 @@ public class Serialize extends ClawTransformation {
   {
     FfunctionType serType = xcodeml.createSubroutineType();
     // Create the char constant type
-    Xnode savepointArg = xcodeml.createCharConstant(savepoint);
+    Xnode nameArg = xcodeml.createCharConstant(savepoint);
+    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT, "ppser_savepoint", Xscope.GLOBAL);
 
     Xnode serCall = xcodeml.createFctCall(serType, "fs_create_savepoint");
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(nameArg);
     serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
 
     return serCall;
   }
@@ -99,14 +104,17 @@ public class Serialize extends ClawTransformation {
   {
     FfunctionType serType = xcodeml.createSubroutineType();
     // Create the char constant type
-    Xnode savepointArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
+    Xnode nameArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
+    Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,"ppser_serializer", Xscope.GLOBAL);
+    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT,"ppser_savepoint", Xscope.GLOBAL);
+    Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
 
     Xnode serCall = xcodeml.createFctCall(serType, "fs_write_field");
     Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
+    arguments.append(serializerArg);
     arguments.append(savepointArg);
-    arguments.append(savepointArg);
-    arguments.append(savepointArg);
-    arguments.append(xcodeml.createName("ppser_savepoint", null));
+    arguments.append(nameArg);
+    arguments.append(varArg);
 
     return serCall;
   }
@@ -115,14 +123,17 @@ public class Serialize extends ClawTransformation {
   {
     FfunctionType serType = xcodeml.createSubroutineType();
     // Create the char constant type
-    Xnode savepointArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
+    Xnode nameArg = xcodeml.createCharConstant(savepoint + "_" + param.value());
+    Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,"ppser_serializer", Xscope.GLOBAL);
+    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT,"ppser_savepoint", Xscope.GLOBAL);
+    Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
 
     Xnode serCall = xcodeml.createFctCall(serType, "fs_read_field");
     Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
+    arguments.append(serializerArg);
     arguments.append(savepointArg);
-    arguments.append(savepointArg);
-    arguments.append(savepointArg);
-    arguments.append(xcodeml.createName("ppser_savepoint", null));
+    arguments.append(nameArg);
+    arguments.append(varArg);
 
     return serCall;
   }
@@ -131,14 +142,19 @@ public class Serialize extends ClawTransformation {
   {
     FfunctionType serType = xcodeml.createSubroutineType();
     // Create the char constant type
-    Xnode savepointArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
+    Xnode nameArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
+    Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,"ppser_serializer", Xscope.GLOBAL);
+    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT,"ppser_savepoint", Xscope.GLOBAL);
+    Xnode perturbArg = xcodeml.createVar(FortranType.REAL,"ppser_zrperturb", Xscope.GLOBAL);
+    Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
 
     Xnode serCall = xcodeml.createFctCall(serType, "fs_read_field");
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
-    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
+    Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
+    arguments.append(serializerArg);
+    arguments.append(savepointArg);
+    arguments.append(nameArg);
+    arguments.append(varArg);
+    arguments.append(perturbArg);
 
     return serCall;
   }
@@ -166,22 +182,72 @@ public class Serialize extends ClawTransformation {
 
   }
 
+  private void readIn(XcodeProgram xcodeml)
+  {
+    String savename = _claw.value(ClawClause.SERIALIZE_SAVEPOINT) + "-input";
+    Xnode savepoint = createSavepoint(xcodeml,
+            savename);
+    Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
+    _fctCall.ancestor().insertBefore(exprStmt);
+    exprStmt.insert(savepoint);
+    readFields(xcodeml, savename);
+  }
+
+  private void perturbIn(XcodeProgram xcodeml)
+  {
+    String savename = _claw.value(ClawClause.SERIALIZE_SAVEPOINT) + "-input";
+    Xnode savepoint = createSavepoint(xcodeml,
+            savename);
+    Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
+    _fctCall.ancestor().insertBefore(exprStmt);
+    exprStmt.insert(savepoint);
+    perturbFields(xcodeml, savename);
+  }
+
   private void writeFields(XcodeProgram xcodeml, String savepoint, boolean in) {
     List<Xnode> params = getParameters(xcodeml);
     for(Xnode param : params) {
       FbasicType type = xcodeml.getTypeTable().getBasicType(param);
-      if(in && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
+      if(in && type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
         // TODO save before
         Xnode serCall = createWriteField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
         _fctCall.ancestor().insertBefore(exprStmt);
         exprStmt.insert(serCall);
       }
-      if(!in && (type.getIntent() == Intent.OUT || type.getIntent() == Intent.INOUT)) {
+      if(!in && type.isArray() && (type.getIntent() == Intent.OUT || type.getIntent() == Intent.INOUT)) {
         // TODO save before
         Xnode serCall = createWriteField(xcodeml, savepoint, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
         _fctCall.ancestor().insertAfter(exprStmt);
+        exprStmt.insert(serCall);
+      }
+    }
+  }
+
+  private void readFields(XcodeProgram xcodeml, String savepoint) {
+    List<Xnode> params = getParameters(xcodeml);
+    for(Xnode param : params) {
+      FbasicType type = xcodeml.getTypeTable().getBasicType(param);
+      if(type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
+        // TODO save before
+        Xnode serCall = createReadField(xcodeml, savepoint, param);
+        Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
+        _fctCall.ancestor().insertBefore(exprStmt);
+        exprStmt.insert(serCall);
+      }
+    }
+  }
+
+  private void perturbFields(XcodeProgram xcodeml, String savepoint) {
+    List<Xnode> params = getParameters(xcodeml);
+    for(Xnode param : params) {
+      FbasicType type = xcodeml.getTypeTable().getBasicType(param);
+      if(type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
+        // TODO save before
+        Xnode serCall = createPerturbField(xcodeml, savepoint, param);
+        Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
+        _fctCall.ancestor().insertBefore(exprStmt);
         exprStmt.insert(serCall);
       }
     }
