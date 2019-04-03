@@ -16,6 +16,8 @@ import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.parser.ClawLexer;
 import claw.wani.language.parser.ClawParser;
+import claw.wani.transformation.serialization.SerializationMode;
+import claw.wani.transformation.serialization.Serialize;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.ModelConfig;
 import org.antlr.v4.runtime.*;
@@ -55,6 +57,7 @@ public class ClawPragma extends AnalyzedPragma {
   private List<Target> _targetClauseValues;
   private ClawConstraint _constraintClauseValue;
   private CompilerDirective _cleanupClauseValue;
+  private SerializationMode _serializationMode;
 
   // Model config information
   private ModelConfig _localModelConfig;
@@ -342,6 +345,9 @@ public class ClawPragma extends AnalyzedPragma {
     // Data Movement Direction
     _copyClauseValue = null;
     _updateClauseValue = null;
+
+    // Serialization mode
+    _serializationMode = SerializationMode.READ;
   }
 
   /**
@@ -734,6 +740,15 @@ public class ClawPragma extends AnalyzedPragma {
   public void setCleanupClauseValue(CompilerDirective value) {
     setClause(ClawClause.CLEANUP);
     _cleanupClauseValue = value;
+  }
+
+  public void setSerModeClauseValue(SerializationMode mode) {
+    setClause(ClawClause.SERIALIZE_SERMODE);
+    _serializationMode = mode;
+  }
+
+  public SerializationMode getSerModeClauseValue() {
+    return _serializationMode;
   }
 
   /**

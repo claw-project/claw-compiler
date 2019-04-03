@@ -51,10 +51,6 @@ public class Serialize extends ClawTransformation {
   private static final String SAVEPOINT_IN_SUFFIX = "-input";
   private static final String SAVEPOINT_OUT_SUFFIX = "-output";
 
-  private static final String SER_MODE_WRITE = "write";
-  private static final String SER_MODE_READ = "read";
-  private static final String SER_MODE_PERTURB = "perturb";
-
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
    *
@@ -103,18 +99,16 @@ public class Serialize extends ClawTransformation {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
   {
-    switch(_claw.value(ClawClause.SERIALIZE_SERMODE)) {
-      case SER_MODE_WRITE:
-        writeIn(xcodeml);
-        break;
-      case SER_MODE_READ:
-        readIn(xcodeml);
-        break;
-      case SER_MODE_PERTURB:
+    switch(_claw.getSerModeClauseValue()) {
+      case PERTURB:
         perturbIn(xcodeml);
         break;
-      default:
+      case WRITE:
         writeIn(xcodeml);
+        break;
+      default:
+      case READ:
+        readIn(xcodeml);
         break;
     }
 
@@ -201,8 +195,7 @@ public class Serialize extends ClawTransformation {
 
     Xnode serCall = xcodeml.createFctCall(serType, serFctName);
     Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
-    if(callType == SerializationCall.SER_WRITE)
-    {
+    if(callType == SerializationCall.SER_WRITE) {
       Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,
           SER_PPSER_SERIALIZER, Xscope.GLOBAL);
       arguments.append(serializerArg);

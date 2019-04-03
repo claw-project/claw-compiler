@@ -19,6 +19,7 @@ grammar Claw;
 
 import claw.wani.ClawConstant;
 import claw.wani.language.*;
+import claw.wani.transformation.serialization.SerializationMode;
 
 import claw.tatsu.common.*;
 import claw.tatsu.directive.common.DataMovement;
@@ -202,11 +203,10 @@ directive[ClawPragma l]
    | NODEP
      { $l.setDirective(ClawDirective.NO_DEP); }
 
-   | SERIALIZE savepoint=IDENTIFIER sermode=IDENTIFIER EOF
+   | SERIALIZE savepoint=IDENTIFIER sermode_clause[$l] EOF
      {
        $l.setDirective(ClawDirective.SERIALIZE);
        $l.setValue(ClawClause.SERIALIZE_SAVEPOINT, $savepoint.text);
-       $l.setValue(ClawClause.SERIALIZE_SERMODE, $sermode.text);
      }
 
    // Special directives
@@ -345,6 +345,13 @@ cleanup_clause[ClawPragma l]:
     CLEANUP { $l.setCleanupClauseValue(CompilerDirective.NONE); }
   | CLEANUP '(' OMP ')' { $l.setCleanupClauseValue(CompilerDirective.OPENMP); }
   | CLEANUP '(' ACC ')' { $l.setCleanupClauseValue(CompilerDirective.OPENACC); }
+;
+
+// ser mode clause
+sermode_clause[ClawPragma l]:
+    READ { $l.setSerModeClauseValue(SerializationMode.READ); }
+  | WRITE { $l.setSerModeClauseValue(SerializationMode.WRITE); }
+  | PERTURB { $l.setSerModeClauseValue(SerializationMode.PERTURB); }
 ;
 
 // reshape clause
@@ -687,6 +694,10 @@ SCALAR       : 'scalar';
 TARGET       : 'target';
 UPDATE       : 'update';
 NODEP        : 'nodep';
+
+READ         : 'read';
+WRITE        : 'write';
+PERTURB      : 'perturb';
 
 // data copy/update clause keywords
 IN           : 'in';

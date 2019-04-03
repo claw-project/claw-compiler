@@ -241,6 +241,7 @@ public class ClawPragmaTest {
   public void serializeTest() {
     analyzeValidSimpleClaw("claw serialize savepoint1", ClawDirective.SERIALIZE,
         false, null);
+
   }
 
   /**
@@ -1506,7 +1507,7 @@ public class ClawPragmaTest {
   public void errorHandlingTest() {
     analyzeErrors("claw loop-fusion group(g", 1);
     analyzeErrors("claw loop-fusion group", 1);
-    analyzeErrors("claw loop", 19);
+    analyzeErrors("claw loop", 20);
   }
 
   private void analyzeErrors(String pragma, int nbExpectedToken) {
