@@ -32,6 +32,18 @@ public class Serialize extends ClawTransformation {
   private Xnode _fctCall;
   private Xnode _anchor;
 
+  private enum SerializationMode {SER_READ, SER_WRITE, SER_READ_PERTURB}
+
+  ;
+
+  private static final String SER_PPSER_SAVEPOINT = "ppser_savepoint";
+  private static final String SER_PPSER_SERIALIZER = "ppser_serializer";
+  private static final String SER_PPSER_ZPERTURB = "ppser_zrperturb";
+  private static final String SER_FS_CREATE_SAVEPOINT = "fs_create_savepoint";
+  private static final String SER_FS_ADD_SP_METAINFO = "fs_add_savepoint_metainfo";
+  private static final String SER_FS_WRITE_FIELD = "fs_write_field";
+  private static final String SER_FS_READ_FIELD = "fs_read_field";
+
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
    *
@@ -62,7 +74,7 @@ public class Serialize extends ClawTransformation {
     }
 
     // Set anchor for new code
-    _anchor = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT) == null ? _fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT): _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
+    _anchor = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT) == null ? _fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT) : _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
 
     return true;
   }
@@ -97,9 +109,9 @@ public class Serialize extends ClawTransformation {
     FfunctionType serType = xcodeml.createSubroutineType();
     // Create the char constant type
     Xnode nameArg = xcodeml.createCharConstant(savepoint);
-    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT, "ppser_savepoint", Xscope.GLOBAL);
+    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT, SER_PPSER_SAVEPOINT, Xscope.GLOBAL);
 
-    Xnode serCall = xcodeml.createFctCall(serType, "fs_create_savepoint");
+    Xnode serCall = xcodeml.createFctCall(serType, SER_FS_CREATE_SAVEPOINT);
     serCall.matchDescendant(Xcode.ARGUMENTS).append(nameArg);
     serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
 
@@ -111,10 +123,10 @@ public class Serialize extends ClawTransformation {
     FfunctionType serType = xcodeml.createSubroutineType();
     // Create the char constant type
     Xnode nameArg = xcodeml.createCharConstant(param.value());
-    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT,"ppser_savepoint", Xscope.GLOBAL);
+    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT, SER_PPSER_SAVEPOINT, Xscope.GLOBAL);
     Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
 
-    Xnode serCall = xcodeml.createFctCall(serType, "fs_add_savepoint_metainfo");
+    Xnode serCall = xcodeml.createFctCall(serType, SER_FS_ADD_SP_METAINFO);
     Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
     arguments.append(savepointArg);
     arguments.append(nameArg);
@@ -128,7 +140,9 @@ public class Serialize extends ClawTransformation {
     List<Xnode> params = getParameters(xcodeml);
     for(Xnode param : params) {
       FbasicType type = xcodeml.getTypeTable().getBasicType(param);
-      if(!type.isArray() && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
+      if(type != null && !type.isArray()
+          && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT))
+      {
         // TODO save before
         Xnode serCall = createMetainfo(xcodeml, param);
         Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
@@ -138,63 +152,57 @@ public class Serialize extends ClawTransformation {
     }
   }
 
-  private Xnode createWriteField(XcodeProgram xcodeml, String savepoint, Xnode param)
-  {
-    FfunctionType serType = xcodeml.createSubroutineType();
-    // Create the char constant type
-    Xnode nameArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
-    Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,"ppser_serializer", Xscope.GLOBAL);
-    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT,"ppser_savepoint", Xscope.GLOBAL);
-    Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
-
-    Xnode serCall = xcodeml.createFctCall(serType, "fs_write_field");
-    Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
-    arguments.append(serializerArg);
-    arguments.append(savepointArg);
-    arguments.append(nameArg);
-    arguments.append(varArg);
-
-    return serCall;
-  }
-
-  private Xnode createReadField(XcodeProgram xcodeml, String savepoint, Xnode param)
+  private Xnode createField(XcodeProgram xcodeml, String savepoint, Xnode param,
+                            SerializationMode mode)
   {
     FfunctionType serType = xcodeml.createSubroutineType();
     // Create the char constant type
     Xnode nameArg = xcodeml.createCharConstant(savepoint + "_" + param.value());
-    Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,"ppser_serializer", Xscope.GLOBAL);
-    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT,"ppser_savepoint", Xscope.GLOBAL);
+    Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT, SER_PPSER_SAVEPOINT, Xscope.GLOBAL);
+    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT, SER_PPSER_SAVEPOINT, Xscope.GLOBAL);
     Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
 
-    Xnode serCall = xcodeml.createFctCall(serType, "fs_read_field");
+    String serFctName;
+    switch(mode) {
+      case SER_READ:
+      case SER_READ_PERTURB:
+        serFctName = SER_FS_READ_FIELD;
+        break;
+      case SER_WRITE:
+        serFctName = SER_FS_WRITE_FIELD;
+        break;
+      default:
+        serFctName = SER_FS_WRITE_FIELD;
+
+    }
+
+    Xnode serCall = xcodeml.createFctCall(serType, serFctName);
     Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
     arguments.append(serializerArg);
     arguments.append(savepointArg);
     arguments.append(nameArg);
     arguments.append(varArg);
+    if(mode == SerializationMode.SER_READ_PERTURB) {
+      Xnode perturbArg = xcodeml.createVar(FortranType.REAL, SER_PPSER_ZPERTURB, Xscope.GLOBAL);
+      arguments.append(perturbArg);
+    }
 
     return serCall;
   }
 
+  private Xnode createWriteField(XcodeProgram xcodeml, String savepoint, Xnode param)
+  {
+    return createField(xcodeml, savepoint, param, SerializationMode.SER_WRITE);
+  }
+
+  private Xnode createReadField(XcodeProgram xcodeml, String savepoint, Xnode param)
+  {
+    return createField(xcodeml, savepoint, param, SerializationMode.SER_READ);
+  }
+
   private Xnode createPerturbField(XcodeProgram xcodeml, String savepoint, Xnode param)
   {
-    FfunctionType serType = xcodeml.createSubroutineType();
-    // Create the char constant type
-    Xnode nameArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
-    Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,"ppser_serializer", Xscope.GLOBAL);
-    Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT,"ppser_savepoint", Xscope.GLOBAL);
-    Xnode perturbArg = xcodeml.createVar(FortranType.REAL,"ppser_zrperturb", Xscope.GLOBAL);
-    Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
-
-    Xnode serCall = xcodeml.createFctCall(serType, "fs_read_field");
-    Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
-    arguments.append(serializerArg);
-    arguments.append(savepointArg);
-    arguments.append(nameArg);
-    arguments.append(varArg);
-    arguments.append(perturbArg);
-
-    return serCall;
+    return createField(xcodeml, savepoint, param, SerializationMode.SER_READ_PERTURB);
   }
 
   private void writeIn(XcodeProgram xcodeml)
@@ -216,7 +224,7 @@ public class Serialize extends ClawTransformation {
         savename);
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
     exprStmt.insert(savepoint);
-    writeFields(xcodeml, savename,false);
+    writeFields(xcodeml, savename, false);
     _anchor.insertAfter(exprStmt);
     addMetainfo(xcodeml, exprStmt);
   }
@@ -225,7 +233,7 @@ public class Serialize extends ClawTransformation {
   {
     String savename = _claw.value(ClawClause.SERIALIZE_SAVEPOINT) + "-input";
     Xnode savepoint = createSavepoint(xcodeml,
-            savename);
+        savename);
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
     _anchor.insertBefore(exprStmt);
     exprStmt.insert(savepoint);
@@ -237,7 +245,7 @@ public class Serialize extends ClawTransformation {
   {
     String savename = _claw.value(ClawClause.SERIALIZE_SAVEPOINT) + "-input";
     Xnode savepoint = createSavepoint(xcodeml,
-            savename);
+        savename);
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
     _anchor.insertBefore(exprStmt);
     exprStmt.insert(savepoint);
