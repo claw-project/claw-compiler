@@ -1,0 +1,6 @@
+<transformations>
+  <!-- Directive -->
+  <transformation name="autoport"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.utility.AutoPort" />
+</transformations>

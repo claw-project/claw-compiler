@@ -98,11 +98,13 @@ refer to the developer's guide
     <set name="claw-internal-set" />
     <set name="claw-low-level-set" />
     <set name="claw-high-level-set" />
+    <set name="claw-autoport-set" />
   </sets>
 
   <!-- Transformation groups and order -->
   <groups>
     <!-- Low-level transformations -->
+    <group name="autoport" />
     <group name="remove" />
     <group name="directive-primitive" />
     <group name="expand" />
