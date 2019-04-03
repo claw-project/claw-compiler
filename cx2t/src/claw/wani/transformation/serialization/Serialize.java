@@ -41,6 +41,7 @@ public class Serialize extends ClawTransformation {
 
   private static final String SER_PPSER_SAVEPOINT = "ppser_savepoint";
   private static final String SER_PPSER_SERIALIZER = "ppser_serializer";
+  private static final String SER_PPSER_SERIALIZER_REF = "ppser_serializer_ref";
   private static final String SER_PPSER_ZPERTURB = "ppser_zrperturb";
   private static final String SER_FS_CREATE_SAVEPOINT = "fs_create_savepoint";
   private static final String SER_FS_ADD_SP_METAINFO = "fs_add_savepoint_metainfo";
@@ -48,7 +49,7 @@ public class Serialize extends ClawTransformation {
   private static final String SER_FS_READ_FIELD = "fs_read_field";
 
   private static final String SAVEPOINT_IN_SUFFIX = "-input";
-  private static final String SAVEPOINT_OUT_SUFFIX = "-out";
+  private static final String SAVEPOINT_OUT_SUFFIX = "-output";
 
   /**
    * Constructs a new LoopFusion triggered from a specific pragma.
@@ -99,8 +100,6 @@ public class Serialize extends ClawTransformation {
                         Transformation other)
   {
     writeIn(xcodeml);
-    readIn(xcodeml);
-    perturbIn(xcodeml);
 
     writeOut(xcodeml);
     removePragma();
@@ -185,12 +184,14 @@ public class Serialize extends ClawTransformation {
 
     Xnode serCall = xcodeml.createFctCall(serType, serFctName);
     Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
-    if(callType == SerializationCall.SER_READ
-        || callType == SerializationCall.SER_WRITE
-        || callType == SerializationCall.SER_READ_PERTURB)
+    if(callType == SerializationCall.SER_WRITE)
     {
       Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,
           SER_PPSER_SERIALIZER, Xscope.GLOBAL);
+      arguments.append(serializerArg);
+    } else if(callType == SerializationCall.SER_READ || callType == SerializationCall.SER_READ_PERTURB) {
+      Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,
+          SER_PPSER_SERIALIZER_REF, Xscope.GLOBAL);
       arguments.append(serializerArg);
     }
     arguments.append(savepointArg);
