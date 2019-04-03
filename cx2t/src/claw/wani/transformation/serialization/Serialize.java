@@ -95,35 +95,92 @@ public class Serialize extends ClawTransformation {
     return serCall;
   }
 
+  private Xnode createWriteField(XcodeProgram xcodeml, String savepoint, Xnode param)
+  {
+    FfunctionType serType = xcodeml.createSubroutineType();
+    // Create the char constant type
+    Xnode savepointArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
+
+    Xnode serCall = xcodeml.createFctCall(serType, "fs_write_field");
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
+
+    return serCall;
+  }
+
+  private Xnode createReadField(XcodeProgram xcodeml, String savepoint, Xnode param)
+  {
+    FfunctionType serType = xcodeml.createSubroutineType();
+    // Create the char constant type
+    Xnode savepointArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
+
+    Xnode serCall = xcodeml.createFctCall(serType, "fs_read_field");
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
+
+    return serCall;
+  }
+
+  private Xnode createPerturbField(XcodeProgram xcodeml, String savepoint, Xnode param)
+  {
+    FfunctionType serType = xcodeml.createSubroutineType();
+    // Create the char constant type
+    Xnode savepointArg = xcodeml.createCharConstant(savepoint+"_"+param.value());
+
+    Xnode serCall = xcodeml.createFctCall(serType, "fs_read_field");
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(savepointArg);
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
+    serCall.matchDescendant(Xcode.ARGUMENTS).append(xcodeml.createName("ppser_savepoint", null));
+
+    return serCall;
+  }
+
   private void writeIn(XcodeProgram xcodeml)
   {
+    String savename = _claw.value(ClawClause.SERIALIZE_SAVEPOINT) + "-input";
     Xnode savepoint = createSavepoint(xcodeml,
-        _claw.value(ClawClause.SERIALIZE_SAVEPOINT));
-    _fctCall.insertBefore(savepoint);
-    writeFields(xcodeml, true);
+        savename);
+    Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
+    _fctCall.insertBefore(exprStmt);
+    exprStmt.insert(savepoint);
+    writeFields(xcodeml, savepoint.value(), true);
   }
 
   private void writeOut(XcodeProgram xcodeml)
   {
-    writeFields(xcodeml, false);
+    String savename = _claw.value(ClawClause.SERIALIZE_SAVEPOINT) + "-output";
     Xnode savepoint = createSavepoint(xcodeml,
-        _claw.value(ClawClause.SERIALIZE_SAVEPOINT));
-    _fctCall.insertAfter(savepoint);
+        savename);
+    Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
+    exprStmt.insert(savepoint);
+    writeFields(xcodeml, savepoint.value(),false);
+    _fctCall.insertAfter(exprStmt);
+
   }
 
-  private void writeFields(XcodeProgram xcodeml, boolean in) {
+  private void writeFields(XcodeProgram xcodeml, String savepoint, boolean in) {
     List<Xnode> params = getParameters(xcodeml);
     for(Xnode param : params) {
       FbasicType type = xcodeml.getTypeTable().getBasicType(param);
       if(in && (type.getIntent() == Intent.IN || type.getIntent() == Intent.INOUT)) {
         // TODO save before
-        Xnode comment = xcodeml.createComment(" write " + param.value());
-        _fctCall.insertBefore(comment);
+        Xnode serCall = createWriteField(xcodeml, savepoint, param);
+        Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
+        _fctCall.insertBefore(exprStmt);
+        exprStmt.insert(serCall);
       }
       if(!in && (type.getIntent() == Intent.OUT || type.getIntent() == Intent.INOUT)) {
         // TODO save before
-        Xnode comment = xcodeml.createComment(" write " + param.value());
-        _fctCall.insertAfter(comment);
+        Xnode serCall = createWriteField(xcodeml, savepoint, param);
+        Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
+        _fctCall.insertAfter(exprStmt);
+        exprStmt.insert(serCall);
       }
     }
   }
