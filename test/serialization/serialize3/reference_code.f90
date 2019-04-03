@@ -16,18 +16,18 @@ PROGRAM serialize
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"i" , i )
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"k" , k )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_a" , a )
+  "banana1-input_a" , a , ppser_zrperturb )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_aa" , aa )
+  "banana1-input_aa" , aa , ppser_zrperturb )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_aaa" , aaa )
+  "banana1-input_aaa" , aaa , ppser_zrperturb )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_c" , c )
+  "banana1-input_c" , c , ppser_zrperturb )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_cc" , cc )
+  "banana1-input_cc" , cc , ppser_zrperturb )
  CALL fs_read_field ( ppser_serializer_ref , ppser_savepoint ,&
-  "banana1-input_ccc" , ccc )
- CALL clawserialize ( i , a , aa , aaa , j , b, bb , bbb , k , c, cc , ccc )
+  "banana1-input_ccc" , ccc , ppser_zrperturb )
+ CALL clawserialize ( i , a , aa , aaa , j , b , bb , bbb, k , c , cc , ccc )
  CALL fs_create_savepoint ( "banana1-output" , ppser_savepoint )
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"i" , i )
  CALL fs_add_savepoint_metainfo ( ppser_savepoint ,"k" , k )
