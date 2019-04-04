@@ -1,4 +1,6 @@
 PROGRAM serialize
+ USE utils_ppser
+ USE m_serialize
  INTEGER :: i = 4
  INTEGER :: j = 2
  INTEGER :: k = 6
