@@ -1080,4 +1080,25 @@ public class XcodeML extends Xnode {
     useDecl.setAttribute(Xattr.NAME, moduleName);
     return useDecl;
   }
+
+  /**
+   * Create a FuseOnlyDecl node with the module name and renamable elements.
+   *
+   * @param moduleName Module name inserted for the use statement.
+   * @param names      List of use names to be add in the ONLY list.
+   * @return Newly created FuseOnlyDecl node.
+   */
+  public Xnode createUseOnlyDecl(String moduleName, List<String> names) {
+    if(names == null || names.isEmpty()) {
+      return createUseDecl(moduleName);
+    }
+    Xnode useOnlyDecl = createNode(Xcode.F_USE_ONLY_DECL);
+    useOnlyDecl.setAttribute(Xattr.NAME, moduleName);
+    for(String useName : names) {
+      Xnode renamable = createNode(Xcode.RENAMABLE);
+      renamable.setAttribute(Xattr.USE_NAME, useName);
+      useOnlyDecl.append(renamable);
+    }
+    return useOnlyDecl;
+  }
 }

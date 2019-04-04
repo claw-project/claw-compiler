@@ -138,14 +138,8 @@ public class Serialize extends ClawTransformation {
           _claw.getPragma().lineNo());
     }
 
-    if(!fctDef.getDeclarationTable().contains(SER_MODULE_M_SERIALIZE)) {
-      fctDef.getDeclarationTable().
-          insertUseDecl(xcodeml, SER_MODULE_M_SERIALIZE);
-    }
-    if(!fctDef.getDeclarationTable().contains(SER_MODULE_UTILS_PPSER)) {
-      fctDef.getDeclarationTable().
-          insertUseDecl(xcodeml, SER_MODULE_UTILS_PPSER);
-    }
+    fctDef.getDeclarationTable().insertUseDecl(xcodeml, SER_MODULE_M_SERIALIZE);
+    fctDef.getDeclarationTable().insertUseDecl(xcodeml, SER_MODULE_UTILS_PPSER);
   }
 
   private List<Xnode> getParameters(XcodeProgram xcodeml) {

@@ -193,14 +193,38 @@ public class XdeclTable extends Xnode {
   }
 
   /**
-   * Create and insert a FuseDecl node at the beginning of the table.
+   * Create and insert a FuseDecl node at the beginning of the table if not
+   * present in the table yet.
    *
+   * @param xcodeml    Current XcodeML translation unit.
    * @param moduleName Module name inserted in the FuseDecl node.
    */
   public void insertUseDecl(XcodeProgram xcodeml, String moduleName) {
+    if(_table.containsKey(moduleName.toLowerCase())) {
+      return;
+    }
     Xnode useDecl = xcodeml.createUseDecl(moduleName);
     this.insert(useDecl);
-    _table.put(moduleName, useDecl);
+    _table.put(moduleName.toLowerCase(), useDecl);
+  }
+
+  /**
+   * Create and insert a FuseOnlyDecl node at the beginning of the table if not
+   * present in the table yet.
+   *
+   * @param xcodeml    Current XcodeML translation unit.
+   * @param moduleName Module name inserted in the FuseDecl node.
+   * @param names      List of use name to be added in the ONLY list.
+   */
+  public void insertUseOnlyDecl(XcodeProgram xcodeml, String moduleName,
+                                List<String> names)
+  {
+    if(_table.containsKey(moduleName.toLowerCase())) {
+      return;
+    }
+    Xnode useOnlyDecl = xcodeml.createUseOnlyDecl(moduleName, names);
+    this.insert(useOnlyDecl);
+    _table.put(moduleName.toLowerCase(), useOnlyDecl);
   }
 
   /**
