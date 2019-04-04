@@ -193,6 +193,17 @@ public class XdeclTable extends Xnode {
   }
 
   /**
+   * Create and insert a FuseDecl node at the beginning of the table.
+   *
+   * @param moduleName Module name inserted in the FuseDecl node.
+   */
+  public void insertUseDecl(XcodeProgram xcodeml, String moduleName) {
+    Xnode useDecl = xcodeml.createUseDecl(moduleName);
+    this.insert(useDecl);
+    _table.put(moduleName, useDecl);
+  }
+
+  /**
    * Get the number of declarations in the table.
    *
    * @return The number of declarations in the table.

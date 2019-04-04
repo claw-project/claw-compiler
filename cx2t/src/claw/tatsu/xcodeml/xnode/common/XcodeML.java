@@ -1068,4 +1068,16 @@ public class XcodeML extends Xnode {
     }
     return pragmas;
   }
+
+  /**
+   * Create a FuseDecl node with the module name.
+   *
+   * @param moduleName Module name inserted for the use statement.
+   * @return Newly created FuseDecl node.
+   */
+  public Xnode createUseDecl(String moduleName) {
+    Xnode useDecl = createNode(Xcode.F_USE_DECL);
+    useDecl.setAttribute(Xattr.NAME, moduleName);
+    return useDecl;
+  }
 }

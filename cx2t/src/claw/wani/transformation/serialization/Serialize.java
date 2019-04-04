@@ -10,6 +10,7 @@ import java.util.List;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.primitive.Function;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
@@ -47,6 +48,9 @@ public class Serialize extends ClawTransformation {
   private static final String SER_FS_ADD_SP_METAINFO = "fs_add_savepoint_metainfo";
   private static final String SER_FS_WRITE_FIELD = "fs_write_field";
   private static final String SER_FS_READ_FIELD = "fs_read_field";
+
+  private static final String SER_MODULE_M_SERIALIZE = "m_serialize";
+  private static final String SER_MODULE_UTILS_PPSER = "utils_ppser";
 
   private static final String SAVEPOINT_IN_SUFFIX = "-input";
   private static final String SAVEPOINT_OUT_SUFFIX = "-output";
@@ -98,7 +102,9 @@ public class Serialize extends ClawTransformation {
   @Override
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
+      throws IllegalTransformationException
   {
+    insertUseStatements(xcodeml);
     switch(_claw.getSerModeClauseValue()) {
       case PERTURB:
         perturbIn(xcodeml);
@@ -114,6 +120,32 @@ public class Serialize extends ClawTransformation {
 
     writeOut(xcodeml);
     removePragma();
+  }
+
+  /**
+   * Insert USE statements for the Serialbox modules if not present yet.
+   *
+   * @param xcodeml Current XcodeML translation unit.
+   * @throws IllegalTransformationException If parent function definition
+   *                                        cannot be found.
+   */
+  private void insertUseStatements(XcodeProgram xcodeml)
+      throws IllegalTransformationException
+  {
+    FfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
+    if(fctDef == null) {
+      throw new IllegalTransformationException("Cannot find parent function.",
+          _claw.getPragma().lineNo());
+    }
+
+    if(!fctDef.getDeclarationTable().contains(SER_MODULE_M_SERIALIZE)) {
+      fctDef.getDeclarationTable().
+          insertUseDecl(xcodeml, SER_MODULE_M_SERIALIZE);
+    }
+    if(!fctDef.getDeclarationTable().contains(SER_MODULE_UTILS_PPSER)) {
+      fctDef.getDeclarationTable().
+          insertUseDecl(xcodeml, SER_MODULE_UTILS_PPSER);
+    }
   }
 
   private List<Xnode> getParameters(XcodeProgram xcodeml) {
