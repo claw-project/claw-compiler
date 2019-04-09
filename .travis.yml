@@ -71,9 +71,9 @@ before_install:
 - git submodule init
 - git submodule update
 - travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
-#- cabal update && cabal install ShellCheck
-#- export PATH=$PATH:$HOME/.cabal/bin
-#- shellcheck --version
+- cabal update && cabal install ShellCheck
+- export PATH=$PATH:$HOME/.cabal/bin
+- shellcheck --version
 - wget https://dl.bintray.com/sonarsource/SonarQube/org/sonarsource/scanner/cli/sonar-scanner-cli/3.2.0.1227/sonar-scanner-cli-3.2.0.1227-linux.zip
 - unzip sonar-scanner-cli-3.2.0.1227-linux.zip
 - export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-3.2.0.1227-linux/bin
@@ -96,7 +96,7 @@ script:
 - "./scripts/check_author"
 - "./scripts/check_lib_split"
 - cd scripts
-#- "./run.shellcheck"
+- "./run.shellcheck"
 - cd ..
 - if [[ "${TRAVIS_PULL_REQUEST_SLUG}" == "claw-project/claw-compiler" ]]; then sonar-scanner -Dsonar.login=$SONAR_TOKEN; fi
 - if [[ "${TRAVIS_REPO_SLUG}" == "claw-project/claw-compiler" ]] && [[ "${TRAVIS_PULL_REQUEST_SLUG}" == "" ]]; then sonar-scanner -Dsonar.login=$SONAR_TOKEN; fi
