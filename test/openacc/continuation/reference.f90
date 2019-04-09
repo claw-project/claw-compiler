@@ -29,5 +29,7 @@ PROGRAM openacc_cont
 !$acc sdsdfsfssadaa )  present ( uikj,   fdhjkd, ujnh,   lokm,  dfds,ztzrtt, &
 !$acc asjdsadsddhjdh )  copyin  ( dfdjfj, dksflkdsfl, sdjsadhfjds )
 !$ACC end data
+!$acc data if(lzacc)    present (ps,p0,pp,dp0,t,qv,qc,qrs,rho0)  create  (lzmask)
+!$ACC end data
 END PROGRAM openacc_cont
 

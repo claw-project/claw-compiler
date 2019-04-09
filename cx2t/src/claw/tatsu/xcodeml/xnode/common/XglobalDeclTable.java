@@ -7,7 +7,7 @@ package claw.tatsu.xcodeml.xnode.common;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,7 +26,7 @@ public class XglobalDeclTable extends Xnode {
 
   /* Hashtable containing the global declaration elements. Key is the name of
    * the function or the module. */
-  private final Hashtable<String, Xnode> _table;
+  private final Map<String, Xnode> _table;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read
@@ -36,7 +36,7 @@ public class XglobalDeclTable extends Xnode {
    */
   public XglobalDeclTable(Xnode node) {
     super(node == null ? null : node.element());
-    _table = new Hashtable<>();
+    _table = new HashMap<>();
     readTable();
   }
 
@@ -46,10 +46,10 @@ public class XglobalDeclTable extends Xnode {
   private void readTable() {
     Xnode crt = firstChild();
     while(crt != null) {
-      if(crt.opcode() == Xcode.F_FUNCTION_DEFINITION) {
+      if(crt.is(Xcode.F_FUNCTION_DEFINITION)) {
         FfunctionDefinition fctDef = new FfunctionDefinition(crt);
         _table.put(fctDef.getName(), fctDef);
-      } else if(crt.opcode() == Xcode.F_MODULE_DEFINITION) {
+      } else if(crt.is(Xcode.F_MODULE_DEFINITION)) {
         FmoduleDefinition moduleDef = new FmoduleDefinition(crt);
         _table.put(moduleDef.getName(), moduleDef);
       }

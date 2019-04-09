@@ -20,6 +20,7 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.internal.OpenAccContinuation;
 import claw.wani.transformation.ll.caching.Kcaching;
 import claw.wani.transformation.ll.directive.DirectivePrimitive;
@@ -32,8 +33,6 @@ import claw.wani.x2t.configuration.GroupConfiguration;
 import org.w3c.dom.Element;
 
 import java.util.*;
-
-import static claw.wani.x2t.configuration.GroupConfiguration.GroupType.DEPENDENT;
 
 /**
  * ClawTranslator stores all transformation groups applied during the
@@ -48,7 +47,7 @@ public class ClawTranslator implements Translator {
   private final Map<Class, TransformationGroup> _tGroups;
   // Hold cross-transformation elements
   private final Map<Element, Object> _crossTransformationTable;
-  private final Map<ClawDirectiveKey, ClawPragma> _blockDirectives;
+  private final Map<ClawDirectiveKey, Deque<ClawPragma>> _blockDirectives;
   private int _transformationCounter = 0;
 
   /**
@@ -62,7 +61,7 @@ public class ClawTranslator implements Translator {
      */
     _tGroups = new LinkedHashMap<>();
     for(GroupConfiguration g : Configuration.get().getGroups()) {
-      if(g.getType() == DEPENDENT) {
+      if(g.getType() == GroupConfiguration.GroupType.DEPENDENT) {
         _tGroups.put(g.getTransformationClass(),
             new DependentTransformationGroup(g.getName()));
       } else {
@@ -156,8 +155,10 @@ public class ClawTranslator implements Translator {
                                     ClawPragma analyzedPragma)
       throws IllegalTransformationException
   {
-    if(analyzedPragma.hasForwardClause()) {
+    if(analyzedPragma.hasClause(ClawClause.FORWARD)) {
       addTransformation(xcodeml, new ScaForward(analyzedPragma));
+    } else if(analyzedPragma.hasClause(ClawClause.ROUTINE)) {
+      addTransformation(xcodeml, new ScaRoutine(analyzedPragma));
     } else {
       if(Context.get().getTarget() == Target.GPU) {
         addTransformation(xcodeml, new ScaGPU(analyzedPragma));
@@ -166,9 +167,9 @@ public class ClawTranslator implements Translator {
             equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
         {
           addTransformation(xcodeml,
-              new ScaCPUsmartFusion(analyzedPragma));
+              new ScaCPUvectorizeGroup(analyzedPragma, true));
         } else {
-          addTransformation(xcodeml, new ScaCPUbasic(analyzedPragma));
+          addTransformation(xcodeml, new ScaCPUvectorizeGroup(analyzedPragma));
         }
       }
     }
@@ -179,9 +180,11 @@ public class ClawTranslator implements Translator {
       throws IllegalTransformationException
   {
     // Clean up block transformation map
-    for(Map.Entry<ClawDirectiveKey, ClawPragma> entry :
+    for(Map.Entry<ClawDirectiveKey, Deque<ClawPragma>> entry :
         _blockDirectives.entrySet()) {
-      createBlockDirectiveTransformation(xcodeml, entry.getValue(), null);
+      for(ClawPragma pragma : entry.getValue()) {
+        createBlockDirectiveTransformation(xcodeml, pragma, null);
+      }
     }
 
     reorderTransformations();
@@ -200,24 +203,59 @@ public class ClawTranslator implements Translator {
     int depth = analyzedPragma.getPragma().depth();
     ClawDirectiveKey crtRemoveKey =
         new ClawDirectiveKey(analyzedPragma.getDirective(), depth);
-    if(analyzedPragma.isEndPragma()) { // start block directive
-      if(!_blockDirectives.containsKey(crtRemoveKey)) {
+    if(analyzedPragma.isEndPragma()) {
+      ClawPragma start = getBlockDirectiveStart(crtRemoveKey);
+      if(start == null) {
         throw new
             IllegalDirectiveException(analyzedPragma.getDirective().name(),
-            "Invalid Claw directive (end with no start)",
+            "Invalid CLAW directive (end with no start)",
             analyzedPragma.getPragma().lineNo());
       } else {
-        createBlockDirectiveTransformation(xcodeml,
-            _blockDirectives.get(crtRemoveKey), analyzedPragma);
-        _blockDirectives.remove(crtRemoveKey);
+        createBlockDirectiveTransformation(xcodeml, start, analyzedPragma);
       }
-    } else { // end block directive
-      if(_blockDirectives.containsKey(crtRemoveKey)) {
-        createBlockDirectiveTransformation(xcodeml,
-            _blockDirectives.get(crtRemoveKey), null);
+    } else {
+      addStartBlockDirective(analyzedPragma, crtRemoveKey);
+    }
+  }
+
+  /**
+   * Return the start directive object corresponding to the end directive and
+   * depth.
+   *
+   * @param key Key representing the directive and depth values.
+   * @return ClawPragma representing the start directive if any.
+   * Null otherwise.
+   */
+  private ClawPragma getBlockDirectiveStart(ClawDirectiveKey key) {
+    if(_blockDirectives.containsKey(key)) {
+      ClawPragma startPragma = _blockDirectives.get(key).pop();
+
+      if(_blockDirectives.get(key).isEmpty()) {
+        _blockDirectives.remove(key);
       }
-      _blockDirectives.remove(crtRemoveKey);
-      _blockDirectives.put(crtRemoveKey, analyzedPragma);
+      return startPragma;
+    }
+    return null;
+  }
+
+  /**
+   * Add new start directive that can have an end directive.
+   *
+   * @param analyzedPragma ClawPragma representing the start directive.
+   * @param key            Key representing the directive and depth values.
+   */
+  private void addStartBlockDirective(ClawPragma analyzedPragma,
+                                      ClawDirectiveKey key)
+  {
+    if(key == null || analyzedPragma == null) {
+      return;
+    }
+    if(_blockDirectives.containsKey(key)) {
+      _blockDirectives.get(key).push(analyzedPragma);
+    } else {
+      Deque<ClawPragma> stack = new ArrayDeque<>();
+      stack.push(analyzedPragma);
+      _blockDirectives.put(key, stack);
     }
   }
 
@@ -371,13 +409,16 @@ public class ClawTranslator implements Translator {
                                       Xnode stmt)
       throws IllegalTransformationException
   {
-    if(claw.hasInterchangeClause() && stmt.opcode() == Xcode.F_DO_STATEMENT) {
+    if(claw.hasClause(ClawClause.INTERCHANGE)
+        && Xnode.isOfCode(stmt, Xcode.F_DO_STATEMENT))
+    {
       Xnode p = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
       stmt.insertBefore(p);
       ClawPragma l = ClawPragma.createLoopInterchangeLanguage(claw, p);
       LoopInterchange interchange = new LoopInterchange(l);
       addTransformation(xcodeml, interchange);
-      Message.debug("Loop interchange added: " + claw.getIndexes());
+      Message.debug("Loop interchange added: " +
+          claw.values(ClawClause.INTERCHANGE_INDEXES));
     }
   }
 
@@ -396,10 +437,13 @@ public class ClawTranslator implements Translator {
                                  Xnode stmt)
       throws IllegalTransformationException
   {
-    if(claw.hasFusionClause() && stmt.opcode() == Xcode.F_DO_STATEMENT) {
+    if(claw.hasClause(ClawClause.FUSION)
+        && Xnode.isOfCode(stmt, Xcode.F_DO_STATEMENT))
+    {
       ClawPragma l = ClawPragma.createLoopFusionLanguage(claw);
       addTransformation(xcodeml, new LoopFusion(stmt, l));
-      Message.debug("Loop fusion added: " + claw.getGroupValue());
+      Message.debug("Loop fusion added: " +
+          claw.value(ClawClause.GROUP));
     }
   }
 

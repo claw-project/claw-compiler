@@ -7,15 +7,14 @@ package claw.wani.transformation.sca;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.*;
-import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.*;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.ModelConfig;
@@ -33,17 +32,21 @@ import java.util.*;
  *
  * @author clementval
  * @see claw.wani.transformation.sca.ScaGPU
- * @see claw.wani.transformation.sca.ScaCPUbasic
- * @see claw.wani.transformation.sca.ScaCPUsmartFusion
+ * @see claw.wani.transformation.sca.ScaCPUvectorizeGroup
  */
 public class Sca extends ClawTransformation {
 
   final Map<String, PromotionInfo> _promotions;
   final Set<String> _arrayFieldsInOut;
   final Set<String> _scalarFields;
+  final Set<String> _noPromotion;
   FfunctionDefinition _fctDef;
-  // private int _overDimensions;
-  private FfunctionType _fctType;
+  Set<String> _inductionVariables;
+  FfunctionType _fctType;
+
+  protected boolean forceAssumedShapedArrayPromotion = false;
+
+  static final String SCA_DEBUG_PREFIX = "SCA:";
 
   /**
    * Constructs a new Sca transformation triggered from a specific
@@ -53,10 +56,16 @@ public class Sca extends ClawTransformation {
    */
   Sca(ClawPragma directive) {
     super(directive);
-    //_overDimensions = 0;
     _promotions = new HashMap<>();
     _arrayFieldsInOut = new HashSet<>();
     _scalarFields = new HashSet<>();
+    _noPromotion = new HashSet<>();
+  }
+
+  @Override
+  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
+    // Analysis is performed in child classes.
+    return false;
   }
 
   /**
@@ -64,77 +73,71 @@ public class Sca extends ClawTransformation {
    * scalars.
    *
    * @param name            Name of the subroutine.
-   * @param promoted        List of promoted array variables.
    * @param candidateArrays List of candidate array variables for promotion.
    * @param scalars         List of candidate scalar variables for promotion.
    */
-  private void printDebugPromotionInfos(String name, Set<String> promoted,
+  private void printDebugPromotionInfos(String name,
                                         List<String> candidateArrays,
                                         List<String> scalars)
   {
     Message.debug("==========================================");
-    Message.debug("Sca promotion infos for subroutine " + name);
-    Message.debug("  - Promoted arrays(" + promoted.size() + "):");
-    for(String array : promoted) {
+    Message.debug("SCA automatic promotion deduction information for subroutine "
+        + name);
+    Message.debug("  - Promoted arrays(" + _arrayFieldsInOut.size() + "):");
+    List<String> unsorted = new ArrayList<>(_arrayFieldsInOut);
+    Collections.sort(unsorted);
+    for(String array : unsorted) {
+      Message.debug("\t" + array);
+    }
+    Message.debug("  - Excluded from promotion variables("
+        + _noPromotion.size() + "):");
+    List<String> unsortedNoPromotions = new ArrayList<>(_noPromotion);
+    Collections.sort(unsortedNoPromotions);
+    for(String array : unsortedNoPromotions) {
       Message.debug("\t" + array);
     }
     Message.debug("  - Candidate arrays(" + candidateArrays.size() + "):");
+    Collections.sort(candidateArrays);
     for(String array : candidateArrays) {
       Message.debug("\t" + array);
     }
     Message.debug("  - Candidate scalars(" + scalars.size() + "):");
+    Collections.sort(scalars);
     for(String array : scalars) {
       Message.debug("\t" + array);
     }
     Message.debug("==========================================");
   }
 
-  @Override
-  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-
-    ClawTranslator trans = (ClawTranslator) translator;
-
+  /**
+   * Locate the parent function/subroutine in which the pragma is located.
+   *
+   * @param xcodeml Current translation unit.
+   * @return True if the function/subroutine was located. False otherwise.
+   */
+  boolean detectParentFunction(XcodeProgram xcodeml) {
     // Check for the parent fct/subroutine definition
     _fctDef = _claw.getPragma().findParentFunction();
     if(_fctDef == null) {
       xcodeml.addError("Parent function/subroutine cannot be found. " +
-              "Sca directive must be defined in a function/subroutine.",
-          _claw.getPragma().lineNo());
+              "SCA directive must be defined in a function/subroutine.",
+          _claw.getPragma());
       return false;
     }
     _fctType = xcodeml.getTypeTable().getFunctionType(_fctDef);
     if(_fctType == null) {
-      xcodeml.addError("Function/subroutine signature cannot be found. ",
-          _claw.getPragma().lineNo());
+      xcodeml.addError("Function/subroutine signature cannot be found!",
+          _claw.getPragma());
       return false;
     }
+    return true;
+  }
 
-    /* Check if unsupported statements are located in the future parallel
-     * region. */
-    if(Context.isTarget(Target.GPU)
-        && (Context.get().getGenerator().getDirectiveLanguage()
-        != CompilerDirective.NONE))
-    {
-      Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
-      Xnode parallelRegionStart =
-          Directive.findParallelRegionStart(_fctDef, null);
-      Xnode parallelRegionEnd =
-          Directive.findParallelRegionEnd(_fctDef, contains);
-
-      List<Xnode> unsupportedStatements =
-          XnodeUtil.getNodes(parallelRegionStart, parallelRegionEnd,
-              Context.get().getGenerator().getUnsupportedStatements());
-
-      if(!unsupportedStatements.isEmpty()) {
-        for(Xnode statement : unsupportedStatements) {
-          xcodeml.addError("Unsupported statement in parallel region",
-              statement.lineNo());
-        }
-        return false;
-      }
-    }
-
-    return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans);
+  /**
+   * Populate list of induction variables used in the function/subroutine body.
+   */
+  void detectInductionVariables() {
+    _inductionVariables = Function.detectInductionVariables(_fctDef);
   }
 
   /**
@@ -143,13 +146,13 @@ public class Sca extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyzeDimension(XcodeProgram xcodeml) {
-    if(!_claw.hasDimensionClause()
+  boolean analyzeDimension(XcodeProgram xcodeml) {
+    if(!_claw.hasClause(ClawClause.DIMENSION)
         && (_claw.isScaModelConfig()
         && Configuration.get().getModelConfig().getNbDimensions() == 0))
     {
       xcodeml.addError("No dimension defined for parallelization.",
-          _claw.getPragma().lineNo());
+          _claw.getPragma());
       return false;
     }
     return true;
@@ -161,11 +164,11 @@ public class Sca extends ClawTransformation {
    * @param xcodeml Current XcodeML program unit to store the error message.
    * @return True if the analysis succeeded. False otherwise.
    */
-  private boolean analyzeData(XcodeProgram xcodeml, ClawTranslator trans) {
+  boolean analyzeData(XcodeProgram xcodeml, ClawTranslator trans) {
     if(_claw.isScaModelConfig()) {
       return analyzeModelData(xcodeml, trans);
     } else {
-      if(!_claw.hasDataOverClause()) {
+      if(!_claw.hasClause(ClawClause.DATA_OVER)) {
         return analyzeDataForAutomaticPromotion(xcodeml);
       } else {
         return analyzeDataFromOverClause(xcodeml);
@@ -191,7 +194,9 @@ public class Sca extends ClawTransformation {
         _arrayFieldsInOut.add(dataInfo.getKey());
 
         ModelConfig global = Configuration.get().getModelConfig();
-        if(dataInfo.getValue() != null && global.hasLayout(dataInfo.getValue())) {
+        if(dataInfo.getValue() != null
+            && global.hasLayout(dataInfo.getValue()))
+        {
           _claw.getLocalModelConfig().putLayout(dataInfo.getKey(),
               global.getLayout(dataInfo.getKey()));
         }
@@ -199,7 +204,7 @@ public class Sca extends ClawTransformation {
       return true;
     } else {
       xcodeml.addError("No model-data defined in function " + _fctDef.getName(),
-          _claw.getPragma().lineNo());
+          _claw.getPragma());
       return false;
     }
   }
@@ -209,7 +214,7 @@ public class Sca extends ClawTransformation {
    * array promotion is performed.
    *
    * @param xcodeml Current translation unit
-   * @return True if the analyzis succeed. False otherwise.
+   * @return True if the analysis succeed. False otherwise.
    */
   private boolean analyzeDataForAutomaticPromotion(XcodeProgram xcodeml) {
     List<String> scalars = new ArrayList<>();
@@ -217,34 +222,43 @@ public class Sca extends ClawTransformation {
     List<Xnode> declarations =
         _fctDef.getDeclarationTable().values(Xcode.VAR_DECL);
 
+    if(_claw.hasClause(ClawClause.NO_PROMOTE)) {
+      _noPromotion.addAll(_claw.values(ClawClause.NO_PROMOTE));
+    }
+
     for(Xnode decl : declarations) {
       if(xcodeml.getTypeTable().isBasicType(decl)) {
         String varName = decl.matchSeq(Xcode.NAME).value();
         FbasicType bType = xcodeml.getTypeTable().getBasicType(decl);
 
-        if(bType.isArray()) {
-          if(bType.hasIntent() || bType.isPointer()) {
-            _arrayFieldsInOut.add(varName);
+        if(!_noPromotion.contains(varName)) {
+          if(bType.isArray()) {
+            if(bType.hasIntent() || bType.isPointer()) {
+              _arrayFieldsInOut.add(varName);
+            } else {
+              candidateArrays.add(varName);
+            }
           } else {
-            candidateArrays.add(varName);
-          }
-        } else {
-          if(_claw.hasScalarClause() &&
-              _claw.getScalarClauseValues().contains(varName))
-          {
-            _arrayFieldsInOut.add(varName);
-          }
-          if(!bType.isParameter() && bType.hasIntent()) {
-            scalars.add(varName);
+            // Scalars mentioned in the scalar clause will be promoted.
+            if(_claw.hasClause(ClawClause.SCALAR) &&
+                _claw.values(ClawClause.SCALAR).contains(varName))
+            {
+              if(!bType.hasIntent()) {
+                xcodeml.addWarning(String.format(
+                    "Variable %s in scalar clause but not a dummy argument!",
+                    varName), _claw.getPragma());
+              }
+              _arrayFieldsInOut.add(varName);
+            } else if(!bType.isParameter() && !bType.hasIntent()) {
+              scalars.add(varName); // Add scalar as candidate
+            }
           }
         }
       }
     }
     _scalarFields.addAll(scalars);
-    _scalarFields.addAll(candidateArrays);
 
-    printDebugPromotionInfos(_fctDef.getName(), _arrayFieldsInOut,
-        candidateArrays, scalars);
+    printDebugPromotionInfos(_fctDef.getName(), candidateArrays, scalars);
 
     return true;
   }
@@ -266,14 +280,14 @@ public class Sca extends ClawTransformation {
       if(!_fctDef.getSymbolTable().contains(d)) {
         xcodeml.addError(
             String.format("Data %s is not defined in the current block.", d),
-            _claw.getPragma().lineNo()
+            _claw.getPragma()
         );
         return false;
       }
       if(!_fctDef.getDeclarationTable().contains(d)) {
         xcodeml.addError(
             String.format("Data %s is not declared in the current block.", d),
-            _claw.getPragma().lineNo()
+            _claw.getPragma()
         );
         return false;
       }
@@ -288,16 +302,11 @@ public class Sca extends ClawTransformation {
       throws Exception
   {
     // Handle PURE function / subroutine
-    boolean pureRemoved = _fctType.isPure();
-    _fctType.removeAttribute(Xattr.IS_PURE);
-    if(Configuration.get().isForcePure() && pureRemoved) {
+    if(Configuration.get().isForcePure() && _fctType.isPure()) {
       throw new IllegalTransformationException(
           "PURE specifier cannot be removed", _fctDef.lineNo());
-    } else if(pureRemoved) {
-      String fctName = _fctDef.matchDirectDescendant(Xcode.NAME).value();
-      xcodeml.addWarning("PURE specifier removed from function " + fctName +
-              ". Transformation and code generation applied to it.",
-          _fctDef.lineNo());
+    } else {
+      removeAttributesWithWaring(xcodeml, _fctType, Xattr.IS_PURE);
     }
 
     // Insert the declarations of variables to iterate over the new dimensions.
@@ -307,7 +316,7 @@ public class Sca extends ClawTransformation {
     promoteFields(xcodeml);
 
     // Adapt array references.
-    if(_claw.hasDataOverClause()) {
+    if(_claw.hasClause(ClawClause.DATA_OVER)) {
       for(String id : _claw.getDataOverClauseValues()) {
         Field.adaptArrayRef(_promotions.get(id), _fctDef.body(), xcodeml);
       }
@@ -321,6 +330,25 @@ public class Sca extends ClawTransformation {
   }
 
   /**
+   * Remove the given attribute if exists and add a warning.
+   *
+   * @param xcodeml   Current translation unit.
+   * @param fctType   Function type on which attribute is removed.
+   * @param attribute Attribute to remove.
+   */
+  void removeAttributesWithWaring(XcodeProgram xcodeml, FfunctionType fctType,
+                                  Xattr attribute)
+  {
+    if(fctType.hasAttribute(attribute)) {
+      xcodeml.addWarning(String.format(
+          "%s attribute %s removed from function/subroutine %s",
+          SCA_DEBUG_PREFIX, attribute.toStringForMsg(), _fctDef.getName()),
+          _claw.getPragma());
+      fctType.removeAttribute(attribute);
+    }
+  }
+
+  /**
    * This method should be call by any class inheriting this class to apply
    * the last steps fo the transformation common to all SCA transformation.
    *
@@ -331,9 +359,14 @@ public class Sca extends ClawTransformation {
   {
     /* If the subroutine/function is public and part of a module, update the
      * module signature to propagate the promotion information. */
-    if(!_fctType.getBooleanAttribute(Xattr.IS_PRIVATE)) {
+    if(Function.isModuleProcedure(_fctDef, xcodeml)
+        || !_fctType.getBooleanAttribute(Xattr.IS_PRIVATE))
+    {
       FmoduleDefinition modDef = _fctDef.findParentModule();
       if(modDef != null) {
+        if(forceAssumedShapedArrayPromotion) {
+          _fctType.setBooleanAttribute(Xattr.IS_FORCE_ASSUMED, true);
+        }
         Xmod.updateSignature(modDef.getName(), xcodeml, _fctDef, _fctType,
             false);
       }
@@ -352,7 +385,7 @@ public class Sca extends ClawTransformation {
   private void promoteFields(XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    if(_claw.hasDataOverClause()) {
+    if(_claw.hasClause(ClawClause.DATA_OVER)) {
       for(String fieldId : _claw.getDataOverClauseValues()) {
         PromotionInfo promotionInfo = new PromotionInfo(fieldId,
             _claw.getLayoutForData(fieldId));
@@ -364,6 +397,9 @@ public class Sca extends ClawTransformation {
       for(String fieldId : _arrayFieldsInOut) {
         PromotionInfo promotionInfo = new PromotionInfo(fieldId,
             _claw.getLayoutForData(fieldId));
+        if(forceAssumedShapedArrayPromotion) {
+          promotionInfo.forceAssumedShape();
+        }
         Field.promote(promotionInfo, _fctDef, xcodeml);
         _promotions.put(fieldId, promotionInfo);
       }
@@ -384,30 +420,32 @@ public class Sca extends ClawTransformation {
 
     // For each dimension defined in the directive
     for(DimensionDefinition dimension : _claw.getDefaultLayout()) {
-      // Create the parameter for the lower bound
-      if(dimension.getLowerBound().isVar()) {
-        xcodeml.createIdAndDecl(dimension.getLowerBound().getValue(),
-            bt.getType(), XstorageClass.F_PARAM, _fctDef,
-            DeclarationPosition.FIRST);
+      if(!forceAssumedShapedArrayPromotion) {
+        // Create the parameter for the lower bound
+        if(dimension.getLowerBound().isVar()) {
+          xcodeml.createIdAndDecl(dimension.getLowerBound().getValue(),
+              bt.getType(), XstorageClass.F_PARAM, _fctDef,
+              DeclarationPosition.FIRST);
 
-        // Add parameter to the local type table
-        Xnode param = xcodeml.createAndAddParam(
-            dimension.getLowerBound().getValue(),
-            bt.getType(), _fctType);
-        param.setBooleanAttribute(Xattr.IS_INSERTED, true);
-      }
+          // Add parameter to the local type table
+          Xnode param = xcodeml.createAndAddParam(
+              dimension.getLowerBound().getValue(),
+              bt.getType(), _fctType);
+          param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+        }
 
-      // Create parameter for the upper bound
-      if(dimension.getUpperBound().isVar()) {
-        xcodeml.createIdAndDecl(dimension.getUpperBound().getValue(),
-            bt.getType(), XstorageClass.F_PARAM, _fctDef,
-            DeclarationPosition.FIRST);
+        // Create parameter for the upper bound
+        if(dimension.getUpperBound().isVar()) {
+          xcodeml.createIdAndDecl(dimension.getUpperBound().getValue(),
+              bt.getType(), XstorageClass.F_PARAM, _fctDef,
+              DeclarationPosition.FIRST);
 
-        // Add parameter to the local type table
-        Xnode param = xcodeml.createAndAddParam(
-            dimension.getUpperBound().getValue(),
-            bt.getType(), _fctType);
-        param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+          // Add parameter to the local type table
+          Xnode param = xcodeml.createAndAddParam(
+              dimension.getUpperBound().getValue(),
+              bt.getType(), _fctType);
+          param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+        }
       }
       // Create induction variable declaration
       xcodeml.createIdAndDecl(dimension.getIdentifier(), FortranType.INTEGER,

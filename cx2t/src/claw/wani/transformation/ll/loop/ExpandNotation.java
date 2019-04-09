@@ -7,6 +7,7 @@ package claw.wani.transformation.ll.loop;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.directive.common.Directive;
+import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Range;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
@@ -14,7 +15,9 @@ import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawBlockTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 
@@ -25,8 +28,7 @@ import java.util.List;
 /**
  * <pre>
  * An ExpandNotation transformation is an independent transformation. It
- * transforms the Fortran vector notation into single or nested do statements
- * notation.
+ * transforms the Fortran array notation into single or nested do statements.
  *
  * Array notation example:
  * A(1:n) = A(1+m:n+m) + B(1:n) * C(n+1:n+n)
@@ -46,7 +48,7 @@ public class ExpandNotation extends ClawBlockTransformation {
   /**
    * Constructs a new ExpandNotation triggered from a specific directive.
    *
-   * @param begin The directive that triggered the array transform
+   * @param begin The directive that triggered the expand notation
    *              transformation.
    * @param end   The directive that close the block transformation.
    *              Can be null.
@@ -63,7 +65,7 @@ public class ExpandNotation extends ClawBlockTransformation {
 
       // TODO Analyse dependency between assignments. cf array9 example.
 
-      // Find assignments with array notation
+      // Find assignments with vector notation
       List<Xnode> foundAssignments =
           XnodeUtil.getArrayAssignInBlock(_clawStart.getPragma(),
               _clawEnd.getPragma().value()
@@ -71,23 +73,23 @@ public class ExpandNotation extends ClawBlockTransformation {
 
       if(foundAssignments.isEmpty()) {
         xcodeml.addError(
-            "No array notation assignments found in the expand block.",
+            "No vector notation assignments found in the expand block.",
             _clawStart.getPragma().lineNo()
         );
         return false;
       }
 
       /* Using a structure of list of list of assignments to group together the
-       * array notation that share an identical iteration range. */
+       * expand notation that share an identical iteration range. */
 
       // 1st group always exists
-      _groupedAssignStmts.add(new ArrayList<Xnode>());
+      _groupedAssignStmts.add(new ArrayList<>());
       int crtGroup = 0;
       Xnode refArrayRef = foundAssignments.get(0).matchSeq(Xcode.F_ARRAY_REF);
       List<Xnode> refRanges =
           XnodeUtil.getIdxRangesFromArrayRef(refArrayRef);
 
-      // First array notation is automatically in the 1st group as 1st element
+      // First vector notation is automatically in the 1st group as 1st element
       _groupedAssignStmts.get(crtGroup).add(foundAssignments.get(0));
       _groupIterationRanges.add(refRanges);
 
@@ -101,7 +103,7 @@ public class ExpandNotation extends ClawBlockTransformation {
         if(!Range.compare(refRanges, ranges)) {
           refRanges = ranges;
           ++crtGroup;
-          _groupedAssignStmts.add(new ArrayList<Xnode>());
+          _groupedAssignStmts.add(new ArrayList<>());
           _groupIterationRanges.add(refRanges);
         }
         _groupedAssignStmts.get(crtGroup).add(foundAssignments.get(i));
@@ -116,25 +118,16 @@ public class ExpandNotation extends ClawBlockTransformation {
             _clawStart.getPragma().lineNo());
         return false;
       }
-      // Check if we are dealing with an array notation
-
-      if(stmt.child(0).opcode() != Xcode.F_ARRAY_REF) {
-        FbasicType lhsType = xcodeml.getTypeTable().getBasicType(stmt.child(0));
-        // vector notation without assumed shape
-        if(stmt.child(0).opcode() == Xcode.VAR && lhsType.isArray()) {
-          for(int d = 0; d < lhsType.getDimensions(); ++d) {
-            stmt.child(0).append(xcodeml.createEmptyAssumedShaped());
-          }
-        } else {
-          xcodeml.addError("Assign statement is not an array notation",
-              _clawStart.getPragma().lineNo());
-          return false;
-        }
+      // Check if we are dealing with an vector notation
+      if(!Xnode.isOfCode(stmt.child(0), Xcode.F_ARRAY_REF)) {
+        xcodeml.addError("Assign statement is not an array notation",
+            _clawStart.getPragma().lineNo());
+        return false;
       }
 
       List<Xnode> ranges = new ArrayList<>();
       for(Xnode el : stmt.child(0).children()) {
-        if(el.opcode() == Xcode.INDEX_RANGE) {
+        if(Xnode.isOfCode(el, Xcode.INDEX_RANGE)) {
           ranges.add(el);
         }
       }
@@ -219,8 +212,8 @@ public class ExpandNotation extends ClawBlockTransformation {
     // 1. Create do statements with induction variables
     for(int i = 0; i < ranges.size(); ++i) {
       // 1.1 Create induction variables
-      if(_clawStart.hasInductionClause()) { // Use user names
-        inductionVars[i] = _clawStart.getInductionValues().get(i);
+      if(_clawStart.hasClause(ClawClause.INDUCTION)) { // Use user names
+        inductionVars[i] = _clawStart.values(ClawClause.INDUCTION).get(i);
       } else { // generate new names
         inductionVars[i] = "claw_induction_" +
             translator.getNextTransformationCounter();
@@ -266,7 +259,7 @@ public class ExpandNotation extends ClawBlockTransformation {
       for(Xnode arrayRef : allArrayRef) {
         for(int i = 0; i < arrayRef.children().size() - 1; ++i) {
           Xnode el = arrayRef.child(i + 1);
-          if(el.opcode() == Xcode.INDEX_RANGE) {
+          if(Xnode.isOfCode(el, Xcode.INDEX_RANGE) && i < doStmts.length) {
             String induction = doStmts[i].matchSeq(Xcode.VAR).value();
             Xnode inductionVar =
                 xcodeml.createVar(FortranType.INTEGER, induction, Xscope.LOCAL);
@@ -280,26 +273,26 @@ public class ExpandNotation extends ClawBlockTransformation {
         }
       }
 
+      List<Xnode> fctCalls = stmt.matchAll(Xcode.FUNCTION_CALL);
+      for(Xnode fctCall : fctCalls) {
+        if(Function.isIntrinsicCall(fctCall, Xintrinsic.SUM)) {
+          Function.adaptIntrinsicSumCall(fctCall);
+        }
+      }
+
       // 4. Move assignment statement inside the most inner loop
       doStmts[ranges.size() - 1].body().append(stmt, true);
       stmt.delete();
     }
 
-    // Generate directive pragmas if needed
-
     Xnode grip = null;
-    if(_clawStart.hasAcceleratorClause()) {
-      /* TODO
-         OpenACC and OpenMP loop construct are pretty different ...
-         have to look how to do that properly. See issue #22
-       */
-      grip = Directive.generateAcceleratorClause(xcodeml, doStmts[0],
-          _clawStart.getAcceleratorClauses());
-    }
+    if(_clawStart.hasClause(ClawClause.PARALLEL)) {
+      List<String> privates = Collections.emptyList();
 
-    if(_clawStart.hasParallelClause()) {
-      grip = Directive.generateParallelClause(xcodeml,
-          (grip == null) ? doStmts[0] : grip, doStmts[0]);
+      String clauses = _clawStart.hasClause(ClawClause.ACC)
+          ? _clawStart.value(ClawClause.ACC) : "";
+      grip = Directive.generateParallelLoopClause(xcodeml, privates, doStmts[0],
+          doStmts[0], clauses, doStmts.length);
     }
 
     // Add any additional transformation defined in the directive clauses

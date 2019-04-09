@@ -4,6 +4,6 @@
 !
 
 module mod1
-  use mod2
+  use mod2, ONLY: i
   use mod3
 end module mod1

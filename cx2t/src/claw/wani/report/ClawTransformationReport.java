@@ -6,7 +6,6 @@ package claw.wani.report;
 
 import claw.ClawVersion;
 import claw.shenron.transformation.TransformationGroup;
-import claw.tatsu.common.Utility;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
@@ -105,7 +104,7 @@ public class ClawTransformationReport {
     infos.add(new String[]{"Directive",
         Configuration.get().getCurrentDirective().toString()});
     infos.add(new String[]{"Driver command", ""}); // TODO
-    infos.add(new String[]{"Translator command", Utility.join(" ", args)});
+    infos.add(new String[]{"Translator command", String.join(" ", args)});
 
     int indentCol = 0;
     for(String[] info : infos) {

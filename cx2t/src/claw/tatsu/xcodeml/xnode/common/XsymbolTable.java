@@ -4,7 +4,8 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The XsymbolTable represents the symbols (4) element in XcodeML intermediate
@@ -19,7 +20,7 @@ import java.util.Hashtable;
 
 public class XsymbolTable extends Xnode {
 
-  private final Hashtable<String, Xid> _table;
+  private final Map<String, Xid> _table;
 
   /**
    * Element standard ctor. Pass the base element to the base class and read
@@ -29,7 +30,7 @@ public class XsymbolTable extends Xnode {
    */
   public XsymbolTable(Xnode node) {
     super(node == null ? null : node.element());
-    _table = new Hashtable<>();
+    _table = new HashMap<>();
     readTable();
   }
 

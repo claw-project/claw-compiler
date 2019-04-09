@@ -25,7 +25,7 @@ compiler_macro="@COMPILER_MACRO@"
 
 ### Directory for saving intermediate files ###
 temp_dir=$(mktemp -d)
-debug_temp_dir="__omni_tmp__"
+debug_temp_dir="${PWD}/__omni_tmp__"
 
 ### Default options ###
 fpp_redirect=@FPP_REDIRECT@
@@ -54,6 +54,8 @@ force_pure=false
 report=false
 pipe_workflow=true
 keep_comment=false
+add_paren=false
+omni_ffront_debug=false
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
@@ -118,12 +120,17 @@ readonly force_pure
 readonly report
 readonly pipe_workflow
 readonly keep_comment
+readonly add_paren
+readonly omni_ffront_debug
 
 ### sed constant ###
 readonly claw_sed_ignore="s/\\!\$claw ignore//"
 readonly claw_sed_end_ignore="s/\\!\$claw end ignore//"
 readonly claw_sed_cont="s/__CLAWAMP__/\\&/"
 readonly claw_sed_verbatim="s/\\!\$claw verbatim //"
+
+readonly claw_debug_prefix="claw-driver-debug"
+readonly claw_debug_lvl_dep="CLAW_DEBUG_DEP"
 
 ### Add additional parameters needed for cx2t ###
 claw::format_cx2t_params
@@ -149,10 +156,21 @@ if [[ ${show_config} == true ]]; then
   exit 0
 fi
 
+### Add front-end debug option
+if [[ ${omni_ffront_debug} == true ]]; then
+  OMNI_F2X_OPT="${OMNI_F2X_OPT} -d"
+fi
+
 ### Add front-end option to keep the comment
 if [[ ${keep_comment} == true ]]; then
   OMNI_F2X_OPT="${OMNI_F2X_OPT} -fleave-comment"
-  readonly OMNI_F2X_OPT
+fi
+
+readonly OMNI_F2X_OPT
+
+# Add debug flag for the translator options
+if [[ ${enable_debug} == true ]]; then
+  CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} -d"
 fi
 
 ## Check that input file exits
@@ -175,7 +193,7 @@ fi
 
 ### Create temporal directory ###
 [[ ${enable_debug_omni} == true ]] && temp_dir=${debug_temp_dir}
-mkdir -p ${temp_dir}
+mkdir -p "${temp_dir}"
 claw::verbose "Create ${temp_dir}/"
 
 ### Bypass file without code transformation ###
@@ -207,14 +225,12 @@ done
 [[ ${only_pp} == true ]] && [[ -f "${output_file}" ]] && rm "${output_file}"
 [[ ${enable_cpp} == true ]] && OMNI_FPP_OPT="${OMNI_FPP_OPT} ${CPP_OPT}"
 for input_file in "${f_files_transformation[@]}"; do
-  claw::verbose "Prepocessing ..."
+  claw::verbose "Prepocessing file ${input_file}"
 
-  file_name="$(claw::norm_file_name "${input_file}")"
-  base_name="$(basename "${input_file}")"
   ext=${input_file##*.}
-  file_pp1=${temp_dir}/"${file_name}".pp1.${ext} # temp file for preprocessing 1
-  file_pp2=${temp_dir}/"${file_name}".pp2.${ext} # temp file for preprocessing 2
-  file_pp=${temp_dir}/"${base_name}"             # preprocessed file with original name
+  file_pp="$(claw::get_pp_filename "${input_file}")"   # preprocessed file with original name
+  file_pp1="$(claw::get_pp1_filename "${input_file}")" # temp file for preprocessing 1
+  file_pp2="$(claw::get_pp2_filename "${input_file}")" # temp file for preprocessing 2
   preprocessor_output="$(basename "${file_pp%.*}")"
 
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
@@ -226,7 +242,7 @@ for input_file in "${f_files_transformation[@]}"; do
 
     if [[ ${fpp_redirect} == true ]]; then
       # Debug output
-      [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Preprocessing"
+      [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Preprocessing (redirect)"
       [[ ${enable_debug_omni} == true ]] && echo "${OMNI_FPP_CMD} ${include_opt[*]} \
         ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp} > \
         ${file_pp2}"
@@ -234,7 +250,7 @@ for input_file in "${f_files_transformation[@]}"; do
       # Call to the preprocessor
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
-        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}" > "${file_pp2}"
+        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}" > ${file_pp2}
 
       mv "${file_pp2}" "${file_pp}"
     else
@@ -265,21 +281,19 @@ done
 [[ ${stop_pp} == true ]] && exit 0
 [[ ${only_pp} == true ]] && [[ ${enable_debug_omni} == true ]] && exit 0
 [[ ${only_pp} == true ]] && {
-  rm -rf ${temp_dir}
+  rm -rf "${temp_dir}"
   exit 0
 }
 
 ### Apply ignore directive
 for input_file in "${f_files_transformation[@]}"; do
-  file_name="$(claw::norm_file_name "${input_file}")"
+  claw::verbose "Apply !\$claw ignore to file ${input_file}"
   ext=${input_file##*.}
-  base_name="$(basename "${input_file}")"
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
     [[ ${enable_cpp} == true ]]; then
-    file_pp=${temp_dir}/"${base_name}"
+    file_pp="$(claw::get_pp_filename "${input_file}")"
   else
-    # TODO not correct file name as iignore is applied in place
-    file_pp="${input_file}"
+    file_pp="$(claw::get_pp_filename "${input_file}")"
   fi
   claw::applyIgnore "${file_pp}"
 done
@@ -287,15 +301,13 @@ done
 ### dependencies resolution ###
 if [[ ${resolve_dependencies} == true ]]; then
   for input_file in "${f_files_transformation[@]}"; do
-    claw::verbose "Dependencies resolution ..."
-    file_name="$(claw::norm_file_name "${input_file}")"
+    claw::verbose "Dependencies resolution for file ${input_file}"
     ext=${input_file##*.}
-    base_name="$(basename "${input_file}")"
     if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
       [[ ${enable_cpp} == true ]]; then
-      file_pp=${temp_dir}/"${base_name}"
+      file_pp="$(claw::get_pp_filename "${input_file}")"
     else
-      file_pp="${input_file}"
+      file_pp="$(claw::get_pp_filename "${input_file}")"
     fi
 
     claw::process_dependencies "${file_pp}" "${input_file}"
@@ -313,30 +325,44 @@ if [[ ${pipe_workflow} == true ]]; then
       file_out_f=${output_dir}/${input_file}
     fi
 
-    #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
-
-      file_name="$(claw::norm_file_name "${input_file}")"
+      #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
       ext=${input_file##*.}
-      base_name="$(basename "${input_file}")"
       if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
         [[ ${enable_cpp} == true ]]; then
-        file_pp=${temp_dir}/"${base_name}"
+        file_pp="$(claw::get_pp_filename "${input_file}")"
       else
-        file_pp="${input_file}"
+        file_pp="$(claw::get_pp_filename "${input_file}")"
       fi
 
-      # shellcheck disable=SC2086,SC2068
-      ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-        "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
-        ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
-          ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
-          ${CLAW_X2T_CONFIG_OPT} ${CLAW_X2T_MODEL_CONFIG_OPT} \
-          ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
-          "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
-          "${trans_module_opt[@]}" "${override_config_opt[@]}" |
-        sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
-        sed -e "${claw_sed_cont}" | sed -e "${claw_sed_verbatim}" >"${file_out_f}"
+      basefile_name="$(claw::get_basefile "${input_file}")"
+      base_pp="$(basename "${file_pp}")"
+      sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
 
+      if [[ "${file_out_f}" != "" ]]; then
+        # shellcheck disable=SC2086,SC2068
+        ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
+          "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
+          ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
+            ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
+            ${CLAW_X2T_CONFIG_OPT} ${CLAW_X2T_MODEL_CONFIG_OPT} \
+            ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
+            "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
+            "${trans_module_opt[@]}" "${override_config_opt[@]}" |
+          sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
+          sed -e "${claw_sed_cont}" | sed -e "${claw_sed_verbatim}" > "${file_out_f}"
+      else
+        # shellcheck disable=SC2086,SC2068
+        ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
+          "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
+          ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
+            ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
+            ${CLAW_X2T_CONFIG_OPT} ${CLAW_X2T_MODEL_CONFIG_OPT} \
+            ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
+            "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
+            "${trans_module_opt[@]}" "${override_config_opt[@]}" |
+          sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
+          sed -e "${claw_sed_cont}" | sed -e "${claw_sed_verbatim}"
+      fi
       # 0: OMNI FORTRAN Front-end
       # 1: CLAW XcodeML Translator
       # 2: !$claw ignore     # revert pass
@@ -364,16 +390,14 @@ fi
 ### Frontend ###
 for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "Fortran to XcodeML ..."
-  file_name="$(claw::norm_file_name "${input_file}")"
   ext=${input_file##*.}
-  base_name="$(basename "${input_file}")"
   if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
     [[ ${enable_cpp} == true ]]; then
-    file_pp=${temp_dir}/"${base_name}"
+    file_pp="$(claw::get_pp_filename "${input_file}")"
   else
-    file_pp="${input_file}"
+    file_pp="$(claw::get_pp_filename "${input_file}")"
   fi
-  file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
+  file_in_x="$(claw::get_in_xcodeml_filename "${input_file}")"
 
   # Check that input file produced by preprocessing pass exists.
   if [[ ! -f ${file_pp} ]]; then
@@ -381,8 +405,13 @@ for input_file in "${f_files_transformation[@]}"; do
       "Input file not preprocessed correctly. Parsing cannot be done."
   fi
 
+  basefile_name="$(claw::get_basefile "${input_file}")"
+  base_pp="$(basename "${file_pp}")"
+  sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
+
   # Debug output
   [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Front-end"
+
   # shellcheck disable=SC2153,SC2086
   [[ ${enable_debug_omni} == true ]] && echo "${OMNI_F2X_CMD} \
     ${include_opt[*]} ${module_opt[*]} ${frontend_add_opt[*]} ${OMNI_F2X_OPT} \
@@ -391,21 +420,17 @@ for input_file in "${f_files_transformation[@]}"; do
   # Call F_Front with the correct arguments
   # shellcheck disable=SC2153,SC2086
   ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-    "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" -o "${file_in_x}"
+    "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" \
+    -o "${file_in_x}"
 done
 [[ ${stop_frontend} == true ]] && claw::exit_without_error
-
-# Add debug flag for the translator options
-if [[ ${enable_debug} == true ]]; then
-  CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} -d"
-fi
 
 ### Translator ###
 for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "XcodeML to XcodeML translation ..."
-  file_name="$(claw::norm_file_name "${input_file}")"
+
   ext=${input_file##*.}
-  file_in_x=${temp_dir}/"${file_name}"_${ext}_in.xml
+  file_in_x="$(claw::get_in_xcodeml_filename "${input_file}")"
 
   # Check that input file produced by parsing pass exists.
   if [[ ! -f ${file_in_x} ]]; then
@@ -413,7 +438,7 @@ for input_file in "${f_files_transformation[@]}"; do
       "Input file not parsed correctly. Translation cannot be done."
   fi
 
-  file_out_x=${temp_dir}/"${file_name}"_${ext}_out.xml
+  file_out_x="$(claw::get_out_xcodeml_filename "${input_file}")"
   file_out_f=${temp_dir}/"${input_file}"
   if [[ "${output_file}" != "" ]]; then
     file_out_f=${output_file}
@@ -430,13 +455,18 @@ for input_file in "${f_files_transformation[@]}"; do
 
   # Dump the arguments pass to the translator for easier debugging
   if [[ ${dump_cx2t_args} == true ]]; then
+    echo "=============================="
     echo "-- [DEBUG] Arguments for cx2t:"
+    echo "=============================="
+    echo ""
     echo "${CLAW_X2T_TRANSLATOR_OPT} ${CLAW_X2T_TARGET_OPT} \
       ${CLAW_X2T_DIRECTIVE_OPT} ${CLAW_X2T_CONFIG_OPT} \
       ${CLAW_X2T_MODEL_CONFIG_OPT} \
       ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
       ${xcode_translator_add_opt[*]} ${module_opt[*]} ${trans_module_opt[*]} \
       -o ${file_out_x} -f ${file_out_f} ${file_in_x}"
+    echo ""
+    echo "=============================="
   fi
 
   # Debug output

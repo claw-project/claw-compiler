@@ -5,26 +5,19 @@
 ! Test the CLAW abstraction model with one additional dimension.
 !
 
-PROGRAM test_abstraction16
-  USE mo_column_extra, ONLY: compute_one, compute_two
-  REAL, DIMENSION(20,60) :: q, t  ! Fields as declared in the whole model
-  INTEGER :: nproma, nz           ! Size of array fields
-  INTEGER :: p                    ! Loop index
+PROGRAM test_abstraction1
+  USE mo_column, ONLY: compute_point
+  INTEGER, PARAMETER :: nproma = 20
+  REAL, DIMENSION(nproma) :: q, t, w  ! Fields as declared in the whole model
+  INTEGER :: i, k
 
-  nproma = 20
-  nz = 60
+  do i = 1, nproma
+    t(i) = 0.5 * i
+  end do
 
-  DO p = 1, nproma
-    q(p,1) = 0.0
-    t(p,1) = 0.0
-  END DO
-
-  !$claw parallelize forward create update
-  DO p = 1, nproma
-    CALL compute_one(nz, q(p,:), t(p,:))
-    CALL compute_two(nz, q(p,:), t(p,:))
-  END DO
+  !$claw sca forward create update
+  q = compute_point(t, w = w)
 
   PRINT*,SUM(q)
   PRINT*,SUM(t)
-END PROGRAM test_abstraction16
+END PROGRAM test_abstraction1

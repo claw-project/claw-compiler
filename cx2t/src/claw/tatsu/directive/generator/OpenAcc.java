@@ -6,7 +6,6 @@ package claw.tatsu.directive.generator;
 
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Message;
-import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 
@@ -109,8 +108,8 @@ public class OpenAcc extends DirectiveGenerator {
     }
     Message.debug(String.format(
         "%s generate private clause for (%d variables): %s",
-        OPENACC_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
-    return String.format(FORMATPAR, OPENACC_PRIVATE, Utility.join(",", vars));
+        OPENACC_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
+    return String.format(FORMATPAR, OPENACC_PRIVATE, String.join(",", vars));
   }
 
   @Override
@@ -120,8 +119,8 @@ public class OpenAcc extends DirectiveGenerator {
     }
     Message.debug(String.format(
         "%s generate present clause for (%d variables): %s",
-        OPENACC_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
-    return String.format(FORMATPAR, OPENACC_PRESENT, Utility.join(",", vars));
+        OPENACC_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
+    return String.format(FORMATPAR, OPENACC_PRESENT, String.join(",", vars));
   }
 
   @Override
@@ -131,8 +130,8 @@ public class OpenAcc extends DirectiveGenerator {
     }
     Message.debug(String.format(
         "%s generate pcreate clause for (%d variables): %s",
-        OPENACC_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
-    return String.format(FORMATPAR, OPENACC_PCREATE, Utility.join(",", vars));
+        OPENACC_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
+    return String.format(FORMATPAR, OPENACC_PCREATE, String.join(",", vars));
   }
 
   @Override
@@ -166,7 +165,7 @@ public class OpenAcc extends DirectiveGenerator {
     //!$acc data
     return new String[]{
         String.format(FORMAT3, OPENACC_PREFIX, OPENACC_DATA,
-            Utility.join(" ", clauses)).trim()
+            String.join(" ", clauses)).trim()
     };
   }
 
@@ -193,14 +192,14 @@ public class OpenAcc extends DirectiveGenerator {
         return new String[]{
             String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
                 getSequentialClause(), String.format("%s(%d)",
-                    OPENACC_COLLAPSE, value), clauses).trim()
+                    OPENACC_COLLAPSE, value), clauses.trim()).trim()
         };
       } else {
         return new String[]{
             String.format(FORMAT5, OPENACC_PREFIX, OPENACC_LOOP,
                 naked ? "" : _mode.getFormattedExecutionMode(),
                 String.format("%s(%d)", OPENACC_COLLAPSE, value),
-                clauses).trim()
+                clauses.trim()).trim()
         };
       }
     } else {
@@ -208,12 +207,13 @@ public class OpenAcc extends DirectiveGenerator {
       if(seq) {
         return new String[]{
             String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
-                getSequentialClause(), clauses).trim()
+                getSequentialClause(), clauses.trim()).trim()
         };
       } else {
         return new String[]{
             String.format(FORMAT4, OPENACC_PREFIX, OPENACC_LOOP,
-                naked ? "" : _mode.getFormattedExecutionMode(), clauses).trim()
+                naked ? "" : _mode.getFormattedExecutionMode(),
+                clauses.trim()).trim()
         };
       }
 
@@ -228,7 +228,8 @@ public class OpenAcc extends DirectiveGenerator {
   @Override
   public List<Xcode> getUnsupportedStatements() {
     return Arrays.asList(
-        Xcode.F_ALLOCATE_STATEMENT, Xcode.F_DEALLOCATE_STATEMENT
+        Xcode.F_ALLOCATE_STATEMENT, Xcode.F_DEALLOCATE_STATEMENT,
+        Xcode.GOTO_STATEMENT, Xcode.F_RETURN_STATEMENT
     );
   }
 
@@ -254,10 +255,12 @@ public class OpenAcc extends DirectiveGenerator {
       return new String[0];
     }
     Message.debug(OPENACC_DEBUG_PREFIX + "generate update " +
-        (direction == DataMovement.DEVICE ? OPENACC_DEVICE : OPENACC_HOST) +
-        " clause for: " + Utility.join(",", vars));
-    String updates = String.format(FORMATPAR, direction == DataMovement.DEVICE ?
-        OPENACC_DEVICE : OPENACC_HOST, Utility.join(",", vars));
+        (direction == DataMovement.HOST_TO_DEVICE
+            ? OPENACC_DEVICE : OPENACC_HOST) + " clause for: "
+        + String.join(",", vars));
+    String updates =
+        String.format(FORMATPAR, direction == DataMovement.HOST_TO_DEVICE ?
+            OPENACC_DEVICE : OPENACC_HOST, String.join(",", vars));
     return new String[]{
         String.format(FORMAT3, OPENACC_PREFIX, OPENACC_UPDATE, updates)
     };

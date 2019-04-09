@@ -8,6 +8,7 @@ import claw.ClawVersion;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
+import claw.tatsu.directive.configuration.OpenAccConfiguration;
 import claw.tatsu.directive.generator.OpenAcc;
 import helper.TestConstant;
 import org.junit.Test;

@@ -124,7 +124,7 @@ public class NestedDoStatementTest {
         ndostmt.computeSwappingIndices(Arrays.asList("K", "I", "J")));
 
     assertEquals(0,
-        ndostmt.computeSwappingIndices(Collections.<String>emptyList()));
+        ndostmt.computeSwappingIndices(Collections.emptyList()));
     assertEquals(0,
         ndostmt.computeSwappingIndices(Arrays.asList("i", "j")));
   }

@@ -5,41 +5,24 @@
 
 MODULE mo_column
   IMPLICIT NONE
-
-  TYPE ty_column
-
-  CONTAINS
-    PROCEDURE :: compute_column
-  END TYPE ty_column
-
 CONTAINS
 
-  ! Compute only one column
-  SUBROUTINE compute_column(this, nz, q, t)
+  ! Compute single point with elemental function
+  ELEMENTAL FUNCTION compute_point(t) RESULT(q)
     IMPLICIT NONE
 
-    CLASS(ty_column)      :: this
-    INTEGER, INTENT(IN)   :: nz   ! Size of the array field
-    REAL, INTENT(INOUT)   :: t(:) ! Field declared as one column only
-    REAL, INTENT(INOUT)   :: q(:) ! Field declared as one column only
-    INTEGER :: k                  ! Loop index
-    REAL :: c                     ! Coefficient
+    !$claw model-data
+    REAL, INTENT(IN)   :: t ! Field declared as a single point only
+    REAL :: q               ! Field declared as a single point only
+    !$claw end model-data
 
-    ! CLAW definition
+    REAL :: c
 
-    ! Define one dimension that will be added to the variables defined in the
-    ! data clause.
-    ! Apply the parallelization transformation on this subroutine.
+    ! The following directive is optional in ELEMENTAL function/subroutine
 
-    !$claw define dimension proma(1:nproma) &
-    !$claw parallelize
+    !$claw sca
 
     c = 5.345
-    DO k = 2, nz
-      t(k) = c * k
-      q(k) = q(k - 1)  + t(k) * c
-    END DO
-    q(nz) = q(nz) * c
-  END SUBROUTINE compute_column
-
+    q = q + t * c
+  END FUNCTION compute_point
 END MODULE mo_column

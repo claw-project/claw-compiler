@@ -56,8 +56,8 @@ public final class Range {
    */
   public static boolean compare(Xnode idx1, Xnode idx2, boolean withLowerBound)
   {
-    if(idx1 == null || idx2 == null || idx1.opcode() != Xcode.INDEX_RANGE
-        || idx2.opcode() != Xcode.INDEX_RANGE)
+    if(!Xnode.isOfCode(idx1, Xcode.INDEX_RANGE)
+        || !Xnode.isOfCode(idx2, Xcode.INDEX_RANGE))
     {
       return false;
     }

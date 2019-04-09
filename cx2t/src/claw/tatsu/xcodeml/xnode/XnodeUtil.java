@@ -93,11 +93,11 @@ public class XnodeUtil {
    */
   public static List<Xnode> getIdxRangesFromArrayRef(Xnode arrayRef) {
     List<Xnode> ranges = new ArrayList<>();
-    if(arrayRef.opcode() != Xcode.F_ARRAY_REF) {
+    if(!Xnode.isOfCode(arrayRef, Xcode.F_ARRAY_REF)) {
       return ranges;
     }
     for(Xnode el : arrayRef.children()) {
-      if(el.opcode() == Xcode.INDEX_RANGE) {
+      if(el.is(Xcode.INDEX_RANGE)) {
         ranges.add(el);
       }
     }
@@ -393,58 +393,24 @@ public class XnodeUtil {
   }
 
   /**
-   * Find all the var elements that are real references to a variable. Var
-   * element nested in an arrayIndex element are excluded.
+   * Find all the var names that are real references to a variable. Variable
+   * used as array index are excluded.
    *
    * @param parent Root element to search from.
-   * @return A list of all var elements found.
+   * @return A set of all variables names.
    */
-  public static List<Xnode> findAllReferences(Xnode parent) {
-    List<Xnode> vars = parent.matchAll(Xcode.VAR);
-    List<Xnode> realReferences = new ArrayList<>();
-    for(Xnode var : vars) {
-      if(!((Element) var.element().getParentNode()).getTagName().
-          equals(Xcode.ARRAY_INDEX.code()))
-      {
-        realReferences.add(var);
-      }
-    }
-    return realReferences;
-  }
-
-  /**
-   * Find all Xnode.VAR inside the given node and return their value. From
-   * the set are excluded the variables used as indexes for vectors.
-   *
-   * @param node The node from where the research will start.
-   * @return A set contains the variables used inside the node.
-   */
-  public static Set<String> findChildrenVariables(Xnode node) {
-    List<Xnode> varNodes = node.matchAll(Xcode.VAR);
-    Set<String> vars = new HashSet<>();
-    for(Xnode xnode : varNodes) {
-      // Skip vector indexes
-      if(xnode.ancestor().opcode() == Xcode.ARRAY_INDEX) {
-        continue;
-      }
-      vars.add(xnode.value());
-    }
-    return vars;
-  }
-
-  /**
-   * Get all the variables names from a list of var elements.
-   *
-   * @param nodes List containing var element.
-   * @return A set of all variable's name.
-   */
-  public static Set<String> getNamesFromReferences(List<Xnode> nodes) {
+  public static Set<String> findAllReferences(Xnode parent) {
     Set<String> names = new HashSet<>();
-    for(Xnode node : nodes) {
-      if(node.opcode() != Xcode.VAR) {
-        continue;
+    if(Xnode.isOfCode(parent, Xcode.VAR)) {
+      names.add(parent.value());
+      return names;
+    }
+
+    List<Xnode> vars = parent.matchAll(Xcode.VAR);
+    for(Xnode var : vars) {
+      if(var.isNotArrayIndex()) {
+        names.add(var.value());
       }
-      names.add(node.value());
     }
     return names;
   }
@@ -483,7 +449,7 @@ public class XnodeUtil {
   public static boolean isInductionIndex(Xnode arrayIndex,
                                          List<String> inductionVariables)
   {
-    if(arrayIndex == null || arrayIndex.opcode() != Xcode.ARRAY_INDEX
+    if(!Xnode.isOfCode(arrayIndex, Xcode.ARRAY_INDEX)
         || inductionVariables == null || inductionVariables.isEmpty())
     {
       return false;
@@ -531,6 +497,10 @@ public class XnodeUtil {
       // Get all nodes matching in the subtree
       unsupportedStatements.addAll(getNodes(crt, nodeOpcodes));
       crt = crt.nextSibling();
+    }
+
+    if(crt != null && crt.equals(to) && nodeOpcodes.contains(crt.opcode())) {
+      unsupportedStatements.add(crt);
     }
     return unsupportedStatements;
   }
@@ -615,20 +585,52 @@ public class XnodeUtil {
   }
 
   /**
+   * Gather string representation of the return value if there is one.
+   *
+   * @param xcodeml Current XcodeML translation unit.
+   * @param fctCall Function call to retrieve the return value.
+   * @return String representation of the return value if any. Null otherwise.
+   */
+  public static String gatherReturnValue(XcodeProgram xcodeml, Xnode fctCall) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
+      return null;
+    }
+
+    Xnode fctCallAncestor = fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
+    if(fctCallAncestor == null) {
+      return null;
+    }
+
+    Xnode returnNode = fctCallAncestor.firstChild();
+    if(xcodeml.getTypeTable().isBasicType(returnNode) &&
+        xcodeml.getTypeTable().getBasicType(returnNode).isArray())
+    {
+      return returnNode.constructRepresentation(false);
+    }
+    return null;
+  }
+
+  /**
    * Gather arguments of a function call.
    *
-   * @param xcodeml   Current XcodeML translation unit.
-   * @param fctCall   functionCall node in which the arguments are retrieved.
-   * @param intent    Intent to use for gathering.
-   * @param arrayOnly If true, gather only arrays arguments.
+   * @param xcodeml       Current XcodeML translation unit.
+   * @param fctCall       functionCall node in which the arguments are
+   *                      retrieved.
+   * @param fctType       FfunctionType information for parameters.
+   * @param fctTypeHolder XcodeML holding the function type information. Might
+   *                      be identical to fctCall.
+   * @param intent        Intent to use for gathering.
+   * @param arrayOnly     If true, gather only arrays arguments.
    * @return List of arguments as their string representation.
    */
   public static List<String> gatherArguments(XcodeProgram xcodeml,
-                                             Xnode fctCall, Intent intent,
-                                             boolean arrayOnly)
+                                             Xnode fctCall,
+                                             FfunctionType fctType,
+                                             XcodeML fctTypeHolder,
+                                             Intent intent, boolean arrayOnly)
   {
     List<String> gatheredArguments = new ArrayList<>();
-    if(fctCall == null || fctCall.opcode() != Xcode.FUNCTION_CALL) {
+    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return gatheredArguments;
     }
     Xnode argumentsNode = fctCall.matchDescendant(Xcode.ARGUMENTS);
@@ -637,38 +639,47 @@ public class XnodeUtil {
     }
 
     // Retrieve function type to check intents and types of parameters
-    FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctCall);
     List<Xnode> parameters = fctType.getParameters();
     List<Xnode> arguments = argumentsNode.children();
 
     for(int i = 0; i < parameters.size(); ++i) {
       // TODO handle optional arguments, named value args
+
+      if(i >= arguments.size()) { // avoid getting args out of list
+        break;
+      }
+
       Xnode parameter = parameters.get(i);
       Xnode arg = arguments.get(i);
 
-      String rep = "";
+      if(Xnode.isOfCode(arg, Xcode.NAMED_VALUE)) {
+        arg = arg.firstChild();
+      }
+
+      String nodeRepresentation = "";
       if(FortranType.isBuiltInType(arg.getType()) && !arrayOnly
-          && xcodeml.getTypeTable().isBasicType(parameter))
+          && fctTypeHolder.getTypeTable().isBasicType(parameter))
       {
         FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
         if(!intent.isCompatible(btParameter.getIntent())) {
           continue;
         }
-        rep = arg.constructRepresentation(false);
-      } else if(xcodeml.getTypeTable().isBasicType(parameter)
+        nodeRepresentation = arg.constructRepresentation(false);
+      } else if(fctTypeHolder.getTypeTable().isBasicType(parameter)
           && xcodeml.getTypeTable().isBasicType(arg))
       {
-        FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
+        FbasicType btParameter =
+            fctTypeHolder.getTypeTable().getBasicType(parameter);
         FbasicType btArg = xcodeml.getTypeTable().getBasicType(arg);
         if((arrayOnly && !btArg.isArray() && !btArg.isAllocatable())
             || !intent.isCompatible(btParameter.getIntent()))
         {
           continue;
         }
-        rep = arg.constructRepresentation(false);
+        nodeRepresentation = arg.constructRepresentation(false);
       }
-      if(rep != null && !rep.isEmpty()) {
-        gatheredArguments.add(rep);
+      if(nodeRepresentation != null && !nodeRepresentation.isEmpty()) {
+        gatheredArguments.add(nodeRepresentation);
       }
     }
     return gatheredArguments;

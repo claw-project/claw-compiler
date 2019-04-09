@@ -2,10 +2,10 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.tatsu.xcodeml.xnode.common;
+package claw.tatsu.xcodeml.xnode.fortran;
 
-import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -42,8 +42,7 @@ public class FfunctionTypeTest {
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
 
-    FfunctionType emptyFctType = xcodeml.createFunctionType(
-        xcodeml.getTypeTable().generateHash(FortranType.FUNCTION));
+    FfunctionType emptyFctType = xcodeml.createFunctionType(null);
     assertFalse(emptyFctType.hasParam("a"));
 
     Xnode paramA = xcodeml.createName("a", FortranType.INTEGER.toString());

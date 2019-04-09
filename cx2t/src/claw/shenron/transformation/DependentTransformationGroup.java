@@ -30,9 +30,9 @@ public class DependentTransformationGroup extends TransformationGroup {
   }
 
   /**
-   * @see TransformationGroup#applyTranslations(XcodeProgram, Translator)
+   * @see TransformationGroup#applyTransformations(XcodeProgram, Translator)
    */
-  public void applyTranslations(XcodeProgram xcodeml, Translator translator)
+  public void applyTransformations(XcodeProgram xcodeml, Translator translator)
       throws Exception
   {
     List<Transformation> transformations = getTransformations();
@@ -73,6 +73,9 @@ public class DependentTransformationGroup extends TransformationGroup {
    */
   @Override
   public void add(Transformation transformation) {
+    if(transformation == null) {
+      return;
+    }
     int linePosition = transformation.getStartLine();
     int insertIndex = 0;
     for(Transformation t : getTransformations()) {

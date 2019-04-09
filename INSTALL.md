@@ -3,7 +3,7 @@
 ### Requirements
 
 The CLAW Compiler has the followings dependencies:
-* Java 1.7 or greater
+* Java 1.8 or greater
 * Ant 1.9 or greater
 * yacc, lex (For OMNI Compiler)
 * C/C++ compiler (supports C99) (For OMNI Compiler)

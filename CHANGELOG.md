@@ -1,7 +1,28 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
-## [1.2] - Unreleased
+## [1.3] - Unreleased
+* SCA: basic support for transformation in ELEMENTAL function/subroutine for
+  GPU target
+* low-level: block directive like `loop-hoist` can now be nested on the same
+  depth.
+* driver: `_CRAYFTN` macro is passed directly when Cray preprocessor is used.
+* `array-transform` directive as been renamed `expand` as specified in v2.0 of
+  the CLAW Directive Language Specification.
+* `parallel` clause for `expand` directive is implemented.   
+* OMNI Compiler submodule now pointing to
+  omni-compiler/xcodeml-tools@6dfda5a2bb16ed04487d9e3c688dbba27072944e
+* Java 1.8 or newer is now required for CX2T.
+
+## [1.2.2] - 2019-03-29
+* driver: fix temporary file name being too long in some cases.
+
+## [1.2.1] - 2018-11-16
+* driver: new option `--add-paren` to force parenthesis on mathematical binary
+  operation in code generation.
+* driver: fix automatic dependency resolver arguments passing (#478)
+
+## [1.2.0] - 2018-11-13
 * SCA: Support model configuration file with the `--model-config=<path>` option.
 * SCA: `parallelize` can still be used but it is deprecated. Use the new
   `!$claw sca` directive construct.
@@ -10,7 +31,8 @@ All notable changes to the CLAW Compiler project are documented in this file.
 * SCA: Support `model-data` directive.
 * Various bug fixes.
 * OMNI Compiler submodule now pointing to
-  omni-compiler/xcodeml-tools@8d782adcd2fc521911c927540682ce6c0fa620bc
+  omni-compiler/xcodeml-tools@4f66174b739fa59d15631a9b55457f809ae70d1f
+* Current version of OMNI Compiler can fully parse/validate COSMO CPU/GPU.
 
 ## [1.1.0] - 2018-09-24
 * SCA: Initial support of OpenMP 4.5 code generation for accelerator.

@@ -14,6 +14,7 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.List;
@@ -24,7 +25,6 @@ import java.util.List;
  *
  * @author clementval
  */
-
 public class LoopInterchange extends ClawTransformation {
 
   private NestedDoStatement _doStmts = null;
@@ -57,20 +57,20 @@ public class LoopInterchange extends ClawTransformation {
 
     analyze(xcodeml, translator);
 
-    Loop.reorder(_doStmts, _claw.getIndexes());
+    Loop.reorder(_doStmts, _claw.values(ClawClause.INTERCHANGE_INDEXES));
 
     // Generate directive pragmas if needed
-    if(_claw.hasAcceleratorClause()) {
+    if(_claw.hasClause(ClawClause.ACC)) {
       /* TODO see TODO in ExpandNotation
          OpenACC and OpenMP loop construct are pretty different ...
          have to look how to do that properly. See issue #22
        */
       Directive.generateAcceleratorClause(xcodeml, _doStmts.getOuterStatement(),
-          _claw.getAcceleratorClauses());
+          _claw.value(ClawClause.ACC));
     }
 
-    if(_claw.hasParallelClause()) {
-      Directive.generateParallelClause(xcodeml, _doStmts.getOuterStatement(),
+    if(_claw.hasClause(ClawClause.PARALLEL)) {
+      Directive.generateParallelRegion(xcodeml, _doStmts.getOuterStatement(),
           _doStmts.getOuterStatement());
     }
 
@@ -90,7 +90,6 @@ public class LoopInterchange extends ClawTransformation {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     // Find next loop after pragma
-    //_loopLevel0 = _claw.getPragma().matchSibling(Xcode.FDOSTATEMENT);
     Xnode outerDoStatement =
         _claw.getPragma().matchSibling(Xcode.F_DO_STATEMENT);
     if(outerDoStatement == null) {
@@ -99,18 +98,18 @@ public class LoopInterchange extends ClawTransformation {
       return false;
     }
 
-    int nestedLevel = _claw.getIndexes() != null ?
-        _claw.getIndexes().size() : 2;
+    int nestedLevel = _claw.values(ClawClause.INTERCHANGE_INDEXES) != null ?
+        _claw.values(ClawClause.INTERCHANGE_INDEXES).size() : 2;
     _doStmts = new NestedDoStatement(outerDoStatement, nestedLevel);
 
-    if(_claw.getIndexes() != null) {
-      if(_claw.getIndexes().size() != 3) {
+    if(_claw.values(ClawClause.INTERCHANGE_INDEXES) != null) {
+      if(_claw.values(ClawClause.INTERCHANGE_INDEXES).size() != 3) {
         xcodeml.addError("new-order option has not enough parameters",
             _claw.getPragma().lineNo());
       }
 
       List<String> inductions = _doStmts.getInductionVariables();
-      for(String idx : _claw.getIndexes()) {
+      for(String idx : _claw.values(ClawClause.INTERCHANGE_INDEXES)) {
         if(!inductions.contains(idx.toLowerCase())) {
           xcodeml.addError("invalid induction variable in new-order option. "
               + idx, _claw.getPragma().lineNo());

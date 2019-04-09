@@ -23,6 +23,7 @@ import claw.wani.ClawConstant;
 import claw.wani.language.ClawMapping;
 import claw.wani.language.ClawMappingVar;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 
@@ -298,7 +299,7 @@ public class LoopExtraction extends ClawTransformation {
          *    2.2 insert clone of base variable in varRef
          * 3. Create arrayRef element with varRef + arrayIndex
          */
-        if(argument.opcode() == Xcode.VAR) {
+        if(argument.is(Xcode.VAR)) {
           FbasicType type = xcodeml.getTypeTable().getBasicType(argument);
 
           // Demotion cannot be applied as type dimension is smaller
@@ -336,9 +337,6 @@ public class LoopExtraction extends ClawTransformation {
           argument.delete();
         }
         // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
-        /*else if(argument.opcode() == Xcode.FARRAYREF) {
-          // TODO
-        }*/
 
         // Change variable declaration in extracted fct
         Xnode varDecl = fctDeclarations.get(var.getFctMapping());
@@ -352,11 +350,7 @@ public class LoopExtraction extends ClawTransformation {
               varDeclType.getRef()));
           fctDeclarations.replace(newVarDecl, var.getFctMapping());
           id.setType(varDeclType.getRef());
-        }/* else {
-          // Case 2: variable is not totally demoted then create new type
-          // TODO
-
-        }*/
+        }
       } // Loop mapped variables
     } // Loop over mapping clauses
 
@@ -364,7 +358,7 @@ public class LoopExtraction extends ClawTransformation {
     List<Xnode> arrayReferences =
         clonedFctDef.body().matchAll(Xcode.F_ARRAY_REF);
     for(Xnode ref : arrayReferences) {
-      if(ref.matchSeq(Xcode.VAR_REF).child(0).opcode() != Xcode.VAR) {
+      if(!Xnode.isOfCode(ref.matchSeq(Xcode.VAR_REF).child(0), Xcode.VAR)) {
         continue;
       }
       String mappedVar = ref.matchSeq(Xcode.VAR_REF, Xcode.VAR).value();
@@ -375,9 +369,11 @@ public class LoopExtraction extends ClawTransformation {
 
         int mappingIndex = 0;
         for(Xnode e : ref.children()) {
-          if(e.opcode() == Xcode.ARRAY_INDEX) {
+          if(e.is(Xcode.ARRAY_INDEX)) {
             List<Xnode> children = e.children();
-            if(!children.isEmpty() && children.get(0).opcode() == Xcode.VAR) {
+            if(!children.isEmpty()
+                && Xnode.isOfCode(children.get(0), Xcode.VAR))
+            {
               String varName = e.matchSeq(Xcode.VAR).value();
               if(varName.equals(mapping.getMappingVariables().
                   get(mappingIndex).getFctMapping()))
@@ -400,17 +396,17 @@ public class LoopExtraction extends ClawTransformation {
 
     // Generate directive pragmas if needed
     Xnode grip = null;
-    if(_claw.hasAcceleratorClause()) {
+    if(_claw.hasClause(ClawClause.ACC)) {
       /* TODO see TODO in ExpandNotation
          OpenACC and OpenMP loop construct are pretty different ...
          have to look how to do that properly. See issue #22
        */
       grip = Directive.generateAcceleratorClause(xcodeml, extractedLoop,
-          _claw.getAcceleratorClauses());
+          _claw.value(ClawClause.ACC));
     }
 
-    if(_claw.hasParallelClause()) {
-      Directive.generateParallelClause(xcodeml,
+    if(_claw.hasClause(ClawClause.PARALLEL)) {
+      Directive.generateParallelRegion(xcodeml,
           (grip == null) ? extractedLoop : grip, extractedLoop);
     }
 

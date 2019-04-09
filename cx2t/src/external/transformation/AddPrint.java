@@ -6,7 +6,6 @@ package external.transformation;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
@@ -56,13 +55,10 @@ public class AddPrint extends ClawTransformation {
    * @param xcodeml        The XcodeML on which the transformations are applied.
    * @param translator     The translator used to applied the transformations.
    * @param transformation Not used in this transformation
-   * @throws IllegalTransformationException if the transformation cannot be
-   *                                        applied.
    */
   @Override
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation)
-      throws IllegalTransformationException
   {
     for(Xnode fctDef : xcodeml.matchAll(Xcode.F_FUNCTION_DEFINITION)) {
       Xnode printStatement = xcodeml.createPrintStatement("*",

@@ -19,7 +19,7 @@ SUBROUTINE claw
     vec1(j) = j
   END DO
 
-  !$claw expand parallel acc(loop)
+  !$claw expand parallel
   vec1(:) = vec1(:) + 10
 
 

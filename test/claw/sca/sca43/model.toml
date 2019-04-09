@@ -1,0 +1,15 @@
+# SCA model configuration for regression tests
+
+[model] # Definition of global model information
+  name = "SCA43"
+
+[[dimensions]] # Definition of dimensions that can be used in layouts
+  id = "proma"
+  [dimensions.size]
+    lower = 1             # if not specified, 1 by default
+    upper = "nproma"      # mandatory information
+
+[[layouts]] # Definition of layouts and default layout for specific target
+  id = "default" # mandatory layout, used if no specific target layout
+                 # specified
+  position = [ "proma", ":" ]

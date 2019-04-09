@@ -8,12 +8,12 @@ located in Japan. The \clawfcomp is a contributor to this project.
 The \clawfcomp is using the Fortran front-end and back-end as well as the
 C back-end of the \omni. Similar transformation mechanism could be
 applied without to much effort to C or C++ code by using their corresponding
-fron-end. The \omni Project is actively developed as of today. Contributions or
+front-end. The \omni Project is actively developed as of today. Contributions or
 issues can be reported on their master repository \cite{omni:github}.
 
 \subsection{The Fortran front-end}
 The Fortran front-end is the program that parses Fortran source code and that
-generates its \gls{ir}. The Fotran grammar is written in \lstinline|yacc| and
+generates its \gls{ir}. The Fortran grammar is written in \lstinline|yacc| and
 the processing and \gls{ir} generation is written in \lstinline|C|. This program
 can be called individually as shown in Listing \ref{lst:ffront}.
 
@@ -127,16 +127,16 @@ The \clawfc is the program handed to the end-user. It performs all the needed
 step to have a source-to-source translation of a Fortran source code.
 As shown in Figure~\ref{fig:clawfc_main_workflow},
 it is composed by various programs under-the-hood.
-The complete workflow is devided as follows:
+The complete workflow is divided as follows:
 
 \begin{enumerate}
-\item \textbf{FPP}: The Fortran source code is preprocessed by a standard
+\item \textbf{FPP}: The Fortran source code is pre-processed by a standard
 Fortran preprocessor.
 The \lstinline|FC| environment variable is used by the CMake build system to
 determine it. \textbf{FPP} is needed to have a syntactically correct Fortran
 code to pass to the parser. Code with preprocessor directive is impossible
 to parse and to transform.
-\item \textbf{F\_Front}: The preprocessed Fortran source code is then parsed
+\item \textbf{F\_Front}: The pre-processed Fortran source code is then parsed
 by the OMNI Compiler Fortran front-end to produce the input \xcodemlf \gls{ir}.
 \item \textbf{CX2T}: The input \xcodemlf \gls{ir} is manipulated according to
 the rules of the transformations. It produces the output \xcodeml \gls{ir}.

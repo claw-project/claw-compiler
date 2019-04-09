@@ -15,6 +15,7 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Primitive transformation and test applied to fields. This included:
@@ -51,6 +52,13 @@ public final class Field {
     Xid id = fctDef.getSymbolTable().get(fieldInfo.getIdentifier());
     Xnode decl = fctDef.getDeclarationTable().get(fieldInfo.getIdentifier());
     FbasicType crtType = xcodeml.getTypeTable().getBasicType(id);
+    FfunctionType tmpFctType = xcodeml.getTypeTable().getFunctionType(id);
+    boolean returnTypePromotion = false;
+    if(crtType == null && tmpFctType != null) {
+      // Have to retrieve function return type.
+      crtType = xcodeml.getTypeTable().getBasicType(tmpFctType.getReturnType());
+      returnTypePromotion = true;
+    }
 
     if(!FortranType.isBuiltInType(id.getType()) && crtType == null) {
       throw new IllegalTransformationException("Basic type of field " +
@@ -89,14 +97,19 @@ public final class Field {
     } else {
       fieldInfo.setPromotionType(PromotionInfo.PromotionType.SCALAR_TO_ARRAY);
       Intent newIntent = crtType != null ? crtType.getIntent() : Intent.NONE;
-      newType = xcodeml.createBasicType(type, id.getType(), newIntent);
+      if(returnTypePromotion) {
+        newType = xcodeml.createBasicType(type, crtType.getRef(), newIntent);
+      } else {
+        newType = xcodeml.createBasicType(type, id.getType(), newIntent);
+      }
+      newType.copyAttributes(crtType);
     }
 
     // Save promotion information (base dimensions, target dimensions, type)
     fieldInfo.setBaseDimension(newType.getDimensions());
     fieldInfo.setTargetDimension(newType.getDimensions() +
         fieldInfo.getDimensions().size());
-    fieldInfo.setTargetType(type);
+    fieldInfo.setTargetType(newType);
 
     if(fieldInfo.getPromotionType() ==
         PromotionInfo.PromotionType.ARRAY_TO_ARRAY)
@@ -134,7 +147,12 @@ public final class Field {
       }
     } else { // SCALAR to ARRAY promotion
       for(DimensionDefinition dim : fieldInfo.getDimensions()) {
-        Xnode index = dim.generateIndexRange(xcodeml, false);
+        Xnode index;
+        if(fieldInfo.isForcedAssumedShape()) {
+          index = xcodeml.createEmptyAssumedShaped();
+        } else {
+          index = dim.generateIndexRange(xcodeml, false);
+        }
         newType.addDimension(index);
       }
     }
@@ -143,6 +161,10 @@ public final class Field {
     id.setType(type);
     decl.matchSeq(Xcode.NAME).setType(type);
     xcodeml.getTypeTable().add(newType);
+
+    if(returnTypePromotion) {
+      fctType.setAttribute(Xattr.RETURN_TYPE, type);
+    }
 
     // Update params in function type with correct type hash
     for(Xnode param : fctType.getParameters()) {
@@ -170,19 +192,25 @@ public final class Field {
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
    *
-   * @param identifier List of array identifiers that must be adapted.
-   * @param fctDef     Function definition in which reference are changed.
-   * @param dims       Dimension definition to use for array index generation.
-   * @param xcodeml    Current XcodeML program unit in which the element will be
-   *                   created.
+   * @param promotionInfo Object holding the promotion information.
+   * @param fctDef        Function definition in which reference are changed.
+   * @param dims          Dimension definition to use for array index
+   *                      generation.
+   * @param xcodeml       Current XcodeML program unit in which the element
+   *                      will be created.
    */
-  public static void adaptScalarRefToArrayRef(String identifier,
+  public static void adaptScalarRefToArrayRef(PromotionInfo promotionInfo,
                                               FfunctionDefinition fctDef,
                                               List<DimensionDefinition> dims,
                                               XcodeML xcodeml)
   {
-    List<Xnode> vars = XnodeUtil.findAllReferences(fctDef.body(), identifier);
-    Xid sId = fctDef.getSymbolTable().get(identifier);
+    if(promotionInfo.isRefAdapted()) {
+      return;
+    }
+
+    List<Xnode> vars = XnodeUtil.findAllReferences(fctDef.body(),
+        promotionInfo.getIdentifier());
+    Xid sId = fctDef.getSymbolTable().get(promotionInfo.getIdentifier());
     FbasicType type = xcodeml.getTypeTable().getBasicType(sId);
 
     List<Xnode> arrayIndexes = new ArrayList<>();
@@ -198,6 +226,7 @@ public final class Field {
       var.insertAfter(ref);
       var.delete();
     }
+    promotionInfo.setRefAdapted();
   }
 
   /**
@@ -261,7 +290,7 @@ public final class Field {
   private static void demoteToScalar(Xnode arrayRef)
       throws IllegalTransformationException
   {
-    if(arrayRef == null || arrayRef.opcode() != Xcode.F_ARRAY_REF) {
+    if(!Xnode.isOfCode(arrayRef, Xcode.F_ARRAY_REF)) {
       throw new
           IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
     }
@@ -282,7 +311,7 @@ public final class Field {
   private static void demote(Xnode arrayRef, List<Integer> keptDimensions)
       throws IllegalTransformationException
   {
-    if(arrayRef == null || arrayRef.opcode() != Xcode.F_ARRAY_REF) {
+    if(!Xnode.isOfCode(arrayRef, Xcode.F_ARRAY_REF)) {
       throw new
           IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
     }
@@ -392,6 +421,11 @@ public final class Field {
       List<Xnode> refs =
           XnodeUtil.getAllVarReferences(parent, promotionInfo.getIdentifier());
       for(Xnode ref : refs) {
+
+        if(Function.isArgOfFunction(ref, Xintrinsic.PRESENT)) {
+          continue;
+        }
+
         Xnode arrayRef = xcodeml.createNode(Xcode.F_ARRAY_REF);
         Xnode varRef = xcodeml.createNode(Xcode.VAR_REF);
         arrayRef.setType(ref.getType());
@@ -436,5 +470,51 @@ public final class Field {
       }
     }
     promotionInfo.setRefAdapted();
+  }
+
+  /**
+   * Adapt potential pointer that are assigned from a promoted variable in
+   * a function definition.
+   *
+   * @param xcodeml     Current XcodeML program unit.
+   * @param fctDef      Function definition in which assignment statements are
+   *                    checked.
+   * @param promotions  Map of promoted variable with their promotion info.
+   * @param pointeeInfo PromotionInformation about the promoted variable.
+   * @throws IllegalTransformationException If XcodeML modifications failed.
+   */
+  public static void adaptPointer(XcodeProgram xcodeml,
+                                  FfunctionDefinition fctDef,
+                                  Map<String, PromotionInfo> promotions,
+                                  PromotionInfo pointeeInfo)
+      throws IllegalTransformationException
+  {
+    FbasicType varType =
+        xcodeml.getTypeTable().getBasicType(pointeeInfo.getTargetType());
+    if(varType != null && varType.isTarget()) {
+      List<Xnode> pAssignments =
+          fctDef.matchAll(Xcode.F_POINTER_ASSIGN_STATEMENT);
+      for(Xnode pAssignment : pAssignments) {
+        Xnode pointer = pAssignment.child(0);
+        Xnode pointee = pAssignment.child(1);
+
+        // Check if the pointer assignment has the promoted variable
+        if(pointee.value().equals(pointeeInfo.getIdentifier())) {
+          FbasicType pointerType = xcodeml.getTypeTable().getBasicType(pointer);
+          FbasicType pointeeType = xcodeml.getTypeTable().
+              getBasicType(pointeeInfo.getTargetType());
+
+          // Check if their dimensions differ
+          if(pointeeType.getDimensions() != pointerType.getDimensions()
+              && !promotions.containsKey(pointer.value()))
+          {
+            PromotionInfo promotionInfo =
+                new PromotionInfo(pointer.value(), pointeeInfo.getDimensions());
+            Field.promote(promotionInfo, fctDef, xcodeml);
+            promotions.put(pointer.value(), promotionInfo);
+          }
+        }
+      }
+    }
   }
 }

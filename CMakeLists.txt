@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project("CLAW Compiler" VERSION 1.1.0)
+project("CLAW Compiler" VERSION 1.2.2)
 
 # Add local cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
@@ -15,7 +15,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
 enable_language(Fortran)
 enable_testing()
 find_package(Ant 1.7.1 REQUIRED)
-find_package(Java 1.7 REQUIRED)
+find_package(Java 1.8 REQUIRED)
 include(ExternalProject)
 include(cmake/git.cmake)
 include(cmake/omni_compiler.cmake)

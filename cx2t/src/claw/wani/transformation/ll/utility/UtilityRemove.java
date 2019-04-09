@@ -6,7 +6,6 @@ package claw.wani.transformation.ll.utility;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
@@ -54,9 +53,10 @@ public class UtilityRemove extends ClawBlockTransformation {
     if(_clawEnd == null) {
       Xnode next = _clawStart.getPragma().nextSibling();
 
-      _do = next.opcode() == Xcode.F_DO_STATEMENT ? next : null;
-      _if = next.opcode() == Xcode.F_IF_STATEMENT ? next : null;
-      _contains = next.opcode() == Xcode.F_CONTAINS_STATEMENT ? next : null;
+      _do = Xnode.isOfCode(next, Xcode.F_DO_STATEMENT) ? next : null;
+      _if = Xnode.isOfCode(next, Xcode.F_IF_STATEMENT) ? next : null;
+      _contains =
+          Xnode.isOfCode(next, Xcode.F_CONTAINS_STATEMENT) ? next : null;
 
       if(_do == null && _if == null && _contains == null) {
         xcodeml.addError("Directive remove without end not followed by a do " +
@@ -73,12 +73,10 @@ public class UtilityRemove extends ClawBlockTransformation {
    * @param xcodeml        The XcodeML on which the transformations are applied.
    * @param translator     The translator used to applied the transformations.
    * @param transformation Not used for independent transformation.
-   * @throws IllegalTransformationException If transformation cannot be applied.
    */
   @Override
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation transformation)
-      throws IllegalTransformationException
   {
     if(_clawEnd == null) {
       if(_do != null) {

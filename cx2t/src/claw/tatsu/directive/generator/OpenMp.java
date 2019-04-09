@@ -7,8 +7,7 @@ package claw.tatsu.directive.generator;
 import claw.tatsu.common.*;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
-import claw.wani.x2t.configuration.Configuration;
-import claw.wani.x2t.configuration.OpenMpConfiguration;
+import claw.tatsu.directive.configuration.OpenMpConfiguration;
 
 import java.util.Arrays;
 import java.util.List;
@@ -97,7 +96,7 @@ public class OpenMp extends DirectiveGenerator {
       }
 
       OpenMpConfiguration ompConfig =
-          (OpenMpConfiguration) Configuration.get().accelerator();
+          (OpenMpConfiguration) Context.get().getAcceleratorConfig();
 
       int numThreads = ompConfig.getNumThreads();
       int numTeams = ompConfig.getNumTeams();
@@ -173,8 +172,8 @@ public class OpenMp extends DirectiveGenerator {
     }
     Message.debug(String.format(
         "%s generate private clause for (%d variables): %s",
-        OPENMP_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
-    return String.format(FORMATPAR, OPENMP_PRIVATE, Utility.join(",", vars));
+        OPENMP_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
+    return String.format(FORMATPAR, OPENMP_PRIVATE, String.join(",", vars));
   }
 
   @Override
@@ -189,9 +188,9 @@ public class OpenMp extends DirectiveGenerator {
     }
     Message.debug(String.format(
         "%s generate map(alloc:x) clause for (%d variables): %s",
-        OPENMP_DEBUG_PREFIX, vars.size(), Utility.join(",", vars)));
+        OPENMP_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
     return String.format(FORMATPAR, OPENMP_MAP,
-        String.format("%s:%s", OPENMP_ALLOC, Utility.join(",", vars)));
+        String.format("%s:%s", OPENMP_ALLOC, String.join(",", vars)));
   }
 
   @Override
@@ -242,7 +241,7 @@ public class OpenMp extends DirectiveGenerator {
     // !$omp target data
     return new String[]{
         String.format(FORMAT4, OPENMP_PREFIX, OPENMP_TARGET, OPENMP_DATA,
-            Utility.join(" ", clauses)).trim()
+            String.join(" ", clauses)).trim()
     };
   }
 
@@ -282,7 +281,7 @@ public class OpenMp extends DirectiveGenerator {
     }
 
     OpenMpConfiguration ompConfig =
-        (OpenMpConfiguration) Configuration.get().accelerator();
+        (OpenMpConfiguration) Context.get().getAcceleratorConfig();
     int chunkSize = ompConfig.getSchedulerChunkSize();
 
     String scheduler = "";
@@ -360,10 +359,10 @@ public class OpenMp extends DirectiveGenerator {
       return new String[0];
     }
     Message.debug(OPENMP_DEBUG_PREFIX + "generate update " +
-        (direction == DataMovement.DEVICE ? OPENMP_TO : OPENMP_FROM) +
-        " clause for: " + Utility.join(",", vars));
-    String updates = String.format(FORMATPAR, direction == DataMovement.DEVICE ?
-        OPENMP_TO : OPENMP_FROM, Utility.join(",", vars));
+        (direction == DataMovement.HOST_TO_DEVICE ? OPENMP_TO : OPENMP_FROM) +
+        " clause for: " + String.join(",", vars));
+    String updates = String.format(FORMATPAR, direction == DataMovement.HOST_TO_DEVICE ?
+        OPENMP_TO : OPENMP_FROM, String.join(",", vars));
     return new String[]{
         String.format(FORMAT4,
             OPENMP_PREFIX, OPENMP_TARGET, OPENMP_UPDATE, updates)

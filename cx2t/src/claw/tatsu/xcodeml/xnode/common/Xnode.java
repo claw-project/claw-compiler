@@ -5,6 +5,7 @@
 package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.xcodeml.xnode.Xname;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
@@ -38,7 +39,7 @@ public class Xnode {
   }
 
   /**
-   * Delete this nodes with all its siblings.
+   * Delete this nodes with all its next siblings.
    */
   public void deleteWithSiblings() {
     List<Xnode> toDelete = new ArrayList<>();
@@ -781,6 +782,38 @@ public class Xnode {
   }
 
   /**
+   * Check if the ancestor if of the given opcode.
+   *
+   * @param opcode Opcode to check for
+   * @return True if the ancestor if of the given opcode. False otherwise.
+   */
+  public boolean ancestorIs(Xcode opcode) {
+    return ancestor() != null && ancestor().is(opcode);
+  }
+
+  /**
+   * Check is the node is of the given opcode.
+   *
+   * @param opcode Opcode to check for.
+   * @return True if the node is of the given opcode.
+   */
+  public boolean is(Xcode opcode) {
+    return opcode() == opcode;
+  }
+
+  /**
+   * Check whether the given node is of the given opcode.
+   *
+   * @param node   Node to be checked.
+   * @param opcode Opcode to be matched.
+   * @return True if the node is not null and match the given opcode. False
+   * otherwise.
+   */
+  public static boolean isOfCode(Xnode node, Xcode opcode) {
+    return node != null && node.is(opcode);
+  }
+
+  /**
    * Check whether a node is nested into another one.
    *
    * @param ancestor Node in which the current node is supposed to be nested.
@@ -788,6 +821,9 @@ public class Xnode {
    * otherwise.
    */
   public boolean isNestedIn(Xnode ancestor) {
+    if(ancestor == null || element() == null) {
+      return false;
+    }
     Node possibleAncestor = element().getParentNode();
     while(possibleAncestor != null) {
       if(possibleAncestor == ancestor.element()) {
@@ -804,6 +840,9 @@ public class Xnode {
    * @return Type hash. Empty string if there is no type hash associated.
    */
   public String getType() {
+    if(_baseElement == null) {
+      return "";
+    }
     switch(opcode()) {
       case F_ARRAY_REF:
         String type = getAttribute(Xattr.TYPE);
@@ -824,6 +863,15 @@ public class Xnode {
       default:
         return getAttribute(Xattr.TYPE);
     }
+  }
+
+  /**
+   * Set type of the node.
+   *
+   * @param type FbasicType to be associated with this node.
+   */
+  public void setType(FbasicType type) {
+    setAttribute(Xattr.TYPE, type.getType());
   }
 
   /**
@@ -852,54 +900,106 @@ public class Xnode {
       case ARRAY_INDEX:
       case LOWER_BOUND:
       case UPPER_BOUND:
-      case VAR_REF: {
-        Xnode n = firstChild();
-        return (n != null) ? n.constructRepresentation(withNamedValue) : "";
-      }
+      case VAR_REF:
+        return constructSimpleRepresentation(withNamedValue);
       case INDEX_RANGE:
-        if(getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
-          return ":";
-        }
-        Xnode child0 = child(0);
-        Xnode child1 = child(1);
-        return ((child0 != null) ?
-            child0.constructRepresentation(withNamedValue) : "") + ":" +
-            ((child1 != null) ?
-                child1.constructRepresentation(withNamedValue) : "");
+        return constructIndexRangeRepresentation(withNamedValue);
       case F_ARRAY_REF:
-        List<Xnode> childs = children();
-        if(childs.size() == 1) {
-          return childs.get(0).constructRepresentation(withNamedValue);
-        } else {
-          StringBuilder str = new StringBuilder();
-          str.append(childs.get(0).constructRepresentation(withNamedValue));
-          str.append("(");
-          for(int i = 1; i < childs.size(); ++i) {
-            str.append(childs.get(i).constructRepresentation(withNamedValue));
-            if(i != childs.size() - 1) {
-              str.append(",");
-            }
-          }
-          str.append(")");
-          return str.toString();
-        }
-      case F_MEMBER_REF: {
-        Xnode n = firstChild();
-        return ((n != null) ?
-            n.constructRepresentation(withNamedValue) + "%" +
-                getAttribute(Xattr.MEMBER) : "");
-      }
-      case NAMED_VALUE: {
-        Xnode n = firstChild();
-        if(withNamedValue) {
-          return ((n != null) ? getAttribute(Xattr.NAME) + "=" +
-              n.constructRepresentation(true) : "");
-        }
-        return (n != null) ? n.constructRepresentation(false) : "";
-      }
+        return constructArrayRefRepresentation(withNamedValue);
+      case F_MEMBER_REF:
+        return constructMemberRefRepresentation(withNamedValue);
+      case NAMED_VALUE:
+        return constructNamedValueRepresentation(withNamedValue);
       default:
         return "";
     }
+  }
+
+  /**
+   * Construct string representation of the IndexRange node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  private String constructIndexRangeRepresentation(boolean withNamedValue) {
+    if(getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
+      return ":";
+    }
+    Xnode child0 = child(0);
+    Xnode child1 = child(1);
+    return ((child0 != null) ?
+        child0.constructRepresentation(withNamedValue) : "") + ":" +
+        ((child1 != null) ?
+            child1.constructRepresentation(withNamedValue) : "");
+  }
+
+  /**
+   * Construct string representation of the simple node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  private String constructSimpleRepresentation(boolean withNamedValue) {
+    Xnode n = firstChild();
+    return (n != null) ? n.constructRepresentation(withNamedValue) : "";
+  }
+
+  /**
+   * Construct string representation of the ArrayRef node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  private String constructArrayRefRepresentation(boolean withNamedValue) {
+    List<Xnode> childs = children();
+    if(childs.size() == 1) {
+      return childs.get(0).constructRepresentation(withNamedValue);
+    } else {
+      StringBuilder str = new StringBuilder();
+      str.append(childs.get(0).constructRepresentation(withNamedValue));
+      str.append("(");
+      for(int i = 1; i < childs.size(); ++i) {
+        str.append(childs.get(i).constructRepresentation(withNamedValue));
+        if(i != childs.size() - 1) {
+          str.append(",");
+        }
+      }
+      str.append(")");
+      return str.toString();
+    }
+  }
+
+  /**
+   * Construct string representation of the MemberRef node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  private String constructMemberRefRepresentation(boolean withNamedValue) {
+    Xnode n = firstChild();
+    return ((n != null) ?
+        n.constructRepresentation(withNamedValue) + "%" +
+            getAttribute(Xattr.MEMBER) : "");
+  }
+
+  /**
+   * Construct string representation of the NamedValue node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @return String representation. Null if node is null.
+   */
+  private String constructNamedValueRepresentation(boolean withNamedValue) {
+    Xnode n = firstChild();
+    if(withNamedValue) {
+      return ((n != null) ? getAttribute(Xattr.NAME) + "=" +
+          n.constructRepresentation(true) : "");
+    }
+    return (n != null) ? n.constructRepresentation(false) : "";
   }
 
   /**
@@ -951,24 +1051,52 @@ public class Xnode {
   }
 
   /**
+   * Sync given attribute between two node. Attribute present in this node
+   * is created in "to" if not present yet. Attribute not present in this node
+   * is removed from "to" if present.
+   *
+   * @param to        Node to which attribute is synced.
+   * @param attribute Attribute to be synced.
+   */
+  public void syncBooleanAttribute(Xnode to, Xattr attribute)
+  {
+    if(getBooleanAttribute(attribute) && !to.getBooleanAttribute(attribute)) {
+      to.setBooleanAttribute(attribute, true);
+    } else if(!getBooleanAttribute(attribute)
+        && to.getBooleanAttribute(attribute))
+    {
+      to.removeAttribute(attribute);
+    }
+  }
+
+  /**
    * Return a brief description of the Xnode.
    *
    * @return String description of the Xnode as "Opcode (children: n)".
    */
   @Override
   public String toString() {
-    return String.format("%s (children: %d)", opcode().code(),
-        children().size());
+    return String.format("%s (children: %d) - %d", opcode().code(),
+        children().size(), lineNo());
   }
 
   @Override
   public int hashCode() {
-    return _baseElement.hashCode();
+    return _baseElement != null ? _baseElement.hashCode() : 0;
   }
 
   @Override
   public boolean equals(Object o) {
-    return !(o == null || !(o instanceof Xnode))
-        && element() == ((Xnode) o).element();
+    return o instanceof Xnode && element() == ((Xnode) o).element();
+  }
+
+  /**
+   * Check whether current node is not part of an arrayIndex node.
+   *
+   * @return True if the node is not a direct child of an arrayIndex node.
+   * False otherwise.
+   */
+  public boolean isNotArrayIndex() {
+    return !Xnode.isOfCode(ancestor(), Xcode.ARRAY_INDEX);
   }
 }

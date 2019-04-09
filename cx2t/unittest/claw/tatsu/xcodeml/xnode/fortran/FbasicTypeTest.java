@@ -2,12 +2,13 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw.tatsu.xcodeml.xnode.common;
+package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.xcodeml.xnode.Xname;
-import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
-import claw.tatsu.xcodeml.xnode.fortran.FortranType;
-import claw.tatsu.xcodeml.xnode.fortran.Intent;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
 import helper.XmlHelper;
 import org.junit.Test;
 
@@ -171,19 +172,19 @@ public class FbasicTypeTest {
     Xnode dim0 = b.getDimensions(0);
     Xnode dim1 = b.getDimensions(1);
 
-    assertSame(dim0.opcode(), Xcode.ARRAY_INDEX);
-    assertSame(dim1.opcode(), Xcode.INDEX_RANGE);
+    assertTrue(Xnode.isOfCode(dim0, Xcode.ARRAY_INDEX));
+    assertTrue(Xnode.isOfCode(dim1, Xcode.INDEX_RANGE));
 
-    assertSame(dim0.child(0).opcode(), Xcode.F_INT_CONSTANT);
+    assertTrue(Xnode.isOfCode(dim0.child(0), Xcode.F_INT_CONSTANT));
     assertEquals("10", dim0.child(0).value());
 
     assertNotNull(dim1.matchSeq(Xcode.LOWER_BOUND));
     assertNotNull(dim1.matchSeq(Xcode.UPPER_BOUND));
-    assertSame(dim1.matchSeq(Xcode.LOWER_BOUND).child(0).opcode(),
-        Xcode.F_INT_CONSTANT);
+    assertTrue(Xnode.isOfCode(dim1.matchSeq(Xcode.LOWER_BOUND).child(0),
+        Xcode.F_INT_CONSTANT));
     assertEquals("1", dim1.matchSeq(Xcode.LOWER_BOUND).child(0).value());
-    assertSame(dim1.matchSeq(Xcode.LOWER_BOUND).child(0).opcode(),
-        Xcode.F_INT_CONSTANT);
+    assertTrue(Xnode.isOfCode(dim1.matchSeq(Xcode.LOWER_BOUND).child(0),
+        Xcode.F_INT_CONSTANT));
     assertEquals("10", dim1.matchSeq(Xcode.UPPER_BOUND).child(0).value());
 
     assertEquals("Fint", b.getRef());
@@ -202,7 +203,7 @@ public class FbasicTypeTest {
   @Test
   public void dimTest() {
     FbasicType b = XmlHelper.createXbasicTypeFromString(type3);
-    b.removeDimension(Collections.<Integer>emptyList());
+    b.removeDimension(Collections.emptyList());
     assertEquals(0, b.getDimensions());
     assertFalse(b.isArray());
     assertFalse(b.isAllAssumedShape());
