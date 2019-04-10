@@ -310,43 +310,47 @@ if [[ ${pipe_workflow} == true ]]; then
     fi
 
     #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
-      ext=${input_file##*.}
-      if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
-        [[ ${enable_cpp} == true ]]; then
-        file_pp="$(claw::get_pp_filename "${input_file}")"
-      else
-        file_pp="$(claw::get_pp_filename "${input_file}")"
-      fi
+    ext=${input_file##*.}
+    if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
+      [[ ${enable_cpp} == true ]]; then
+      file_pp="$(claw::get_pp_filename "${input_file}")"
+    else
+      file_pp="$(claw::get_pp_filename "${input_file}")"
+    fi
 
-      # shellcheck disable=SC2086,SC2068
-      ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-        "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
-        ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
-          ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
-          ${CLAW_X2T_CONFIG_OPT} ${CLAW_X2T_MODEL_CONFIG_OPT} \
-          ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
-          "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
-          "${trans_module_opt[@]}" "${override_config_opt[@]}" |
-        sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
-        sed -e "${claw_sed_cont}" | sed -e "${claw_sed_verbatim}" >"${file_out_f}"
+    basefile_name="$(claw::get_basefile "${input_file}")"
+    base_pp="$(basename "${file_pp}")"
+    sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
 
-      # 0: OMNI FORTRAN Front-end
-      # 1: CLAW XcodeML Translator
-      # 2: !$claw ignore     # revert pass
-      # 3: !$claw end ignore # revert pass
-      # 4: __CLAWAMP__       # convertion pass
-      # 5: !$claw verbatim   # revert pass
-      # shellcheck disable=SC2206
-      compiler_status=(${PIPESTATUS[*]})
+    # shellcheck disable=SC2086,SC2068
+    ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
+      "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
+      ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
+        ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
+        ${CLAW_X2T_CONFIG_OPT} ${CLAW_X2T_MODEL_CONFIG_OPT} \
+        ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
+        "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
+        "${trans_module_opt[@]}" "${override_config_opt[@]}" |
+      sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
+      sed -e "${claw_sed_cont}" | sed -e "${claw_sed_verbatim}" >"${file_out_f}"
 
-      if [[ ${compiler_status[0]} -ne 0 ]] ||
-        [[ ${compiler_status[1]} -ne 0 ]] ||
-        [[ ${compiler_status[2]} -ne 0 ]] ||
-        [[ ${compiler_status[3]} -ne 0 ]] ||
-        [[ ${compiler_status[4]} -ne 0 ]] ||
-        [[ ${compiler_status[5]} -ne 0 ]]; then
-        claw::error_exit "${input_file}" "-" "-" "Internal error."
-      fi
+    # 0: OMNI FORTRAN Front-end
+    # 1: CLAW XcodeML Translator
+    # 2: !$claw ignore     # revert pass
+    # 3: !$claw end ignore # revert pass
+    # 4: __CLAWAMP__       # convertion pass
+    # 5: !$claw verbatim   # revert pass
+    # shellcheck disable=SC2206
+    compiler_status=(${PIPESTATUS[*]})
+
+    if [[ ${compiler_status[0]} -ne 0 ]] ||
+      [[ ${compiler_status[1]} -ne 0 ]] ||
+      [[ ${compiler_status[2]} -ne 0 ]] ||
+      [[ ${compiler_status[3]} -ne 0 ]] ||
+      [[ ${compiler_status[4]} -ne 0 ]] ||
+      [[ ${compiler_status[5]} -ne 0 ]]; then
+      claw::error_exit "${input_file}" "-" "-" "Internal error."
+    fi
     #TODO integrate when full workflow: else
     #TODO integrate when full workflow:  claw::error_exit "FPP breaks pipe mode"
     #TODO integrate when full workflow: fi
@@ -372,8 +376,13 @@ for input_file in "${f_files_transformation[@]}"; do
       "Input file not preprocessed correctly. Parsing cannot be done."
   fi
 
+  basefile_name="$(claw::get_basefile "${input_file}")"
+  base_pp="$(basename "${file_pp}")"
+  sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
+
   # Debug output
   [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Front-end"
+
   # shellcheck disable=SC2153,SC2086
   [[ ${enable_debug_omni} == true ]] && echo "${OMNI_F2X_CMD} \
     ${include_opt[*]} ${module_opt[*]} ${frontend_add_opt[*]} ${OMNI_F2X_OPT} \
