@@ -319,8 +319,8 @@ if [[ ${pipe_workflow} == true ]]; then
     fi
 
     basefile_name="$(claw::get_basefile "${input_file}")"
-	  base_pp="$(basename "${file_pp}")"
-	  sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
+    base_pp="$(basename "${file_pp}")"
+    sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
 
     # shellcheck disable=SC2086,SC2068
     ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
@@ -377,8 +377,8 @@ for input_file in "${f_files_transformation[@]}"; do
   fi
 
   basefile_name="$(claw::get_basefile "${input_file}")"
-	base_pp="$(basename "${file_pp}")"
-	sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
+  base_pp="$(basename "${file_pp}")"
+  sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
 
   # Debug output
   [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Front-end"
