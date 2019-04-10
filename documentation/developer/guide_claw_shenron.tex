@@ -35,7 +35,7 @@ specific to the kind of transformation.
     language=Fortran
   ]{code/trans_dependent.f90}
 
-\section{Trigger transformation}
+\section{Trigger a transformation}
 \label{section:trans_trigger}
 Transformations can be triggered by a directive or they can be applied for each
 translation unit independently from the directives present in it or not.
@@ -75,7 +75,7 @@ details in Chapter~\ref{chapter:configuration}.
 \section{Add a new transformation}
 \label{section:new_trans}
 A transformation in the \clawfc is represented as a class that inherits from
-the \lstinline|ClawTranformation| or \lstinline|ClawBlockTransformation|
+the \lstinline|ClawTransformation| or \lstinline|ClawBlockTransformation|
 super class. In order to add a new transformation into the the CLAW Compiler,
 the following steps must be done.
 
@@ -152,7 +152,7 @@ public enum ClawDirective {
   SCA,
   REMOVE,
   VERBATIM,
-  MYDIRECTIVE
+  MY_DIRECTIVE
 }
 \end{lstlisting}
 
@@ -182,7 +182,7 @@ analyze returns [ClawPragma cp]
 
 directive[ClawPragma cp]:
   // The new directive
-  MYDIRECTIVE { $cp.setDirective(ClawDirective.MYDIRETIVE); }
+  MY_DIRECTIVE { $cp.setDirective(ClawDirective.MY_DIRECTIVE); }
 ;
 
 /*----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ directive[ClawPragma cp]:
 
 // Start point
 CLAW         : 'claw';
-MYDIRECTIVE  : 'mydirective';
+MY_DIRECTIVE  : 'mydirective';
 \end{lstlisting}
 
 In Listing~\ref{lst:clawdirectiveantlr}, there is a minimal version of the
@@ -218,7 +218,7 @@ correct group as long as its analysis step succeed.
 \begin{lstlisting}[label=lst:categorization, caption=ClawTranslator.java,
   language=java]
 switch(analyzedPragma.getDirective()) {
-  case MYDIRECTIVE:
+  case MY_DIRECTIVE:
     addTransformation(xcodeml, new MyFirstTransformation(analyzedPragma));
     break;
 }

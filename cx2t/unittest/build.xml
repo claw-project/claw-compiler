@@ -97,6 +97,7 @@
           <fileset dir="${build.dir}">
             <include name="claw/tatsu/**/*Test*.class"/>
             <exclude name="**/TestConstant.class"/>
+            <exclude name="**/*$*.class"/>
           </fileset>
         </batchtest>
       </junit>
@@ -145,6 +146,7 @@
         <fileset dir="${build.dir}">
           <include name="claw/shenron/**/*Test*.class"/>
           <exclude name="**/TestConstant.class"/>
+          <exclude name="**/*$*.class"/>
         </fileset>
       </batchtest>
     </junit>
@@ -195,6 +197,7 @@
         <fileset dir="${build.dir}">
           <include name="claw/wani/**/*Test*.class"/>
           <exclude name="**/TestConstant.class"/>
+          <exclude name="**/*$*.class"/>
         </fileset>
       </batchtest>
     </junit>

@@ -20,6 +20,7 @@
 # hoist8:  cleanup clause for both OpenACC and OpenMP
 # hoist9:  cleanup clause for OpenACC only
 # hoist10: cleanup clause for OpenMP only
+# hoist11: nested hoist
 # ifextract1: if-then block
 # ifextract2: if-then-else block
 # interchange3: with target clause

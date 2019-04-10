@@ -25,7 +25,7 @@ compiler_macro="@COMPILER_MACRO@"
 
 ### Directory for saving intermediate files ###
 temp_dir=$(mktemp -d)
-debug_temp_dir="__omni_tmp__"
+debug_temp_dir="${PWD}/__omni_tmp__"
 
 ### Default options ###
 fpp_redirect=@FPP_REDIRECT@
@@ -55,6 +55,7 @@ report=false
 pipe_workflow=true
 keep_comment=false
 add_paren=false
+omni_ffront_debug=false
 
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
@@ -120,12 +121,16 @@ readonly report
 readonly pipe_workflow
 readonly keep_comment
 readonly add_paren
+readonly omni_ffront_debug
 
 ### sed constant ###
 readonly claw_sed_ignore="s/\\!\$claw ignore//"
 readonly claw_sed_end_ignore="s/\\!\$claw end ignore//"
 readonly claw_sed_cont="s/__CLAWAMP__/\\&/"
 readonly claw_sed_verbatim="s/\\!\$claw verbatim //"
+
+readonly claw_debug_prefix="claw-driver-debug"
+readonly claw_debug_lvl_dep="CLAW_DEBUG_DEP"
 
 ### Add additional parameters needed for cx2t ###
 claw::format_cx2t_params
@@ -151,10 +156,21 @@ if [[ ${show_config} == true ]]; then
   exit 0
 fi
 
+### Add front-end debug option
+if [[ ${omni_ffront_debug} == true ]]; then
+  OMNI_F2X_OPT="${OMNI_F2X_OPT} -d"
+fi
+
 ### Add front-end option to keep the comment
 if [[ ${keep_comment} == true ]]; then
   OMNI_F2X_OPT="${OMNI_F2X_OPT} -fleave-comment"
-  readonly OMNI_F2X_OPT
+fi
+
+readonly OMNI_F2X_OPT
+
+# Add debug flag for the translator options
+if [[ ${enable_debug} == true ]]; then
+  CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} -d"
 fi
 
 ## Check that input file exits
@@ -177,7 +193,7 @@ fi
 
 ### Create temporal directory ###
 [[ ${enable_debug_omni} == true ]] && temp_dir=${debug_temp_dir}
-mkdir -p ${temp_dir}
+mkdir -p "${temp_dir}"
 claw::verbose "Create ${temp_dir}/"
 
 ### Bypass file without code transformation ###
@@ -265,7 +281,7 @@ done
 [[ ${stop_pp} == true ]] && exit 0
 [[ ${only_pp} == true ]] && [[ ${enable_debug_omni} == true ]] && exit 0
 [[ ${only_pp} == true ]] && {
-  rm -rf ${temp_dir}
+  rm -rf "${temp_dir}"
   exit 0
 }
 
@@ -309,7 +325,7 @@ if [[ ${pipe_workflow} == true ]]; then
       file_out_f=${output_dir}/${input_file}
     fi
 
-    #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
+      #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
       ext=${input_file##*.}
       if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
         [[ ${enable_cpp} == true ]]; then
@@ -318,18 +334,35 @@ if [[ ${pipe_workflow} == true ]]; then
         file_pp="$(claw::get_pp_filename "${input_file}")"
       fi
 
-      # shellcheck disable=SC2086,SC2068
-      ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-        "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
-        ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
-          ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
-          ${CLAW_X2T_CONFIG_OPT} ${CLAW_X2T_MODEL_CONFIG_OPT} \
-          ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
-          "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
-          "${trans_module_opt[@]}" "${override_config_opt[@]}" |
-        sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
-        sed -e "${claw_sed_cont}" | sed -e "${claw_sed_verbatim}" >"${file_out_f}"
+      basefile_name="$(claw::get_basefile "${input_file}")"
+      base_pp="$(basename "${file_pp}")"
+      sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
 
+      if [[ "${file_out_f}" != "" ]]; then
+        # shellcheck disable=SC2086,SC2068
+        ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
+          "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
+          ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
+            ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
+            ${CLAW_X2T_CONFIG_OPT} ${CLAW_X2T_MODEL_CONFIG_OPT} \
+            ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
+            "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
+            "${trans_module_opt[@]}" "${override_config_opt[@]}" |
+          sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
+          sed -e "${claw_sed_cont}" | sed -e "${claw_sed_verbatim}" > "${file_out_f}"
+      else
+        # shellcheck disable=SC2086,SC2068
+        ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
+          "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
+          ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
+            ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
+            ${CLAW_X2T_CONFIG_OPT} ${CLAW_X2T_MODEL_CONFIG_OPT} \
+            ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
+            "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
+            "${trans_module_opt[@]}" "${override_config_opt[@]}" |
+          sed -e "${claw_sed_ignore}" | sed -e "${claw_sed_end_ignore}" |
+          sed -e "${claw_sed_cont}" | sed -e "${claw_sed_verbatim}"
+      fi
       # 0: OMNI FORTRAN Front-end
       # 1: CLAW XcodeML Translator
       # 2: !$claw ignore     # revert pass
@@ -372,8 +405,13 @@ for input_file in "${f_files_transformation[@]}"; do
       "Input file not preprocessed correctly. Parsing cannot be done."
   fi
 
+  basefile_name="$(claw::get_basefile "${input_file}")"
+  base_pp="$(basename "${file_pp}")"
+  sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
+
   # Debug output
   [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Front-end"
+
   # shellcheck disable=SC2153,SC2086
   [[ ${enable_debug_omni} == true ]] && echo "${OMNI_F2X_CMD} \
     ${include_opt[*]} ${module_opt[*]} ${frontend_add_opt[*]} ${OMNI_F2X_OPT} \
@@ -382,14 +420,10 @@ for input_file in "${f_files_transformation[@]}"; do
   # Call F_Front with the correct arguments
   # shellcheck disable=SC2153,SC2086
   ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-    "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" -o "${file_in_x}"
+    "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" \
+    -o "${file_in_x}"
 done
 [[ ${stop_frontend} == true ]] && claw::exit_without_error
-
-# Add debug flag for the translator options
-if [[ ${enable_debug} == true ]]; then
-  CLAW_X2T_TRANSLATOR_OPT="${CLAW_X2T_TRANSLATOR_OPT} -d"
-fi
 
 ### Translator ###
 for input_file in "${f_files_transformation[@]}"; do
@@ -421,13 +455,18 @@ for input_file in "${f_files_transformation[@]}"; do
 
   # Dump the arguments pass to the translator for easier debugging
   if [[ ${dump_cx2t_args} == true ]]; then
+    echo "=============================="
     echo "-- [DEBUG] Arguments for cx2t:"
+    echo "=============================="
+    echo ""
     echo "${CLAW_X2T_TRANSLATOR_OPT} ${CLAW_X2T_TARGET_OPT} \
       ${CLAW_X2T_DIRECTIVE_OPT} ${CLAW_X2T_CONFIG_OPT} \
       ${CLAW_X2T_MODEL_CONFIG_OPT} \
       ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
       ${xcode_translator_add_opt[*]} ${module_opt[*]} ${trans_module_opt[*]} \
       -o ${file_out_x} -f ${file_out_f} ${file_in_x}"
+    echo ""
+    echo "=============================="
   fi
 
   # Debug output

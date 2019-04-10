@@ -15,6 +15,7 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.wani.ClawConstant;
 import claw.wani.language.ClawConstraint;
 import claw.wani.language.ClawPragma;
+import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.Arrays;
@@ -45,8 +46,8 @@ public class LoopFusion extends ClawTransformation {
    */
   public LoopFusion(ClawPragma directive) {
     super(directive);
-    if(_claw.hasGroupClause()) {
-      _groupClauseLabel = directive.getGroupValue();
+    if(_claw.hasClause(ClawClause.GROUP)) {
+      _groupClauseLabel = directive.value(ClawClause.GROUP);
     }
   }
 
@@ -60,8 +61,8 @@ public class LoopFusion extends ClawTransformation {
   public LoopFusion(Xnode loop, ClawPragma ghostDirective) {
     super(ghostDirective);
     _doStmt = new NestedDoStatement(loop, 1);
-    if(_claw.hasGroupClause()) {
-      _groupClauseLabel = ghostDirective.getGroupValue();
+    if(_claw.hasClause(ClawClause.GROUP)) {
+      _groupClauseLabel = ghostDirective.value(ClawClause.GROUP);
     }
     if(_claw.getPragma() != null) {
       setStartLine(ghostDirective.getPragma().lineNo());
@@ -89,7 +90,7 @@ public class LoopFusion extends ClawTransformation {
     _doStmt = new NestedDoStatement(outerLoop, _claw.getCollapseValue());
 
     // With collapse clause
-    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0
+    if(_claw.hasClause(ClawClause.COLLAPSE) && _claw.getCollapseValue() > 0
         && _claw.getCollapseValue() > _doStmt.size())
     {
       xcodeml.addError("not enough do statements for collapse value",
@@ -122,17 +123,14 @@ public class LoopFusion extends ClawTransformation {
     LoopFusion other = (LoopFusion) transformation;
 
     // Apply different transformation if the collapse clause is used
-    if(_claw != null && _claw.hasCollapseClause()
-        && _claw.getCollapseValue() > 0)
+    if(_claw != null && _claw.hasClause(ClawClause.COLLAPSE)
+        && _claw.getCollapseValue() > 0 &&
+        _claw.getCollapseValue() > _doStmt.size())
     {
-      // Merge the most inner loop with the most inner loop of the other fusion
-      // unit
-      if(_claw.getCollapseValue() > _doStmt.size()) {
-        throw new IllegalTransformationException(
-            "Cannot apply transformation, one or both do stmt are invalid.",
-            _claw.getPragma().lineNo()
-        );
-      }
+      throw new IllegalTransformationException(
+          "Cannot apply transformation, one or both do stmt are invalid.",
+          _claw.getPragma().lineNo()
+      );
     }
 
     // Actual merge happens here
@@ -168,45 +166,10 @@ public class LoopFusion extends ClawTransformation {
     if(this.isTransformed() || other.isTransformed()) {
       return false;
     }
+
     // Loop must share the same group option
     if(!hasSameGroupClause(other)) {
       return false;
-    }
-
-    ClawConstraint currentConstraint = ClawConstraint.DIRECT;
-    if(_claw.hasConstraintClause()
-        && other.getLanguageInfo().hasConstraintClause())
-    {
-      // Check the constraint clause. Must be identical if set.
-      if(_claw.getConstraintClauseValue() !=
-          other.getLanguageInfo().getConstraintClauseValue())
-      {
-        return false;
-      }
-      currentConstraint = _claw.getConstraintClauseValue();
-    } else {
-      if(_claw.hasConstraintClause()
-          || other.getLanguageInfo().hasConstraintClause())
-      {
-        // Constraint are not consistent
-        return false;
-      }
-    }
-
-    // Following constraint are used only in default mode. If constraint clause
-    // is set to none, there are note checked.
-    if(currentConstraint == ClawConstraint.DIRECT) {
-      // Only pragma statement can be between the two loops.
-      if(!_doStmt.getOuterStatement().isDirectSibling(
-          other.getNestedDoStmt().getOuterStatement(),
-          Collections.singletonList(Xcode.F_PRAGMA_STATEMENT)))
-      {
-        return false;
-      }
-    } else {
-      xcodeml.addWarning("Unconstrained loop-fusion generated",
-          Arrays.asList(_claw.getPragma().lineNo(),
-              other.getLanguageInfo().getPragma().lineNo()));
     }
 
     // Loops can only be merged if they are at the same level
@@ -216,7 +179,11 @@ public class LoopFusion extends ClawTransformation {
       return false;
     }
 
-    if(_claw.hasCollapseClause() && _claw.getCollapseValue() > 0) {
+    if(!hasCompatibleConstraints(xcodeml, other)) {
+      return false;
+    }
+
+    if(_claw.hasClause(ClawClause.COLLAPSE) && _claw.getCollapseValue() > 0) {
       for(int i = 0; i < _claw.getCollapseValue(); ++i) {
         if(!Loop.hasSameIndexRange(_doStmt.get(i),
             other.getNestedDoStmt().get(i)))
@@ -230,6 +197,53 @@ public class LoopFusion extends ClawTransformation {
       return Loop.hasSameIndexRange(_doStmt.getOuterStatement(),
           other.getNestedDoStmt().getOuterStatement());
     }
+  }
+
+  /**
+   * Check compatibility of constraint clause on loop-fusion transformation.
+   *
+   * @param xcodeml Current translation unit.
+   * @param other   The other loop fusion unit to be merge with this one.
+   * @return True if the constraints are compatible. False otherwise.
+   */
+  private boolean hasCompatibleConstraints(XcodeProgram xcodeml,
+                                           LoopFusion other)
+  {
+    ClawConstraint currentConstraint = ClawConstraint.DIRECT;
+    if(_claw.hasClause(ClawClause.CONSTRAINT)
+        && other.getLanguageInfo().hasClause(ClawClause.CONSTRAINT))
+    {
+      // Check the constraint clause. Must be identical if set.
+      if(_claw.getConstraintClauseValue() !=
+          other.getLanguageInfo().getConstraintClauseValue())
+      {
+        return false;
+      }
+      currentConstraint = _claw.getConstraintClauseValue();
+    } else {
+      if(_claw.hasClause(ClawClause.CONSTRAINT)
+          || other.getLanguageInfo().hasClause(ClawClause.CONSTRAINT))
+      {
+        // Constraint are not consistent
+        return false;
+      }
+    }
+
+    // Following constraint are used only in default mode. If constraint clause
+    // is set to none, there are note checked.
+    if(currentConstraint == ClawConstraint.DIRECT
+        && !_doStmt.getOuterStatement().isDirectSibling(
+        other.getNestedDoStmt().getOuterStatement(),
+        Collections.singletonList(Xcode.F_PRAGMA_STATEMENT)))
+    // Only pragma statement can be between the two loops.
+    {
+      return false;
+    } else {
+      xcodeml.addWarning("Unconstrained loop-fusion generated",
+          Arrays.asList(_claw.getPragma().lineNo(),
+              other.getLanguageInfo().getPragma().lineNo()));
+    }
+    return true;
   }
 
   /**

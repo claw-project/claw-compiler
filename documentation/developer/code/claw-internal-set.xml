@@ -1,8 +1,4 @@
 <transformations>
-  <transformation name="internal-xcodeml"
-    type="independent" trigger="translation_unit"
-    class="claw.wani.transformation.ll.utility.XcodeMLWorkaround" />
-
   <transformation name="openacc-continuation"
     type="independent" trigger="directive"
     class="claw.wani.transformation.internal.OpenAccContinuation" />

@@ -4,7 +4,7 @@
 !
 
 ! Simple program to test the array notation to do loop directive
-! test block transformation of the array-transform directive
+! test block transformation of the expand directive
 
 PROGRAM array4_test
   CALL claw_test
@@ -23,13 +23,13 @@ SUBROUTINE claw_test
   vec4(:) = 10;
   vec5(:) = 11;
 
-  !$claw array-transform parallel acc(loop vector)
+  !$claw expand parallel 
   vec1(:) = vec2(:) + 10
   vec2(:) = vec1(:) + 10
 
   vec4(:) = vec5(:) + 1
   vec4(:) = vec4(:) + 1
-  !$claw end array-transform
+  !$claw end expand
 
   vec3(:) = vec1(:) + vec2(:)
 

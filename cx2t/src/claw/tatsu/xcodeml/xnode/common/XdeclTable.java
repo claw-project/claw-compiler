@@ -4,10 +4,6 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
 import java.util.*;
 
 /**
@@ -56,7 +52,7 @@ public class XdeclTable extends Xnode {
   private void readTable() {
     List<Xnode> declarations = children();
     for(Xnode n : declarations) {
-      String key = "";
+      String key;
       switch(n.opcode()) {
         case EXTERN_DECL:
         case F_STRUCT_DECL:
@@ -77,6 +73,8 @@ public class XdeclTable extends Xnode {
         case F_EQUIVALENCE_DECL:
           key = Xcode.F_EQUIVALENCE_DECL.toString() + UUID.randomUUID();
           break;
+        default:
+          continue;
       }
       _table.put(key, n);
     }
@@ -87,41 +85,50 @@ public class XdeclTable extends Xnode {
    * Replace a declaration in the table.
    *
    * @param decl The new declaration to be inserted.
-   * @param name Name describing the declaration in the table.
+   * @param name Name describing the declaration in the table to be replaced.
    */
   public void replace(Xnode decl, String name) {
-    Xnode oldDecl = _table.get(name);
-    if(oldDecl == null) {
+    if(!_table.containsKey(name)) {
       append(decl);
+      _table.put(name, decl);
     } else {
+      Xnode oldDecl = _table.get(name);
       oldDecl.insertAfter(decl);
       oldDecl.delete();
+      _table.remove(name);
+      _table.put(name, decl);
     }
   }
 
   /**
-   * Add a new declaration as last element.
+   * Add a new declaration as last element if key is not used yet.
    *
    * @param decl The new declaration object.
    */
   public void add(Xnode decl) {
-    _baseElement.appendChild(decl.cloneRawNode());
-    _table.put(decl.matchSeq(Xcode.NAME).value(), decl);
+    String key = decl.matchSeq(Xcode.NAME).value();
+    if(!_table.containsKey(key)) {
+      _baseElement.appendChild(decl.cloneRawNode());
+      _table.put(key, decl);
+    }
   }
 
   /**
-   * Add a new declaration as last element.
+   * Add a new declaration as last element if key is not used yet.
    *
    * @param decl The new declaration object.
    */
   public void addFirst(Xnode decl) {
     if(_baseElement.getFirstChild() != null) {
-      _baseElement.insertBefore(decl.cloneRawNode(),
-          _baseElement.getFirstChild());
+      String key = decl.matchSeq(Xcode.NAME).value();
+      if(!_table.containsKey(key)) {
+        _baseElement.insertBefore(decl.cloneRawNode(),
+            _baseElement.getFirstChild());
+        _table.put(decl.matchSeq(Xcode.NAME).value(), decl);
+      }
     } else {
-      _baseElement.appendChild(decl.cloneRawNode());
+      add(decl);
     }
-    _table.put(decl.matchSeq(Xcode.NAME).value(), decl);
   }
 
   /**
@@ -202,51 +209,6 @@ public class XdeclTable extends Xnode {
    */
   public boolean contains(String name) {
     return _table.containsKey(name);
-  }
-
-  /**
-   * Check if the order of declaration makes sense. If not, fix it.
-   *
-   * @param fct Function definition which is checked.
-   */
-  public void checkOrder(FfunctionDefinition fct) {
-    int functionLineNo = fct.lineNo();
-    List<Xnode> decl = new ArrayList<>();
-
-    // TODO DOM element
-    Node crtNode = _baseElement.getFirstChild();
-    while(crtNode != null) {
-      if(crtNode.getNodeType() == Node.ELEMENT_NODE) {
-        Xnode node = new Xnode((Element) crtNode);
-        // Only var declarations can be disordered
-        if(node.opcode() == Xcode.VAR_DECL
-            || node.opcode() == Xcode.F_STRUCT_DECL)
-        {
-          decl.add(node);
-        }
-      }
-      crtNode = crtNode.getNextSibling();
-    }
-
-    if(decl.size() < 2) {
-      return;
-    }
-
-    int firstDeclLineNo = decl.get(0).lineNo();
-    int secondDeclLineNo = decl.get(1).lineNo();
-
-    if(functionLineNo == firstDeclLineNo) {
-      _baseElement.appendChild(decl.get(0).element());
-    } else if(firstDeclLineNo > secondDeclLineNo) {
-      Xnode hook = decl.get(1);
-      for(int i = 1; i < decl.size(); ++i) {
-        if(decl.get(i).lineNo() > firstDeclLineNo) {
-          break;
-        }
-        hook = decl.get(i);
-      }
-      hook.insertAfter(decl.get(0));
-    }
   }
 
   @Override

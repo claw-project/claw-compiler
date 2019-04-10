@@ -62,6 +62,7 @@ public class ModelConfig {
   private final Map<String, List<DimensionDefinition>> _layouts;
 
   private String _modelName;
+  private boolean _isLoaded;
 
   /**
    * Private ctor to avoid instantiation of this class.
@@ -69,6 +70,7 @@ public class ModelConfig {
   public ModelConfig() {
     _dimensions = new LinkedHashMap<>();
     _layouts = new HashMap<>();
+    _isLoaded = false;
   }
 
   /**
@@ -93,6 +95,7 @@ public class ModelConfig {
       readDimensions(result);
       readLayouts(result);
     }
+    _isLoaded = true;
   }
 
   /**
@@ -160,7 +163,7 @@ public class ModelConfig {
    * id = "id"
    * position = [ "dim1", ":" ]
    *
-   * The ":" dimension is resprensting the base dimension
+   * The ":" dimension is representing the base dimension
    * (currently present dimensions)
    *
    * @param result The current TOML parse result object.
@@ -393,6 +396,15 @@ public class ModelConfig {
    */
   public int getNbLayouts() {
     return _layouts.size();
+  }
+
+  /**
+   * Check if the model configuration has been loaded.
+   *
+   * @return True if the model configuration is loaded. False otherwise.
+   */
+  public boolean isLoaded() {
+    return _isLoaded;
   }
 
 }

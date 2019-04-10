@@ -7,11 +7,11 @@ To ease this task, an AST abstraction and manipulation library is included
 in the \cx2x program. This library helps to traverse the \gls{ast}, access and
 update the type table, add, modify or delete node.
 
-This section is currently very simple but will be enhanced in the future version
+This section is currently very basic but will be enhanced in the future version
 of this manual.
 
 \section{The Xnode class}
-The main class of this library is the \lstinline|Xnode| class that is the base
+The main class of this library is the \lstinline|Xnode| class, the base class
 of any node in the AST. 
 Any specialization of the a node like \lstinline|XcodeML|, 
 \lstinline|XcodeProgram|, \lstinline|Xmod| or \lstinline|XbasicType| inherits 
@@ -27,10 +27,10 @@ This class has basic methods to perform the following actions:
 \end{itemize}
 
 Each \lstinline|Xnode| instance has a specific opcode that match the \xcodemlf 
-element tag.
+element tag name.
 This opcode is also used when creating new node or matching nodes in a tree.
-All the opcode are members of the \lstinline|Xcode| class.
-The \lstinline|Xattr| class contains all the members to access and match 
+All the opcode are members of the \lstinline|Xcode| enumeration.
+The \lstinline|Xattr| enumeration contains all names the to access and match 
 attribute of a node. 
 
 \begin{lstlisting}[label=lst:xnode_attr, language=Java, caption=XtypeTable]
@@ -40,19 +40,19 @@ Xnode n = ...
 boolean hasAttributeAllocatable = n.hasAttribute(Xattr.IS_ALLOCATABLE);
 // Get value from a boolean attribute
 boolean attributeAllocatable = n.getBooleanAttribute(Xattr.IS_ALLOCATABLE);
-// Get value from a boolean attribute
+// Get value from an attribute
 String type = n.getAttribute(Xattr.TYPE);
-// Set value of a boolean attribute
+// Set value to a boolean attribute
 n.setAttribute(Xattr.IS_ALLOCATABLE, true);
-// Set value of an attribute
+// Set value to an attribute
 n.setAttribute(Xattr.TYPE, "VALUE_OF_TYPE");
 // Remove an attribute
 n.removeAttribute(Xattr.IS_ALLOCATABLE);
 \end{lstlisting}
 
 \begin{lstlisting}[label=lst:xnode_node, language=Java, caption=XtypeTable]
-// Gather a node
-Xnode n = ...
+// Gather the root node
+Xnode n = xcodeml;
 // Get first child
 Xnode fChild = n.firstChild();
 // Get last child
@@ -78,11 +78,11 @@ Xnode clone = n.cloneNode();
 // Gather a node
 Xnode n = ...
 // Match all arrayRef nodes in sub-tree
-List<Xnode> arrayRefs = n.matchAll(Xcode.FARRAYREF);
+List<Xnode> arrayRefs = n.matchAll(Xcode.F_ARRAY_REF);
 // Match all arrayRef nodes in the siblings of the node
-List<Xnode> arrayRefs = n.matchSibling(Xcode.FARRAYREF);
+List<Xnode> arrayRefs = n.matchSibling(Xcode.F_ARRAY_REF);
 // Match first arrayRef node in the direct descendant of the node
-Xnode arrayRef = n.matchDirectDescendant(Xcode.FARRAYREF);
+Xnode arrayRef = n.matchDirectDescendant(Xcode.F_ARRAY_REF);
 \end{lstlisting}
 
 \section{Access the type table}
@@ -105,7 +105,7 @@ public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     // Get the declarations of the function
     List<Xnode> declarations = fctDef.getDeclarationTable().values();
     for(Xnode decl : declarations) {
-      if(decl.opcode() == Xcode.VARDECL) {
+      if(decl.is(Xcode.VAR_DECL)) {
         if(!xcodeml.getTypeTable().isBasicType(decl)) {
           continue; // Only FbasicType can be array
         }
@@ -132,7 +132,7 @@ public void transform(XcodeProgram xcodeml, Translator translator,
     Xnode crt = _claw.getPragma();
     while(crt != null){
       System.out.println("Current node: " + crt.opcode());
-      crt = crt.nextSibling();          
+      crt = crt.nextSibling();
     }
 }
 \end{lstlisting}
@@ -153,7 +153,7 @@ the \lstinline!insertAfter! will add the new node after the current node.
 public void transform(XcodeProgram xcodeml, Translator translator,
                       Transformation other)
 {
-    Xnode myNewNode = xcodeml.createNode(Xcode.FPRAGMASTATEMENT);
+    Xnode myNewNode = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
     myNewNode.setValue("omp parallel");
     _claw.getPragma().insertAfter(myNewNode);
 }

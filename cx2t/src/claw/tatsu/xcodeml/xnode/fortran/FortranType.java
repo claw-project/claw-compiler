@@ -94,24 +94,14 @@ public enum FortranType {
   /**
    * Get a new unique hash with the current FortranType prefix.
    *
-   * @return New unique hash.
-   */
-  public String generateHash() {
-    return _prefix + generateHash(HASH_LENGTH);
-  }
-
-  /**
-   * Generate a new unique type hash for the table.
-   *
-   * @param length Length of the hash string to be generated.
    * @return The new unique hash.
    */
-  private String generateHash(int length) {
+  public String generateHash() {
     StringBuilder sb = new StringBuilder();
-    while(sb.length() < length) {
+    while(sb.length() < HASH_LENGTH) {
       sb.append(Integer.toHexString(this.rand.nextInt()));
     }
-    return sb.toString().substring(0, length);
+    return _prefix + sb.toString().substring(0, HASH_LENGTH);
   }
 
   /**

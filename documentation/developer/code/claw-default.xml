@@ -21,7 +21,7 @@
     <!-- Low-level transformations -->
     <group name="remove" />
     <group name="directive-primitive" />
-    <group name="array-transform" />
+    <group name="expand" />
     <group name="loop-extract" />
     <group name="loop-hoist" />
     <group name="loop-fusion" />
@@ -30,6 +30,7 @@
     <group name="kcache" />
     <group name="if-extract" />
     <!-- High-level transformations -->
+    <group name="sca-model-data" />
     <group name="sca" />
     <group name="sca-forward" />
     <!-- internal applied at the end -->

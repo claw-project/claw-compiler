@@ -23,9 +23,9 @@ public class UtilityTest {
   @Test
   public void joinArrayTest() {
     String[] a = {"a", "b", "c"};
-    assertEquals("a,b,c", Utility.join(",", a));
+    assertEquals("a,b,c", String.join(",", a));
     String[] b = {"a"};
-    assertEquals("a", Utility.join(",", b));
+    assertEquals("a", String.join(",", b));
   }
 
   @Test
@@ -34,10 +34,10 @@ public class UtilityTest {
     a.add("a");
     a.add("b");
     a.add("c");
-    assertEquals("a,b,c", Utility.join(",", a));
+    assertEquals("a,b,c", String.join(",", a));
     List<String> b = new ArrayList<>();
     b.add("a");
-    assertEquals("a", Utility.join(",", b));
+    assertEquals("a", String.join(",", b));
   }
 
   @Test

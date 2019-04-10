@@ -117,7 +117,7 @@ public class XenumTest {
   }
 
   @Test
-  public void xScopeCctorTest() {
+  public void xScopeCtorTest() {
     assertEquals(Xscope.LOCAL, Xscope.fromString("local"));
     assertEquals(Xscope.GLOBAL, Xscope.fromString("global"));
     assertEquals(Xscope.PARAM, Xscope.fromString("param"));

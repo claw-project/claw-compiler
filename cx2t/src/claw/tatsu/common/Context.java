@@ -9,9 +9,9 @@ import claw.tatsu.directive.generator.DirectiveNone;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.xcodeml.module.ModuleCache;
-import claw.wani.x2t.configuration.AcceleratorConfiguration;
-import claw.wani.x2t.configuration.OpenAccConfiguration;
-import claw.wani.x2t.configuration.OpenMpConfiguration;
+import claw.tatsu.directive.configuration.AcceleratorConfiguration;
+import claw.tatsu.directive.configuration.OpenAccConfiguration;
+import claw.tatsu.directive.configuration.OpenMpConfiguration;
 
 /**
  * Class holding all information needed during a translation.
@@ -19,8 +19,10 @@ import claw.wani.x2t.configuration.OpenMpConfiguration;
  * @author clementval
  */
 public class Context {
+
   private int _maxColumns;
   private DirectiveGenerator _directiveGenerator;
+  private AcceleratorConfiguration _acceleratorConfiguration;
   private CompilerDirective _compilerDirective;
   private Target _target;
   private ModuleCache _moduleCache;
@@ -84,6 +86,7 @@ public class Context {
       _compilerDirective = CompilerDirective.NONE;
       _directiveGenerator = new DirectiveNone();
     }
+    _acceleratorConfiguration = acceleratorConfiguration;
 
     if(target == null) {
       _target = Target.NONE;
@@ -113,6 +116,10 @@ public class Context {
 
   public ModuleCache getModuleCache() {
     return _moduleCache;
+  }
+
+  public AcceleratorConfiguration getAcceleratorConfig() {
+    return _acceleratorConfiguration;
   }
 
   /**

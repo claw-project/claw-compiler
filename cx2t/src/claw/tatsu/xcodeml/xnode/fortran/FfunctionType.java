@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.fortran;
 
+import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
@@ -30,7 +31,7 @@ import java.util.List;
 public class FfunctionType extends Xnode {
 
   private final List<Xnode> _parameters;
-  private Xnode _params;
+  private final Xnode _params;
 
   /**
    * Basic ctor from Xnode.
@@ -41,7 +42,7 @@ public class FfunctionType extends Xnode {
     super(node == null ? null : node.element());
     _params = matchSeq(Xcode.PARAMS);
     _parameters = (_params != null) ?
-        _params.matchAll(Xcode.NAME) : Collections.<Xnode>emptyList();
+        _params.matchAll(Xcode.NAME) : Collections.emptyList();
   }
 
   /**
@@ -97,6 +98,26 @@ public class FfunctionType extends Xnode {
    */
   public boolean isPure() {
     return getBooleanAttribute(Xattr.IS_PURE);
+  }
+
+  /**
+   * Check if the function type is a subroutine.
+   *
+   * @return True if the function type is a subroutine.
+   */
+  public boolean isSubroutine() {
+    return getReturnType() == null
+        || getReturnType().equalsIgnoreCase(Xname.TYPE_F_VOID);
+  }
+
+  /**
+   * Check if the function type is a function.
+   *
+   * @return True if the function type is a subroutine.
+   */
+  public boolean isFunction() {
+    return getReturnType() != null
+        && !getReturnType().equalsIgnoreCase(Xname.TYPE_F_VOID);
   }
 
   /**

@@ -34,12 +34,15 @@ public final class Body {
   public static void append(Xnode masterBody, Xnode slaveBody)
       throws IllegalTransformationException
   {
-    if(masterBody == null || slaveBody == null
-        || masterBody.opcode() != Xcode.BODY
-        || slaveBody.opcode() != Xcode.BODY)
+    if(!Xnode.isOfCode(masterBody, Xcode.BODY)
+        || !Xnode.isOfCode(slaveBody, Xcode.BODY))
     {
       throw new
-          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+          IllegalTransformationException(String.format(
+          "%s for Body.append. opcode: %s - %s",
+          TatsuConstant.ERROR_INCOMPATIBLE,
+          masterBody == null ? "null" : masterBody.opcode(),
+          slaveBody == null ? "null" : slaveBody.opcode()));
     }
 
     // Move all nodes to master body
@@ -55,8 +58,8 @@ public final class Body {
    * Shift all statements from the first siblings of the "from" element until
    * the "until" element if "included" is true.
    *
-   * @param from       Start element for the swifting.
-   * @param until      End element for the swifting.
+   * @param from       Start element for the shifting.
+   * @param until      End element for the shifting.
    * @param targetBody Body element in which statements are inserted.
    * @param included   If true, until element is shifted.
    * @throws IllegalTransformationException If one element is null or the
@@ -67,11 +70,20 @@ public final class Body {
                              boolean included)
       throws IllegalTransformationException
   {
-    if(from == null || until == null || targetBody == null
-        || targetBody.opcode() != Xcode.BODY)
+    if(from == null && until == null) {
+      return;
+    }
+
+    if(from == null || until == null
+        || !Xnode.isOfCode(targetBody, Xcode.BODY))
     {
       throw new
-          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+          IllegalTransformationException(String.format(
+          "%s for Body.shiftIn. opcode: %s, from: %s, until: %s",
+          TatsuConstant.ERROR_INCOMPATIBLE,
+          targetBody == null ? "null" : targetBody.opcode(),
+          from == null ? "null" : from.opcode(),
+          until == null ? "null" : until.opcode()));
     }
 
     Node currentSibling = from.element();
@@ -103,9 +115,12 @@ public final class Body {
   public static boolean isEmpty(Xnode body)
       throws IllegalTransformationException
   {
-    if(body == null || body.opcode() != Xcode.BODY) {
+    if(!Xnode.isOfCode(body, Xcode.BODY)) {
       throw new
-          IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
+          IllegalTransformationException(String.format(
+          "%s for Body.isEmpty. opcode: %s",
+          TatsuConstant.ERROR_INCOMPATIBLE,
+          body == null ? "null" : body.opcode()));
     }
 
     return body.firstChild() == null;

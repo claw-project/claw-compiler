@@ -13,7 +13,7 @@ package claw.tatsu.xcodeml.xnode.common;
  * - name (Xname)
  * Attributes:
  * - Required: type (text), sclass (text: auto, param, extern, extern_def,
- * label, tagname) // TODO move to enum
+ * label, tagname)
  *
  * @author clementval
  */

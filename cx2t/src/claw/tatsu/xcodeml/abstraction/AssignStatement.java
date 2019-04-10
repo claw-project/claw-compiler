@@ -37,7 +37,7 @@ public class AssignStatement extends Xnode {
   public String getLhsName() {
     Xnode lhs = getLhs();
     if(lhs != null) {
-      return (lhs.opcode() == Xcode.VAR) ? lhs.value() :
+      return lhs.is(Xcode.VAR) ? lhs.value() :
           lhs.matchSeq(Xcode.VAR_REF, Xcode.VAR).value();
     }
     return "";
@@ -53,6 +53,15 @@ public class AssignStatement extends Xnode {
   }
 
   /**
+   * Get the right hand-side node of the assignment.
+   *
+   * @return Right hans-side node.
+   */
+  public Xnode getRhs() {
+    return child(Xnode.RHS);
+  }
+
+  /**
    * Check if the current assignment statement is a child of a give type of
    * node.
    *
@@ -63,11 +72,11 @@ public class AssignStatement extends Xnode {
   public boolean isChildOf(Xcode opcode) {
     Xnode crt = this;
     while(crt != null) {
-      if(crt.ancestor().opcode() == opcode) {
+      if(Xnode.isOfCode(crt.ancestor(), opcode)) {
         return true;
       }
       // Stop searching when FfunctionDefinition is reached
-      if(crt.ancestor().opcode() == Xcode.F_FUNCTION_DEFINITION) {
+      if(Xnode.isOfCode(crt.ancestor(), Xcode.F_FUNCTION_DEFINITION)) {
         return false;
       }
       crt = crt.ancestor();
@@ -80,12 +89,46 @@ public class AssignStatement extends Xnode {
    *
    * @return List of variables.
    */
-  public Set<String> getVarRefNames() {
-    List<Xnode> varRefs = matchAll(Xcode.VAR_REF);
+  public Set<String> getVarNames() {
+    return filterVars(matchAll(Xcode.VAR));
+  }
+
+  /**
+   * Get all variables names on the RHS.
+   *
+   * @return Set of variables names used on the RHS.
+   */
+  public Set<String> getReadNames() {
+    return filterVars(getRhs().matchAll(Xcode.VAR));
+  }
+
+  /**
+   * Filter a list of Var nodes to keep only the real var and exclude the array
+   * index variables.
+   *
+   * @param vars List of Var node to filter.
+   * @return Set of variable names.
+   */
+  private Set<String> filterVars(List<Xnode> vars) {
     Set<String> names = new HashSet<>();
-    for(Xnode varRef : varRefs) {
-      names.add(varRef.matchSeq(Xcode.VAR).value());
+    for(Xnode var : vars) {
+      if(var.isNotArrayIndex()) {
+        names.add(var.value());
+      }
     }
     return names;
+  }
+
+  /**
+   * Check whether the assignment is made with constant only.
+   *
+   * @return True of the assignment is constant only. False otherwise.
+   */
+  public boolean isConstantAssignement() {
+    Set<String> usedVars = getReadNames();
+    usedVars.remove(getLhsName());
+    return Xnode.isOfCode(getRhs(), Xcode.F_INT_CONSTANT)
+        || Xnode.isOfCode(getLhs(), Xcode.F_REAL_CONSTANT)
+        || usedVars.isEmpty();
   }
 }
