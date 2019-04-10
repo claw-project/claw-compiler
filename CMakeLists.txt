@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-project("CLAW Compiler" VERSION 1.2.2)
+project("CLAW Compiler" VERSION 1.2.3)
 
 # Add local cmake modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")

@@ -1,7 +1,10 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
-## [1.2.2] - 2019-04-19
+## [1.2.3] - 2019-04-10
+* driver: fix preprocessor filename for Cray in dependency resolver
+
+## [1.2.2] - 2019-03-29
 * driver: fix temporary file name being too long in some cases.
 
 ## [1.2.1] - 2018-11-16
