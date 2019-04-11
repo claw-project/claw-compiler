@@ -251,12 +251,7 @@ public class VectorBlock {
   public static boolean isContainedIn(List<VectorBlock> blocks,
                                       AssignStatement as)
   {
-    for(VectorBlock block : blocks) {
-      if(block.contains(as)) {
-        return true;
-      }
-    }
-    return false;
+    return blocks.stream().anyMatch(b -> b.contains(as));
   }
 
 }
