@@ -9,6 +9,7 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class representing a set of contiguous statements that can be wrapped in
@@ -81,26 +82,18 @@ public class VectorBlock {
     }
 
     if(isSingleStatement()) {
-
-      List<Xnode> vars = _startStmt.matchAll(Xcode.VAR);
-      for(Xnode var : vars) {
-        _readAndWrittenVariables.add(var.value());
-      }
+      _readAndWrittenVariables.addAll(_startStmt.matchAll(Xcode.VAR).stream()
+          .map(Xnode::value).collect(Collectors.toList()));
     } else {
       Xnode crt = getStartStmt();
       while(!crt.equals(getEndStmt())) {
-        List<Xnode> vars = crt.matchAll(Xcode.VAR);
-        for(Xnode var : vars) {
-          _readAndWrittenVariables.add(var.value());
-        }
+        _readAndWrittenVariables.addAll(crt.matchAll(Xcode.VAR).stream()
+            .map(Xnode::value).collect(Collectors.toList()));
         crt = crt.nextSibling();
       }
-
       if(crt.equals(getEndStmt())) {
-        List<Xnode> vars = crt.matchAll(Xcode.VAR);
-        for(Xnode var : vars) {
-          _readAndWrittenVariables.add(var.value());
-        }
+        _readAndWrittenVariables.addAll(crt.matchAll(Xcode.VAR).stream()
+            .map(Xnode::value).collect(Collectors.toList()));
       }
     }
   }

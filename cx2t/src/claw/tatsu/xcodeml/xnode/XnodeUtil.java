@@ -23,6 +23,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The class XnodeUtil contains only static method to help manipulating the
@@ -406,12 +407,10 @@ public class XnodeUtil {
       return names;
     }
 
-    List<Xnode> vars = parent.matchAll(Xcode.VAR);
-    for(Xnode var : vars) {
-      if(var.isNotArrayIndex()) {
-        names.add(var.value());
-      }
-    }
+    names.addAll(parent.matchAll(Xcode.VAR).stream()
+        .filter(Xnode::isNotArrayIndex)
+        .map(Xnode::value)
+        .collect(Collectors.toList()));
     return names;
   }
 
@@ -424,17 +423,10 @@ public class XnodeUtil {
    * @return A list of all var elements found.
    */
   public static List<Xnode> findAllReferences(Xnode parent, String id) {
-    List<Xnode> vars = parent.matchAll(Xcode.VAR);
-    List<Xnode> realReferences = new ArrayList<>();
-    for(Xnode var : vars) {
-      if(!((Element) var.element().getParentNode()).getTagName().
-          equals(Xcode.ARRAY_INDEX.code())
-          && var.value().equalsIgnoreCase(id))
-      {
-        realReferences.add(var);
-      }
-    }
-    return realReferences;
+    return parent.matchAll(Xcode.VAR).stream()
+        .filter(Xnode::isNotArrayIndex)
+        .filter(x -> x.value().equalsIgnoreCase(id))
+        .collect(Collectors.toList());
   }
 
   /**

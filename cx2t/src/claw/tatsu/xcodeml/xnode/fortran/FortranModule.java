@@ -86,16 +86,9 @@ public class FortranModule extends XcodeML {
    * False otherwise.
    */
   private boolean isInterfaceDeclaration(String interfaceName) {
-    List<Xnode> interfaceDecls = matchAll(Xcode.F_INTERFACE_DECL);
-    for(Xnode interfaceDecl : interfaceDecls) {
-      if(interfaceDecl.getAttribute(Xattr.NAME) != null
-          && interfaceDecl.getAttribute(Xattr.NAME).
-          equalsIgnoreCase(interfaceName))
-      {
-        return true;
-      }
-    }
-    return false;
+    return matchAll(Xcode.F_INTERFACE_DECL).stream()
+        .anyMatch(i -> i.getAttribute(Xattr.NAME) != null
+            && i.getAttribute(Xattr.NAME).equalsIgnoreCase(interfaceName));
   }
 
   /**
