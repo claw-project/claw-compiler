@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The class Directive contains only static method to help the
@@ -302,12 +303,13 @@ public final class Directive {
     }
 
     // Find all fct call in the current transformed fct
-    List<Xnode> fctCalls = fctDef.matchAll(Xcode.FUNCTION_CALL);
+    List<Xnode> fctCalls = fctDef.matchAll(Xcode.FUNCTION_CALL).stream()
+        .filter(f -> !f.getBooleanAttribute(Xattr.IS_INTRINSIC))
+        .collect(Collectors.toList());
     for(Xnode fctCall : fctCalls) {
       String fctName = Function.getFctNameFromFctCall(fctCall);
       // Do nothing for intrinsic fct or null fctName
-      if(fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)
-          || fctName == null)
+      if(fctName == null)
       {
         continue;
       }
@@ -579,14 +581,8 @@ public final class Directive {
    * function definition. False otherwise.
    */
   public static boolean hasDirectives(FfunctionDefinition fctDef) {
-    List<Xnode> pragmas = fctDef.body().matchAll(Xcode.F_PRAGMA_STATEMENT);
-    for(Xnode pragma : pragmas) {
-      if(pragma.value().toLowerCase().
-          startsWith(Context.get().getGenerator().getPrefix()))
-      {
-        return true;
-      }
-    }
-    return false;
+    String prefix = Context.get().getGenerator().getPrefix();
+    return fctDef.body().matchAll(Xcode.F_PRAGMA_STATEMENT).stream()
+        .anyMatch(p -> p.value().toLowerCase().startsWith(prefix));
   }
 }
