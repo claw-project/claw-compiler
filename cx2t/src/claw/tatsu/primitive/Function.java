@@ -302,13 +302,8 @@ public final class Function {
     if(namedValue != null && namedValue.hasAttribute(Xattr.NAME)
         && namedValue.getAttribute(Xattr.NAME).equalsIgnoreCase("dim"))
     {
-      List<Xnode> indexRanges = fctCall.matchAll(Xcode.INDEX_RANGE);
-      int nbAssumedShape = 0;
-      for(Xnode indexRange : indexRanges) {
-        if(indexRange.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
-          ++nbAssumedShape;
-        }
-      }
+      long nbAssumedShape = fctCall.matchAll(Xcode.INDEX_RANGE).stream().
+          filter(x -> x.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)).count();
       if(nbAssumedShape <= 1) {
         namedValue.delete();
       }
