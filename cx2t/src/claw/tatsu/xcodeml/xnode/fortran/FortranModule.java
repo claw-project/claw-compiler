@@ -103,16 +103,12 @@ public class FortranModule extends XcodeML {
       return null;
     }
     Set<String> fctTypes = getInterfaceImplementation(fctName);
-    int nbArgs = Function.getNbOfArgsFromFctCall(fctCall);
+    long nbArgs = Function.getNbOfArgsFromFctCall(fctCall);
     for(String type : fctTypes) {
       FfunctionType tmp = getTypeTable().getFunctionType(type);
       if(tmp != null) {
-        int nbParams = 0;
-        for(Xnode param : tmp.getParameters()) {
-          if(!param.hasAttribute(Xattr.IS_INSERTED)) {
-            ++nbParams;
-          }
-        }
+        long nbParams = tmp.getParameters().stream()
+            .filter(x -> !x.hasAttribute(Xattr.IS_INSERTED)).count();
         // TODO several function might have same number of args.
         if(nbArgs == nbParams) {
           return tmp;
