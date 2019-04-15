@@ -23,6 +23,7 @@ import claw.wani.x2t.translator.ClawTranslator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <pre>
@@ -124,12 +125,9 @@ public class ExpandNotation extends ClawBlockTransformation {
         return false;
       }
 
-      List<Xnode> ranges = new ArrayList<>();
-      for(Xnode el : stmt.child(0).children()) {
-        if(Xnode.isOfCode(el, Xcode.INDEX_RANGE)) {
-          ranges.add(el);
-        }
-      }
+      List<Xnode> ranges = stmt.firstChild().children().stream()
+          .filter(x -> x.is(Xcode.INDEX_RANGE)).collect(Collectors.toList());
+
       if(ranges.isEmpty()) {
         xcodeml.addError("Assign statement is not an array notation",
             _clawStart.getPragma().lineNo());
