@@ -9,6 +9,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The XglobalDeclTable represents the typeTable (5.1) element in XcodeML
@@ -99,9 +100,10 @@ public class XglobalDeclTable extends Xnode {
       for(Map.Entry<String, Xnode> entry : _table.entrySet()) {
         if(entry.getValue() instanceof FmoduleDefinition) {
           FmoduleDefinition mod = (FmoduleDefinition) entry.getValue();
-          FfunctionDefinition fctDef = mod.getFunctionDefinition(fctName);
-          if(fctDef != null) {
-            return fctDef;
+          Optional<FfunctionDefinition> fctDef
+              = mod.getFunctionDefinition(fctName);
+          if(fctDef.isPresent()) {
+            return fctDef.get();
           }
         }
       }

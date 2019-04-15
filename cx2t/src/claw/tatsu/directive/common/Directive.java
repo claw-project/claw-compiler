@@ -19,10 +19,7 @@ import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -309,19 +306,18 @@ public final class Directive {
     for(Xnode fctCall : fctCalls) {
       String fctName = Function.getFctNameFromFctCall(fctCall);
       // Do nothing for intrinsic fct or null fctName
-      if(fctName == null)
-      {
+      if(fctName == null) {
         continue;
       }
 
-      FfunctionDefinition calledFctDef =
+      Optional<FfunctionDefinition> calledFctDef =
           Function.findFunctionDefinitionFromFctCall(xcodeml, fctDef, fctCall);
 
-      if(calledFctDef != null) {
+      if(calledFctDef.isPresent()) {
         // TODO - Check that the directive is not present yet.
         // TODO - Directive.hasDirectives(calledFctDef)
         addPragmasBefore(xcodeml, dirGen.getRoutineDirective(true),
-            calledFctDef.body().child(0));
+            calledFctDef.get().body().child(0));
         Message.debug(dirGen.getPrefix()
             + "generated routine seq directive for " + fctName
             + " subroutine/function.");

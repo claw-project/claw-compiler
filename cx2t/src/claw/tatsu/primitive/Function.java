@@ -13,6 +13,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Primitive transformation, test and utility for Function related action.
@@ -193,11 +194,11 @@ public final class Function {
    * @param fctCall Function call to find the definition.
    * @return The function definition if found. Null otherwise.
    */
-  public static FfunctionDefinition findFunctionDefinitionFromFctCall(
+  public static Optional<FfunctionDefinition> findFunctionDefinitionFromFctCall(
       XcodeProgram xcodeml, FfunctionDefinition fctDef, Xnode fctCall)
   {
     if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return null;
+      return Optional.empty();
     }
 
     String fctName = getFctNameFromFctCall(fctCall);
@@ -208,16 +209,13 @@ public final class Function {
       if(meaningfulParentNode == null) { // fct is not a module child
         meaningfulParentNode = fctDef.matchAncestor(Xcode.GLOBAL_DECLARATIONS);
       }
-      List<Xnode> fctDefs =
-          meaningfulParentNode.matchAll(Xcode.F_FUNCTION_DEFINITION);
-      for(Xnode fDef : fctDefs) {
-        Xnode name = fDef.matchSeq(Xcode.NAME);
-        if(name != null && name.value().equals(fctName)) {
-          return new FfunctionDefinition(fDef);
-        }
-      }
+
+      return meaningfulParentNode.matchAll(Xcode.F_FUNCTION_DEFINITION).stream()
+          .map(FfunctionDefinition::new)
+          .filter(x -> x.getName().equalsIgnoreCase(fctName)).findFirst();
+
     }
-    return null;
+    return Optional.empty();
   }
 
   /**
