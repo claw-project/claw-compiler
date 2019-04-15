@@ -130,15 +130,8 @@ public final class Function {
    */
   public static Set<String> detectInductionVariables(FfunctionDefinition fctDef)
   {
-    Set<String> inductionVariables = new HashSet<>();
-
-    List<Xnode> doStatements = fctDef.body().matchAll(Xcode.F_DO_STATEMENT);
-
-    for(Xnode doStatement : doStatements) {
-      inductionVariables.add(Loop.extractInductionVariable(doStatement));
-    }
-
-    return inductionVariables;
+    return fctDef.body().matchAll(Xcode.F_DO_STATEMENT).stream()
+        .map(Loop::extractInductionVariable).collect(Collectors.toSet());
   }
 
   /**
@@ -174,16 +167,10 @@ public final class Function {
       return false;
     }
 
-    List<Xnode> nodes = xcodeml.matchAll(Xcode.F_MODULE_PROCEDURE_DECL);
-    for(Xnode node : nodes) {
-      Xnode nameNode = node.matchSeq(Xcode.NAME);
-      if(nameNode != null
-          && nameNode.value().equalsIgnoreCase(fctDef.getName()))
-      {
-        return true;
-      }
-    }
-    return false;
+    return xcodeml.matchAll(Xcode.F_MODULE_PROCEDURE_DECL).stream()
+        .filter(x -> x.matchSeq(Xcode.NAME) != null)
+        .map(x -> x.matchSeq(Xcode.NAME))
+        .map(Xnode::value).anyMatch(x -> x.equalsIgnoreCase(fctDef.getName()));
   }
 
   /**

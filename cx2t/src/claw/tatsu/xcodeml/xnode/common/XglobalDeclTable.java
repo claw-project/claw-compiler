@@ -101,7 +101,7 @@ public class XglobalDeclTable extends Xnode {
     } else {
       List<FmoduleDefinition> mods = _table.values().stream()
           .filter(FmoduleDefinition.class::isInstance)
-          .map(FmoduleDefinition::new).collect(Collectors.toList());
+          .map(FmoduleDefinition.class::cast).collect(Collectors.toList());
 
       for(FmoduleDefinition mod : mods) {
         Optional<FfunctionDefinition> fctDef
