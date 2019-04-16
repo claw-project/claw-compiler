@@ -448,6 +448,23 @@ function claw::get_out_xcodeml_filename()
 }
 
 ###################################################################
+# Get the formatted filename in the temp folder
+# Arguments:
+#   $1: original filepath
+# Returns:
+#   basefile name in the temp folder
+#   <temp_dir>/filename.f90
+# Global:
+#   temp_dir
+###################################################################
+function claw::get_basefile()
+{
+  local file_name
+  file_name="$(basename "$1")"
+  echo "${file_name}"
+}
+
+###################################################################
 # Get the formatted filename for the preprocessed file
 # Arguments:
 #   $1: original filename
@@ -470,8 +487,6 @@ function claw::get_pp_generic_filename()
   file_pp=${temp_dir}/"${file_shasum}".$2.${file_ext}
   echo "${file_pp}"
 }
-
-
 
 ###################################################################
 # Get the formatted filename for the preprocessed file
@@ -735,6 +750,7 @@ function claw::process_dependencies() {
     ### Preprocess file ###
     base_file=${source_mod_file}
     dep_basename="$(basename "${base_file%.*}")"
+
     # shellcheck disable=SC2154
     local file_pp
     file_pp="$(claw::get_pp_filename "${base_file}")"

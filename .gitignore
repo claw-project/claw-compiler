@@ -69,4 +69,8 @@ install
 
 # sonar
 .scannerwork
-/bin/
+bin
+
+# vscode
+.vscode
+

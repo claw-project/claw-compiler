@@ -7,6 +7,8 @@ package claw.tatsu.xcodeml.xnode.fortran;
 import claw.tatsu.xcodeml.xnode.common.*;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The FmoduleDefinition represents the FmoduleDefinition (5.7) element in
@@ -80,18 +82,13 @@ public class FmoduleDefinition extends Xnode {
    * @param name Name of the function to be found.
    * @return A function definition element if found. Null otherwise.
    */
-  public FfunctionDefinition getFunctionDefinition(String name) {
+  public Optional<FfunctionDefinition> getFunctionDefinition(String name) {
     if(name == null || name.isEmpty()) {
-      return null;
+      return Optional.empty();
     }
-    List<Xnode> fctDefs = matchAll(Xcode.F_FUNCTION_DEFINITION);
-    for(Xnode n : fctDefs) {
-      FfunctionDefinition fctDef = new FfunctionDefinition(n);
-      if(fctDef.getName().equals(name)) {
-        return fctDef;
-      }
-    }
-    return null;
+    return matchAll(Xcode.F_FUNCTION_DEFINITION)
+        .stream().map(FfunctionDefinition::new)
+        .filter(x -> x.getName().equalsIgnoreCase(name)).findFirst();
   }
 
   @Override

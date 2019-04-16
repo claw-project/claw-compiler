@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The XcodeML class represents the basic XcodeML file unit. Both XcodeProgram
@@ -124,12 +125,8 @@ public class XcodeML extends Xnode {
    * @return A list of all function definitions in the XcodeProgram unit.
    */
   public List<FfunctionDefinition> getAllFctDef() {
-    List<FfunctionDefinition> definitions = new ArrayList<>();
-    List<Xnode> nodes = matchAll(Xcode.F_FUNCTION_DEFINITION);
-    for(Xnode fctDef : nodes) {
-      definitions.add(new FfunctionDefinition(fctDef));
-    }
-    return definitions;
+    return matchAll(Xcode.F_FUNCTION_DEFINITION).stream()
+        .map(FfunctionDefinition::new).collect(Collectors.toList());
   }
 
   /**

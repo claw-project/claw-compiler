@@ -17,6 +17,7 @@ import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * An array access to function call transformation replace the access to an
@@ -59,16 +60,18 @@ public class ArrayToFctCall extends ClawTransformation {
         getFunctionDefinition(_claw.value(ClawClause.FCT_NAME));
     if(_replaceFct == null) {
       FmoduleDefinition parentModule = _claw.getPragma().findParentModule();
-      _replaceFct = parentModule.getFunctionDefinition(
-          _claw.value(ClawClause.FCT_NAME));
 
-      if(_replaceFct == null) {
+      Optional<FfunctionDefinition> replaceFct =
+          parentModule.getFunctionDefinition(_claw.value(ClawClause.FCT_NAME));
+
+      if(!replaceFct.isPresent()) {
         xcodeml.addError("Function " +
                 _claw.value(ClawClause.FCT_NAME) +
                 " not found in current file.",
             _claw.getPragma().lineNo());
         return false;
       }
+      _replaceFct = replaceFct.get();
     }
 
     return true; // skeleton

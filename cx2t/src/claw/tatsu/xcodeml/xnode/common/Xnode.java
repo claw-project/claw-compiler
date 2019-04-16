@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -169,11 +170,7 @@ public class Xnode {
    * @param value    Boolean value to set.
    */
   private void setBooleanAttribute(String attrCode, boolean value) {
-    if(value) {
-      setAttribute(attrCode, Xname.TRUE);
-    } else {
-      setAttribute(attrCode, Xname.FALSE);
-    }
+    setAttribute(attrCode, value ? Xname.TRUE : Xname.FALSE);
   }
 
   /**
@@ -588,20 +585,7 @@ public class Xnode {
    * @return The matched node. Null if nothing matched.
    */
   public Xnode matchDirectDescendant(Xcode opcode) {
-    if(_baseElement == null) {
-      return null;
-    }
-    NodeList nodeList = _baseElement.getChildNodes();
-    for(int i = 0; i < nodeList.getLength(); i++) {
-      Node nextNode = nodeList.item(i);
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(opcode.code())) {
-          return new Xnode(element);
-        }
-      }
-    }
-    return null;
+    return matchDirectDescendant(Collections.singletonList(opcode));
   }
 
   /**

@@ -158,7 +158,7 @@ fi
 
 ### Add front-end debug option
 if [[ ${omni_ffront_debug} == true ]]; then
-OMNI_F2X_OPT="${OMNI_F2X_OPT} -d"
+  OMNI_F2X_OPT="${OMNI_F2X_OPT} -d"
 fi
 
 ### Add front-end option to keep the comment
@@ -325,7 +325,7 @@ if [[ ${pipe_workflow} == true ]]; then
       file_out_f=${output_dir}/${input_file}
     fi
 
-    #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
+      #TODO integrate when full workflow: if [[ ${fpp_redirect} == true ]]; then
       ext=${input_file##*.}
       if [[ "${ext}" == "F90" ]] || [[ "${ext}" == "F" ]] ||
         [[ ${enable_cpp} == true ]]; then
@@ -333,6 +333,10 @@ if [[ ${pipe_workflow} == true ]]; then
       else
         file_pp="$(claw::get_pp_filename "${input_file}")"
       fi
+
+      basefile_name="$(claw::get_basefile "${input_file}")"
+      base_pp="$(basename "${file_pp}")"
+      sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
 
       if [[ "${file_out_f}" != "" ]]; then
         # shellcheck disable=SC2086,SC2068
@@ -401,8 +405,13 @@ for input_file in "${f_files_transformation[@]}"; do
       "Input file not preprocessed correctly. Parsing cannot be done."
   fi
 
+  basefile_name="$(claw::get_basefile "${input_file}")"
+  base_pp="$(basename "${file_pp}")"
+  sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
+
   # Debug output
   [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Front-end"
+
   # shellcheck disable=SC2153,SC2086
   [[ ${enable_debug_omni} == true ]] && echo "${OMNI_F2X_CMD} \
     ${include_opt[*]} ${module_opt[*]} ${frontend_add_opt[*]} ${OMNI_F2X_OPT} \
@@ -411,7 +420,8 @@ for input_file in "${f_files_transformation[@]}"; do
   # Call F_Front with the correct arguments
   # shellcheck disable=SC2153,SC2086
   ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-    "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" -o "${file_in_x}"
+    "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" \
+    -o "${file_in_x}"
 done
 [[ ${stop_frontend} == true ]] && claw::exit_without_error
 

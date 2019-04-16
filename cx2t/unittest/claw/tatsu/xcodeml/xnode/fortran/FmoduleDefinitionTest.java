@@ -43,9 +43,9 @@ public class FmoduleDefinitionTest {
     assertTrue(!nodes.isEmpty());
     FmoduleDefinition modDef = new FmoduleDefinition(nodes.get(0));
     assertEquals("mod1", modDef.getName());
-    assertNull(modDef.getFunctionDefinition(null));
-    assertNull(modDef.getFunctionDefinition(""));
-    assertNotNull(modDef.getFunctionDefinition("sub1"));
+    assertFalse(modDef.getFunctionDefinition(null).isPresent());
+    assertFalse(modDef.getFunctionDefinition("").isPresent());
+    assertTrue(modDef.getFunctionDefinition("sub1").isPresent());
 
     assertNotNull(modDef.cloneNode());
   }

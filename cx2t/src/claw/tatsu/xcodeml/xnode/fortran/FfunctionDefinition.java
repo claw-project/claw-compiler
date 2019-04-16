@@ -13,6 +13,7 @@ import claw.tatsu.xcodeml.xnode.common.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The FfunctionDefinition represents the FfunctionDefinition (5.3) element in
@@ -158,11 +159,9 @@ public class FfunctionDefinition extends Xnode {
     if(body() == null) {
       return Collections.emptyList();
     }
-    List<AssignStatement> statements = new ArrayList<>();
-    for(Xnode n : body().matchAll(Xcode.F_ASSIGN_STATEMENT)) {
-      statements.add(new AssignStatement(n.element()));
-    }
-    return statements;
+    return body().matchAll(Xcode.F_ASSIGN_STATEMENT).stream()
+        .map(Xnode::element)
+        .map(AssignStatement::new).collect(Collectors.toList());
   }
 
   /**
@@ -176,14 +175,10 @@ public class FfunctionDefinition extends Xnode {
     if(body() == null) {
       return Collections.emptyList();
     }
-    List<AssignStatement> statements = new ArrayList<>();
-    for(Xnode n : body().matchAll(Xcode.F_ASSIGN_STATEMENT)) {
-      AssignStatement as = new AssignStatement(n.element());
-      if(as.getLhsName().equals(var)) {
-        statements.add(as);
-      }
-    }
-    return statements;
+    return body().matchAll(Xcode.F_ASSIGN_STATEMENT).stream()
+        .map(Xnode::element).map(AssignStatement::new)
+        .filter(x -> x.getLhsName().equalsIgnoreCase(var))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -232,7 +227,7 @@ public class FfunctionDefinition extends Xnode {
         if((parameters && isParameterVariable(bt, onlyArray))
             || (temporary && isTemporaryVariable(bt, onlyArray)))
         {
-            variables.add(name.value());
+          variables.add(name.value());
         }
       }
     }
