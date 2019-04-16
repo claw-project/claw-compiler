@@ -579,6 +579,7 @@ public final class Directive {
   public static boolean hasDirectives(FfunctionDefinition fctDef) {
     String prefix = Context.get().getGenerator().getPrefix();
     return fctDef.body().matchAll(Xcode.F_PRAGMA_STATEMENT).stream()
-        .anyMatch(p -> p.value().toLowerCase().startsWith(prefix));
+        .map(Xnode::value).map(String::toLowerCase)
+        .anyMatch(p -> p.startsWith(prefix));
   }
 }

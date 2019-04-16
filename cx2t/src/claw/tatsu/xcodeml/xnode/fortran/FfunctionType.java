@@ -199,7 +199,8 @@ public class FfunctionType extends Xnode {
    */
   public boolean hasParam(String paramName) {
     return _parameters.stream()
-        .map(Xnode::value).anyMatch(x -> x.equalsIgnoreCase(paramName));
+        .map(Xnode::value)
+        .anyMatch(paramName::equalsIgnoreCase);
   }
 
   @Override
