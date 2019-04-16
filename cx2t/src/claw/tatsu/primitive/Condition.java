@@ -50,19 +50,10 @@ public final class Condition {
     if(!Xnode.isOfCode(condition, Xcode.CONDITION)) {
       return false;
     }
-
-    List<Xnode> nodes = condition.matchAll(Xcode.FUNCTION_CALL);
-    if(nodes.isEmpty()) {
-      return false;
-    }
-
-    for(Xnode node : nodes) {
-      Xnode name = node.matchSeq(Xcode.NAME);
-      if(name.value().equals(Xname.F_INTR_ALLOCATED)) {
-        return true;
-      }
-    }
-    return false;
+    return condition.matchAll(Xcode.FUNCTION_CALL).stream()
+        .map(x -> x.matchSeq(Xcode.NAME))
+        .map(Xnode::value)
+        .anyMatch(Xname.F_INTR_ALLOCATED::equalsIgnoreCase);
   }
 
 }
