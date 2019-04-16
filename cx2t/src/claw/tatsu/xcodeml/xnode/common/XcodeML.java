@@ -880,10 +880,10 @@ public class XcodeML extends Xnode {
       return null;
     }
 
-    for(Xnode p : fctType.getParameters()) {
-      if(p.value().equalsIgnoreCase(nameValue)) {
-        return null;
-      }
+    if(fctType.getParameters().stream()
+        .map(Xnode::value).anyMatch(nameValue::equalsIgnoreCase))
+    {
+      return null;
     }
     return createAndAddParam(nameValue, type, fctType);
   }

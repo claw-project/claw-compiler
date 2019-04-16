@@ -170,7 +170,7 @@ public final class Function {
     return xcodeml.matchAll(Xcode.F_MODULE_PROCEDURE_DECL).stream()
         .filter(x -> x.matchSeq(Xcode.NAME) != null)
         .map(x -> x.matchSeq(Xcode.NAME))
-        .map(Xnode::value).anyMatch(x -> x.equalsIgnoreCase(fctDef.getName()));
+        .map(Xnode::value).anyMatch(fctDef.getName()::equalsIgnoreCase);
   }
 
   /**
