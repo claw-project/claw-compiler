@@ -13,6 +13,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Primitive transformation, test and utility for Function related action.
@@ -129,15 +130,8 @@ public final class Function {
    */
   public static Set<String> detectInductionVariables(FfunctionDefinition fctDef)
   {
-    Set<String> inductionVariables = new HashSet<>();
-
-    List<Xnode> doStatements = fctDef.body().matchAll(Xcode.F_DO_STATEMENT);
-
-    for(Xnode doStatement : doStatements) {
-      inductionVariables.add(Loop.extractInductionVariable(doStatement));
-    }
-
-    return inductionVariables;
+    return fctDef.body().matchAll(Xcode.F_DO_STATEMENT).stream()
+        .map(Loop::extractInductionVariable).collect(Collectors.toSet());
   }
 
   /**
@@ -173,16 +167,10 @@ public final class Function {
       return false;
     }
 
-    List<Xnode> nodes = xcodeml.matchAll(Xcode.F_MODULE_PROCEDURE_DECL);
-    for(Xnode node : nodes) {
-      Xnode nameNode = node.matchSeq(Xcode.NAME);
-      if(nameNode != null
-          && nameNode.value().equalsIgnoreCase(fctDef.getName()))
-      {
-        return true;
-      }
-    }
-    return false;
+    return xcodeml.matchAll(Xcode.F_MODULE_PROCEDURE_DECL).stream()
+        .filter(x -> x.matchSeq(Xcode.NAME) != null)
+        .map(x -> x.matchSeq(Xcode.NAME))
+        .map(Xnode::value).anyMatch(x -> x.equalsIgnoreCase(fctDef.getName()));
   }
 
   /**
@@ -193,11 +181,11 @@ public final class Function {
    * @param fctCall Function call to find the definition.
    * @return The function definition if found. Null otherwise.
    */
-  public static FfunctionDefinition findFunctionDefinitionFromFctCall(
+  public static Optional<FfunctionDefinition> findFunctionDefinitionFromFctCall(
       XcodeProgram xcodeml, FfunctionDefinition fctDef, Xnode fctCall)
   {
     if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return null;
+      return Optional.empty();
     }
 
     String fctName = getFctNameFromFctCall(fctCall);
@@ -208,16 +196,13 @@ public final class Function {
       if(meaningfulParentNode == null) { // fct is not a module child
         meaningfulParentNode = fctDef.matchAncestor(Xcode.GLOBAL_DECLARATIONS);
       }
-      List<Xnode> fctDefs =
-          meaningfulParentNode.matchAll(Xcode.F_FUNCTION_DEFINITION);
-      for(Xnode fDef : fctDefs) {
-        Xnode name = fDef.matchSeq(Xcode.NAME);
-        if(name != null && name.value().equals(fctName)) {
-          return new FfunctionDefinition(fDef);
-        }
-      }
+
+      return meaningfulParentNode.matchAll(Xcode.F_FUNCTION_DEFINITION).stream()
+          .map(FfunctionDefinition::new)
+          .filter(x -> x.getName().equalsIgnoreCase(fctName)).findFirst();
+
     }
-    return null;
+    return Optional.empty();
   }
 
   /**
@@ -302,13 +287,8 @@ public final class Function {
     if(namedValue != null && namedValue.hasAttribute(Xattr.NAME)
         && namedValue.getAttribute(Xattr.NAME).equalsIgnoreCase("dim"))
     {
-      List<Xnode> indexRanges = fctCall.matchAll(Xcode.INDEX_RANGE);
-      int nbAssumedShape = 0;
-      for(Xnode indexRange : indexRanges) {
-        if(indexRange.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
-          ++nbAssumedShape;
-        }
-      }
+      long nbAssumedShape = fctCall.matchAll(Xcode.INDEX_RANGE).stream().
+          filter(x -> x.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)).count();
       if(nbAssumedShape <= 1) {
         namedValue.delete();
       }

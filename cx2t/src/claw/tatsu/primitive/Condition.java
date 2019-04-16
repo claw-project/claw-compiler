@@ -35,13 +35,8 @@ public final class Condition {
     if(!Xnode.isOfCode(condition, Xcode.CONDITION) || variables.isEmpty()) {
       return false;
     }
-    List<Xnode> vars = condition.matchAll(Xcode.VAR);
-    for(Xnode var : vars) {
-      if(var.isNotArrayIndex() && variables.contains(var.value())) {
-        return true;
-      }
-    }
-    return false;
+    return condition.matchAll(Xcode.VAR).stream()
+        .anyMatch(v -> v.isNotArrayIndex() && variables.contains(v.value()));
   }
 
   /**

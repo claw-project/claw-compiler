@@ -23,6 +23,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The class XnodeUtil contains only static method to help manipulating the
@@ -92,16 +93,11 @@ public class XnodeUtil {
    * @return A list if indexRanges elements.
    */
   public static List<Xnode> getIdxRangesFromArrayRef(Xnode arrayRef) {
-    List<Xnode> ranges = new ArrayList<>();
     if(!Xnode.isOfCode(arrayRef, Xcode.F_ARRAY_REF)) {
-      return ranges;
+      return Collections.emptyList();
     }
-    for(Xnode el : arrayRef.children()) {
-      if(el.is(Xcode.INDEX_RANGE)) {
-        ranges.add(el);
-      }
-    }
-    return ranges;
+    return arrayRef.children().stream()
+        .filter(x -> x.is(Xcode.INDEX_RANGE)).collect(Collectors.toList());
   }
 
   /**
@@ -406,12 +402,10 @@ public class XnodeUtil {
       return names;
     }
 
-    List<Xnode> vars = parent.matchAll(Xcode.VAR);
-    for(Xnode var : vars) {
-      if(var.isNotArrayIndex()) {
-        names.add(var.value());
-      }
-    }
+    names.addAll(parent.matchAll(Xcode.VAR).stream()
+        .filter(Xnode::isNotArrayIndex)
+        .map(Xnode::value)
+        .collect(Collectors.toList()));
     return names;
   }
 
@@ -424,17 +418,10 @@ public class XnodeUtil {
    * @return A list of all var elements found.
    */
   public static List<Xnode> findAllReferences(Xnode parent, String id) {
-    List<Xnode> vars = parent.matchAll(Xcode.VAR);
-    List<Xnode> realReferences = new ArrayList<>();
-    for(Xnode var : vars) {
-      if(!((Element) var.element().getParentNode()).getTagName().
-          equals(Xcode.ARRAY_INDEX.code())
-          && var.value().equalsIgnoreCase(id))
-      {
-        realReferences.add(var);
-      }
-    }
-    return realReferences;
+    return parent.matchAll(Xcode.VAR).stream()
+        .filter(Xnode::isNotArrayIndex)
+        .filter(x -> x.value().equalsIgnoreCase(id))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -467,10 +454,10 @@ public class XnodeUtil {
    * @return List of statement found.
    */
   public static List<Xnode> getNodes(Xnode root, List<Xcode> nodeOpcodes) {
-    List<Xnode> unsupportedStatements = new ArrayList<>();
     if(root == null) {
-      return unsupportedStatements;
+      return Collections.emptyList();
     }
+    List<Xnode> unsupportedStatements = new ArrayList<>();
     for(Xcode opcode : nodeOpcodes) {
       unsupportedStatements.addAll(root.matchAll(opcode));
     }
@@ -482,24 +469,24 @@ public class XnodeUtil {
    *
    * @param from        Node from.
    * @param to          Node to.
-   * @param nodeOpcodes List of statements to look for.
+   * @param nodeOpCodes List of statements to look for.
    * @return List of statement found.
    */
   public static List<Xnode> getNodes(Xnode from, Xnode to,
-                                     List<Xcode> nodeOpcodes)
+                                     List<Xcode> nodeOpCodes)
   {
     List<Xnode> unsupportedStatements = new ArrayList<>();
     Xnode crt = from;
     while(crt != null && crt.element() != to.element()) {
-      if(nodeOpcodes.contains(crt.opcode())) {
+      if(nodeOpCodes.contains(crt.opcode())) {
         unsupportedStatements.add(crt);
       }
       // Get all nodes matching in the subtree
-      unsupportedStatements.addAll(getNodes(crt, nodeOpcodes));
+      unsupportedStatements.addAll(getNodes(crt, nodeOpCodes));
       crt = crt.nextSibling();
     }
 
-    if(crt != null && crt.equals(to) && nodeOpcodes.contains(crt.opcode())) {
+    if(crt != null && crt.equals(to) && nodeOpCodes.contains(crt.opcode())) {
       unsupportedStatements.add(crt);
     }
     return unsupportedStatements;
@@ -686,17 +673,11 @@ public class XnodeUtil {
   }
 
   public static Set<String> getAllVariables(Xnode begin, Xnode end) {
-    Set<String> values = new HashSet<>();
-
     // Locate all declarations in the model-data block
     List<Xnode> decls = XnodeUtil.getNodes(begin, end,
         Collections.singletonList(Xcode.VAR_DECL));
 
-    // Save variables for SCA usage
-    for(Xnode varDecl : decls) {
-      Xnode name = varDecl.matchSeq(Xcode.NAME);
-      values.add(name.value());
-    }
-    return values;
+    return decls.stream().map(x -> x.matchSeq(Xcode.NAME))
+        .map(Xnode::value).collect(Collectors.toSet());
   }
 }

@@ -8,7 +8,10 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The XglobalDeclTable represents the typeTable (5.1) element in XcodeML
@@ -96,13 +99,15 @@ public class XglobalDeclTable extends Xnode {
         return (FfunctionDefinition) el;
       }
     } else {
-      for(Map.Entry<String, Xnode> entry : _table.entrySet()) {
-        if(entry.getValue() instanceof FmoduleDefinition) {
-          FmoduleDefinition mod = (FmoduleDefinition) entry.getValue();
-          FfunctionDefinition fctDef = mod.getFunctionDefinition(fctName);
-          if(fctDef != null) {
-            return fctDef;
-          }
+      List<FmoduleDefinition> mods = _table.values().stream()
+          .filter(FmoduleDefinition.class::isInstance)
+          .map(FmoduleDefinition.class::cast).collect(Collectors.toList());
+
+      for(FmoduleDefinition mod : mods) {
+        Optional<FfunctionDefinition> fctDef
+            = mod.getFunctionDefinition(fctName);
+        if(fctDef.isPresent()) {
+          return fctDef.get();
         }
       }
     }

@@ -338,12 +338,8 @@ public class FbasicType extends Xnode {
     if(!isArray()) {
       return false;
     }
-    for(Xnode dim : _dimensions) {
-      if(!dim.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
-        return false;
-      }
-    }
-    return true;
+    return _dimensions.stream()
+        .allMatch(x -> x.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE));
   }
 
   /**
