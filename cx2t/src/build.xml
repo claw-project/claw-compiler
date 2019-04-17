@@ -20,7 +20,7 @@
     <!-- Java classes -->
     <property name="build.dir" location="bin"/>
 
-    <!-- Classpath for the CX2X Translator library -->
+    <!-- Classpath for the CX2T Translator library -->
     <path id="build.path">
         <pathelement path="${st4.dep}"/>
         <pathelement path="${antlr.dep}"/>
