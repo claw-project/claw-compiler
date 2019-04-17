@@ -94,13 +94,6 @@ set(TOML_NAME "cava-toml")
 set(TOML "${CLAW_X2T_JAR_INSTALL_PATH}/${TOML_NAME}.jar")
 set(BUILD_TOML "${CMAKE_SOURCE_DIR}/cx2t/lib/${TOML_NAME}.jar")
 
-#
-# External program options
-#
-if(${Java_VERSION} VERSION_EQUAL "1.7")
-  set(JAVA_OPT "-Xmx200m -Xms200m")
-endif()
-
 set(FPP "${CMAKE_Fortran_COMPILER}")
 set(CPP_OPT "${FPPFLAGS}")
 
