@@ -338,7 +338,9 @@ if [[ ${pipe_workflow} == true ]]; then
 
       basefile_name="$(claw::get_basefile "${input_file}")"
       base_pp="$(basename "${file_pp}")"
-      sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
+      # Adapt filename in XcodeML/F to report correctly errors and warnings
+      sed -i.bak "s:${base_pp}:${basefile_name}:g" "${file_pp}"
+      sed -i.bak "s:${temp_dir}/::g" "${file_pp}"
 
       if [[ "${file_out_f}" != "" ]]; then
         # shellcheck disable=SC2086,SC2068
@@ -409,7 +411,9 @@ for input_file in "${f_files_transformation[@]}"; do
 
   basefile_name="$(claw::get_basefile "${input_file}")"
   base_pp="$(basename "${file_pp}")"
-  sed -i.bak "s/${base_pp}/${basefile_name}/g" "${file_pp}"
+  # Adapt filename in XcodeML/F to report correctly errors and warnings
+  sed -i.bak "s:${base_pp}:${basefile_name}:g" "${file_pp}"
+  sed -i.bak "s:${temp_dir}/::g" "${file_pp}"
 
   # Debug output
   [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Front-end"
