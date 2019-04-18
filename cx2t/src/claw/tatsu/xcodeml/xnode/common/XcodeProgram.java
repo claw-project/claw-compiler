@@ -81,7 +81,7 @@ public class XcodeProgram extends XcodeML {
   public static XcodeProgram createFromDocument(Document doc) {
     if(doc == null) {
       XcodeProgram program = new XcodeProgram();
-      program.addError("Unable to read document");
+      program.addError("Unable to input XcodeML/F");
       return program;
     }
     XcodeProgram program = new XcodeProgram(doc);
