@@ -208,8 +208,10 @@ for input_file in "${f_files[@]}"; do
       claw::warning "${input_file}" "-" "-" "file does not contains \$claw. Skip..."
       if [[ "${output_dir}" != "" ]]; then
         cp "${input_file}" "${output_dir}"/"${input_file}"
-      else
+      elif [[ "${output_file}" != "" ]]; then
         cp "${input_file}" "${output_file}"
+      else
+        cat "${input_file}"
       fi
     else
       f_files_transformation+=("${input_file}")
