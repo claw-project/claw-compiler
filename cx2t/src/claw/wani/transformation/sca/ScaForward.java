@@ -571,11 +571,6 @@ public class ScaForward extends ClawTransformation {
       fctCallAncestor = _fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
     }
 
-    if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
-      Directive.generateParallelRegion(xcodeml, fctCallAncestor,
-          fctCallAncestor);
-    }
-
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
       List<String> creates = XnodeUtil.gatherArguments(xcodeml, _fctCall,
           _fctType, _mod, Intent.INOUT, true);
@@ -591,16 +586,21 @@ public class ScaForward extends ClawTransformation {
           creates, fctCallAncestor, fctCallAncestor);
     }
 
+    Xnode preHook = fctCallAncestor;
+    Xnode postHook = fctCallAncestor;
+
     if(_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)) {
+      // Generate update from HOST TO DEVICE
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
           _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
       {
         List<String> out = XnodeUtil.gatherArguments(xcodeml, _fctCall,
             _fctType, _mod, Intent.IN, true);
-        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+        preHook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.HOST_TO_DEVICE);
       }
 
+      // Generate update from DEVICE to HOST
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
           || _claw.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
       {
@@ -614,8 +614,12 @@ public class ScaForward extends ClawTransformation {
           }
         }
 
-        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+        postHook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.DEVICE_TO_HOST);
+      }
+
+      if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
+        Directive.generateParallelRegion(xcodeml, preHook, postHook);
       }
     }
   }
