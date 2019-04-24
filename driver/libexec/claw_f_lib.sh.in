@@ -694,7 +694,7 @@ function claw::process_dependencies() {
       # with regular expression
       for directory in "${module_search_path[@]}"; do
         for ext in "${fortran_ext[@]}"; do
-          found_file=("$(grep -s -l -i "^ *MODULE *${module_name}" \
+          found_file=("$(grep -s -l -i "^ *MODULE *${module_name}[[:blank:]]*\$" \
             "${directory}"/*"${ext}" | grep -v ".*\\.claw\\..*")")
           if [[ ${#found_file[@]} -gt 1 ]]; then
             break
@@ -725,7 +725,7 @@ function claw::process_dependencies() {
         [[ "${module_name}" != "ieee_exceptions" ]] &&
         [[ "${module_name}" != "ieee_arithmetic" ]]; then
         claw::warning "$2" "-" "-" \
-          "only module file found for ${module_name}. Might be out-of-date..."
+          "only module file found for ${module_name} with dependency ${dep}. Might be out-of-date..."
       fi
       continue
     elif [[ ${source_mod_file_found} == true ]] &&
