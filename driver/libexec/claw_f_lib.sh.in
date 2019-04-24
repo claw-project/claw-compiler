@@ -694,7 +694,7 @@ function claw::process_dependencies() {
       # with regular expression
       for directory in "${module_search_path[@]}"; do
         for ext in "${fortran_ext[@]}"; do
-          found_file=("$(grep -s -l -i "^ *MODULE *${module_name}" \
+          found_file=("$(grep -s -l -i "^ *MODULE *${module_name}[[:blank:]]*\$" \
             "${directory}"/*"${ext}" | grep -v ".*\\.claw\\..*")")
           if [[ ${#found_file[@]} -gt 1 ]]; then
             break
