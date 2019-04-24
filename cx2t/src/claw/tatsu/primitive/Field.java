@@ -422,7 +422,9 @@ public final class Field {
           XnodeUtil.getAllVarReferences(parent, promotionInfo.getIdentifier());
       for(Xnode ref : refs) {
 
-        if(Function.isArgOfFunction(ref, Xintrinsic.PRESENT)) {
+        if(Function.isArgOfFunction(ref, Xintrinsic.PRESENT)
+            || ref.getBooleanAttribute(Xattr.IS_LOCKED))
+        {
           continue;
         }
 
@@ -444,7 +446,9 @@ public final class Field {
       List<Xnode> refs = XnodeUtil.getAllArrayReferences(parent,
           promotionInfo.getIdentifier());
       for(Xnode ref : refs) {
-        if(ref.matchAncestor(Xcode.F_ALLOCATE_STATEMENT) != null) {
+        if(ref.matchAncestor(Xcode.F_ALLOCATE_STATEMENT) != null
+            || ref.getBooleanAttribute(Xattr.IS_LOCKED))
+        {
           continue;
         }
         int beforePositionIndex = 0; // First arrayIndex after varRef at pos 0
