@@ -156,6 +156,7 @@ public class ClawTranslator implements Translator {
       throws IllegalTransformationException
   {
     if(analyzedPragma.hasClause(ClawClause.FORWARD)) {
+      addTransformation(xcodeml, new ScaForwardPrePass(analyzedPragma));
       addTransformation(xcodeml, new ScaForward(analyzedPragma));
     } else if(analyzedPragma.hasClause(ClawClause.ROUTINE)) {
       addTransformation(xcodeml, new ScaRoutine(analyzedPragma));
