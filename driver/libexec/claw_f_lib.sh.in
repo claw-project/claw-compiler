@@ -725,7 +725,7 @@ function claw::process_dependencies() {
         [[ "${module_name}" != "ieee_exceptions" ]] &&
         [[ "${module_name}" != "ieee_arithmetic" ]]; then
         claw::warning "$2" "-" "-" \
-          "only module file found for ${module_name} with dependency ${dep}. Might be out-of-date..."
+          "only module file found for ${module_name}. Might be out-of-date..."
       fi
       continue
     elif [[ ${source_mod_file_found} == true ]] &&
