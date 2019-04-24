@@ -7,10 +7,12 @@ package claw.wani.transformation.sca;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
+import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.wani.language.ClawClause;
 import claw.wani.language.ClawPragma;
 
 import java.util.List;
@@ -37,8 +39,9 @@ public class ScaForwardPrePass extends ScaForward {
   public void transform(XcodeProgram xcodeml, Translator translator,
                         Transformation other)
   {
-    if(_fctType.isElemental()) {
+    if(_fctType.isElemental() && !_claw.hasClause(ClawClause.ROUTINE)) {
       lockFctCallArguments(_fCall);
+      lockFctCallReturn(_fCall);
     }
   }
 
@@ -54,6 +57,22 @@ public class ScaForwardPrePass extends ScaForward {
         .collect(Collectors.toList());
     for(Xnode node : nodes) {
       node.setBooleanAttribute(Xattr.IS_LOCKED, true);
+    }
+  }
+
+  /**
+   * Lock the return node of the function call.
+   *
+   * @param fctCall Function call node.
+   */
+  private void lockFctCallReturn(FunctionCall fctCall) {
+    if(_fctType.isFunction()) {
+      Xnode fctCallAncestor = fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
+      if(fctCallAncestor == null) {
+        return;
+      }
+
+      fctCallAncestor.firstChild().setBooleanAttribute(Xattr.IS_LOCKED, true);
     }
   }
 
