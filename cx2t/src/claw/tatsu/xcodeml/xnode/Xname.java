@@ -88,6 +88,8 @@ public final class Xname {
   public static final String ATTR_IS_INSERTED = "is_inserted";
   public static final String ATTR_PROMOTION_INFO = "promotion_info";
   public static final String ATTR_IS_FORCE_ASSUMED = "is_force_assumed";
+  public static final String ATTR_IS_LOCKED = "is_locked";
+  public static final String ATTR_WAS_ELEMENTAL = "was_elemental";
   // Element names
   public static final String ALLOC = "alloc";
   public static final String ALLOC_OPT = "allocOpt";
