@@ -5,6 +5,7 @@
 package claw.tatsu.primitive;
 
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.xnode.common.*;
@@ -188,9 +189,10 @@ public final class Function {
       return Optional.empty();
     }
 
-    String fctName = getFctNameFromFctCall(fctCall);
+    FunctionCall fCall = new FunctionCall(fctCall);
     FfunctionDefinition calledFctDef =
-        xcodeml.getGlobalDeclarationsTable().getFunctionDefinition(fctName);
+        xcodeml.getGlobalDeclarationsTable()
+            .getFunctionDefinition(fCall.getFctName());
     if(calledFctDef == null) {
       Xnode meaningfulParentNode = fctDef.findParentModule();
       if(meaningfulParentNode == null) { // fct is not a module child
@@ -199,78 +201,11 @@ public final class Function {
 
       return meaningfulParentNode.matchAll(Xcode.F_FUNCTION_DEFINITION).stream()
           .map(FfunctionDefinition::new)
-          .filter(x -> x.getName().equalsIgnoreCase(fctName)).findFirst();
+          .filter(x -> x.getName()
+              .equalsIgnoreCase(fCall.getFctName())).findFirst();
 
     }
     return Optional.empty();
-  }
-
-  /**
-   * Extract the name of the function in a function call.
-   *
-   * @param fctCall Function call node.
-   * @return Function name if can be extracted. Null otherwise.
-   */
-  public static String getFctNameFromFctCall(Xnode fctCall) {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return null;
-    }
-    if(Xnode.isOfCode(fctCall.firstChild(), Xcode.F_MEMBER_REF)) {
-      return fctCall.firstChild().getAttribute(Xattr.MEMBER);
-    } else {
-      return fctCall.matchSeq(Xcode.NAME).value();
-    }
-  }
-
-  /**
-   * Get the number of arguments in a function call.
-   *
-   * @param fctCall Function call to check.
-   * @return Number of arguments in the function call. -1 if not a function
-   * call.
-   */
-  public static int getNbOfArgsFromFctCall(Xnode fctCall) {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return -1;
-    }
-    Xnode arguments = fctCall.matchDescendant(Xcode.ARGUMENTS);
-    return arguments != null ? arguments.children().size() : 0;
-  }
-
-  /**
-   * Check whether the function call is calling a type bound procedure.
-   *
-   * @param fctCall Function call node.
-   * @return True if the function call is a type bound procedure call. False
-   * otherwise.
-   */
-  public static boolean isCallToTypeBoundProcedure(Xnode fctCall) {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return false;
-    }
-    return Xnode.isOfCode(fctCall.firstChild(), Xcode.F_MEMBER_REF);
-  }
-
-  /**
-   * Check if the given function call is an intrinsic call of the given type.
-   *
-   * @param fctCall   Function call node.
-   * @param intrinsic Intrinsic to be checked for.
-   * @return True if the function call is an intrinsic call of the given
-   * intrinsic. False otherwise.
-   */
-  public static boolean isIntrinsicCall(Xnode fctCall, Xintrinsic intrinsic) {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return false;
-    }
-
-    if(!fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)) {
-      return false;
-    }
-
-    String functionName = getFctNameFromFctCall(fctCall);
-    return functionName != null
-        && functionName.equalsIgnoreCase(intrinsic.toString());
   }
 
   /**
@@ -279,8 +214,8 @@ public final class Function {
    *
    * @param fctCall Function call node.
    */
-  public static void adaptIntrinsicSumCall(Xnode fctCall) {
-    if(!isIntrinsicCall(fctCall, Xintrinsic.SUM)) {
+  public static void adaptIntrinsicSumCall(FunctionCall fctCall) {
+    if(!fctCall.isIntrinsicCall(Xintrinsic.SUM)) {
       return;
     }
     Xnode namedValue = fctCall.matchDescendant(Xcode.NAMED_VALUE);

@@ -12,6 +12,7 @@ import claw.tatsu.directive.generator.DirectiveGenerator;
 
 import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Pragma;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
@@ -300,13 +301,13 @@ public final class Directive {
     }
 
     // Find all fct call in the current transformed fct
-    List<Xnode> fctCalls = fctDef.matchAll(Xcode.FUNCTION_CALL).stream()
+    List<FunctionCall> fctCalls = fctDef.matchAll(Xcode.FUNCTION_CALL).stream()
         .filter(f -> !f.getBooleanAttribute(Xattr.IS_INTRINSIC))
+        .map(FunctionCall::new)
         .collect(Collectors.toList());
-    for(Xnode fctCall : fctCalls) {
-      String fctName = Function.getFctNameFromFctCall(fctCall);
+    for(FunctionCall fctCall : fctCalls) {
       // Do nothing for intrinsic fct or null fctName
-      if(fctName == null) {
+      if(fctCall.getFctName() == null) {
         continue;
       }
 
@@ -319,11 +320,11 @@ public final class Directive {
         addPragmasBefore(xcodeml, dirGen.getRoutineDirective(true),
             calledFctDef.get().body().child(0));
         Message.debug(dirGen.getPrefix()
-            + "generated routine seq directive for " + fctName
+            + "generated routine seq directive for " + fctCall.getFctName()
             + " subroutine/function.");
       } else {
         // Could not generate directive for called function.
-        xcodeml.addWarning(fctName + " has not been found. " +
+        xcodeml.addWarning(fctCall.getFctName() + " has not been found. " +
                 "Automatic routine directive generation could not be done.",
             fctCall.lineNo());
       }

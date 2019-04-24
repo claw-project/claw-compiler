@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
@@ -193,6 +194,16 @@ public class XtypeTable extends Xnode {
    * @return FfunctionType if associated. Null otherwise.
    */
   public FfunctionType getFunctionType(Xnode node) {
+    return getFunctionType(node.getType());
+  }
+
+  /**
+   * Get the FfunctionType associated with the node if any.
+   *
+   * @param node Node to look for type.
+   * @return FfunctionType if associated. Null otherwise.
+   */
+  public FfunctionType getFunctionType(FunctionCall node) {
     return getFunctionType(node.getType());
   }
 
