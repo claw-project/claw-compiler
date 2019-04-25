@@ -50,14 +50,13 @@ public enum CompilerDirective {
       return NONE;
     }
     switch(value.toLowerCase()) {
-      case TatsuConstant.DIRECTIVE_NONE:
-        return NONE;
       case OpenAcc.OPENACC_NAME:
       case OpenAcc.OPENACC_PREFIX:
         return OPENACC;
       case OpenMp.OPENMP_NAME:
       case OpenMp.OPENMP_PREFIX:
         return OPENMP;
+      case TatsuConstant.DIRECTIVE_NONE:
       default:
         return NONE;
     }

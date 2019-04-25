@@ -466,9 +466,8 @@ public class ScaCPUvectorizeGroup extends Sca {
    */
   private boolean shouldBePromoted(AssignStatement assign) {
     return (assign.getRhs() != null)
-        && !XnodeUtil.findAllReferences(assign.getRhs()).stream().
-        filter(_arrayFieldsInOut::contains).collect(Collectors.toList()).
-        isEmpty();
+        && XnodeUtil.findAllReferences(assign.getRhs()).stream().
+        anyMatch(_arrayFieldsInOut::contains);
   }
 
 }
