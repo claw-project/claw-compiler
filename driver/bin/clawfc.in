@@ -57,6 +57,9 @@ keep_comment=false
 add_paren=false
 omni_ffront_debug=false
 
+### Warning switches
+warn_dep_solver=false
+
 ### Set options ###
 # e.g.) clawfc -I/usr/lib myfile.f90
 #
@@ -205,7 +208,7 @@ for input_file in "${f_files[@]}"; do
     if [[ "${num_directives}" == "0" ]] &&
       [[ "${num_omp_compile_guard}" == "0" ]] &&
       [[ "${num_acc_compile_guard}" == "0" ]]; then
-      claw::warning "${input_file}" "-" "-" "file does not contains \$claw. Skip..."
+      claw::warning "${warn_dep_solver}" "${input_file}" "-" "-" "file does not contains \$claw. Skip..."
       if [[ "${output_dir}" != "" ]]; then
         cp "${input_file}" "${output_dir}"/"${input_file}"
       elif [[ "${output_file}" != "" ]]; then
