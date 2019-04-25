@@ -101,61 +101,25 @@ public class XnodeUtil {
   }
 
   /**
-   * <pre>
-   * Intersect two sets of elements in XPath 1.0
+   * Find all array assignment statement from a node until the to node.
    *
-   * This method use Xpath to select the correct nodes. Xpath 1.0 does not have
-   * the intersect operator but only union. By using the Kaysian Method, we can
-   * it is possible to express the intersection of two node sets.
-   *
-   *       $set1[count(.|$set2)=count($set2)]
-   *
-   * </pre>
-   *
-   * @param s1 First set of element.
-   * @param s2 Second set of element.
-   * @return Xpath query that performs the intersect operator between s1 and s2.
-   */
-  private static String xPathIntersect(String s1, String s2) {
-    return String.format("%s[count(.|%s)=count(%s)]", s1, s2, s2);
-  }
-
-  /**
-   * <pre>
-   * Find all assignment statement from a node until the end pragma.
-   *
-   * We intersect all assign statements which are next siblings of
-   * the "from" element with all the assign statements which are previous
-   * siblings of the ending pragma.
-   * </pre>
-   *
-   * @param from      The element from which the search is initiated.
-   * @param endPragma Value of the end pragma. Search will be performed until
-   *                  there.
+   * @param from Node from which the search is initiated.
+   * @param to   Node until the search is done.
    * @return A list of all assign statements found. List is empty if no
    * statements are found.
    */
-  public static List<Xnode> getArrayAssignInBlock(Xnode from, String endPragma)
-  {
-    /* Define all the assign element with array refs which are next siblings of
-     * the "from" element */
-    String s1 = String.format(
-        "following-sibling::%s[%s]",
-        Xname.F_ASSIGN_STATEMENT,
-        Xname.F_ARRAY_REF
-    );
-    /* Define all the assign element with array refs which are previous siblings
-     * of the end pragma element */
-    String s2 = String.format(
-        "following-sibling::%s[text()=\"%s\"]/preceding-sibling::%s[%s]",
-        Xname.F_PRAGMA_STMT,
-        endPragma,
-        Xname.F_ASSIGN_STATEMENT,
-        Xname.F_ARRAY_REF
-    );
-    // Use the Kaysian method to express the intersect operator
-    String intersect = XnodeUtil.xPathIntersect(s1, s2);
-    return getFromXpath(from, intersect);
+  public static List<Xnode> getArrayAssignInBlock(Xnode from, Xnode to) {
+    List<Xnode> assignments = new ArrayList<>();
+    Xnode crt = from.nextSibling();
+    while(crt != null && !crt.equals(to)) {
+      if(crt.is(Xcode.F_ASSIGN_STATEMENT) && crt.firstChild() != null
+          && crt.firstChild().is(Xcode.F_ARRAY_REF))
+      {
+        assignments.add(crt);
+      }
+      crt = crt.nextSibling();
+    }
+    return assignments;
   }
 
   /**

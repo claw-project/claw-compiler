@@ -66,10 +66,8 @@ public class ExpandNotation extends ClawBlockTransformation {
       // TODO Analyse dependency between assignments. cf array9 example.
 
       // Find assignments with vector notation
-      List<Xnode> foundAssignments =
-          XnodeUtil.getArrayAssignInBlock(_clawStart.getPragma(),
-              _clawEnd.getPragma().value()
-          );
+      List<Xnode> foundAssignments = XnodeUtil.getArrayAssignInBlock(
+          _clawStart.getPragma(), _clawEnd.getPragma());
 
       if(foundAssignments.isEmpty()) {
         xcodeml.addError(
