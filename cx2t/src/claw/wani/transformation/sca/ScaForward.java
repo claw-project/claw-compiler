@@ -375,7 +375,9 @@ public class ScaForward extends ClawTransformation {
 
     FfunctionType parentFctType = xcodeml.getTypeTable().getFunctionType(fDef);
 
-    if(_fctType.isElemental()) {
+    if(_fctType.isElemental()
+        || _fctType.getBooleanAttribute(Xattr.WAS_ELEMENTAL))
+    {
       _flatten = true;
     }
 
