@@ -361,6 +361,23 @@ public class XnodeTest {
     assertNotEquals(node, null);
   }
 
+  @Test
+  public void isConstantTest() {
+    XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
+    Xnode n1 = xcodeml.createNode(Xcode.F_BASIC_TYPE);
+    Xnode n2 = xcodeml.createNode(Xcode.F_REAL_CONSTANT);
+    Xnode n3 = xcodeml.createNode(Xcode.F_INT_CONSTANT);
+    Xnode n4 = xcodeml.createNode(Xcode.F_COMPLEX_CONSTANT);
+    Xnode n5 = xcodeml.createNode(Xcode.F_LOGICAL_CONSTANT);
+    Xnode n6 = xcodeml.createNode(Xcode.F_CHARACTER_CONSTANT);
+    assertFalse(n1.isConstant());
+    assertTrue(n2.isConstant());
+    assertTrue(n3.isConstant());
+    assertTrue(n4.isConstant());
+    assertTrue(n5.isConstant());
+    assertTrue(n6.isConstant());
+  }
+
 
 
 }
