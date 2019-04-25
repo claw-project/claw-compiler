@@ -779,4 +779,12 @@ public class ClawPragma extends AnalyzedPragma {
   public List<String> getErrors() {
     return _errors;
   }
+
+  @Override
+  public String toString() {
+    if(_pragma != null) {
+      return String.format("%d - %s", _pragma.lineNo(), _pragma.value());
+    }
+   return super.toString();
+  }
 }
