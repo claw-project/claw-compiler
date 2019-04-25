@@ -9,7 +9,6 @@ import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
-import java.util.List;
 import java.util.Set;
 
 /**

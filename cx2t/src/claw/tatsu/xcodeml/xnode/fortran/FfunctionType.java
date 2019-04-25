@@ -9,7 +9,6 @@ import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

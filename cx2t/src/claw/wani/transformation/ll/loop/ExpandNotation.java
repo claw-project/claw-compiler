@@ -7,7 +7,6 @@ package claw.wani.transformation.ll.loop;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.directive.common.Directive;
-import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Range;
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
