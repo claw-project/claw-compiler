@@ -108,4 +108,24 @@ public class FunctionCall extends Xnode {
     return lineNo(); // Default if not found
   }
 
+  /**
+   * Adapt a SUM() call after change in the array argument.
+   * - Remove DIM parameter if not necessary anymore.
+   */
+  public void adaptIntrinsicSumCall() {
+    if(!isIntrinsicCall(Xintrinsic.SUM)) {
+      return;
+    }
+    Xnode namedValue = matchDescendant(Xcode.NAMED_VALUE);
+    if(namedValue != null && namedValue.hasAttribute(Xattr.NAME)
+        && namedValue.getAttribute(Xattr.NAME).equalsIgnoreCase("dim"))
+    {
+      long nbAssumedShape = matchAll(Xcode.INDEX_RANGE).stream().
+          filter(x -> x.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)).count();
+      if(nbAssumedShape <= 1) {
+        namedValue.delete();
+      }
+    }
+  }
+
 }

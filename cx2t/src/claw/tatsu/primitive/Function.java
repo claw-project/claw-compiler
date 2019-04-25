@@ -247,47 +247,4 @@ public final class Function {
     return Xnode.isOfCode(fctCall.firstChild(), Xcode.F_MEMBER_REF);
   }
 
-  /**
-   * Check if the given function call is an intrinsic call of the given type.
-   *
-   * @param fctCall   Function call node.
-   * @param intrinsic Intrinsic to be checked for.
-   * @return True if the function call is an intrinsic call of the given
-   * intrinsic. False otherwise.
-   */
-  public static boolean isIntrinsicCall(Xnode fctCall, Xintrinsic intrinsic) {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return false;
-    }
-
-    if(!fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)) {
-      return false;
-    }
-
-    String functionName = getFctNameFromFctCall(fctCall);
-    return functionName != null
-        && functionName.equalsIgnoreCase(intrinsic.toString());
-  }
-
-  /**
-   * Adapt a SUM() call after change in the array argument.
-   * - Remove DIM parameter if not necessary anymore.
-   *
-   * @param fctCall Function call node.
-   */
-  public static void adaptIntrinsicSumCall(Xnode fctCall) {
-    if(!isIntrinsicCall(fctCall, Xintrinsic.SUM)) {
-      return;
-    }
-    Xnode namedValue = fctCall.matchDescendant(Xcode.NAMED_VALUE);
-    if(namedValue != null && namedValue.hasAttribute(Xattr.NAME)
-        && namedValue.getAttribute(Xattr.NAME).equalsIgnoreCase("dim"))
-    {
-      long nbAssumedShape = fctCall.matchAll(Xcode.INDEX_RANGE).stream().
-          filter(x -> x.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)).count();
-      if(nbAssumedShape <= 1) {
-        namedValue.delete();
-      }
-    }
-  }
 }

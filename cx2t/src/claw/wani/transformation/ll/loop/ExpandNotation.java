@@ -9,6 +9,7 @@ import claw.shenron.translator.Translator;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Range;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
@@ -270,12 +271,9 @@ public class ExpandNotation extends ClawBlockTransformation {
         }
       }
 
-      List<Xnode> fctCalls = stmt.matchAll(Xcode.FUNCTION_CALL);
-      for(Xnode fctCall : fctCalls) {
-        if(Function.isIntrinsicCall(fctCall, Xintrinsic.SUM)) {
-          Function.adaptIntrinsicSumCall(fctCall);
-        }
-      }
+      stmt.matchAll(Xcode.FUNCTION_CALL).stream().map(FunctionCall::new)
+          .filter(x -> x.isIntrinsicCall(Xintrinsic.SUM))
+          .forEach(FunctionCall::adaptIntrinsicSumCall);
 
       // 4. Move assignment statement inside the most inner loop
       doStmts[ranges.size() - 1].body().append(stmt, true);

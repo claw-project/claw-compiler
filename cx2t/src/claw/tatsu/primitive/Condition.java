@@ -4,6 +4,7 @@
  */
 package claw.tatsu.primitive;
 
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
@@ -51,8 +52,8 @@ public final class Condition {
       return false;
     }
     return condition.matchAll(Xcode.FUNCTION_CALL).stream()
-        .map(x -> x.matchSeq(Xcode.NAME))
-        .map(Xnode::value)
+        .map(FunctionCall::new)
+        .map(FunctionCall::getFctName)
         .anyMatch(Xname.F_INTR_ALLOCATED::equalsIgnoreCase);
   }
 
