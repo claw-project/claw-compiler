@@ -352,14 +352,17 @@ function claw::exit_without_error()
 ###################################################################
 # Display warning message
 # Arguments:
-#   $1: filename
-#   $2: line number
-#   $3: character number
-#   $3: Warning message
+#   $1: warning switch
+#   $2: filename
+#   $3: line number
+#   $4: character number
+#   $5: Warning message
 ###################################################################
 function claw::warning()
 {
-  claw::status_message "warning" "$1" "$2" "$3" "$4"
+  if [[ $1 == true ]]; then
+    claw::status_message "warning" "$2" "$3" "$4" "$5"
+  fi
 }
 
 ###################################################################

@@ -13,6 +13,7 @@ import claw.tatsu.xcodeml.xnode.fortran.*;
 import org.w3c.dom.Document;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,6 +31,16 @@ public final class Xmod {
 
   private static final String CLAW_MOD_SUFFIX = "claw";
   private static final String XMOD_FILE_EXTENSION = ".xmod";
+
+  private static final List<Xattr> SYNCABLE_ATTR = Arrays.asList(
+      Xattr.IS_ELEMENTAL,
+      Xattr.IS_PURE,
+      Xattr.IS_FORCE_ASSUMED,
+      Xattr.IS_RECURSIVE,
+      Xattr.IS_PROGRAM,
+      Xattr.IS_INTERNAL,
+      Xattr.WAS_ELEMENTAL
+  );
 
   // Avoid instantiation of this class
   private Xmod() {
@@ -222,10 +233,9 @@ public final class Xmod {
     }
 
     // Sync attribute between local fct type and module fct type.
-    for(Xattr attr : Arrays.asList(Xattr.IS_ELEMENTAL, Xattr.IS_PURE,
-        Xattr.IS_FORCE_ASSUMED, Xattr.IS_RECURSIVE, Xattr.IS_PROGRAM,
-        Xattr.IS_INTERNAL)) {
+    for(Xattr attr : SYNCABLE_ATTR) {
       fctType.syncBooleanAttribute(fctTypeMod, attr);
     }
+
   }
 }

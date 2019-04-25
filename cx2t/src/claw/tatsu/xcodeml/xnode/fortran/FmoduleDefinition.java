@@ -6,9 +6,7 @@ package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.xcodeml.xnode.common.*;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The FmoduleDefinition represents the FmoduleDefinition (5.7) element in

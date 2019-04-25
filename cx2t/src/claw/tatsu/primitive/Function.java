@@ -5,6 +5,7 @@
 package claw.tatsu.primitive;
 
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.xnode.common.*;
@@ -182,15 +183,10 @@ public final class Function {
    * @return The function definition if found. Null otherwise.
    */
   public static Optional<FfunctionDefinition> findFunctionDefinitionFromFctCall(
-      XcodeProgram xcodeml, FfunctionDefinition fctDef, Xnode fctCall)
+      XcodeProgram xcodeml, FfunctionDefinition fctDef, FunctionCall fctCall)
   {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return Optional.empty();
-    }
-
-    String fctName = getFctNameFromFctCall(fctCall);
-    FfunctionDefinition calledFctDef =
-        xcodeml.getGlobalDeclarationsTable().getFunctionDefinition(fctName);
+    FfunctionDefinition calledFctDef = xcodeml.getGlobalDeclarationsTable()
+        .getFunctionDefinition(fctCall.getFctName());
     if(calledFctDef == null) {
       Xnode meaningfulParentNode = fctDef.findParentModule();
       if(meaningfulParentNode == null) { // fct is not a module child
@@ -199,8 +195,8 @@ public final class Function {
 
       return meaningfulParentNode.matchAll(Xcode.F_FUNCTION_DEFINITION).stream()
           .map(FfunctionDefinition::new)
-          .filter(x -> x.getName().equalsIgnoreCase(fctName)).findFirst();
-
+          .filter(x -> x.getName().equalsIgnoreCase(fctCall.getFctName()))
+          .findFirst();
     }
     return Optional.empty();
   }
@@ -251,47 +247,4 @@ public final class Function {
     return Xnode.isOfCode(fctCall.firstChild(), Xcode.F_MEMBER_REF);
   }
 
-  /**
-   * Check if the given function call is an intrinsic call of the given type.
-   *
-   * @param fctCall   Function call node.
-   * @param intrinsic Intrinsic to be checked for.
-   * @return True if the function call is an intrinsic call of the given
-   * intrinsic. False otherwise.
-   */
-  public static boolean isIntrinsicCall(Xnode fctCall, Xintrinsic intrinsic) {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return false;
-    }
-
-    if(!fctCall.getBooleanAttribute(Xattr.IS_INTRINSIC)) {
-      return false;
-    }
-
-    String functionName = getFctNameFromFctCall(fctCall);
-    return functionName != null
-        && functionName.equalsIgnoreCase(intrinsic.toString());
-  }
-
-  /**
-   * Adapt a SUM() call after change in the array argument.
-   * - Remove DIM parameter if not necessary anymore.
-   *
-   * @param fctCall Function call node.
-   */
-  public static void adaptIntrinsicSumCall(Xnode fctCall) {
-    if(!isIntrinsicCall(fctCall, Xintrinsic.SUM)) {
-      return;
-    }
-    Xnode namedValue = fctCall.matchDescendant(Xcode.NAMED_VALUE);
-    if(namedValue != null && namedValue.hasAttribute(Xattr.NAME)
-        && namedValue.getAttribute(Xattr.NAME).equalsIgnoreCase("dim"))
-    {
-      long nbAssumedShape = fctCall.matchAll(Xcode.INDEX_RANGE).stream().
-          filter(x -> x.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)).count();
-      if(nbAssumedShape <= 1) {
-        namedValue.delete();
-      }
-    }
-  }
 }

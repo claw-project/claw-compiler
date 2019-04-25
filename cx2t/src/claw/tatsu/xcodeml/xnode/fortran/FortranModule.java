@@ -6,6 +6,7 @@ package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Xmod;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.common.*;
 import org.w3c.dom.Document;
 
@@ -150,16 +151,15 @@ public class FortranModule extends XcodeML {
    * @param fctCall Function call node.
    * @return Function type if found. Null otherwise.
    */
-  public FfunctionType findFunctionTypeFromCall(Xnode fctCall) {
-    String fctName = Function.getFctNameFromFctCall(fctCall);
-    if(fctName == null) {
+  public FfunctionType findFunctionTypeFromCall(FunctionCall fctCall) {
+    if(fctCall.getFctName() == null) {
       return null;
     }
-    FfunctionType fctType = findFunctionType(fctName);
+    FfunctionType fctType = findFunctionType(fctCall.getFctName());
 
     // Make sure it is not the generic function type for the interface
     if(fctType != null && fctType.getParameters().isEmpty()
-        && isInterfaceDeclaration(fctName))
+        && isInterfaceDeclaration(fctCall.getFctName()))
     {
       fctType = findFunctionTypeMatchingFctCall(fctCall);
     }

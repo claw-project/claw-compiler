@@ -112,26 +112,20 @@ public class ClawTranslator implements Translator {
       case LOOP_EXTRACT:
         addTransformation(xcodeml, new LoopExtraction(analyzedPragma));
         break;
-      case LOOP_HOIST:
-        handleBlockDirective(xcodeml, analyzedPragma);
-        break;
-      case EXPAND:
-        handleBlockDirective(xcodeml, analyzedPragma);
-        break;
-      case REMOVE:
-        handleBlockDirective(xcodeml, analyzedPragma);
-        break;
-      case SCA:
-        addScaTransformation(xcodeml, analyzedPragma);
-        break;
-      case MODEL_DATA:
-        handleBlockDirective(xcodeml, analyzedPragma);
-        break;
       case PRIMITIVE:
         addTransformation(xcodeml, new DirectivePrimitive(analyzedPragma));
         break;
       case IF_EXTRACT:
         addTransformation(xcodeml, new IfExtract(analyzedPragma));
+        break;
+      case SCA:
+        addScaTransformation(xcodeml, analyzedPragma);
+        break;
+      case LOOP_HOIST:
+      case EXPAND:
+      case REMOVE:
+      case MODEL_DATA:
+        handleBlockDirective(xcodeml, analyzedPragma);
         break;
       // driver handled directives
       case IGNORE:

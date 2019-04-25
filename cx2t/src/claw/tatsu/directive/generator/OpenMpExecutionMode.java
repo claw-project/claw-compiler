@@ -38,7 +38,6 @@ public enum OpenMpExecutionMode {
       case TatsuConstant.OPENMP_EXEC_MODE_TEAMS_DISTRIBUTE_PARALLEL_DO_SIMD:
         return TEAMS_DISTRIBUTE_PARALLEL_DO_SIMD;
       case TatsuConstant.OPENMP_EXEC_MODE_NONE:
-        return NONE;
       default:
         return NONE;
     }
@@ -51,8 +50,6 @@ public enum OpenMpExecutionMode {
    */
   public String getFormattedExecutionMode() {
     switch(this) {
-      case NONE:
-        return "";
       case TEAMS_DISTRIBUTE:
         return "teams distribute";
       case TEAMS_DISTRIBUTE_SIMD:
@@ -61,6 +58,7 @@ public enum OpenMpExecutionMode {
         return "teams distribute parallel do";
       case TEAMS_DISTRIBUTE_PARALLEL_DO_SIMD:
         return "teams distribute parallel do simd";
+      case NONE:
       default:
         return "";
     }

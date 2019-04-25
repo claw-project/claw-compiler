@@ -340,10 +340,9 @@ public class Sca extends ClawTransformation {
                                   Xattr attribute)
   {
     if(fctType.hasAttribute(attribute)) {
-      xcodeml.addWarning(String.format(
+      Message.debug(String.format(
           "%s attribute %s removed from function/subroutine %s",
-          SCA_DEBUG_PREFIX, attribute.toStringForMsg(), _fctDef.getName()),
-          _claw.getPragma());
+          SCA_DEBUG_PREFIX, attribute.toStringForMsg(), _fctDef.getName()));
       fctType.removeAttribute(attribute);
     }
   }

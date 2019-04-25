@@ -34,7 +34,6 @@ public enum AcceleratorDataStrategy {
       case DATA_STRATEGY_PRESENT:
         return PRESENT;
       case DATA_STRATEGY_NONE:
-        return NONE;
       default:
         return NONE;
     }

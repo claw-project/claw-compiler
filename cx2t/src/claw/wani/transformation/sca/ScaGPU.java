@@ -280,6 +280,8 @@ public class ScaGPU extends Sca {
      * another translation unit. */
     if(_fctType.isElemental()) {
 
+      _fctType.setBooleanAttribute(Xattr.WAS_ELEMENTAL, true);
+
       if(_fctType.isFunction() && !_fctType.hasAttribute(Xattr.RESULT_NAME)) {
         _arrayFieldsInOut.add(_fctDef.getName());
       }

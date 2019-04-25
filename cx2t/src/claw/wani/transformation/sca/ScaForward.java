@@ -13,10 +13,7 @@ import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.*;
-import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
-import claw.tatsu.xcodeml.abstraction.InsertionPosition;
-import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
-import claw.tatsu.xcodeml.abstraction.PromotionInfo;
+import claw.tatsu.xcodeml.abstraction.*;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
@@ -45,7 +42,7 @@ public class ScaForward extends ClawTransformation {
   private final Set<String> _promotedVar; // Promoted array from the call
   private final Map<String, PromotionInfo> _promotions; // Info about promotion
   private final Map<String, String> _fctCallMapping; // NamedValue mapping
-  private Xnode _fctCall;
+  private FunctionCall _fCall;
   private FfunctionType _fctType;
   private FortranModule _mod = null;
   private boolean _localFct = false;
@@ -82,8 +79,9 @@ public class ScaForward extends ClawTransformation {
         || Xnode.isOfCode(next, Xcode.F_ASSIGN_STATEMENT))
     {
       _isNestedInAssignment = Xnode.isOfCode(next, Xcode.F_ASSIGN_STATEMENT);
-      _fctCall = next.matchSeq(Xcode.FUNCTION_CALL);
-      if(_fctCall != null) {
+      Xnode fctCallNode = next.matchSeq(Xcode.FUNCTION_CALL);
+      if(fctCallNode != null) {
+        _fCall = new FunctionCall(fctCallNode);
         return analyzeForward(xcodeml);
       }
     } else if(Xnode.isOfCode(next, Xcode.F_DO_STATEMENT)) {
@@ -140,8 +138,9 @@ public class ScaForward extends ClawTransformation {
         } else if(n.is(Xcode.EXPR_STATEMENT)
             || n.is(Xcode.F_ASSIGN_STATEMENT))
         {
-          _fctCall = n.matchSeq(Xcode.FUNCTION_CALL);
-          if(_fctCall != null) {
+          Xnode fctCallNode = n.matchSeq(Xcode.FUNCTION_CALL);
+          if(fctCallNode != null) {
+            _fCall = new FunctionCall(fctCallNode);
             return analyzeForward(xcodeml);
           }
         }
@@ -159,15 +158,15 @@ public class ScaForward extends ClawTransformation {
    * @return True if the analysis succeed. False otherwise.
    */
   private boolean analyzeForward(XcodeProgram xcodeml) {
-    if(_fctCall == null) {
+    if(_fCall == null) {
       xcodeml.addError("Directive is not followed by a fct call.",
           _claw.getPragma());
       return false;
     }
 
-    detectParameterMapping(_fctCall);
+    detectParameterMapping(_fCall);
 
-    _calledFctName = Function.getFctNameFromFctCall(_fctCall);
+    _calledFctName = _fCall.getFctName();
 
     FfunctionDefinition fctDef = xcodeml.getGlobalDeclarationsTable().
         getFunctionDefinition(_calledFctName);
@@ -180,7 +179,7 @@ public class ScaForward extends ClawTransformation {
 
     FmoduleDefinition parentModule = parentFctDef.findParentModule();
 
-    if(Function.isCallToTypeBoundProcedure(_fctCall)) {
+    if(_fCall.isTbpCall()) {
       /* If type is a FbasicType element for a type-bound procedure, we have to
        * matchSeq the correct function in the typeTable.
        * TODO if there is a rename.
@@ -198,8 +197,8 @@ public class ScaForward extends ClawTransformation {
         _fctType = xcodeml.getTypeTable().getFunctionType(id);
       }
     } else {
-      if(xcodeml.getTypeTable().isFunctionType(_fctCall)) {
-        _fctType = xcodeml.getTypeTable().getFunctionType(_fctCall);
+      if(xcodeml.getTypeTable().isFunctionType(_fCall)) {
+        _fctType = xcodeml.getTypeTable().getFunctionType(_fCall);
       } else {
         xcodeml.
             addError("Unsupported type of XcodeML/F element for the function "
@@ -283,11 +282,11 @@ public class ScaForward extends ClawTransformation {
    *
    * @param fctCall Function call to be analyzed.
    */
-  private void detectParameterMapping(Xnode fctCall) {
+  private void detectParameterMapping(FunctionCall fctCall) {
     if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
       return;
     }
-    for(Xnode arg : _fctCall.matchSeq(Xcode.ARGUMENTS).children()) {
+    for(Xnode arg : fctCall.arguments()) {
       if(arg.is(Xcode.NAMED_VALUE)) {
         String originalName = arg.getAttribute(Xattr.NAME);
         Xnode targetVar = arg.matchDescendant(Xcode.VAR);
@@ -316,7 +315,7 @@ public class ScaForward extends ClawTransformation {
       if(_mod != null) {
         Message.debug("Reading CLAW module file: " + _mod.getFullPath());
         if(_mod.getIdentifiers().contains(_calledFctName)) {
-          _fctType = _mod.findFunctionTypeFromCall(_fctCall);
+          _fctType = _mod.findFunctionTypeFromCall(_fCall);
           if(_fctType != null) {
             return true;
           }
@@ -376,7 +375,9 @@ public class ScaForward extends ClawTransformation {
 
     FfunctionType parentFctType = xcodeml.getTypeTable().getFunctionType(fDef);
 
-    if(_fctType.isElemental()) {
+    if(_fctType.isElemental()
+        || _fctType.getBooleanAttribute(Xattr.WAS_ELEMENTAL))
+    {
       _flatten = true;
     }
 
@@ -392,7 +393,7 @@ public class ScaForward extends ClawTransformation {
      */
     int argOffset = 0;
     if(!params.isEmpty() && FortranType.STRUCT.isOfType(params.get(0).getType())
-        && Xnode.isOfCode(_fctCall.firstChild(), Xcode.F_MEMBER_REF))
+        && _fCall.isTbpCall())
     {
       argOffset = 1;
     }
@@ -442,19 +443,17 @@ public class ScaForward extends ClawTransformation {
       // Add variable in the function call before the optional parameters
       Xnode arg = xcodeml.createNamedValue(varId);
       arg.append(xcodeml.createVar(type, varId, Xscope.LOCAL));
-      Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
-      Xnode hook = arguments.child((i - 1) - argOffset);
+      Xnode hook = _fCall.arguments().get((i - 1) - argOffset);
       if(hook != null) {
         hook.insertAfter(arg);
       } else {
-        arguments.append(arg);
+        _fCall.addArguments(arg);
       }
     }
 
     // In flatten mode, arguments are demoted if needed.
     if(_flatten) {
-      Xnode arguments = _fctCall.matchSeq(Xcode.ARGUMENTS);
-      for(Xnode arg : arguments.children()) {
+      for(Xnode arg : _fCall.arguments()) {
         if(arg.is(Xcode.F_ARRAY_REF) && arg.matchDirectDescendant(
             Arrays.asList(Xcode.INDEX_RANGE, Xcode.ARRAY_INDEX)) != null)
         {
@@ -549,7 +548,7 @@ public class ScaForward extends ClawTransformation {
           Xmod.updateSignature(modDef.getName(), xcodeml, fDef, parentFctType,
               false);
         }
-      } else if(_fctCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATA_REF)) {
+      } else if(_fCall.matchSeq(Xcode.NAME).hasAttribute(Xattr.DATA_REF)) {
         /* The function/subroutine is private but accessible through the type
          * as a type-bound procedure. In this case, the function is not in the
          * type table of the .xmod file. We need to insert it first and then
@@ -566,17 +565,17 @@ public class ScaForward extends ClawTransformation {
 
     propagatePromotion(xcodeml, (ClawTranslator) translator);
 
-    Xnode fctCallAncestor = _fctCall.matchAncestor(Xcode.EXPR_STATEMENT);
+    Xnode fctCallAncestor = _fCall.matchAncestor(Xcode.EXPR_STATEMENT);
     if(fctCallAncestor == null) {
-      fctCallAncestor = _fctCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
+      fctCallAncestor = _fCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
     }
 
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
-      List<String> creates = XnodeUtil.gatherArguments(xcodeml, _fctCall,
+      List<String> creates = XnodeUtil.gatherArguments(xcodeml, _fCall,
           _fctType, _mod, Intent.INOUT, true);
 
       if(_fctType.isFunction()) {
-        String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fctCall);
+        String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fCall);
         if(returnValue != null) {
           creates.add(returnValue);
         }
@@ -586,17 +585,14 @@ public class ScaForward extends ClawTransformation {
           creates, fctCallAncestor, fctCallAncestor);
     }
 
-    Xnode preHook = fctCallAncestor;
-    Xnode postHook = fctCallAncestor;
-
     if(_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)) {
       // Generate update from HOST TO DEVICE
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
           _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
       {
-        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fctCall,
+        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fCall,
             _fctType, _mod, Intent.IN, true);
-        preHook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.HOST_TO_DEVICE);
       }
 
@@ -604,22 +600,22 @@ public class ScaForward extends ClawTransformation {
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
           || _claw.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
       {
-        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fctCall,
+        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fCall,
             _fctType, _mod, Intent.OUT, true);
 
         if(_fctType.isFunction()) {
-          String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fctCall);
+          String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fCall);
           if(returnValue != null) {
             out.add(returnValue);
           }
         }
 
-        postHook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.DEVICE_TO_HOST);
       }
 
       if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
-        Directive.generateParallelRegion(xcodeml, preHook, postHook);
+        Directive.generateParallelRegion(xcodeml, fctCallAncestor, fctCallAncestor);
       }
     }
   }
@@ -643,7 +639,7 @@ public class ScaForward extends ClawTransformation {
       Xnode lhs = assignment.firstChild();
       // TODO handle the case when the array ref is a var directly
       Xnode varInLhs = lhs.matchDescendant(Xcode.VAR);
-      FfunctionDefinition parentFctDef = _fctCall.findParentFunction();
+      FfunctionDefinition parentFctDef = _fCall.findParentFunction();
 
       PromotionInfo promotionInfo;
       if(!_promotions.containsKey(varInLhs.value())) {
@@ -688,7 +684,7 @@ public class ScaForward extends ClawTransformation {
       throws IllegalTransformationException
   {
     // Get all the assignment statements in the function definition
-    FfunctionDefinition parentFctDef = _fctCall.findParentFunction();
+    FfunctionDefinition parentFctDef = _fCall.findParentFunction();
 
     // Retrieve information of previous forward transformation in the same fct
     List<String> previouslyPromoted =

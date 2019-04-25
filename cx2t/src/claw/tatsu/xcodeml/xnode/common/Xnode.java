@@ -786,6 +786,19 @@ public class Xnode {
   }
 
   /**
+   * Check is the current node is one of the constant node.
+   *
+   * @return True if the node is a constant node. False otherwise.
+   */
+  public boolean isConstant() {
+    return opcode() == Xcode.F_REAL_CONSTANT
+        || opcode() == Xcode.F_INT_CONSTANT
+        || opcode() == Xcode.F_COMPLEX_CONSTANT
+        || opcode() == Xcode.F_CHARACTER_CONSTANT
+        || opcode() == Xcode.F_LOGICAL_CONSTANT;
+  }
+
+  /**
    * Check whether the given node is of the given opcode.
    *
    * @param node   Node to be checked.
