@@ -583,9 +583,6 @@ public class ScaForward extends ClawTransformation {
           creates, fctCallAncestor, fctCallAncestor);
     }
 
-    Xnode preHook = fctCallAncestor;
-    Xnode postHook = fctCallAncestor;
-
     if(_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)) {
       // Generate update from HOST TO DEVICE
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
@@ -593,7 +590,7 @@ public class ScaForward extends ClawTransformation {
       {
         List<String> out = XnodeUtil.gatherArguments(xcodeml, _fCall,
             _fctType, _mod, Intent.IN, true);
-        preHook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.HOST_TO_DEVICE);
       }
 
@@ -611,12 +608,12 @@ public class ScaForward extends ClawTransformation {
           }
         }
 
-        postHook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.DEVICE_TO_HOST);
       }
 
       if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
-        Directive.generateParallelRegion(xcodeml, preHook, postHook);
+        Directive.generateParallelRegion(xcodeml, fctCallAncestor, fctCallAncestor);
       }
     }
   }
