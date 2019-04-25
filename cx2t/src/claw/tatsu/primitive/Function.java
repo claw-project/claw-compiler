@@ -5,6 +5,7 @@
 package claw.tatsu.primitive;
 
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.abstraction.InsertionPosition;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.xnode.common.*;
@@ -182,15 +183,10 @@ public final class Function {
    * @return The function definition if found. Null otherwise.
    */
   public static Optional<FfunctionDefinition> findFunctionDefinitionFromFctCall(
-      XcodeProgram xcodeml, FfunctionDefinition fctDef, Xnode fctCall)
+      XcodeProgram xcodeml, FfunctionDefinition fctDef, FunctionCall fctCall)
   {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return Optional.empty();
-    }
-
-    String fctName = getFctNameFromFctCall(fctCall);
-    FfunctionDefinition calledFctDef =
-        xcodeml.getGlobalDeclarationsTable().getFunctionDefinition(fctName);
+    FfunctionDefinition calledFctDef = xcodeml.getGlobalDeclarationsTable()
+        .getFunctionDefinition(fctCall.getFctName());
     if(calledFctDef == null) {
       Xnode meaningfulParentNode = fctDef.findParentModule();
       if(meaningfulParentNode == null) { // fct is not a module child
@@ -199,8 +195,8 @@ public final class Function {
 
       return meaningfulParentNode.matchAll(Xcode.F_FUNCTION_DEFINITION).stream()
           .map(FfunctionDefinition::new)
-          .filter(x -> x.getName().equalsIgnoreCase(fctName)).findFirst();
-
+          .filter(x -> x.getName().equalsIgnoreCase(fctCall.getFctName()))
+          .findFirst();
     }
     return Optional.empty();
   }
