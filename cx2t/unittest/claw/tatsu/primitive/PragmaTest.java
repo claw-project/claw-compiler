@@ -20,9 +20,7 @@ import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Test methods of the Pragma class.
@@ -128,7 +126,7 @@ public class PragmaTest {
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
     List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
-    assertTrue(!fctDefs.isEmpty());
+    assertFalse(fctDefs.isEmpty());
     FfunctionDefinition fd = fctDefs.get(0);
     assertNotNull(fd.body());
     List<Xnode> previous = fd.matchAll(Xcode.F_PRAGMA_STATEMENT);
@@ -159,7 +157,7 @@ public class PragmaTest {
   public void splitByContTest2() {
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
     List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
-    assertTrue(!fctDefs.isEmpty());
+    assertFalse(fctDefs.isEmpty());
     FfunctionDefinition fd = fctDefs.get(0);
     assertNotNull(fd.body());
     List<Xnode> previous = fd.matchAll(Xcode.F_PRAGMA_STATEMENT);

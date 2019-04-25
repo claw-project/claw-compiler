@@ -40,7 +40,7 @@ public class FmoduleDefinitionTest {
         XcodeProgram.createFromFile(TestConstant.TEST_DECLARATIONS);
     assertNotNull(xcodeml);
     List<Xnode> nodes = xcodeml.matchAll(Xcode.F_MODULE_DEFINITION);
-    assertTrue(!nodes.isEmpty());
+    assertFalse(nodes.isEmpty());
     FmoduleDefinition modDef = new FmoduleDefinition(nodes.get(0));
     assertEquals("mod1", modDef.getName());
     assertFalse(modDef.getFunctionDefinition(null).isPresent());
