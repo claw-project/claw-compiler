@@ -272,6 +272,10 @@ public class ExpandNotation extends ClawBlockTransformation {
           .filter(x -> x.isIntrinsicCall(Xintrinsic.SUM))
           .forEach(FunctionCall::adaptIntrinsicSumCall);
 
+      stmt.matchAll(Xcode.FUNCTION_CALL).stream().map(FunctionCall::new)
+          .filter(x -> x.isIntrinsicCall(Xintrinsic.SPREAD))
+          .forEach(FunctionCall::adaptIntrinsicSpreadCall);
+
       // 4. Move assignment statement inside the most inner loop
       doStmts[ranges.size() - 1].body().append(stmt, true);
       stmt.delete();

@@ -128,4 +128,20 @@ public class FunctionCall extends Xnode {
     }
   }
 
+  /**
+   * Adapt a SPREAD() call after change in the array argument if source is a
+   * constant.
+   */
+  public void adaptIntrinsicSpreadCall() {
+    if(!isIntrinsicCall(Xintrinsic.SPREAD)) {
+      return;
+    }
+    Xnode arg0 = arguments().get(0);
+
+    if(arg0.isConstant()) {
+      insertAfter(arg0.cloneNode());
+      delete();
+    } // TODO add warning if cannot be adapted
+  }
+
 }
