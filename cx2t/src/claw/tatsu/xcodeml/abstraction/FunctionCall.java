@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * Abstraction of functionCall XcodeML/F node.
+ *
  * @author clementval
  */
 public class FunctionCall extends Xnode {
