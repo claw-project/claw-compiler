@@ -11,6 +11,7 @@ import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author clementval
@@ -142,6 +143,20 @@ public class FunctionCall extends Xnode {
       insertAfter(arg0.cloneNode());
       delete();
     } // TODO add warning if cannot be adapted
+  }
+
+  /**
+   * Find specific argument in a function call.
+   *
+   * @param argName Name of the argument to be found.
+   * @return The argument if found. Null otherwise.
+   */
+  public Optional<Xnode> findArg(String argName) {
+    if(arguments().isEmpty()) {
+      return Optional.empty();
+    }
+    return arguments().stream()
+        .filter(x -> argName.equalsIgnoreCase(x.value())).findFirst();
   }
 
 }

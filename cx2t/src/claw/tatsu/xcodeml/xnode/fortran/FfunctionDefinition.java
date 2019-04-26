@@ -5,6 +5,7 @@
 package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.primitive.Body;
+import claw.tatsu.primitive.Loop;
 import claw.tatsu.primitive.Xmod;
 import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
@@ -13,6 +14,7 @@ import claw.tatsu.xcodeml.xnode.common.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -257,6 +259,18 @@ public class FfunctionDefinition extends Xnode {
   private boolean isTemporaryVariable(FbasicType bt, boolean onlyArray) {
     return bt != null && bt.getIntent() == Intent.NONE
         && (!onlyArray || bt.isArray());
+  }
+
+  /**
+   * Detect all induction variables in the function body.
+   *
+   * @param fctDef Function definition to be checked.
+   * @return Set of induction variables stored in a set.
+   */
+  public Set<String> detectInductionVariables()
+  {
+    return body().matchAll(Xcode.F_DO_STATEMENT).stream()
+        .map(Loop::extractInductionVariable).collect(Collectors.toSet());
   }
 
 }

@@ -378,6 +378,4 @@ public class XnodeTest {
     assertTrue(n6.isConstant());
   }
 
-
-
 }

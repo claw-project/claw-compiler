@@ -31,29 +31,6 @@ public final class Function {
   }
 
   /**
-   * Find specific argument in a function call.
-   *
-   * @param fctCall Function call node to search in.
-   * @param argName Name of the argument to be found.
-   * @return The argument if found. Null otherwise.
-   */
-  public static Xnode findArg(Xnode fctCall, String argName) {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return null;
-    }
-    Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
-    if(args == null) {
-      return null;
-    }
-    for(Xnode arg : args.children()) {
-      if(argName.equalsIgnoreCase(arg.value())) {
-        return arg;
-      }
-    }
-    return null;
-  }
-
-  /**
    * Find the id element in the current function definition or in parent
    * function definition if nested.
    *
@@ -124,18 +101,6 @@ public final class Function {
   }
 
   /**
-   * Detect all induction variables in the function body.
-   *
-   * @param fctDef Function definition to be checked.
-   * @return Set of induction variables stored in a set.
-   */
-  public static Set<String> detectInductionVariables(FfunctionDefinition fctDef)
-  {
-    return fctDef.body().matchAll(Xcode.F_DO_STATEMENT).stream()
-        .map(Loop::extractInductionVariable).collect(Collectors.toSet());
-  }
-
-  /**
    * Check if the given element is argument of a function call for a given
    * intrinsic function name.
    *
@@ -199,52 +164,6 @@ public final class Function {
           .findFirst();
     }
     return Optional.empty();
-  }
-
-  /**
-   * Extract the name of the function in a function call.
-   *
-   * @param fctCall Function call node.
-   * @return Function name if can be extracted. Null otherwise.
-   */
-  public static String getFctNameFromFctCall(Xnode fctCall) {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return null;
-    }
-    if(Xnode.isOfCode(fctCall.firstChild(), Xcode.F_MEMBER_REF)) {
-      return fctCall.firstChild().getAttribute(Xattr.MEMBER);
-    } else {
-      return fctCall.matchSeq(Xcode.NAME).value();
-    }
-  }
-
-  /**
-   * Get the number of arguments in a function call.
-   *
-   * @param fctCall Function call to check.
-   * @return Number of arguments in the function call. -1 if not a function
-   * call.
-   */
-  public static int getNbOfArgsFromFctCall(Xnode fctCall) {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return -1;
-    }
-    Xnode arguments = fctCall.matchDescendant(Xcode.ARGUMENTS);
-    return arguments != null ? arguments.children().size() : 0;
-  }
-
-  /**
-   * Check whether the function call is calling a type bound procedure.
-   *
-   * @param fctCall Function call node.
-   * @return True if the function call is a type bound procedure call. False
-   * otherwise.
-   */
-  public static boolean isCallToTypeBoundProcedure(Xnode fctCall) {
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return false;
-    }
-    return Xnode.isOfCode(fctCall.firstChild(), Xcode.F_MEMBER_REF);
   }
 
 }

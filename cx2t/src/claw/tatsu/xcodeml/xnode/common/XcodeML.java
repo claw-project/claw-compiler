@@ -7,6 +7,7 @@ package claw.tatsu.xcodeml.xnode.common;
 import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.primitive.Pragma;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.fortran.*;
@@ -493,8 +494,8 @@ public class XcodeML extends Xnode {
    * @param fctType    Value of the type attribute for the name node.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createFctCall(String returnType, String fctName,
-                             String fctType)
+  public FunctionCall createFctCall(String returnType, String fctName,
+                                    String fctType)
   {
     Xnode fctCall = createNode(Xcode.FUNCTION_CALL);
     fctCall.setType(returnType);
@@ -505,7 +506,7 @@ public class XcodeML extends Xnode {
     }
     fctCall.append(fctNameNode);
     fctCall.append(createNode(Xcode.ARGUMENTS));
-    return fctCall;
+    return new FunctionCall(fctCall);
   }
 
   /**
@@ -522,10 +523,10 @@ public class XcodeML extends Xnode {
    * @param fctName    Value of the name node.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createIntrinsicFctCall(FortranType returnType,
-                                      Xintrinsic fctName)
+  public FunctionCall createIntrinsicFctCall(FortranType returnType,
+                                             Xintrinsic fctName)
   {
-    Xnode fctCall =
+    FunctionCall fctCall =
         createFctCall(returnType.toString(), fctName.toString(), null);
     fctCall.setBooleanAttribute(Xattr.IS_INTRINSIC, true);
     return fctCall;

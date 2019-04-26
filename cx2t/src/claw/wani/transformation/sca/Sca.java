@@ -137,7 +137,7 @@ public class Sca extends ClawTransformation {
    * Populate list of induction variables used in the function/subroutine body.
    */
   void detectInductionVariables() {
-    _inductionVariables = Function.detectInductionVariables(_fctDef);
+    _inductionVariables = _fctDef.detectInductionVariables();
   }
 
   /**
