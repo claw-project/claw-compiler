@@ -376,8 +376,10 @@ public class Xnode {
    * @return Line number. 0 if the attribute is not defined.
    */
   public int lineNo() {
-    return hasAttribute(Xattr.LINENO) ?
-        Integer.parseInt(getAttribute(Xattr.LINENO)) : 0;
+    if(hasAttribute(Xattr.LINENO)) {
+      return Integer.parseInt(getAttribute(Xattr.LINENO));
+    }
+    return getClosestLineNo();
   }
 
   /**
@@ -1095,5 +1097,21 @@ public class Xnode {
    */
   public boolean isNotArrayIndex() {
     return !Xnode.isOfCode(ancestor(), Xcode.ARRAY_INDEX);
+  }
+
+  /**
+   * Find meaningful line number for error reporting.
+   *
+   * @return First line number found in ancestors.
+   */
+  private int getClosestLineNo() {
+    Xnode crtAncestor = ancestor();
+    while(crtAncestor != null) {
+      if(crtAncestor.hasAttribute(Xattr.LINENO)) {
+        return crtAncestor.lineNo();
+      }
+      crtAncestor = crtAncestor.ancestor();
+    }
+    return 0; // Default if not found
   }
 }

@@ -94,22 +94,6 @@ public class FunctionCall extends Xnode {
   }
 
   /**
-   * Find meaningful line number for error reporting.
-   *
-   * @return First line number found in ancestors.
-   */
-  public int getLineNo() {
-    Xnode crtAncestor = ancestor();
-    while(crtAncestor != null) {
-      if(crtAncestor.hasAttribute(Xattr.LINENO)) {
-        return crtAncestor.lineNo();
-      }
-      crtAncestor = crtAncestor.ancestor();
-    }
-    return lineNo(); // Default if not found
-  }
-
-  /**
    * Adapt a SUM() call after change in the array argument.
    * - Remove DIM parameter if not necessary anymore.
    */
