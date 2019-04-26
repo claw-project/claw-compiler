@@ -264,13 +264,49 @@ public class FfunctionDefinition extends Xnode {
   /**
    * Detect all induction variables in the function body.
    *
-   * @param fctDef Function definition to be checked.
    * @return Set of induction variables stored in a set.
    */
   public Set<String> detectInductionVariables()
   {
     return body().matchAll(Xcode.F_DO_STATEMENT).stream()
         .map(Loop::extractInductionVariable).collect(Collectors.toSet());
+  }
+
+  /**
+   * Find the id element in the current function definition or in parent
+   * function definition if nested.
+   *
+   * @param name   Id name to be searched for.
+   * @return The id if found. Null otherwise.
+   */
+  public Xid findId(String name) {
+    if(getSymbolTable().contains(name)) {
+      return getSymbolTable().get(name);
+    }
+    FfunctionDefinition upperDef = findParentFunction();
+    if(upperDef == null) {
+      return null;
+    }
+    return upperDef.findId(name);
+  }
+
+
+  /**
+   * Find the declaration element in the current function definition or in
+   * parent if nested.
+   *
+   * @param name   Declaration name to be searched for.
+   * @return The element if found. Null otherwise.
+   */
+  public Xnode findDecl(String name) {
+    if(getSymbolTable().contains(name)) {
+      return getDeclarationTable().get(name);
+    }
+    FfunctionDefinition upperDef = findParentFunction();
+    if(upperDef == null) {
+      return null;
+    }
+    return upperDef.findDecl(name);
   }
 
 }

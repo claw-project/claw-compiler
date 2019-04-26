@@ -335,8 +335,8 @@ public final class Field {
                              XcodeProgram xcodeml)
       throws IllegalTransformationException
   {
-    Xid id = Function.findId(fctDef, reshapeInfo.getArrayName());
-    Xnode decl = Function.findDecl(fctDef, reshapeInfo.getArrayName());
+    Xid id = fctDef.findId(reshapeInfo.getArrayName());
+    Xnode decl = fctDef.findDecl(reshapeInfo.getArrayName());
 
     if(id == null || decl == null) {
       throw new IllegalTransformationException("Cannot apply reshape clause."
