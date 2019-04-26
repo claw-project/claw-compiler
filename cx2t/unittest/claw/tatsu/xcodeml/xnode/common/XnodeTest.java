@@ -96,6 +96,21 @@ public class XnodeTest {
       "<Var scope=\"local\" type=\"A7f899b411d50\">q</Var></varRef>" +
       "</FarrayRef>";
 
+  private static final String ARG_11 = "<varDecl lineno=\"7\" file=\"dummy.f90\">\n" +
+      "              <name type=\"R10030b500\">y</name>\n" +
+      "              <value>\n" +
+      "                <FpowerExpr type=\"Fint\">\n" +
+      "                  <FintConstant type=\"Fint\">2</FintConstant>\n" +
+      "                  <functionCall type=\"Fint\" is_intrinsic=\"true\">\n" +
+      "                    <name>precision</name>\n" +
+      "                    <arguments>\n" +
+      "                      <FrealConstant type=\"Freal\">10.0</FrealConstant>\n" +
+      "                    </arguments>\n" +
+      "                  </functionCall>\n" +
+      "                </FpowerExpr>\n" +
+      "              </value>\n" +
+      "            </varDecl>";
+
   @Test
   public void constructStringTest() {
     Xnode arg1Node = XmlHelper.createXnode(ARG_1);
@@ -378,4 +393,13 @@ public class XnodeTest {
     assertTrue(n6.isConstant());
   }
 
+  @Test
+  public void matchAncestorTest() {
+    Xnode arg11Node = XmlHelper.createXnode(ARG_11);
+    Xnode fPow = arg11Node.matchDescendant(Xcode.F_POWER_EXPR);
+    assertNotNull(fPow);
+    Xnode varDecl = fPow.matchAncestor(Xcode.VAR_DECL);
+    assertNotNull(varDecl);
+    assertEquals("R10030b500", varDecl.getType());
+  }
 }
