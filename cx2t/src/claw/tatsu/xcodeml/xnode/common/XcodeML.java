@@ -6,6 +6,7 @@ package claw.tatsu.xcodeml.xnode.common;
 
 import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
@@ -818,17 +819,10 @@ public class XcodeML extends Xnode {
     lower.append(createIntConstant(startIndex));
 
     // Upper bound
-    Xnode fctCall = createNode(Xcode.FUNCTION_CALL);
-    upper.append(fctCall);
-    fctCall.setBooleanAttribute(Xattr.IS_INTRINSIC, true);
-    fctCall.setType(Xname.TYPE_F_INT);
-    Xnode name = createNode(Xcode.NAME);
-    name.setValue(Xname.INTRINSIC_SIZE);
-    fctCall.append(name);
-    Xnode args = createNode(Xcode.ARGUMENTS);
-    fctCall.append(args);
-    args.append(arrayVar, true);
-    args.append(createIntConstant(dimension));
+    FunctionCall fctCall =
+        createIntrinsicFctCall(FortranType.INTEGER, Xintrinsic.SIZE);
+    fctCall.addArguments(arrayVar.cloneNode());
+    fctCall.addArguments(createIntConstant(dimension));
     return indexRange;
   }
 
