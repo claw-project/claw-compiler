@@ -823,6 +823,7 @@ public class XcodeML extends Xnode {
         createIntrinsicFctCall(FortranType.INTEGER, Xintrinsic.SIZE);
     fctCall.addArguments(arrayVar.cloneNode());
     fctCall.addArguments(createIntConstant(dimension));
+    upper.append(fctCall);
     return indexRange;
   }
 
