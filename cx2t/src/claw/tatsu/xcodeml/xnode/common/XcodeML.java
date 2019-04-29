@@ -501,7 +501,7 @@ public class XcodeML extends Xnode {
     Xnode fctCall = createNode(Xcode.FUNCTION_CALL);
     fctCall.setType(returnType);
     Xnode fctNameNode = createNode(Xcode.NAME);
-    fctNameNode.setValue(fctName);
+    fctNameNode.setValue(fctName.toLowerCase());
     if(fctType != null) {
       fctNameNode.setType(fctType);
     }
@@ -527,8 +527,8 @@ public class XcodeML extends Xnode {
   public FunctionCall createIntrinsicFctCall(FortranType returnType,
                                              Xintrinsic fctName)
   {
-    FunctionCall fctCall =
-        createFctCall(returnType.toString(), fctName.toString(), null);
+    FunctionCall fctCall = createFctCall(returnType.toString(),
+        fctName.toString(), null);
     fctCall.setBooleanAttribute(Xattr.IS_INTRINSIC, true);
     return fctCall;
   }
@@ -812,8 +812,7 @@ public class XcodeML extends Xnode {
     Xnode indexRange = createNode(Xcode.INDEX_RANGE);
     Xnode lower = createNode(Xcode.LOWER_BOUND);
     Xnode upper = createNode(Xcode.UPPER_BOUND);
-    indexRange.append(lower);
-    indexRange.append(upper);
+    indexRange.append(lower).append(upper);
 
     // Lower bound
     lower.append(createIntConstant(startIndex));

@@ -328,9 +328,11 @@ public class Xnode {
    * Append an element ot the children of this element. Node is not cloned.
    *
    * @param node The element to append.
+   * @return Current object to allow chaining.
    */
-  public void append(Xnode node) {
+  public Xnode append(Xnode node) {
     append(node, false);
+    return this;
   }
 
   /**
