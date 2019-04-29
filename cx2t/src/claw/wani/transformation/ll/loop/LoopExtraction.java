@@ -4,13 +4,10 @@
  */
 package claw.wani.transformation.ll.loop;
 
-// ClawX2T import
-
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.Message;
 import claw.tatsu.directive.common.Directive;
-import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Loop;
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
@@ -28,14 +25,10 @@ import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 
-import javax.swing.text.html.Option;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-// OMNI import
-// Java import
 
 /**
  * A LoopExtraction transformation is an independent transformation. The

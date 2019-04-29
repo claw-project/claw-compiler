@@ -14,7 +14,6 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Primitive transformation, test and utility for Function related action.

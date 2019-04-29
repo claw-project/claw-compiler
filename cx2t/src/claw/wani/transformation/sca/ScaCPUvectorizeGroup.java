@@ -25,7 +25,6 @@ import claw.wani.language.ClawPragma;
 import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Single Column Abstraction (SCA) CPU target transformation. This
