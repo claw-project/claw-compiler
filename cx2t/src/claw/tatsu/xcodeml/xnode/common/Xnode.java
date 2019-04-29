@@ -146,11 +146,13 @@ public class Xnode {
    * Set the element value.
    *
    * @param value The element value.
+   * @return Current object to allow chaining.
    */
-  public void setValue(String value) {
+  public Xnode setValue(String value) {
     if(_baseElement != null) {
       _baseElement.setTextContent(value);
     }
+    return this;
   }
 
   /**
@@ -158,9 +160,10 @@ public class Xnode {
    *
    * @param attrCode Attribute code.
    * @param value    Boolean value to set.
+   * @return Current object to allow chaining.
    */
-  public void setBooleanAttribute(Xattr attrCode, boolean value) {
-    setBooleanAttribute(attrCode.toString(), value);
+  public Xnode setBooleanAttribute(Xattr attrCode, boolean value) {
+    return setBooleanAttribute(attrCode.toString(), value);
   }
 
   /**
@@ -168,9 +171,11 @@ public class Xnode {
    *
    * @param attrCode Attribute code.
    * @param value    Boolean value to set.
+   * @return Current object to allow chaining.
    */
-  private void setBooleanAttribute(String attrCode, boolean value) {
+  private Xnode setBooleanAttribute(String attrCode, boolean value) {
     setAttribute(attrCode, value ? Xname.TRUE : Xname.FALSE);
+    return this;
   }
 
   /**
@@ -178,9 +183,10 @@ public class Xnode {
    *
    * @param attrCode Attribute code.
    * @param value    Value of the attribute.
+   * @return Current object to allow chaining.
    */
-  public void setAttribute(Xattr attrCode, String value) {
-    setAttribute(attrCode.toString(), value);
+  public Xnode setAttribute(Xattr attrCode, String value) {
+    return setAttribute(attrCode.toString(), value);
   }
 
   /**
@@ -188,11 +194,13 @@ public class Xnode {
    *
    * @param attrCode Attribute code.
    * @param value    Value of the attribute.
+   * @return Current object to allow chaining.
    */
-  private void setAttribute(String attrCode, String value) {
+  private Xnode setAttribute(String attrCode, String value) {
     if(_baseElement != null && value != null) {
       _baseElement.setAttribute(attrCode, value);
     }
+    return this;
   }
 
   /**
@@ -313,8 +321,9 @@ public class Xnode {
    * @param node  The element to append.
    * @param clone If true, the element is cloned before being appended. If
    *              false, the element is directly appended.
+   * @return Current object to allow chaining.
    */
-  public void append(Xnode node, boolean clone) {
+  public Xnode append(Xnode node, boolean clone) {
     if(node != null && _baseElement != null) {
       if(clone) {
         _baseElement.appendChild(node.cloneRawNode());
@@ -322,6 +331,7 @@ public class Xnode {
         _baseElement.appendChild(node.element());
       }
     }
+    return this;
   }
 
   /**
@@ -871,8 +881,8 @@ public class Xnode {
    *
    * @param type FbasicType to be associated with this node.
    */
-  public void setType(FbasicType type) {
-    setAttribute(Xattr.TYPE, type.getType());
+  public Xnode setType(FbasicType type) {
+    return setAttribute(Xattr.TYPE, type.getType());
   }
 
   /**
@@ -880,8 +890,11 @@ public class Xnode {
    *
    * @param value Type value.
    */
-  public void setType(String value) {
-    setAttribute(Xattr.TYPE, value);
+  public Xnode setType(String value) {
+    if(value != null && !value.isEmpty()) {
+      setAttribute(Xattr.TYPE, value);
+    }
+    return this;
   }
 
   /**
