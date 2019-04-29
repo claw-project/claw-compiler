@@ -54,16 +54,6 @@ public class Xid extends Xnode {
   }
 
   /**
-   * Set id type value.
-   *
-   * @param value The new type value.
-   */
-  @Override
-  public void setType(String value) {
-    setAttribute(Xattr.TYPE, value);
-  }
-
-  /**
    * Get the sclass value.
    *
    * @return Sclass value.
