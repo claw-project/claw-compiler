@@ -367,9 +367,11 @@ public class Xnode {
    * Insert as first child.
    *
    * @param node Node to be inserted.
+   * @return Current object to allow chaining.
    */
-  public void insert(Xnode node) {
+  public Xnode insert(Xnode node) {
     insert(node, false);
+    return this;
   }
 
   /**
