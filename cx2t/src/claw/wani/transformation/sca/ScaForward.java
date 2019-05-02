@@ -598,11 +598,12 @@ public class ScaForward extends ClawTransformation {
             _fctType, _mod, Intent.IN, true);
 
         if(Configuration.get()
-            .getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+            .getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED)
+            && _claw.hasClause(ClawClause.SAVEPOINT))
         {
           Serialization.insertImports(xcodeml, _fCall.findParentFunction());
           Serialization.writeSavepoint(xcodeml, fctCallAncestor, in,
-              _fCall.getFctName(), SerializationStep.SER_IN);
+              _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
         }
 
         Directive.generateUpdate(xcodeml, fctCallAncestor, in,
@@ -627,11 +628,12 @@ public class ScaForward extends ClawTransformation {
             DataMovement.DEVICE_TO_HOST);
 
         if(Configuration.get()
-            .getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+            .getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED)
+            && _claw.hasClause(ClawClause.SAVEPOINT))
         {
           Serialization.insertImports(xcodeml, _fCall.findParentFunction());
-          Serialization.writeSavepoint(xcodeml, hook, out, _fCall.getFctName(),
-              SerializationStep.SER_OUT);
+          Serialization.writeSavepoint(xcodeml, hook, out,
+              _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
         }
       }
 

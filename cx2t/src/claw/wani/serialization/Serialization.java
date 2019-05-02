@@ -34,8 +34,8 @@ public class Serialization {
   private static final String SER_MODULE_M_SERIALIZE = "m_serialize";
   private static final String SER_MODULE_UTILS_PPSER = "utils_ppser";
 
-  private static final String SAVEPOINT_IN_SUFFIX = "_in";
-  private static final String SAVEPOINT_OUT_SUFFIX = "_out";
+  private static final String SAVEPOINT_IN_SUFFIX = "in";
+  private static final String SAVEPOINT_OUT_SUFFIX = "out";
 
   // Avoid potential instantiation of this class
   private Serialization() {
