@@ -1558,4 +1558,13 @@ public class ClawPragmaTest {
     analyzeValidSimpleClaw("claw if-extract", ClawDirective.IF_EXTRACT,
         false, null);
   }
+
+  @Test
+  public void savepointTest(){
+    ClawPragma l = analyze("claw sca forward savepoint=sp1", ClawDirective.SCA);
+    assertNotNull(l);
+    assertFalse(l.isEndPragma());
+    assertTrue(l.hasClause(ClawClause.SAVEPOINT));
+    assertEquals("sp1", l.value(ClawClause.SAVEPOINT));
+  }
 }

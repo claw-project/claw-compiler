@@ -499,7 +499,13 @@ foward_clauses[ClawPragma l]:
   | { !$l.hasClause(ClawClause.UPDATE) }? update_clause[$l]
   | { !$l.hasClause(ClawClause.CREATE) }? create_clause[$l]
   | { !$l.hasClause(ClawClause.PARALLEL) }? parallel_clause[$l]
+  | { !$l.hasClause(ClawClause.SAVEPOINT) }? savepoint_clause[$l]
   )*
+;
+
+savepoint_clause[ClawPragma l]:
+    SAVEPOINT '=' savepoint_name=IDENTIFIER
+    { $l.setValue(ClawClause.SAVEPOINT, $savepoint_name.text); }
 ;
 
 copy_clause[ClawPragma l]:
@@ -675,7 +681,9 @@ PRIVATE      : 'private';
 RANGE        : 'range';
 RESHAPE      : 'reshape';
 ROUTINE      : 'routine';
+SAVEPOINT    : 'savepoint';
 SCALAR       : 'scalar';
+SERIALIZE    : 'serialize';
 TARGET       : 'target';
 UPDATE       : 'update';
 NODEP        : 'nodep';
