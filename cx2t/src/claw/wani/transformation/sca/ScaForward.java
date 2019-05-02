@@ -20,7 +20,10 @@ import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
 import claw.wani.language.ClawClause;
+import claw.wani.serialization.Serialization;
+import claw.wani.serialization.SerializationStep;
 import claw.wani.transformation.ClawTransformation;
+import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
@@ -590,9 +593,19 @@ public class ScaForward extends ClawTransformation {
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
           _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
       {
-        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fCall,
+
+        List<String> in = XnodeUtil.gatherArguments(xcodeml, _fCall,
             _fctType, _mod, Intent.IN, true);
-        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+
+        if(Configuration.get()
+            .getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+        {
+          Serialization.insertImports(xcodeml, _fCall.findParentFunction());
+          Serialization.writeSavepoint(xcodeml, fctCallAncestor, in,
+              _fCall.getFctName(), SerializationStep.SER_IN);
+        }
+
+        Directive.generateUpdate(xcodeml, fctCallAncestor, in,
             DataMovement.HOST_TO_DEVICE);
       }
 
@@ -610,12 +623,21 @@ public class ScaForward extends ClawTransformation {
           }
         }
 
-        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+        Xnode hook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.DEVICE_TO_HOST);
+
+        if(Configuration.get()
+            .getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+        {
+          Serialization.insertImports(xcodeml, _fCall.findParentFunction());
+          Serialization.writeSavepoint(xcodeml, hook, out, _fCall.getFctName(),
+              SerializationStep.SER_OUT);
+        }
       }
 
       if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
-        Directive.generateParallelRegion(xcodeml, fctCallAncestor, fctCallAncestor);
+        Directive.generateParallelRegion(xcodeml, fctCallAncestor,
+            fctCallAncestor);
       }
     }
   }

@@ -91,6 +91,9 @@ refer to the developer's guide
       the promotion is performed like in normal function/subroutine.
     -->
     <parameter key="sca_elemental_promotion_assumed" value="true" />
+
+
+    <parameter key="sca_serialization_enabled" value="true" />
   </global>
 
   <!-- Transformation sets -->

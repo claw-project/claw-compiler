@@ -91,6 +91,9 @@ public class Configuration {
   // SCA configuration keys
   public static final String SCA_ELEMENTAL_PROMOTION_ASSUMED =
       "sca_elemental_promotion_assumed";
+  public static final String SCA_SERIALIZATION_ENABLED =
+      "sca_serialization_enabled";
+
   // env var
   private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";
 
