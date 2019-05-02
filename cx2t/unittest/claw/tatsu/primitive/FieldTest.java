@@ -20,8 +20,6 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.*;
@@ -319,7 +317,7 @@ public class FieldTest {
             dimensions[(i * 2) + 1]);
       }
     } catch(IllegalTransformationException itex) {
-      Logger.getAnonymousLogger().log(Level.SEVERE, itex.getMessage());
+      System.err.println(itex.getMessage());
       fail();
     }
   }

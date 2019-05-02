@@ -6,6 +6,7 @@ package claw.wani.transformation.ll.utility;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
@@ -95,11 +96,11 @@ public class ArrayToFctCall extends ClawTransformation {
     FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(_replaceFct);
 
     // Prepare the function call
-    Xnode fctCall = xcodeml.createFctCall(fctType.getReturnType(),
+    FunctionCall fctCall = xcodeml.createFctCall(fctType.getReturnType(),
         _claw.value(ClawClause.FCT_NAME), _replaceFct.getType());
-    Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
     for(String arg : _claw.values(ClawClause.FCT_PARAMETERS)) {
-      args.append(xcodeml.createVar(FortranType.INTEGER, arg, Xscope.LOCAL));
+      fctCall.addArguments(
+          xcodeml.createVar(FortranType.INTEGER, arg, Xscope.LOCAL));
     }
 
     List<Xnode> refs =

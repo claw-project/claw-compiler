@@ -4,7 +4,6 @@
  */
 package claw.tatsu.xcodeml.xnode.fortran;
 
-import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Xmod;
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.common.*;
@@ -98,13 +97,12 @@ public class FortranModule extends XcodeML {
    * @param fctCall Actual function call.
    * @return Matched function type if can be found. Null otherwise.
    */
-  private FfunctionType findFunctionTypeMatchingFctCall(Xnode fctCall) {
-    String fctName = Function.getFctNameFromFctCall(fctCall);
-    if(fctName == null) {
+  private FfunctionType findFunctionTypeMatchingFctCall(FunctionCall fctCall) {
+    if(fctCall.getFctName() == null) {
       return null;
     }
-    Set<String> fctTypes = getInterfaceImplementation(fctName);
-    long nbArgs = Function.getNbOfArgsFromFctCall(fctCall);
+    Set<String> fctTypes = getInterfaceImplementation(fctCall.getFctName());
+    long nbArgs = fctCall.arguments().size();
     for(String type : fctTypes) {
       FfunctionType tmp = getTypeTable().getFunctionType(type);
       if(tmp != null) {

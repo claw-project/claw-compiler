@@ -447,12 +447,14 @@ for input_file in "${f_files_transformation[@]}"; do
       "Input file not parsed correctly. Translation cannot be done."
   fi
 
+  CLAW_CX2T_F_OUT_OPT=""
   file_out_x="$(claw::get_out_xcodeml_filename "${input_file}")"
-  file_out_f=${temp_dir}/"${input_file}"
   if [[ "${output_file}" != "" ]]; then
     file_out_f=${output_file}
+    CLAW_CX2T_F_OUT_OPT="-f ${file_out_f}"
   elif [[ "${output_dir}" != "" ]]; then
     file_out_f=${output_dir}/${input_file}
+    CLAW_CX2T_F_OUT_OPT="-f ${file_out_f}"
   fi
 
   # Define report file output
@@ -473,7 +475,7 @@ for input_file in "${f_files_transformation[@]}"; do
       ${CLAW_X2T_MODEL_CONFIG_OPT} \
       ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
       ${xcode_translator_add_opt[*]} ${module_opt[*]} ${trans_module_opt[*]} \
-      -o ${file_out_x} -f ${file_out_f} ${file_in_x}"
+      -o ${file_out_x} ${CLAW_CX2T_F_OUT_OPT} ${file_in_x}"
     echo ""
     echo "=============================="
   fi
@@ -486,7 +488,7 @@ for input_file in "${f_files_transformation[@]}"; do
     ${CLAW_X2T_MODEL_CONFIG_OPT} \
     ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
     ${xcode_translator_add_opt[*]} ${module_opt[*]} ${trans_module_opt[*]} -o \
-    ${file_out_x} -f ${file_out_f} ${file_in_x}"
+    ${file_out_x} ${CLAW_CX2T_F_OUT_OPT} ${file_in_x}"
 
   # Call to the translator
   # shellcheck disable=SC2086
@@ -496,7 +498,7 @@ for input_file in "${f_files_transformation[@]}"; do
     ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \
     "${xcode_translator_add_opt[@]}" "${module_opt[@]}" \
     "${trans_module_opt[@]}" "${override_config_opt[@]}"  -o "${file_out_x}" \
-    -f "${file_out_f}" "${file_in_x}"
+    ${CLAW_CX2T_F_OUT_OPT} "${file_in_x}"
 
   # Check that translation output a file
   if [[ ! -f ${file_out_x} ]]; then

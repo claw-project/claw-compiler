@@ -326,7 +326,7 @@ public final class Directive {
         // Could not generate directive for called function.
         xcodeml.addWarning(fctCall.getFctName() + " has not been found. " +
                 "Automatic routine directive generation could not be done.",
-            fctCall.getLineNo());
+            fctCall.lineNo());
       }
     }
   }

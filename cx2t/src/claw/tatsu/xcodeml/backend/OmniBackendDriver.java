@@ -13,8 +13,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Wrapper class to call the Fortran decompiler of OMNI Compiler directly
@@ -47,7 +45,7 @@ public class OmniBackendDriver {
       try {
         _reader.close();
       } catch(IOException e) {
-        Logger.getAnonymousLogger().log(Level.SEVERE, e.getMessage());
+        System.err.println(e.getMessage());
         return false;
       }
     }
@@ -101,7 +99,7 @@ public class OmniBackendDriver {
             FileWriter(outputFilepath)));
       }
     } catch(IOException e) {
-      Logger.getAnonymousLogger().log(Level.SEVERE, e.getMessage());
+      System.err.println(e.getMessage());
     }
 
     try {

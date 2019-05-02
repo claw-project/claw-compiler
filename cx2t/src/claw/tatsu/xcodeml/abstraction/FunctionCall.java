@@ -11,8 +11,11 @@ import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
+ * Abstraction of functionCall XcodeML/F node.
+ *
  * @author clementval
  */
 public class FunctionCall extends Xnode {
@@ -93,22 +96,6 @@ public class FunctionCall extends Xnode {
   }
 
   /**
-   * Find meaningful line number for error reporting.
-   *
-   * @return First line number found in ancestors.
-   */
-  public int getLineNo() {
-    Xnode crtAncestor = ancestor();
-    while(crtAncestor != null) {
-      if(crtAncestor.hasAttribute(Xattr.LINENO)) {
-        return crtAncestor.lineNo();
-      }
-      crtAncestor = crtAncestor.ancestor();
-    }
-    return lineNo(); // Default if not found
-  }
-
-  /**
    * Adapt a SUM() call after change in the array argument.
    * - Remove DIM parameter if not necessary anymore.
    */
@@ -142,6 +129,20 @@ public class FunctionCall extends Xnode {
       insertAfter(arg0.cloneNode());
       delete();
     } // TODO add warning if cannot be adapted
+  }
+
+  /**
+   * Find specific argument in a function call.
+   *
+   * @param argName Name of the argument to be found.
+   * @return The argument if found. Null otherwise.
+   */
+  public Optional<Xnode> findArg(String argName) {
+    if(arguments().isEmpty()) {
+      return Optional.empty();
+    }
+    return arguments().stream()
+        .filter(x -> argName.equalsIgnoreCase(x.value())).findFirst();
   }
 
 }
