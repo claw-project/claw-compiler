@@ -504,6 +504,25 @@ public class XcodeML extends Xnode {
    * </functionCall>
    * }
    *
+   * @param fctType FfunctionType holding the return type and the type
+   *                information.
+   * @param fctName Value of the name node.
+   * @return The newly created node detached in the current XcodeML unit.
+   */
+  public Xnode createFctCall(FfunctionType fctType, String fctName) {
+    return createFctCall(fctType.getReturnType(), fctName, fctType.getType());
+  }
+
+  /**
+   * Create a new functionCall node with name and arguments as children nodes.
+   *
+   * {@code
+   * <functionCall type="returnType">
+   * <name type="fctType">fctName</name>
+   * <arguments></arguments>
+   * </functionCall>
+   * }
+   *
    * @param returnType Value of the type attribute for the functionCall node.
    * @param fctName    Value of the name node.
    * @param fctType    Value of the type attribute for the name node.
