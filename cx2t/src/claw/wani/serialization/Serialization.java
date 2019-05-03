@@ -45,6 +45,13 @@ public class Serialization {
     SER_ADD_METAINFO, SER_READ, SER_WRITE, SER_READ_PERTURB
   }
 
+  /**
+   * Create function call to fs_create_savepoint
+   *
+   * @param xcodeml       Current XcodeML translation unit.
+   * @param savepointName Name of the savepoint.
+   * @return Newly create functionCall node.
+   */
   private static Xnode createSavepoint(XcodeProgram xcodeml,
                                        String savepointName)
   {
@@ -59,7 +66,7 @@ public class Serialization {
     serCall.matchDescendant(Xcode.ARGUMENTS)
         .append(nameArg).append(savepointArg);
 
-    return serCall;
+    return xcodeml.createNode(Xcode.EXPR_STATEMENT).insert(serCall);
   }
 
   /**
@@ -171,8 +178,7 @@ public class Serialization {
             ? SAVEPOINT_IN_SUFFIX : SAVEPOINT_OUT_SUFFIX);
 
     List<Xnode> nodes = new ArrayList<>();
-    nodes.add(xcodeml.createNode(Xcode.EXPR_STATEMENT)
-        .insert(createSavepoint(xcodeml, savepointName)));
+    nodes.add(createSavepoint(xcodeml, savepointName));
 
     for(String fieldName : fields) {
       nodes.add(createWriteFieldCall(xcodeml, savepointName, fieldName));
