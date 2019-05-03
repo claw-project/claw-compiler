@@ -13,7 +13,10 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Helper class to insert serialization call in XcodeML/F
@@ -180,7 +183,8 @@ public class Serialization {
     List<Xnode> nodes = new ArrayList<>();
     nodes.add(createSavepoint(xcodeml, savepointName));
 
-    for(String fieldName : fields) {
+    Set<String> uniqueFileds = new HashSet<>(fields);
+    for(String fieldName : uniqueFileds) {
       nodes.add(createWriteFieldCall(xcodeml, savepointName, fieldName));
     }
 
