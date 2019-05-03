@@ -904,9 +904,11 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  public String constructRepresentation(boolean withNamedValue)
+  public String constructRepresentation(boolean withNamedValue,
+                                        boolean nameOnly)
   {
     switch(opcode()) {
       case F_INT_CONSTANT:
@@ -917,15 +919,16 @@ public class Xnode {
       case LOWER_BOUND:
       case UPPER_BOUND:
       case VAR_REF:
-        return constructSimpleRepresentation(withNamedValue);
+        return constructSimpleRepresentation(withNamedValue, nameOnly);
       case INDEX_RANGE:
-        return constructIndexRangeRepresentation(withNamedValue);
+        return nameOnly
+            ? "" : constructIndexRangeRepresentation(withNamedValue, nameOnly);
       case F_ARRAY_REF:
-        return constructArrayRefRepresentation(withNamedValue);
+        return constructArrayRefRepresentation(withNamedValue, nameOnly);
       case F_MEMBER_REF:
-        return constructMemberRefRepresentation(withNamedValue);
+        return constructMemberRefRepresentation(withNamedValue, nameOnly);
       case NAMED_VALUE:
-        return constructNamedValueRepresentation(withNamedValue);
+        return constructNamedValueRepresentation(withNamedValue, nameOnly);
       default:
         return "";
     }
@@ -936,18 +939,21 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  private String constructIndexRangeRepresentation(boolean withNamedValue) {
+  private String constructIndexRangeRepresentation(boolean withNamedValue,
+                                                   boolean nameOnly)
+  {
     if(getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
       return ":";
     }
     Xnode child0 = child(0);
     Xnode child1 = child(1);
     return ((child0 != null) ?
-        child0.constructRepresentation(withNamedValue) : "") + ":" +
+        child0.constructRepresentation(withNamedValue, nameOnly) : "") + ":" +
         ((child1 != null) ?
-            child1.constructRepresentation(withNamedValue) : "");
+            child1.constructRepresentation(withNamedValue, nameOnly) : "");
   }
 
   /**
@@ -955,11 +961,15 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  private String constructSimpleRepresentation(boolean withNamedValue) {
+  private String constructSimpleRepresentation(boolean withNamedValue,
+                                               boolean nameOnly)
+  {
     Xnode n = firstChild();
-    return (n != null) ? n.constructRepresentation(withNamedValue) : "";
+    return (n != null)
+        ? n.constructRepresentation(withNamedValue, nameOnly) : "";
   }
 
   /**
@@ -967,18 +977,26 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  private String constructArrayRefRepresentation(boolean withNamedValue) {
+  private String constructArrayRefRepresentation(boolean withNamedValue,
+                                                 boolean nameOnly)
+  {
     List<Xnode> childs = children();
     if(childs.size() == 1) {
-      return childs.get(0).constructRepresentation(withNamedValue);
+      return childs.get(0).constructRepresentation(withNamedValue, nameOnly);
     } else {
       StringBuilder str = new StringBuilder();
-      str.append(childs.get(0).constructRepresentation(withNamedValue));
+      str.append(childs.get(0).constructRepresentation(withNamedValue,
+          nameOnly));
+      if(nameOnly) {
+        return str.toString();
+      }
       str.append("(");
       for(int i = 1; i < childs.size(); ++i) {
-        str.append(childs.get(i).constructRepresentation(withNamedValue));
+        str.append(childs.get(i).constructRepresentation(withNamedValue,
+            nameOnly));
         if(i != childs.size() - 1) {
           str.append(",");
         }
@@ -993,12 +1011,15 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  private String constructMemberRefRepresentation(boolean withNamedValue) {
+  private String constructMemberRefRepresentation(boolean withNamedValue,
+                                                  boolean nameOnly)
+  {
     Xnode n = firstChild();
     return ((n != null) ?
-        n.constructRepresentation(withNamedValue) + "%" +
+        n.constructRepresentation(withNamedValue, nameOnly) + "%" +
             getAttribute(Xattr.MEMBER) : "");
   }
 
@@ -1007,15 +1028,18 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  private String constructNamedValueRepresentation(boolean withNamedValue) {
+  private String constructNamedValueRepresentation(boolean withNamedValue,
+                                                   boolean nameOnly)
+  {
     Xnode n = firstChild();
     if(withNamedValue) {
       return ((n != null) ? getAttribute(Xattr.NAME) + "=" +
-          n.constructRepresentation(true) : "");
+          n.constructRepresentation(true, nameOnly) : "");
     }
-    return (n != null) ? n.constructRepresentation(false) : "";
+    return (n != null) ? n.constructRepresentation(false, nameOnly) : "";
   }
 
   /**

@@ -574,8 +574,8 @@ public class ScaForward extends ClawTransformation {
     }
 
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
-      List<String> creates = XnodeUtil.gatherArguments(xcodeml, _fCall,
-          _fctType, _mod, Intent.INOUT, true);
+      List<String> creates = _fCall.gatherArguments(xcodeml, _fctType, _mod,
+          Intent.INOUT, true, false);
 
       if(_fctType.isFunction()) {
         String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fCall);
@@ -594,15 +594,18 @@ public class ScaForward extends ClawTransformation {
           _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
       {
 
-        List<String> in = XnodeUtil.gatherArguments(xcodeml, _fCall,
-            _fctType, _mod, Intent.IN, true);
+        List<String> in = _fCall.gatherArguments(xcodeml, _fctType, _mod,
+            Intent.IN, true, false);
 
+        // Serialization input
         if(Configuration.get()
             .getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED)
             && _claw.hasClause(ClawClause.SAVEPOINT))
         {
+          List<String> inFields = _fCall.gatherArguments(xcodeml, _fctType,
+              _mod, Intent.IN, true, true);
           Serialization.insertImports(xcodeml, _fCall.findParentFunction());
-          Serialization.writeSavepoint(xcodeml, fctCallAncestor, in,
+          Serialization.writeSavepoint(xcodeml, fctCallAncestor, inFields,
               _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
         }
 
@@ -614,8 +617,8 @@ public class ScaForward extends ClawTransformation {
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
           || _claw.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
       {
-        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fCall,
-            _fctType, _mod, Intent.OUT, true);
+        List<String> out = _fCall.gatherArguments(xcodeml, _fctType, _mod,
+            Intent.OUT, true, false);
 
         if(_fctType.isFunction()) {
           String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fCall);
@@ -627,12 +630,15 @@ public class ScaForward extends ClawTransformation {
         Xnode hook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.DEVICE_TO_HOST);
 
+        // Serialization output
         if(Configuration.get()
             .getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED)
             && _claw.hasClause(ClawClause.SAVEPOINT))
         {
+          List<String> outFieldsName = _fCall.gatherArguments(xcodeml, _fctType,
+              _mod, Intent.OUT, true, true);
           Serialization.insertImports(xcodeml, _fCall.findParentFunction());
-          Serialization.writeSavepoint(xcodeml, hook, out,
+          Serialization.writeSavepoint(xcodeml, hook, outFieldsName,
               _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
         }
       }
