@@ -92,7 +92,7 @@ refer to the developer's guide
     -->
     <parameter key="sca_elemental_promotion_assumed" value="true" />
 
-
+    <!-- Enable generation of Serialbox2 library calls in SCA -->
     <parameter key="sca_serialization_enabled" value="true" />
   </global>
 
