@@ -709,62 +709,64 @@ public class ClawPragmaTest {
    * Test various input for the CLAW expand directive.
    */
   @Test
-  public void arrayTransformTest() {
+  public void expandNotationTest() {
     // Valid directives
-    analyzeValidArrayTransform("claw expand", false, null, false,
-        null, null, null);
-    analyzeValidArrayTransform("claw expand fusion", true, null, false,
-        null, null, null);
-    analyzeValidArrayTransform("claw expand fusion group(j1)", true,
-        "j1", false, null, null, null);
-    analyzeValidArrayTransform("claw expand fusion parallel", true,
-        null, true, null, null, null);
-    analyzeValidArrayTransform("claw expand fusion parallel acc(loop)",
-        true, null, true, "loop", null, null);
-    analyzeValidArrayTransform("claw expand fusion acc(loop)", true,
-        null, false, "loop", null, null);
-    analyzeValidArrayTransform(
+    analyzeValidExpandNotation("claw expand", false, null, false, false,
+        null, null, null, null);
+    analyzeValidExpandNotation("claw expand fusion", true, null, false, false,
+        null, null, null, null);
+    analyzeValidExpandNotation("claw expand fusion group(j1)", true,
+        "j1", false, false, null, null, null, null);
+    analyzeValidExpandNotation("claw expand fusion parallel", true,
+        null, true, false, null, null, null, null);
+    analyzeValidExpandNotation("claw expand fusion parallel acc(loop)",
+        true, null, true, false, "loop", null, null, null);
+    analyzeValidExpandNotation("claw expand fusion acc(loop)", true,
+        null, false, false, "loop", null, null, null);
+    analyzeValidExpandNotation(
         "claw expand fusion parallel acc(loop gang vector)", true,
-        null, true, "loop gang vector", null, null);
-    analyzeValidArrayTransform(
+        null, true, false, "loop gang vector", null, null, null);
+    analyzeValidExpandNotation(
         "claw expand fusion group(j1) parallel acc(loop gang vector)",
-        true, "j1", true, "loop gang vector", null, null);
-    analyzeValidArrayTransform(
-        "claw expand parallel acc(loop gang vector)",
-        false, null, true, "loop gang vector", null, null);
-    analyzeValidArrayTransform("claw expand parallel", false, null,
-        true, null, null, null);
-    analyzeValidArrayTransform("claw expand acc(loop gang vector)",
-        false, null, false, "loop gang vector", null, null);
+        true, "j1", true, false, "loop gang vector", null, null, null);
+    analyzeValidExpandNotation("claw expand parallel acc(loop gang vector)",
+        false, null, true, false, "loop gang vector", null, null, null);
+    analyzeValidExpandNotation("claw expand parallel", false, null, true, false,
+        null, null, null, null);
+    analyzeValidExpandNotation("claw expand acc(loop gang vector)", false, null,
+        false, false, "loop gang vector", null, null, null);
 
-    analyzeValidArrayTransform("claw expand induction(j1,j3)",
-        false, null, false, null, Arrays.asList("j1", "j3"), null);
-    analyzeValidArrayTransform("claw expand induction(j1)",
-        false, null, false, null, Collections.singletonList("j1"), null);
-    analyzeValidArrayTransform("claw expand induction(i,j,k)",
-        false, null, false, null, Arrays.asList("i", "j", "k"), null);
+    analyzeValidExpandNotation("claw expand induction(j1,j3)", false, null,
+        false, false, null, Arrays.asList("j1", "j3"), null, null);
+    analyzeValidExpandNotation("claw expand induction(j1)", false, null, false,
+        false, null, Collections.singletonList("j1"), null, null);
+    analyzeValidExpandNotation("claw expand induction(i,j,k)", false, null,
+        false, false, null, Arrays.asList("i", "j", "k"), null, null);
     analyzeInvalidClawLanguage("claw expand induction()");
     analyzeInvalidClawLanguage("claw expand induction");
 
-    analyzeValidArrayTransform("claw expand target(cpu)", false, null,
-        false, null, null, Collections.singletonList(Target.CPU));
-    analyzeValidArrayTransform("claw expand target(gpu)", false, null,
-        false, null, null, Collections.singletonList(Target.GPU));
-    analyzeValidArrayTransform("claw expand target(cpu, gpu)", false,
-        null, false, null, null, Arrays.asList(Target.CPU, Target.GPU));
+    analyzeValidExpandNotation("claw expand target(cpu)", false, null,
+        false, false, null, null, Collections.singletonList(Target.CPU), null);
+    analyzeValidExpandNotation("claw expand target(gpu)", false, null,
+        false, false, null, null, Collections.singletonList(Target.GPU), null);
+    analyzeValidExpandNotation("claw expand target(cpu, gpu)", false, null,
+        false, false, null, null, Arrays.asList(Target.CPU, Target.GPU), null);
 
-    analyzeValidArrayTransform(
-        "claw expand target(cpu) fusion parallel acc(loop)",
-        true, null, true, "loop", null, Collections.singletonList(Target.CPU));
-    analyzeValidArrayTransform(
-        "claw expand fusion target(cpu) parallel acc(loop)",
-        true, null, true, "loop", null, Collections.singletonList(Target.CPU));
-    analyzeValidArrayTransform(
-        "claw expand fusion parallel target(cpu) acc(loop)",
-        true, null, true, "loop", null, Collections.singletonList(Target.CPU));
-    analyzeValidArrayTransform(
-        "claw expand fusion parallel acc(loop) target(cpu)",
-        true, null, true, "loop", null, Collections.singletonList(Target.CPU));
+    analyzeValidExpandNotation(
+        "claw expand target(cpu) fusion parallel acc(loop)", true, null, true,
+        false, "loop", null, Collections.singletonList(Target.CPU), null);
+    analyzeValidExpandNotation(
+        "claw expand fusion target(cpu) parallel acc(loop)", true, null, true,
+        false, "loop", null, Collections.singletonList(Target.CPU), null);
+    analyzeValidExpandNotation(
+        "claw expand fusion parallel target(cpu) acc(loop)", true, null, true,
+        false, "loop", null, Collections.singletonList(Target.CPU), null);
+    analyzeValidExpandNotation(
+        "claw expand fusion parallel acc(loop) target(cpu)", true, null, true,
+        false, "loop", null, Collections.singletonList(Target.CPU), null);
+    analyzeValidExpandNotation(
+        "claw expand parallel update savepoint=sp1", false, null, true,
+        true, null, null, null, "sp1");
 
     analyzeValidSimpleClaw("claw end expand",
         ClawDirective.EXPAND, true, null);
@@ -778,13 +780,18 @@ public class ClawPragmaTest {
    * @param raw         Raw string value of the CLAW directive to be analyzed.
    * @param fusion      Set to true if the extracted option should be present.
    * @param fusionGroup Name of the group in the extracted fusion option.
-   * @param parallel    Set to true if the extracted option should be present.
+   * @param parallel    Set to true if parallel clause should be present.
+   * @param update      Set to true if update clause should be present.
    * @param acc         String of acc clauses that should be present.
+   * @param inducNames  Induction variables names.
+   * @param targets     Assert target clause.
    */
-  private void analyzeValidArrayTransform(String raw, boolean fusion,
+  private void analyzeValidExpandNotation(String raw, boolean fusion,
                                           String fusionGroup, boolean parallel,
+                                          boolean update,
                                           String acc, List<String> inducNames,
-                                          List<Target> targets)
+                                          List<Target> targets,
+                                          String savepoint)
   {
     ClawPragma l = analyze(raw, ClawDirective.EXPAND);
     assertNotNull(l);
@@ -800,11 +807,23 @@ public class ClawPragmaTest {
     } else {
       assertFalse(l.hasClause(ClawClause.PARALLEL));
     }
+    if(update) {
+      assertTrue(l.hasClause(ClawClause.UPDATE));
+    } else {
+      assertFalse(l.hasClause(ClawClause.UPDATE));
+    }
     if(acc != null) {
       assertTrue(l.hasClause(ClawClause.ACC));
       assertEquals(acc, l.value(ClawClause.ACC));
     } else {
       assertFalse(l.hasClause(ClawClause.ACC));
+    }
+
+    if(savepoint != null) {
+      assertTrue(l.hasClause(ClawClause.SAVEPOINT));
+      assertEquals(savepoint, l.value(ClawClause.SAVEPOINT));
+    } else {
+      assertFalse(l.hasClause(ClawClause.SAVEPOINT));
     }
 
     assertClauseListValues(l, ClawClause.INDUCTION, inducNames);
@@ -1558,7 +1577,7 @@ public class ClawPragmaTest {
   }
 
   @Test
-  public void savepointTest(){
+  public void savepointTest() {
     assertValidSavepointClause("claw sca forward savepoint=sp1", "sp1", null);
 
     Map<String, String> sp2Map = new HashMap<>();

@@ -604,6 +604,8 @@ public class ScaForward extends ClawTransformation {
       }
     }
 
+    Xnode postHook = fctCallAncestor;
+
     if(_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)) {
       // Generate update from HOST TO DEVICE
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
@@ -615,8 +617,6 @@ public class ScaForward extends ClawTransformation {
         Directive.generateUpdate(xcodeml, fctCallAncestor, in,
             DataMovement.HOST_TO_DEVICE);
       }
-
-      Xnode postHook = fctCallAncestor;
 
       // Generate update from DEVICE to HOST
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
@@ -635,20 +635,21 @@ public class ScaForward extends ClawTransformation {
         postHook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.DEVICE_TO_HOST);
       }
-      // Serialization output
-      if(_claw.hasClause(ClawClause.SAVEPOINT)) {
-        List<String> outFieldsName = _fCall.gatherArguments(xcodeml, _fctType,
-            _mod, Intent.OUT, true, true);
-        Serialization.insertImports(xcodeml, _fCall.findParentFunction());
-        Serialization.generateWriteSavepoint(xcodeml, postHook,
-            _claw.getMetadataMap(), outFieldsName,
-            _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
-      }
 
       if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
         Directive.generateParallelRegion(xcodeml, fctCallAncestor,
             fctCallAncestor);
       }
+    }
+
+    // Serialization output
+    if(_claw.hasClause(ClawClause.SAVEPOINT)) {
+      List<String> outFieldsName = _fCall.gatherArguments(xcodeml, _fctType,
+          _mod, Intent.OUT, true, true);
+      Serialization.insertImports(xcodeml, _fCall.findParentFunction());
+      Serialization.generateWriteSavepoint(xcodeml, postHook,
+          _claw.getMetadataMap(), outFieldsName,
+          _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
     }
   }
 
