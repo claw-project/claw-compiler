@@ -25,7 +25,8 @@ public class Serialization {
   private static final String SER_PPSER_SERIALIZER_REF = "ppser_serializer_ref";
   private static final String SER_PPSER_ZPERTURB = "ppser_zrperturb";
   private static final String SER_FS_CREATE_SAVEPOINT = "fs_create_savepoint";
-  private static final String SER_FS_ADD_SP_METAINFO = "fs_add_savepoint_metainfo";
+  private static final String SER_FS_ADD_SP_METAINFO =
+      "fs_add_savepoint_metainfo";
   private static final String SER_FS_WRITE_FIELD = "fs_write_field";
   private static final String SER_FS_READ_FIELD = "fs_read_field";
 
@@ -160,7 +161,8 @@ public class Serialization {
   {
     // Create the char constant type
     Xnode nameArg = xcodeml.createCharConstant(savepointName + "_" + fieldName);
-    Xnode varArg = xcodeml.createVar(FortranType.REAL, fieldName, Xscope.GLOBAL);
+    Xnode varArg =
+        xcodeml.createVar(FortranType.REAL, fieldName, Xscope.GLOBAL);
     FunctionCall serCall = createBaseSerFctCall(xcodeml, callType);
     serCall.addArguments(nameArg);
     serCall.addArguments(varArg);
