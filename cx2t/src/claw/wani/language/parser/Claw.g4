@@ -504,9 +504,20 @@ foward_clauses[ClawPragma l]:
 ;
 
 savepoint_clause[ClawPragma l]:
-    SAVEPOINT '=' savepoint_name=IDENTIFIER
+    SAVEPOINT '=' savepoint_name=IDENTIFIER metadata_clause[$l]*
     { $l.setValue(ClawClause.SAVEPOINT, $savepoint_name.text); }
 ;
+
+metadata_clause[ClawPragma l]:
+    meta_name=IDENTIFIER '=' meta_value=IDENTIFIER
+    { $l.addMetadata($meta_name.text, $meta_value.text); }
+  | meta_name=IDENTIFIER '=' meta_type=IDENTIFIER '%' meta_member=IDENTIFIER
+    {
+      $l.addMetadata($meta_name.text,
+        String.format("%s%%%s", $meta_type.text, $meta_member.text));
+    }
+;
+
 
 copy_clause[ClawPragma l]:
     COPY

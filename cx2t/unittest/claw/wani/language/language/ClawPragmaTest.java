@@ -18,9 +18,7 @@ import claw.wani.x2t.configuration.Configuration;
 import helper.XmlHelper;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -1561,10 +1559,30 @@ public class ClawPragmaTest {
 
   @Test
   public void savepointTest(){
-    ClawPragma l = analyze("claw sca forward savepoint=sp1", ClawDirective.SCA);
+    assertValidSavepointClause("claw sca forward savepoint=sp1", "sp1", null);
+
+    Map<String, String> sp2Map = new HashMap<>();
+    sp2Map.put("tile_name", "tile%name");
+    sp2Map.put("iblk", "iblk");
+    assertValidSavepointClause("claw sca forward savepoint=sp2 " +
+        "tile_name=tile%name iblk=iblk", "sp2", sp2Map);
+  }
+
+  private void assertValidSavepointClause(String rawDirective,
+                                          String expectedSavepointName,
+                                          Map<String, String> expectedMetadata)
+  {
+    ClawPragma l = analyze(rawDirective, ClawDirective.SCA);
     assertNotNull(l);
     assertFalse(l.isEndPragma());
     assertTrue(l.hasClause(ClawClause.SAVEPOINT));
-    assertEquals("sp1", l.value(ClawClause.SAVEPOINT));
+    assertEquals(expectedSavepointName, l.value(ClawClause.SAVEPOINT));
+    if(expectedMetadata != null) {
+      assertEquals(expectedMetadata.size(), l.getMetadataMap().size());
+      for(String key : expectedMetadata.keySet()) {
+        assertTrue(l.getMetadataMap().containsKey(key));
+        assertEquals(expectedMetadata.get(key), l.getMetadataMap().get(key));
+      }
+    }
   }
 }
