@@ -598,10 +598,7 @@ public class ScaForward extends ClawTransformation {
             Intent.IN, true, false);
 
         // Serialization input
-        if(Configuration.get()
-            .getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED)
-            && _claw.hasClause(ClawClause.SAVEPOINT))
-        {
+        if(_claw.hasClause(ClawClause.SAVEPOINT)) {
           List<String> inFields = _fCall.gatherArguments(xcodeml, _fctType,
               _mod, Intent.IN, true, true);
           Serialization.insertImports(xcodeml, _fCall.findParentFunction());
@@ -631,10 +628,7 @@ public class ScaForward extends ClawTransformation {
             DataMovement.DEVICE_TO_HOST);
 
         // Serialization output
-        if(Configuration.get()
-            .getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED)
-            && _claw.hasClause(ClawClause.SAVEPOINT))
-        {
+        if(_claw.hasClause(ClawClause.SAVEPOINT)) {
           List<String> outFieldsName = _fCall.gatherArguments(xcodeml, _fctType,
               _mod, Intent.OUT, true, true);
           Serialization.insertImports(xcodeml, _fCall.findParentFunction());

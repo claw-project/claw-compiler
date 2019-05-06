@@ -11,6 +11,7 @@ import claw.tatsu.xcodeml.xnode.common.Xscope;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.wani.x2t.configuration.Configuration;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -176,6 +177,12 @@ public class Serialization {
                                      List<String> fields, String savepointName,
                                      SerializationStep step)
   {
+    if(!Configuration.get().
+        getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+    {
+      return hook;
+    }
+
     savepointName = String.format("%s_%s", savepointName,
         step == SerializationStep.SER_IN
             ? SAVEPOINT_IN_SUFFIX : SAVEPOINT_OUT_SUFFIX);
