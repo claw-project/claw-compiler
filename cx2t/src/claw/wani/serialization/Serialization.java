@@ -5,10 +5,7 @@
 package claw.wani.serialization;
 
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
-import claw.tatsu.xcodeml.xnode.common.Xcode;
-import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
-import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.tatsu.xcodeml.xnode.common.Xscope;
+import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
@@ -177,21 +174,35 @@ public class Serialization {
     return exprStmt;
   }
 
+  /**
+   * Create a fs_add_savepoint_metainfo call to the serialization library.
+   *
+   * @param xcodeml Current XcodeML translation unit.
+   * @param key     Metadata key.
+   * @param value   Metadata value.
+   * @return exprStmt node created with the specific function call inside.
+   */
   private static Xnode createAddMetaInfoCall(XcodeProgram xcodeml, String key,
                                              String value)
   {
     FunctionCall serCall =
         createBaseSerFctCall(xcodeml, SerializationCall.SER_ADD_METAINFO);
-    Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
 
     // Create the char constant type
-    Xnode nameArg = xcodeml.createCharConstant(key);
-    //Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
+    Xnode metadataName = xcodeml.createCharConstant(key);
+    serCall.addArguments(metadataName);
 
-    arguments.append(nameArg);
-    arguments.append(nameArg); // TODO variable
+    if(value.contains("%")) {
+      String[] values = value.split("%");
+      serCall.addArguments(xcodeml.createNode(Xcode.F_MEMBER_REF)
+          .setAttribute(Xattr.MEMBER, values[1])
+          .append(xcodeml.createNode(Xcode.VAR_REF)
+              .append(xcodeml.createNode(Xcode.VAR).setValue(values[0]))));
+    } else {
+      serCall.addArguments(xcodeml.createNode(Xcode.VAR).setValue(value));
+    }
 
-    return serCall;
+    return xcodeml.createNode(Xcode.EXPR_STATEMENT).insert(serCall);
   }
 
   /**
