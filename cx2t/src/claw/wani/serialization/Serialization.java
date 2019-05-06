@@ -4,6 +4,7 @@
  */
 package claw.wani.serialization;
 
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
@@ -13,11 +14,7 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.wani.x2t.configuration.Configuration;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * Helper class to insert serialization call in XcodeML/F
@@ -85,8 +82,24 @@ public class Serialization {
                                             String savepointName,
                                             String fieldName)
   {
-    return createSerFctCall(xcodeml, savepointName, fieldName,
+    return createReadWriteFctCall(xcodeml, savepointName, fieldName,
         SerializationCall.SER_WRITE);
+  }
+
+  /**
+   * Create a read field function call to the serialization library.
+   *
+   * @param xcodeml       Current XcodeML translation unit.
+   * @param savepointName Name of the savepoint.
+   * @param fieldName     Name of the field.
+   * @return Newly created exprStmt node encapsulating the function call.
+   */
+  private static Xnode createReadFieldCall(XcodeProgram xcodeml,
+                                           String savepointName,
+                                           String fieldName)
+  {
+    return createReadWriteFctCall(xcodeml, savepointName, fieldName,
+        SerializationCall.SER_READ);
   }
 
   /**
@@ -96,8 +109,8 @@ public class Serialization {
    * @param callType Type of call for the
    * @return Newly create functionCall node.
    */
-  private static Xnode createSerSkeletonFctCall(XcodeProgram xcodeml,
-                                                SerializationCall callType)
+  private static FunctionCall createBaseSerFctCall(XcodeProgram xcodeml,
+                                                   SerializationCall callType)
   {
     FfunctionType serType = xcodeml.createSubroutineType();
     Xnode savepointArg = xcodeml.createVar(FortranType.STRUCT,
@@ -117,20 +130,20 @@ public class Serialization {
         serFctName = SER_FS_WRITE_FIELD;
     }
 
-    Xnode serCall = xcodeml.createFctCall(serType, serFctName);
-    Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
+    FunctionCall serCall = xcodeml.createFctCall(serType, serFctName);
+
     if(callType == SerializationCall.SER_WRITE) {
       Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,
           SER_PPSER_SERIALIZER, Xscope.GLOBAL);
-      arguments.append(serializerArg);
+      serCall.addArguments(serializerArg);
     } else if(callType == SerializationCall.SER_READ
         || callType == SerializationCall.SER_READ_PERTURB)
     {
       Xnode serializerArg = xcodeml.createVar(FortranType.STRUCT,
           SER_PPSER_SERIALIZER_REF, Xscope.GLOBAL);
-      arguments.append(serializerArg);
+      serCall.addArguments(serializerArg);
     }
-    arguments.append(savepointArg);
+    serCall.addArguments(savepointArg);
     return serCall;
   }
 
@@ -143,25 +156,42 @@ public class Serialization {
    * @param callType      Type of serialization call from the enum.
    * @return exprStmt node created with the specific function call inside.
    */
-  private static Xnode createSerFctCall(XcodeProgram xcodeml,
-                                        String savepointName,
-                                        String fieldName,
-                                        SerializationCall callType)
+  private static Xnode createReadWriteFctCall(XcodeProgram xcodeml,
+                                              String savepointName,
+                                              String fieldName,
+                                              SerializationCall callType)
   {
     // Create the char constant type
     Xnode nameArg = xcodeml.createCharConstant(savepointName + "_" + fieldName);
     Xnode varArg = xcodeml.createVar(FortranType.REAL, fieldName, Xscope.GLOBAL);
-    Xnode serCall = createSerSkeletonFctCall(xcodeml, callType);
-    Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
-    arguments.append(nameArg).append(varArg);
+    FunctionCall serCall = createBaseSerFctCall(xcodeml, callType);
+    serCall.addArguments(nameArg);
+    serCall.addArguments(varArg);
     if(callType == SerializationCall.SER_READ_PERTURB) {
       Xnode perturbArg = xcodeml.createVar(FortranType.REAL, SER_PPSER_ZPERTURB,
           Xscope.GLOBAL);
-      arguments.append(perturbArg);
+      serCall.addArguments(perturbArg);
     }
     Xnode exprStmt = xcodeml.createNode(Xcode.EXPR_STATEMENT);
     exprStmt.insert(serCall);
     return exprStmt;
+  }
+
+  private static Xnode createAddMetaInfoCall(XcodeProgram xcodeml, String key,
+                                             String value)
+  {
+    FunctionCall serCall =
+        createBaseSerFctCall(xcodeml, SerializationCall.SER_ADD_METAINFO);
+    Xnode arguments = serCall.matchDescendant(Xcode.ARGUMENTS);
+
+    // Create the char constant type
+    Xnode nameArg = xcodeml.createCharConstant(key);
+    //Xnode varArg = xcodeml.createVar(param.getType(), param.value(), Xscope.GLOBAL);
+
+    arguments.append(nameArg);
+    arguments.append(nameArg); // TODO variable
+
+    return serCall;
   }
 
   /**
@@ -169,13 +199,59 @@ public class Serialization {
    *
    * @param xcodeml       Current XcodeML translation unit.
    * @param hook          Hook for node insertion.
+   * @param metadata      Key=value information for metadata.
    * @param fields        List of fields to be written.
    * @param savepointName Name of the savepoint.
    * @return Last inserted node.
    */
-  public static Xnode writeSavepoint(XcodeProgram xcodeml, Xnode hook,
-                                     List<String> fields, String savepointName,
-                                     SerializationStep step)
+  public static Xnode generateWriteSavepoint(XcodeProgram xcodeml, Xnode hook,
+                                             Map<String, String> metadata,
+                                             List<String> fields,
+                                             String savepointName,
+                                             SerializationStep step)
+  {
+    return generateSavepoint(xcodeml, hook, metadata, fields, savepointName,
+        step, SerializationMode.WRITE);
+  }
+
+  /**
+   * Create function calls to the serialization library to read a
+   * savepoint.
+   *
+   * @param xcodeml       Current XcodeML translation unit.
+   * @param hook          Hook for node insertion.
+   * @param metadata      Key=value information for metadata.
+   * @param fields        List of fields to be written.
+   * @param savepointName Name of the savepoint.
+   * @return Last inserted node.
+   */
+  public static Xnode generateReadSavepoint(XcodeProgram xcodeml, Xnode hook,
+                                            Map<String, String> metadata,
+                                            List<String> fields,
+                                            String savepointName,
+                                            SerializationStep step)
+  {
+    return generateSavepoint(xcodeml, hook, metadata, fields, savepointName,
+        step, SerializationMode.READ);
+  }
+
+  /**
+   * Create function calls to the serialization library to write or read a
+   * savepoint.
+   *
+   * @param xcodeml       Current XcodeML translation unit.
+   * @param hook          Hook for node insertion.
+   * @param metadata      Key=value information for metadata.
+   * @param fields        List of fields to be written.
+   * @param savepointName Name of the savepoint.
+   * @return Last inserted node.
+   */
+  private static Xnode generateSavepoint(XcodeProgram xcodeml, Xnode hook,
+                                         Map<String, String> metadata,
+                                         List<String> fields,
+                                         String savepointName,
+                                         SerializationStep step,
+                                         SerializationMode mode)
   {
     if(!Configuration.get().
         getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
@@ -190,9 +266,18 @@ public class Serialization {
     List<Xnode> nodes = new ArrayList<>();
     nodes.add(createSavepoint(xcodeml, savepointName));
 
-    Set<String> uniqueFileds = new HashSet<>(fields);
-    for(String fieldName : uniqueFileds) {
-      nodes.add(createWriteFieldCall(xcodeml, savepointName, fieldName));
+    for(Map.Entry<String, String> entry : metadata.entrySet()) {
+      nodes.add(createAddMetaInfoCall(xcodeml, entry.getKey(),
+          entry.getValue()));
+    }
+
+    Set<String> uniqueFields = new HashSet<>(fields);
+    for(String fieldName : uniqueFields) {
+      if(mode == SerializationMode.WRITE) {
+        nodes.add(createWriteFieldCall(xcodeml, savepointName, fieldName));
+      } else if(mode == SerializationMode.READ) {
+        nodes.add(createReadFieldCall(xcodeml, savepointName, fieldName));
+      }
     }
 
     return insertNodes(step, hook, nodes);

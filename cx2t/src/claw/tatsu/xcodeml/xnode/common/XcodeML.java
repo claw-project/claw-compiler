@@ -509,7 +509,7 @@ public class XcodeML extends Xnode {
    * @param fctName Value of the name node.
    * @return The newly created node detached in the current XcodeML unit.
    */
-  public Xnode createFctCall(FfunctionType fctType, String fctName) {
+  public FunctionCall createFctCall(FfunctionType fctType, String fctName) {
     return createFctCall(fctType.getReturnType(), fctName, fctType.getType());
   }
 
