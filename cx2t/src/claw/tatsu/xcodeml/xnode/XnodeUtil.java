@@ -584,7 +584,7 @@ public class XnodeUtil {
   public static List<String> getWrittenArraysInRegion(XcodeProgram xcodeml,
                                                       Xnode from, Xnode to)
   {
-    List<String> writtenArraysId = new ArrayList<>();
+    Set<String> writtenArraysIds = new HashSet<>();
     List<Xnode> firstLevelNodesInRegion;
     if(to == null) {
       firstLevelNodesInRegion = Collections.singletonList(from.nextSibling());
@@ -604,10 +604,34 @@ public class XnodeUtil {
       for(AssignStatement as : assignements) {
         Xnode lhs = as.getLhs();
         if(lhs.is(Xcode.F_ARRAY_REF)) {
-          writtenArraysId.add(lhs.matchDescendant(Xcode.VAR).value());
+          writtenArraysIds.add(lhs.matchDescendant(Xcode.VAR).value());
         }
       }
     }
-    return writtenArraysId;
+    return new ArrayList<>(writtenArraysIds);
+  }
+
+  public static List<String> getReadArraysInRegion(XcodeProgram xcodeml,
+                                                   Xnode from, Xnode to)
+  {
+    Set<String> readArrayIds = new HashSet<>();
+    List<Xnode> firstLevelNodesInRegion;
+    if(to == null) {
+      firstLevelNodesInRegion = Collections.singletonList(from.nextSibling());
+    } else {
+      firstLevelNodesInRegion = getSiblingsBetween(from, to);
+    }
+    for(Xnode node : firstLevelNodesInRegion) {
+      List<Xnode> arrayRefs = node.matchAll(Xcode.F_ARRAY_REF);
+      for(Xnode arrayRef : arrayRefs) {
+        if(arrayRef.ancestorIs(Xcode.F_ASSIGN_STATEMENT)
+            && arrayRef.ancestor().firstChild().equals(arrayRef))
+        {
+          continue;
+        }
+        readArrayIds.add(arrayRef.matchDescendant(Xcode.VAR).value());
+      }
+    }
+    return new ArrayList<>(readArrayIds);
   }
 }

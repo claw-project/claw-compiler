@@ -20,12 +20,15 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 import claw.wani.language.ClawPragma;
 import claw.wani.language.ClawClause;
+import claw.wani.serialization.Serialization;
+import claw.wani.serialization.SerializationStep;
 import claw.wani.transformation.ClawBlockTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -170,15 +173,19 @@ public class ExpandNotation extends ClawBlockTransformation {
     // 1. Find the function/module declaration TODO handle module/program ?
     FfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
     Xnode grip = _clawStart.getPragma();
-    for(int i = 0; i < _groupedAssignStmts.size(); ++i) {
-      grip = generateDoStmtNotation(xcodeml, ct, fctDef,
-          _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);
-    }
+
+    Xnode from = _clawStart.getPragma();
+    Xnode to = _clawEnd != null ? _clawEnd.getPragma() : null;
 
     if(Context.isTarget(Target.GPU)) {
-      generateUpdateClause(xcodeml, _clawStart.getPragma(),
-          _clawEnd == null ? null : _clawEnd.getPragma());
+      for(int i = 0; i < _groupedAssignStmts.size(); ++i) {
+        grip = generateDoStmtNotation(xcodeml, ct, fctDef,
+            _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);
+      }
+      generateUpdateClause(xcodeml, from, to);
     }
+
+    generateSavepoint(xcodeml, from, to);
 
     removePragma();
     transformed();
@@ -317,7 +324,10 @@ public class ExpandNotation extends ClawBlockTransformation {
     if(_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
         || _clawStart.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
     {
-
+      List<String> readArrays =
+          XnodeUtil.getReadArraysInRegion(xcodeml, from, to);
+      Directive.generateUpdate(xcodeml, from, readArrays,
+          DataMovement.HOST_TO_DEVICE);
     }
 
     // Generate device to host movement
@@ -331,9 +341,26 @@ public class ExpandNotation extends ClawBlockTransformation {
     }
   }
 
-  private void generateSavepoint() {
+  private void generateSavepoint(XcodeProgram xcodeml, Xnode from, Xnode to) {
     if(!_clawStart.hasClause(ClawClause.SAVEPOINT)) {
       return;
     }
+
+    Serialization.insertImports(xcodeml, from.findParentFunction());
+    List<String> writtenArrays =
+        XnodeUtil.getWrittenArraysInRegion(xcodeml, from, to);
+
+    if(Context.isTarget(Target.GPU)) {
+      // Read inputs
+
+    } else if(Context.isTarget(Target.CPU)) {
+      // Write inputs
+
+    }
+
+    // Write outputs
+    Serialization.generateWriteSavepoint(xcodeml, to,
+        _clawStart.getMetadataMap(), writtenArrays,
+        _clawStart.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
   }
 }
