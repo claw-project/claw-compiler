@@ -177,6 +177,8 @@ public class ExpandNotation extends ClawBlockTransformation {
     Xnode from = _clawStart.getPragma();
     Xnode to = _clawEnd != null ? _clawEnd.getPragma() : null;
 
+    generateSavepoint(xcodeml, from, to);
+
     if(Context.isTarget(Target.GPU)) {
       for(int i = 0; i < _groupedAssignStmts.size(); ++i) {
         grip = generateDoStmtNotation(xcodeml, ct, fctDef,
@@ -184,9 +186,7 @@ public class ExpandNotation extends ClawBlockTransformation {
       }
       generateUpdateClause(xcodeml, from, to);
     }
-
-    generateSavepoint(xcodeml, from, to);
-
+    
     removePragma();
     transformed();
   }
@@ -350,12 +350,19 @@ public class ExpandNotation extends ClawBlockTransformation {
     List<String> writtenArrays =
         XnodeUtil.getWrittenArraysInRegion(xcodeml, from, to);
 
+    List<String> readArrays =
+        XnodeUtil.getReadArraysInRegion(xcodeml, from, to);
+
     if(Context.isTarget(Target.GPU)) {
       // Read inputs
-
+      Serialization.generateReadSavepoint(xcodeml, from,
+          _clawStart.getMetadataMap(), readArrays,
+          _clawStart.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
     } else if(Context.isTarget(Target.CPU)) {
       // Write inputs
-
+      Serialization.generateWriteSavepoint(xcodeml, from,
+          _clawStart.getMetadataMap(), readArrays,
+          _clawStart.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
     }
 
     // Write outputs
