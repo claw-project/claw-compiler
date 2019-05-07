@@ -585,7 +585,12 @@ public class XnodeUtil {
                                                       Xnode from, Xnode to)
   {
     List<String> writtenArraysId = new ArrayList<>();
-    List<Xnode> firstLevelNodesInRegion = getSiblingsBetween(from, to);
+    List<Xnode> firstLevelNodesInRegion;
+    if(to == null) {
+      firstLevelNodesInRegion = Collections.singletonList(from.nextSibling());
+    } else {
+      firstLevelNodesInRegion = getSiblingsBetween(from, to);
+    }
     for(Xnode node : firstLevelNodesInRegion) {
       List<AssignStatement> assignements;
       if(node.is(Xcode.F_ASSIGN_STATEMENT)) {

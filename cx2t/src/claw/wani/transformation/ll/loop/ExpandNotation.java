@@ -6,6 +6,8 @@ package claw.wani.transformation.ll.loop;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.common.Context;
+import claw.tatsu.common.Target;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Range;
@@ -173,8 +175,10 @@ public class ExpandNotation extends ClawBlockTransformation {
           _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);
     }
 
-    generateUpdateClause(xcodeml, _clawStart.getPragma(),
-        _clawEnd == null ? null : _clawEnd.getPragma());
+    if(Context.isTarget(Target.GPU)) {
+      generateUpdateClause(xcodeml, _clawStart.getPragma(),
+          _clawEnd == null ? null : _clawEnd.getPragma());
+    }
 
     removePragma();
     transformed();
@@ -302,8 +306,8 @@ public class ExpandNotation extends ClawBlockTransformation {
     return grip == null ? doStmts[0] : grip;
   }
 
-  private void generateUpdateClause(XcodeProgram xcodeml, Xnode preHook,
-                                    Xnode postHook)
+  private void generateUpdateClause(XcodeProgram xcodeml, Xnode from,
+                                    Xnode to)
   {
     if(!_clawStart.hasClause(ClawClause.UPDATE)) {
       return;
@@ -320,9 +324,9 @@ public class ExpandNotation extends ClawBlockTransformation {
     if(_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
         || _clawStart.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
     {
-      List<String> writtenArrays = XnodeUtil.getWrittenArraysInRegion(xcodeml,
-          _clawStart.getPragma(), _clawEnd.getPragma());
-      Directive.generateUpdate(xcodeml, postHook, writtenArrays,
+      List<String> writtenArrays =
+          XnodeUtil.getWrittenArraysInRegion(xcodeml, from, to);
+      Directive.generateUpdate(xcodeml, to, writtenArrays,
           DataMovement.DEVICE_TO_HOST);
     }
   }
