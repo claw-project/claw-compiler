@@ -6,6 +6,7 @@ package claw.wani.transformation.ll.loop;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Range;
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
@@ -171,6 +172,10 @@ public class ExpandNotation extends ClawBlockTransformation {
       grip = generateDoStmtNotation(xcodeml, ct, fctDef,
           _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);
     }
+
+    generateUpdateClause(xcodeml, _clawStart.getPragma(),
+        _clawEnd == null ? null : _clawEnd.getPragma());
+
     removePragma();
     transformed();
   }
@@ -295,5 +300,36 @@ public class ExpandNotation extends ClawBlockTransformation {
     translator.generateAdditionalTransformation(_clawStart, xcodeml,
         doStmts[0]);
     return grip == null ? doStmts[0] : grip;
+  }
+
+  private void generateUpdateClause(XcodeProgram xcodeml, Xnode preHook,
+                                    Xnode postHook)
+  {
+    if(!_clawStart.hasClause(ClawClause.UPDATE)) {
+      return;
+    }
+
+    // Generate host to device movement
+    if(_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
+        || _clawStart.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
+    {
+
+    }
+
+    // Generate device to host movement
+    if(_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
+        || _clawStart.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
+    {
+      List<String> writtenArrays = XnodeUtil.getWrittenArraysInRegion(xcodeml,
+          _clawStart.getPragma(), _clawEnd.getPragma());
+      Directive.generateUpdate(xcodeml, postHook, writtenArrays,
+          DataMovement.DEVICE_TO_HOST);
+    }
+  }
+
+  private void generateSavepoint() {
+    if(!_clawStart.hasClause(ClawClause.SAVEPOINT)) {
+      return;
+    }
   }
 }

@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode;
 
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
@@ -568,5 +569,40 @@ public class XnodeUtil {
 
     return decls.stream().map(x -> x.matchSeq(Xcode.NAME))
         .map(Xnode::value).collect(Collectors.toSet());
+  }
+
+  public static List<Xnode> getSiblingsBetween(Xnode from, Xnode to) {
+    List<Xnode> siblingsInRegion = new LinkedList<>();
+    Xnode current = from.nextSibling();
+    while(current != null && !current.equals(to)) {
+      siblingsInRegion.add(current);
+      current = current.nextSibling();
+    }
+    return siblingsInRegion;
+  }
+
+  public static List<String> getWrittenArraysInRegion(XcodeProgram xcodeml,
+                                                      Xnode from, Xnode to)
+  {
+    List<String> writtenArraysId = new ArrayList<>();
+    List<Xnode> firstLevelNodesInRegion = getSiblingsBetween(from, to);
+    for(Xnode node : firstLevelNodesInRegion) {
+      List<AssignStatement> assignements;
+      if(node.is(Xcode.F_ASSIGN_STATEMENT)) {
+        assignements =
+            Collections.singletonList(new AssignStatement(node.element()));
+      } else {
+        assignements = node.matchAll(Xcode.F_ASSIGN_STATEMENT).stream()
+            .map(Xnode::element)
+            .map(AssignStatement::new).collect(Collectors.toList());
+      }
+      for(AssignStatement as : assignements) {
+        Xnode lhs = as.getLhs();
+        if(lhs.is(Xcode.F_ARRAY_REF)) {
+          writtenArraysId.add(lhs.matchDescendant(Xcode.VAR).value());
+        }
+      }
+    }
+    return writtenArraysId;
   }
 }
