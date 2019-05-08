@@ -219,6 +219,10 @@ public class ExpandNotation extends ClawBlockTransformation {
     Xnode[] doStmts = new Xnode[ranges.size()];
     Xnode var =
         statements.get(0).matchSeq(Xcode.F_ARRAY_REF, Xcode.VAR_REF, Xcode.VAR);
+    if(var == null) {
+      var = statements.get(0).matchSeq(Xcode.F_ARRAY_REF,
+          Xcode.VAR_REF, Xcode.F_MEMBER_REF);
+    }
     // 1. Create do statements with induction variables
     for(int i = 0; i < ranges.size(); ++i) {
       // 1.1 Create induction variables
