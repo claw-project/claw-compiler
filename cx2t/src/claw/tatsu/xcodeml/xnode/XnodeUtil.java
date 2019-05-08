@@ -571,7 +571,14 @@ public class XnodeUtil {
         .map(Xnode::value).collect(Collectors.toSet());
   }
 
-  public static List<Xnode> getSiblingsBetween(Xnode from, Xnode to) {
+  /**
+   * Gather all nodes at the same level between from and to.
+   *
+   * @param from Node from which the block starts.
+   * @param to   Node to which the block ends.
+   * @return List of nodes in the block.
+   */
+  private static List<Xnode> getSiblingsBetween(Xnode from, Xnode to) {
     List<Xnode> siblingsInRegion = new LinkedList<>();
     Xnode current = from.nextSibling();
     while(current != null && !current.equals(to)) {
@@ -581,9 +588,14 @@ public class XnodeUtil {
     return siblingsInRegion;
   }
 
-  public static List<String> getWrittenArraysInRegion(XcodeProgram xcodeml,
-                                                      Xnode from, Xnode to)
-  {
+  /**
+   * Gather all array identifiers written in the given block.
+   *
+   * @param from Node from which the block starts.
+   * @param to   Node to which the block ends.
+   * @return List of array identifiers written to in the block.
+   */
+  public static List<String> getWrittenArraysInRegion(Xnode from, Xnode to) {
     Set<String> writtenArraysIds = new HashSet<>();
     List<Xnode> firstLevelNodesInRegion;
     if(to == null) {
@@ -611,9 +623,14 @@ public class XnodeUtil {
     return new ArrayList<>(writtenArraysIds);
   }
 
-  public static List<String> getReadArraysInRegion(XcodeProgram xcodeml,
-                                                   Xnode from, Xnode to)
-  {
+  /**
+   * Gather all array identifiers read in the given block.
+   *
+   * @param from Node from which the block starts.
+   * @param to   Node to which the block ends.
+   * @return List of array identifiers read to in the block.
+   */
+  public static List<String> getReadArraysInRegion(Xnode from, Xnode to) {
     Set<String> readArrayIds = new HashSet<>();
     List<Xnode> firstLevelNodesInRegion;
     if(to == null) {
