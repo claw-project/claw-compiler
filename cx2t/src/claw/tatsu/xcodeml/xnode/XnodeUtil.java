@@ -616,7 +616,7 @@ public class XnodeUtil {
       for(AssignStatement as : assignements) {
         Xnode lhs = as.getLhs();
         if(lhs.is(Xcode.F_ARRAY_REF)) {
-          writtenArraysIds.add(lhs.matchDescendant(Xcode.VAR).value());
+          writtenArraysIds.add(lhs.constructRepresentation(false, true));
         }
       }
     }
@@ -646,7 +646,7 @@ public class XnodeUtil {
         {
           continue;
         }
-        readArrayIds.add(arrayRef.matchDescendant(Xcode.VAR).value());
+        readArrayIds.add(arrayRef.constructRepresentation(false, true));
       }
     }
     return new ArrayList<>(readArrayIds);
