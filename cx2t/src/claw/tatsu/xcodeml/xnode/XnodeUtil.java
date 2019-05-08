@@ -642,11 +642,18 @@ public class XnodeUtil {
       List<Xnode> arrayRefs = node.matchAll(Xcode.F_ARRAY_REF);
       for(Xnode arrayRef : arrayRefs) {
         if(arrayRef.ancestorIs(Xcode.F_ASSIGN_STATEMENT)
-            && arrayRef.ancestor().firstChild().equals(arrayRef))
+            && arrayRef.ancestor().firstChild().equals(arrayRef)
+            || arrayRef.matchAncestor(Xcode.F_ARRAY_REF) != null)
         {
           continue;
         }
-        readArrayIds.add(arrayRef.constructRepresentation(false, true));
+
+        if(arrayRef.matchAncestor(Xcode.F_MEMBER_REF) != null) {
+          readArrayIds.add(arrayRef.matchAncestor(Xcode.F_MEMBER_REF).
+              constructRepresentation(false, false));
+        } else {
+          readArrayIds.add(arrayRef.constructRepresentation(false, false));
+        }
       }
     }
     return new ArrayList<>(readArrayIds);
