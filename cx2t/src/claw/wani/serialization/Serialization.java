@@ -160,7 +160,8 @@ public class Serialization {
                                               SerializationCall callType)
   {
     // Create the char constant type
-    Xnode nameArg = xcodeml.createCharConstant(savepointName + "_" + fieldName);
+    Xnode nameArg = xcodeml.createCharConstant(savepointName + "_" +
+        cleanUpFieldName(fieldName));
     Xnode varArg =
         xcodeml.createVar(FortranType.REAL, fieldName, Xscope.GLOBAL);
     FunctionCall serCall = createBaseSerFctCall(xcodeml, callType);
@@ -334,6 +335,17 @@ public class Serialization {
   {
     fctDef.getDeclarationTable().insertUseDecl(xcodeml, SER_MODULE_M_SERIALIZE);
     fctDef.getDeclarationTable().insertUseDecl(xcodeml, SER_MODULE_UTILS_PPSER);
+  }
+
+  /**
+   * Remove illegal character in the field name.
+   *
+   * @param fieldName Original field name.
+   * @return Cleaned up field name.
+   */
+  private static String cleanUpFieldName(String fieldName) {
+    return fieldName.replaceAll("%", "_").replaceAll("\\(.*\\)", "")
+        .replaceAll(":", "").replaceAll(",", "");
   }
 
 }
