@@ -557,11 +557,16 @@ public final class Directive {
         last = last.prevSibling();
       }
     }
-    if(dg.getSkippedStatementsInEpilogue().isEmpty()) {
+    if(dg.getSkippedStatementsInEpilogue().isEmpty()
+        || !last.matchAll(Xcode.F_ASSIGN_STATEMENT).isEmpty())
+    {
       return last;
     } else {
       while(last.prevSibling() != null
-          && dg.getSkippedStatementsInEpilogue().contains(last.opcode())) {
+          && dg.getSkippedStatementsInEpilogue().contains(last.opcode()))
+      {
+
+
         if(last.hasBody() || last.is(Xcode.F_IF_STATEMENT)) {
           List<Xnode> children = (last.hasBody()) ? last.body().children()
               : last.matchDirectDescendant(Xcode.THEN).body().children();
