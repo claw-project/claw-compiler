@@ -616,7 +616,7 @@ public class XnodeUtil {
       for(AssignStatement as : assignements) {
         Xnode lhs = as.getLhs();
         if(lhs.is(Xcode.F_ARRAY_REF)) {
-          writtenArraysIds.add(lhs.constructRepresentation(false, true));
+          writtenArraysIds.add(lhs.constructRepresentation(false, false));
         }
       }
     }
