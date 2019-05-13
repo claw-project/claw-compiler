@@ -410,7 +410,7 @@ public class ScaGPU extends Sca {
     // Generate the parallel region
     Directive.generateParallelLoopClause(xcodeml, privateList,
         loops.getOuterStatement(), loops.getOuterStatement(), null,
-        loops.size() + collapse);
+        loops.size() + collapse, false);
 
     Directive.generateRoutineDirectives(xcodeml, _fctDef);
   }

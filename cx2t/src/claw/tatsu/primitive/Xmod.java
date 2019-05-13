@@ -57,6 +57,22 @@ public final class Xmod {
     if(moduleSuffix == null) {
       moduleSuffix = "";
     }
+    FortranModule clawModule = findModuleInPath(moduleName, moduleSuffix);
+    return clawModule != null ?
+        clawModule : findModuleInPath(moduleName, XMOD_FILE_EXTENSION);
+  }
+
+  /**
+   * Find module by name.
+   *
+   * @param moduleName   Name of the module.
+   * @param moduleSuffix Suffix to the module name.
+   * @return A FortranModule object representing the module if found.
+   * Null otherwise.
+   */
+  private static FortranModule findModuleInPath(String moduleName,
+                                                String moduleSuffix)
+  {
     for(String dir : Context.get().getModuleCache().getSearchPaths()) {
       String path = dir + "/" + moduleName + moduleSuffix;
       File f = new File(path);

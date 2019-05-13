@@ -115,55 +115,61 @@ public class XnodeTest {
   public void constructStringTest() {
     Xnode arg1Node = XmlHelper.createXnode(ARG_1);
     assertNotNull(arg1Node);
-    assertEquals("q(:,1:60)",
-        arg1Node.constructRepresentation(false));
+    assertEquals("q(:,1:60)", arg1Node.constructRepresentation(false, false));
+    assertEquals("q", arg1Node.constructRepresentation(false, true));
 
     Xnode arg2Node = XmlHelper.createXnode(ARG_2);
     assertNotNull(arg2Node);
-    assertEquals("p(:,:)", arg2Node.constructRepresentation(false));
+    assertEquals("p(:,:)", arg2Node.constructRepresentation(false, false));
+    assertEquals("p", arg2Node.constructRepresentation(false, true));
 
     Xnode arg3Node = XmlHelper.createXnode(ARG_3);
     assertNotNull(arg3Node);
-    assertEquals("ty%y(p,:)", arg3Node.constructRepresentation(false));
+    assertEquals("ty%y(p,:)", arg3Node.constructRepresentation(false, false));
+    assertEquals("ty%y", arg3Node.constructRepresentation(false, true));
 
     Xnode arg4Node = XmlHelper.createXnode(ARG_4);
     assertNotNull(ARG_4);
-    assertEquals("nproma=nproma", arg4Node.constructRepresentation(true));
-    assertEquals("nproma", arg4Node.constructRepresentation(false));
+    assertEquals("nproma=nproma", arg4Node.constructRepresentation(true, false));
+    assertEquals("nproma", arg4Node.constructRepresentation(false, false));
 
     Xnode arg5Node = XmlHelper.createXnode(ARG_5);
     assertNotNull(arg5Node);
-    assertEquals("first%middle%end", arg5Node.constructRepresentation(false));
+    assertEquals("first%middle%end",
+        arg5Node.constructRepresentation(false, false));
 
     Xnode arg6Node = XmlHelper.createXnode(ARG_6);
     assertNotNull(arg6Node);
     assertEquals("first%middle%end(p,:)",
-        arg6Node.constructRepresentation(false));
+        arg6Node.constructRepresentation(false, false));
+    assertEquals("first%middle%end",
+        arg6Node.constructRepresentation(false, true));
 
     Xnode arg7Node = XmlHelper.createXnode(ARG_7);
     assertNotNull(arg7Node);
     assertEquals("tend(blockid)%t(jl,:)",
-        arg7Node.constructRepresentation(false));
+        arg7Node.constructRepresentation(false, false));
 
     Xnode arg8Node = XmlHelper.createXnode(ARG_8);
     assertNotNull(arg8Node);
     assertEquals("tend(blockid)%t(jl,:,:)",
-        arg8Node.constructRepresentation(false));
+        arg8Node.constructRepresentation(false, false));
 
     Xnode arg9Node = XmlHelper.createXnode(ARG_9);
     assertNotNull(arg9Node);
-    assertEquals("q(:)", arg9Node.constructRepresentation(false));
+    assertEquals("q(:)", arg9Node.constructRepresentation(false, false));
 
     Xnode arg10Node = XmlHelper.createXnode(ARG_10);
     assertNotNull(arg10Node);
-    assertEquals("q", arg10Node.constructRepresentation(false));
+    assertEquals("q", arg10Node.constructRepresentation(false, false));
 
     XcodeProgram xcodeml = XmlHelper.getDummyXcodeProgram();
     Xnode n1 = xcodeml.createNode(Xcode.F_PRAGMA_STATEMENT);
-    assertEquals("", n1.constructRepresentation(false));
+    assertEquals("", n1.constructRepresentation(false, false));
 
     Xnode n2 = xcodeml.createNode(Xcode.F_DO_STATEMENT);
-    assertEquals("", n2.constructRepresentation(false));
+    assertEquals("", n2.constructRepresentation(false, false));
+    assertEquals("", n2.constructRepresentation(false, true));
   }
 
   @Test

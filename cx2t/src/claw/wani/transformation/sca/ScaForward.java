@@ -20,7 +20,10 @@ import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.*;
 import claw.wani.language.ClawPragma;
 import claw.wani.language.ClawClause;
+import claw.wani.serialization.Serialization;
+import claw.wani.serialization.SerializationStep;
 import claw.wani.transformation.ClawTransformation;
+import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
@@ -207,9 +210,9 @@ public class ScaForward extends ClawTransformation {
       }
     }
 
-    if(_fctType.isElemental() && Context.isTarget(Target.CPU)) {
+    /*if(_fctType.isElemental() && Context.isTarget(Target.CPU)) {
       return true;
-    }
+    }*/
 
     /* Workaround for a bug in OMNI Compiler. Look at test case
      * claw/abstraction10. In this test case, the XcodeML/F intermediate
@@ -571,8 +574,8 @@ public class ScaForward extends ClawTransformation {
     }
 
     if(_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU)) {
-      List<String> creates = XnodeUtil.gatherArguments(xcodeml, _fCall,
-          _fctType, _mod, Intent.INOUT, true);
+      List<String> creates = _fCall.gatherArguments(xcodeml, _fctType, _mod,
+          Intent.INOUT, true, false);
 
       if(_fctType.isFunction()) {
         String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fCall);
@@ -585,14 +588,33 @@ public class ScaForward extends ClawTransformation {
           creates, fctCallAncestor, fctCallAncestor);
     }
 
+    // Serialization input
+    if(_claw.hasClause(ClawClause.SAVEPOINT)) {
+      List<String> inFields = _fCall.gatherArguments(xcodeml, _fctType,
+          _mod, Intent.IN, true, true);
+      Serialization.insertImports(xcodeml, _fCall.findParentFunction());
+      if(Context.isTarget(Target.CPU)) {
+        Serialization.generateWriteSavepoint(xcodeml, fctCallAncestor,
+            _claw.getMetadataMap(), inFields,
+            _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
+      } else {
+        Serialization.generateReadSavepoint(xcodeml, fctCallAncestor,
+            _claw.getMetadataMap(), inFields,
+            _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
+      }
+    }
+
+    Xnode postHook = fctCallAncestor;
+
     if(_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)) {
       // Generate update from HOST TO DEVICE
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
           _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
       {
-        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fCall,
-            _fctType, _mod, Intent.IN, true);
-        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+        List<String> in = _fCall.gatherArguments(xcodeml, _fctType, _mod,
+            Intent.IN, true, false);
+
+        Directive.generateUpdate(xcodeml, fctCallAncestor, in,
             DataMovement.HOST_TO_DEVICE);
       }
 
@@ -600,8 +622,8 @@ public class ScaForward extends ClawTransformation {
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
           || _claw.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
       {
-        List<String> out = XnodeUtil.gatherArguments(xcodeml, _fCall,
-            _fctType, _mod, Intent.OUT, true);
+        List<String> out = _fCall.gatherArguments(xcodeml, _fctType, _mod,
+            Intent.OUT, true, false);
 
         if(_fctType.isFunction()) {
           String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fCall);
@@ -610,13 +632,24 @@ public class ScaForward extends ClawTransformation {
           }
         }
 
-        Directive.generateUpdate(xcodeml, fctCallAncestor, out,
+        postHook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.DEVICE_TO_HOST);
       }
 
       if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
-        Directive.generateParallelRegion(xcodeml, fctCallAncestor, fctCallAncestor);
+        Directive.generateParallelRegion(xcodeml, fctCallAncestor,
+            fctCallAncestor);
       }
+    }
+
+    // Serialization output
+    if(_claw.hasClause(ClawClause.SAVEPOINT)) {
+      List<String> outFieldsName = _fCall.gatherArguments(xcodeml, _fctType,
+          _mod, Intent.OUT, true, true);
+      Serialization.insertImports(xcodeml, _fCall.findParentFunction());
+      Serialization.generateWriteSavepoint(xcodeml, postHook,
+          _claw.getMetadataMap(), outFieldsName,
+          _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
     }
   }
 

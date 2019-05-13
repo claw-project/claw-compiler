@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode;
 
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
@@ -556,84 +557,9 @@ public class XnodeUtil {
     if(xcodeml.getTypeTable().isBasicType(returnNode) &&
         xcodeml.getTypeTable().getBasicType(returnNode).isArray())
     {
-      return returnNode.constructRepresentation(false);
+      return returnNode.constructRepresentation(false, false);
     }
     return null;
-  }
-
-  /**
-   * Gather arguments of a function call.
-   *
-   * @param xcodeml       Current XcodeML translation unit.
-   * @param fctCall       functionCall node in which the arguments are
-   *                      retrieved.
-   * @param fctType       FfunctionType information for parameters.
-   * @param fctTypeHolder XcodeML holding the function type information. Might
-   *                      be identical to fctCall.
-   * @param intent        Intent to use for gathering.
-   * @param arrayOnly     If true, gather only arrays arguments.
-   * @return List of arguments as their string representation.
-   */
-  public static List<String> gatherArguments(XcodeProgram xcodeml,
-                                             Xnode fctCall,
-                                             FfunctionType fctType,
-                                             XcodeML fctTypeHolder,
-                                             Intent intent, boolean arrayOnly)
-  {
-    List<String> gatheredArguments = new ArrayList<>();
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return gatheredArguments;
-    }
-    Xnode argumentsNode = fctCall.matchDescendant(Xcode.ARGUMENTS);
-    if(argumentsNode == null) {
-      return gatheredArguments;
-    }
-
-    // Retrieve function type to check intents and types of parameters
-    List<Xnode> parameters = fctType.getParameters();
-    List<Xnode> arguments = argumentsNode.children();
-
-    for(int i = 0; i < parameters.size(); ++i) {
-      // TODO handle optional arguments, named value args
-
-      if(i >= arguments.size()) { // avoid getting args out of list
-        break;
-      }
-
-      Xnode parameter = parameters.get(i);
-      Xnode arg = arguments.get(i);
-
-      if(Xnode.isOfCode(arg, Xcode.NAMED_VALUE)) {
-        arg = arg.firstChild();
-      }
-
-      String nodeRepresentation = "";
-      if(FortranType.isBuiltInType(arg.getType()) && !arrayOnly
-          && fctTypeHolder.getTypeTable().isBasicType(parameter))
-      {
-        FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
-        if(!intent.isCompatible(btParameter.getIntent())) {
-          continue;
-        }
-        nodeRepresentation = arg.constructRepresentation(false);
-      } else if(fctTypeHolder.getTypeTable().isBasicType(parameter)
-          && xcodeml.getTypeTable().isBasicType(arg))
-      {
-        FbasicType btParameter =
-            fctTypeHolder.getTypeTable().getBasicType(parameter);
-        FbasicType btArg = xcodeml.getTypeTable().getBasicType(arg);
-        if((arrayOnly && !btArg.isArray() && !btArg.isAllocatable())
-            || !intent.isCompatible(btParameter.getIntent()))
-        {
-          continue;
-        }
-        nodeRepresentation = arg.constructRepresentation(false);
-      }
-      if(nodeRepresentation != null && !nodeRepresentation.isEmpty()) {
-        gatheredArguments.add(nodeRepresentation);
-      }
-    }
-    return gatheredArguments;
   }
 
   public static Set<String> getAllVariables(Xnode begin, Xnode end) {
@@ -643,5 +569,93 @@ public class XnodeUtil {
 
     return decls.stream().map(x -> x.matchSeq(Xcode.NAME))
         .map(Xnode::value).collect(Collectors.toSet());
+  }
+
+  /**
+   * Gather all nodes at the same level between from and to.
+   *
+   * @param from Node from which the block starts.
+   * @param to   Node to which the block ends.
+   * @return List of nodes in the block.
+   */
+  private static List<Xnode> getSiblingsBetween(Xnode from, Xnode to) {
+    List<Xnode> siblingsInRegion = new LinkedList<>();
+    Xnode current = from.nextSibling();
+    while(current != null && !current.equals(to)) {
+      siblingsInRegion.add(current);
+      current = current.nextSibling();
+    }
+    return siblingsInRegion;
+  }
+
+  /**
+   * Gather all array identifiers written in the given block.
+   *
+   * @param from Node from which the block starts.
+   * @param to   Node to which the block ends.
+   * @return List of array identifiers written to in the block.
+   */
+  public static List<String> getWrittenArraysInRegion(Xnode from, Xnode to) {
+    Set<String> writtenArraysIds = new HashSet<>();
+    List<Xnode> firstLevelNodesInRegion;
+    if(to == null) {
+      firstLevelNodesInRegion = Collections.singletonList(from.nextSibling());
+    } else {
+      firstLevelNodesInRegion = getSiblingsBetween(from, to);
+    }
+    for(Xnode node : firstLevelNodesInRegion) {
+      List<AssignStatement> assignements;
+      if(node.is(Xcode.F_ASSIGN_STATEMENT)) {
+        assignements =
+            Collections.singletonList(new AssignStatement(node.element()));
+      } else {
+        assignements = node.matchAll(Xcode.F_ASSIGN_STATEMENT).stream()
+            .map(Xnode::element)
+            .map(AssignStatement::new).collect(Collectors.toList());
+      }
+      for(AssignStatement as : assignements) {
+        Xnode lhs = as.getLhs();
+        if(lhs.is(Xcode.F_ARRAY_REF)) {
+          writtenArraysIds.add(lhs.constructRepresentation(false, false));
+        }
+      }
+    }
+    return new ArrayList<>(writtenArraysIds);
+  }
+
+  /**
+   * Gather all array identifiers read in the given block.
+   *
+   * @param from Node from which the block starts.
+   * @param to   Node to which the block ends.
+   * @return List of array identifiers read to in the block.
+   */
+  public static List<String> getReadArraysInRegion(Xnode from, Xnode to) {
+    Set<String> readArrayIds = new HashSet<>();
+    List<Xnode> firstLevelNodesInRegion;
+    if(to == null) {
+      firstLevelNodesInRegion = Collections.singletonList(from.nextSibling());
+    } else {
+      firstLevelNodesInRegion = getSiblingsBetween(from, to);
+    }
+    for(Xnode node : firstLevelNodesInRegion) {
+      List<Xnode> arrayRefs = node.matchAll(Xcode.F_ARRAY_REF);
+      for(Xnode arrayRef : arrayRefs) {
+        if(arrayRef.ancestorIs(Xcode.F_ASSIGN_STATEMENT)
+            && arrayRef.ancestor().firstChild().equals(arrayRef)
+            || arrayRef.matchAncestor(Xcode.F_ARRAY_REF) != null)
+        {
+          continue;
+        }
+
+        if(arrayRef.matchAncestor(Xcode.F_MEMBER_REF) != null) {
+          readArrayIds.add(arrayRef.matchAncestor(Xcode.F_MEMBER_REF).
+              constructRepresentation(false, false));
+        } else {
+          readArrayIds.add(arrayRef.constructRepresentation(false, false));
+        }
+      }
+    }
+    return new ArrayList<>(readArrayIds);
   }
 }

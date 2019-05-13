@@ -55,6 +55,7 @@ public class ClawPragma extends AnalyzedPragma {
   private List<Target> _targetClauseValues;
   private ClawConstraint _constraintClauseValue;
   private CompilerDirective _cleanupClauseValue;
+  private Map<String, String> _metadataMap;
 
   // Model config information
   private ModelConfig _localModelConfig;
@@ -342,6 +343,9 @@ public class ClawPragma extends AnalyzedPragma {
     // Data Movement Direction
     _copyClauseValue = null;
     _updateClauseValue = null;
+
+    // Savepoint clause
+    _metadataMap = new HashMap<>();
   }
 
   /**
@@ -760,6 +764,15 @@ public class ClawPragma extends AnalyzedPragma {
    */
   public ModelConfig getLocalModelConfig() {
     return _localModelConfig;
+  }
+
+
+  public Map<String, String> getMetadataMap() {
+    return _metadataMap;
+  }
+
+  public void addMetadata(String key, String value) {
+    _metadataMap.put(key, value);
   }
 
   /**

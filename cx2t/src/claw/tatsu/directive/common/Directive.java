@@ -166,21 +166,26 @@ public final class Directive {
   /**
    * Generate directive directive for a parallel loop.
    *
-   * @param xcodeml   Object representation of the current XcodeML
-   *                  representation in which the pragmas will be generated.
-   * @param privates  List of variables to be set privates.
-   * @param startStmt Start statement representing the beginning of the parallel
-   *                  region.
-   * @param endStmt   End statement representing the end of the parallel region.
-   * @param collapse  If value bigger than 0, a corresponding collapse
-   *                  constructs can be generated.
-   * @return Directive just over the do statement.
+   * @param xcodeml        Object representation of the current XcodeML
+   *                       representation in which the pragmas will be
+   *                       generated.
+   * @param privates       List of variables to be set privates.
+   * @param startStmt      Start statement representing the beginning of the
+   *                       parallel region.
+   * @param endStmt        End statement representing the end of the parallel
+   *                       region.
+   * @param collapse       If value bigger than 0, a corresponding collapse
+   *                       constructs can be generated.
+   * @param returnEndBlock If true, the end block directive is returned. If
+   *                       false, start block directive is returned.
+   * @return Start or end block directive.
    */
   public static Xnode generateParallelLoopClause(XcodeProgram xcodeml,
                                                  List<String> privates,
                                                  Xnode startStmt, Xnode endStmt,
                                                  String extraDirective,
-                                                 int collapse)
+                                                 int collapse,
+                                                 boolean returnEndBlock)
   {
     if(Context.get().getGenerator().getDirectiveLanguage()
         == CompilerDirective.NONE)
@@ -190,12 +195,14 @@ public final class Directive {
 
     DirectiveGenerator dg = Context.get().getGenerator();
     addPragmasBefore(xcodeml, dg.getStartParallelDirective(null), startStmt);
-    Xnode grip = addPragmasBefore(xcodeml, dg.getStartLoopDirective(collapse,
-        false, false, format(dg.getPrivateClause(privates), extraDirective)),
-        startStmt);
-    addPragmaAfter(xcodeml, dg.getEndParallelDirective(), endStmt);
+    Xnode startBlock =
+        addPragmasBefore(xcodeml, dg.getStartLoopDirective(collapse, false,
+            false, format(dg.getPrivateClause(privates), extraDirective)),
+            startStmt);
+    Xnode endBlock =
+        addPragmaAfter(xcodeml, dg.getEndParallelDirective(), endStmt);
     addPragmaAfter(xcodeml, dg.getEndLoopDirective(), endStmt);
-    return grip;
+    return returnEndBlock ? endBlock : startBlock;
   }
 
   /**
@@ -550,11 +557,16 @@ public final class Directive {
         last = last.prevSibling();
       }
     }
-    if(dg.getSkippedStatementsInEpilogue().isEmpty()) {
+    if(dg.getSkippedStatementsInEpilogue().isEmpty()
+        || !last.matchAll(Xcode.F_ASSIGN_STATEMENT).isEmpty())
+    {
       return last;
     } else {
       while(last.prevSibling() != null
-          && dg.getSkippedStatementsInEpilogue().contains(last.opcode())) {
+          && dg.getSkippedStatementsInEpilogue().contains(last.opcode()))
+      {
+
+
         if(last.hasBody() || last.is(Xcode.F_IF_STATEMENT)) {
           List<Xnode> children = (last.hasBody()) ? last.body().children()
               : last.matchDirectDescendant(Xcode.THEN).body().children();

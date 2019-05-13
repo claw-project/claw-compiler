@@ -83,7 +83,7 @@ directive[ClawPragma l]
     }
 
   // Array notation transformation directive
-  | EXPAND expand_clauses[$l] EOF
+  | EXPAND expand_clauses[$l] savepoint_clause[$l] EOF
     {  $l.setDirective(ClawDirective.EXPAND); }
   | END EXPAND
     {
@@ -123,7 +123,7 @@ directive[ClawPragma l]
        $l.setDirective(ClawDirective.SCA);
        $l.getLocalModelConfig().generateDefaultLayout();
      }
-   | PARALLELIZE FORWARD foward_clauses[$l] EOF
+   | PARALLELIZE FORWARD foward_clauses[$l] savepoint_clause[$l] EOF
      {
        // TODO to be removed
        System.err.
@@ -157,7 +157,7 @@ directive[ClawPragma l]
        $l.setDirective(ClawDirective.SCA);
        $l.getLocalModelConfig().generateDefaultLayout();
      }
-   | SCA FORWARD foward_clauses[$l] EOF
+   | SCA FORWARD foward_clauses[$l] savepoint_clause[$l] EOF
      {
        $l.setDirective(ClawDirective.SCA);
        $l.setClause(ClawClause.FORWARD);
@@ -502,6 +502,23 @@ foward_clauses[ClawPragma l]:
   )*
 ;
 
+savepoint_clause[ClawPragma l]:
+    /* null */
+  | SAVEPOINT '=' savepoint_name=IDENTIFIER metadata_clause[$l]*
+    { $l.setValue(ClawClause.SAVEPOINT, $savepoint_name.text); }
+;
+
+metadata_clause[ClawPragma l]:
+    meta_name=IDENTIFIER '=' meta_value=IDENTIFIER
+    { $l.addMetadata($meta_name.text, $meta_value.text); }
+  | meta_name=IDENTIFIER '=' meta_type=IDENTIFIER '%' meta_member=IDENTIFIER
+    {
+      $l.addMetadata($meta_name.text,
+        String.format("%s%%%s", $meta_type.text, $meta_member.text));
+    }
+;
+
+
 copy_clause[ClawPragma l]:
     COPY
     { $l.setCopyClauseValue(DataMovement.TWO_WAY); }
@@ -587,11 +604,12 @@ loop_extract_clauses[ClawPragma l]:
 // Possible permutation of clauses for the expand directive
 expand_clauses[ClawPragma l]:
   (
-    { !$l.hasClause(ClawClause.FUSION) }?      fusion_clause[$l]
-  | { !$l.hasClause(ClawClause.PARALLEL) }?    parallel_clause[$l]
-  | { !$l.hasClause(ClawClause.ACC) }? acc_clause[$l]
-  | { !$l.hasClause(ClawClause.INDUCTION) }?   induction_clause[$l]
-  | { !$l.hasClause(ClawClause.TARGET) }?      target_clause[$l]
+    { !$l.hasClause(ClawClause.FUSION) }?    fusion_clause[$l]
+  | { !$l.hasClause(ClawClause.PARALLEL) }?  parallel_clause[$l]
+  | { !$l.hasClause(ClawClause.UPDATE) }?    update_clause[$l]
+  | { !$l.hasClause(ClawClause.ACC) }?       acc_clause[$l]
+  | { !$l.hasClause(ClawClause.INDUCTION) }? induction_clause[$l]
+  | { !$l.hasClause(ClawClause.TARGET) }?    target_clause[$l]
   )*
 ;
 
@@ -675,7 +693,9 @@ PRIVATE      : 'private';
 RANGE        : 'range';
 RESHAPE      : 'reshape';
 ROUTINE      : 'routine';
+SAVEPOINT    : 'savepoint';
 SCALAR       : 'scalar';
+SERIALIZE    : 'serialize';
 TARGET       : 'target';
 UPDATE       : 'update';
 NODEP        : 'nodep';

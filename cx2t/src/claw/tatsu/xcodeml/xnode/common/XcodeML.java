@@ -83,6 +83,32 @@ public class XcodeML extends Xnode {
   }
 
   /**
+   * Create a character type based on the given string
+   *
+   * @param charConstant String to based the character type on.
+   * @return Newly FbasicType created.
+   */
+  private FbasicType createCharType(String charConstant) {
+    // Create the char constant type
+    FbasicType charType = createBasicType(FortranType.CHARACTER, Intent.NONE);
+    charType.append(createNode(Xcode.LEN)
+        .append(createIntConstant(charConstant.length())));
+    getTypeTable().add(charType);
+    return charType;
+  }
+
+  /**
+   * Create a character constant.
+   *
+   * @param value String to be placed as the character constant.
+   * @return Newly created FcharacterConstant node.
+   */
+  public Xnode createCharConstant(String value) {
+    return createNode(Xcode.F_CHARACTER_CONSTANT)
+        .setType(createCharType(value)).setValue(value);
+  }
+
+  /**
    * Create a new node in the current translation unit.
    *
    * @param opcode Opcode of the new node.
@@ -478,6 +504,25 @@ public class XcodeML extends Xnode {
    * </functionCall>
    * }
    *
+   * @param fctType FfunctionType holding the return type and the type
+   *                information.
+   * @param fctName Value of the name node.
+   * @return The newly created node detached in the current XcodeML unit.
+   */
+  public FunctionCall createFctCall(FfunctionType fctType, String fctName) {
+    return createFctCall(fctType.getReturnType(), fctName, fctType.getType());
+  }
+
+  /**
+   * Create a new functionCall node with name and arguments as children nodes.
+   *
+   * {@code
+   * <functionCall type="returnType">
+   * <name type="fctType">fctName</name>
+   * <arguments></arguments>
+   * </functionCall>
+   * }
+   *
    * @param returnType Value of the type attribute for the functionCall node.
    * @param fctName    Value of the name node.
    * @param fctType    Value of the type attribute for the name node.
@@ -514,6 +559,19 @@ public class XcodeML extends Xnode {
         fctName.toString(), null);
     fctCall.setBooleanAttribute(Xattr.IS_INTRINSIC, true);
     return fctCall;
+  }
+
+  /**
+   * Create a FfunctionType representing a subroutine and add it to the type
+   * table.
+   *
+   * @return Newly created node.
+   */
+  public FfunctionType createSubroutineType() {
+    FfunctionType subroutine = createFunctionType(
+        getTypeTable().generateHash(FortranType.FUNCTION), Xname.TYPE_F_VOID);
+    getTypeTable().add(subroutine);
+    return subroutine;
   }
 
   /**
