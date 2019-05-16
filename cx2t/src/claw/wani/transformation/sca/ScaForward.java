@@ -584,8 +584,9 @@ public class ScaForward extends ClawTransformation {
         }
       }
 
+      Xblock fctCallBlock = new Xblock(fctCallAncestor);
       Directive.generateDataRegionClause(xcodeml, Collections.emptyList(),
-          creates, fctCallAncestor, fctCallAncestor);
+          creates, fctCallBlock);
     }
 
     // Serialization input

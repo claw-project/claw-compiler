@@ -13,6 +13,7 @@ import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
+import claw.tatsu.xcodeml.abstraction.Xblock;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
@@ -112,6 +113,8 @@ public final class Directive {
       p = addPragmasBefore(xcodeml, Context.get().getGenerator().
           getUpdateClause(direction == DataMovement.TWO_WAY ?
               DataMovement.HOST_TO_DEVICE : direction, vars), hook);
+
+
     }
     if(direction == DataMovement.DEVICE_TO_HOST
         || direction == DataMovement.TWO_WAY)
@@ -166,26 +169,24 @@ public final class Directive {
   /**
    * Generate directive directive for a parallel loop.
    *
-   * @param xcodeml        Object representation of the current XcodeML
-   *                       representation in which the pragmas will be
-   *                       generated.
-   * @param privates       List of variables to be set privates.
-   * @param startStmt      Start statement representing the beginning of the
-   *                       parallel region.
-   * @param endStmt        End statement representing the end of the parallel
-   *                       region.
-   * @param collapse       If value bigger than 0, a corresponding collapse
-   *                       constructs can be generated.
-   * @param returnEndBlock If true, the end block directive is returned. If
-   *                       false, start block directive is returned.
-   * @return Start or end block directive.
+   * @param xcodeml   Object representation of the current XcodeML
+   *                  representation in which the pragmas will be
+   *                  generated.
+   * @param privates  List of variables to be set privates.
+   * @param startStmt Start statement representing the beginning of the
+   *                  parallel region.
+   * @param endStmt   End statement representing the end of the parallel
+   *                  region.
+   * @param collapse  If value bigger than 0, a corresponding collapse
+   *                  constructs can be generated.
+   * @return Block with start and end directive if generated.
    */
-  public static Xnode generateParallelLoopClause(XcodeProgram xcodeml,
-                                                 List<String> privates,
-                                                 Xnode startStmt, Xnode endStmt,
-                                                 String extraDirective,
-                                                 int collapse,
-                                                 boolean returnEndBlock)
+  public static Xblock generateParallelLoopClause(XcodeProgram xcodeml,
+                                                  List<String> privates,
+                                                  Xnode startStmt,
+                                                  Xnode endStmt,
+                                                  String extraDirective,
+                                                  int collapse)
   {
     if(Context.get().getGenerator().getDirectiveLanguage()
         == CompilerDirective.NONE)
@@ -194,15 +195,15 @@ public final class Directive {
     }
 
     DirectiveGenerator dg = Context.get().getGenerator();
-    addPragmasBefore(xcodeml, dg.getStartParallelDirective(null), startStmt);
-    Xnode startBlock =
-        addPragmasBefore(xcodeml, dg.getStartLoopDirective(collapse, false,
-            false, format(dg.getPrivateClause(privates), extraDirective)),
-            startStmt);
+    Xnode startBlock = addPragmasBefore(xcodeml,
+        dg.getStartParallelDirective(null), startStmt);
+    addPragmasBefore(xcodeml, dg.getStartLoopDirective(collapse, false,
+        false, format(dg.getPrivateClause(privates), extraDirective)),
+        startStmt);
     Xnode endBlock =
         addPragmaAfter(xcodeml, dg.getEndParallelDirective(), endStmt);
     addPragmaAfter(xcodeml, dg.getEndLoopDirective(), endStmt);
-    return returnEndBlock ? endBlock : startBlock;
+    return new Xblock(startBlock, endBlock);
   }
 
   /**
@@ -242,18 +243,17 @@ public final class Directive {
    * depending on the configuration, if this results to discard all variables
    * then the directive is not generated.
    *
-   * @param xcodeml   Object representation of the current XcodeML
-   *                  representation in which the pragmas will be generated.
-   * @param presents  List of variables to be set as present.
-   * @param creates   List of variables to be created.
-   * @param startStmt Start statement representing the beginning of the data
-   *                  region.
-   * @param endStmt   End statement representing the end of the data region.
+   * @param xcodeml  Object representation of the current XcodeML
+   *                 representation in which the pragmas will be generated.
+   * @param presents List of variables to be set as present.
+   * @param creates  List of variables to be created.
+   * @param hook     Block around which data region is generated.
+   * @return Block containing start and end of data region.
    */
-  public static void generateDataRegionClause(XcodeProgram xcodeml,
-                                              List<String> presents,
-                                              List<String> creates,
-                                              Xnode startStmt, Xnode endStmt)
+  public static Xblock generateDataRegionClause(XcodeProgram xcodeml,
+                                                List<String> presents,
+                                                List<String> creates,
+                                                Xblock hook)
   {
     DirectiveGenerator generator = Context.get().getGenerator();
     List<String> clauses = new ArrayList<>(Arrays.asList(
@@ -264,9 +264,10 @@ public final class Directive {
 
     // No need to create an empty data region
     if(!clauses.isEmpty()) {
-      insertPragmas(xcodeml, startStmt, endStmt,
-          generator.getStartDataRegion(clauses), generator.getEndDataRegion());
+      return insertPragmas(xcodeml, hook, generator.getStartDataRegion(clauses),
+          generator.getEndDataRegion());
     }
+    return null;
   }
 
   /**
@@ -414,6 +415,7 @@ public final class Directive {
     if(directives == null) {
       return null;
     }
+    Xnode retNode = null; // Returned node 1st for before/last for after
     for(String directive : directives) {
       List<Xnode> pragmas = xcodeml.createPragma(directive,
           Context.get().getMaxColumns());
@@ -423,12 +425,13 @@ public final class Directive {
           ref = pragma; // Insert pragma sequentially one after another
         } else {
           ref.insertBefore(pragma); // Only the first chunk needs to be inserted
+          retNode = pragma;
           after = true;
           ref = pragma;
         }
       }
     }
-    return ref;
+    return retNode == null ? ref : retNode;
   }
 
   /**
@@ -457,6 +460,33 @@ public final class Directive {
     Xnode begin = addPragmasBefore(xcodeml, startDirective, startStmt);
     Xnode end = addPragmaAfter(xcodeml, endDirective, endStmt);
     return end != null ? end : begin;
+  }
+
+  /**
+   * Generate corresponding pragmas to surround the code with a parallel
+   * accelerated region.
+   *
+   * @param xcodeml        Current XcodeML program unit.
+   *                       representation in which the pragmas will be
+   *                       generated.
+   * @param hook
+   * @param startDirective String value of the start directive.
+   * @param endDirective   String value of the end directive.
+   * @return Last stmt inserted or null if nothing is inserted.
+   */
+  private static Xblock insertPragmas(XcodeProgram xcodeml,
+                                      Xblock hook,
+                                      String[] startDirective,
+                                      String[] endDirective)
+  {
+    if(Context.get().getGenerator().getDirectiveLanguage()
+        == CompilerDirective.NONE)
+    {
+      return null;
+    }
+    Xnode begin = addPragmasBefore(xcodeml, startDirective, hook.getStart());
+    Xnode end = addPragmaAfter(xcodeml, endDirective, hook.getEnd());
+    return new Xblock(begin, end);
   }
 
   /**
@@ -563,9 +593,7 @@ public final class Directive {
       return last;
     } else {
       while(last.prevSibling() != null
-          && dg.getSkippedStatementsInEpilogue().contains(last.opcode()))
-      {
-
+          && dg.getSkippedStatementsInEpilogue().contains(last.opcode())) {
 
         if(last.hasBody() || last.is(Xcode.F_IF_STATEMENT)) {
           List<Xnode> children = (last.hasBody()) ? last.body().children()

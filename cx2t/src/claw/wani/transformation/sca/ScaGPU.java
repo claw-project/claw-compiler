@@ -14,6 +14,7 @@ import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Field;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
+import claw.tatsu.xcodeml.abstraction.Xblock;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.Xattr;
@@ -404,13 +405,14 @@ public class ScaGPU extends Sca {
     }
 
     // Generate the data region
-    Directive.generateDataRegionClause(xcodeml, presentList,
-        createList, loops.getOuterStatement(), loops.getOuterStatement());
+    Xblock doStmtBlock = new Xblock(loops.getOuterStatement());
+    Directive.generateDataRegionClause(xcodeml, presentList, createList,
+        doStmtBlock);
 
     // Generate the parallel region
     Directive.generateParallelLoopClause(xcodeml, privateList,
         loops.getOuterStatement(), loops.getOuterStatement(), null,
-        loops.size() + collapse, false);
+        loops.size() + collapse);
 
     Directive.generateRoutineDirectives(xcodeml, _fctDef);
   }
