@@ -24,6 +24,7 @@ import claw.wani.language.ClawClause;
 import claw.wani.serialization.Serialization;
 import claw.wani.serialization.SerializationStep;
 import claw.wani.transformation.ClawBlockTransformation;
+import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
@@ -217,7 +218,6 @@ public class ExpandNotation extends ClawBlockTransformation {
         dataRegionBlock = Directive.generateDataRegionClause(xcodeml, presentLst,
             Collections.emptyList(), updateRegionBlock);
       }
-
     } else {
       doStmtsBlock = new Xblock(_clawStart.getPragma());
       if(_clawEnd != null) {
@@ -227,8 +227,9 @@ public class ExpandNotation extends ClawBlockTransformation {
       }
     }
 
-    if(!_clawStart.hasClause(ClawClause.SAVEPOINT)) {
-
+    if(_clawStart.hasClause(ClawClause.SAVEPOINT) && Configuration.get().
+        getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+    {
       if(dataRegionBlock == null) {
         dataRegionBlock = doStmtsBlock;
       }
@@ -365,7 +366,8 @@ public class ExpandNotation extends ClawBlockTransformation {
                                       List<String> readArrays,
                                       List<String> writtenArrays)
   {
-    Xnode startNode, endNode;
+    Xnode startNode;
+    Xnode endNode;
 
     // Generate host to device movement
     if(_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
@@ -386,7 +388,6 @@ public class ExpandNotation extends ClawBlockTransformation {
     } else {
       endNode = hook.getEnd();
     }
-
     return new Xblock(startNode, endNode);
   }
 
