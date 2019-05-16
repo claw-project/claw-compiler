@@ -16,6 +16,7 @@ SUBROUTINE claw_test ( )
  vec2 ( : ) = 100
  vec4 ( : ) = 10
  vec5 ( : ) = 11
+!$acc data present(vec5(:),vec4(:),vec1(:),vec2(:))
 !$acc parallel
 !$acc loop gang vector
  DO claw_induction_0 = 1 , size ( vec1 , 1 )
@@ -25,6 +26,7 @@ SUBROUTINE claw_test ( )
   vec4 ( claw_induction_0 ) = vec4 ( claw_induction_0 ) + 1
  END DO
 !$acc end parallel
+!$acc end data
  vec3 ( : ) = vec1 ( : ) + vec2 ( : )
  PRINT * , vec1
  PRINT * , vec2
