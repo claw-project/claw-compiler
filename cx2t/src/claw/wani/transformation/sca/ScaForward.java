@@ -584,14 +584,15 @@ public class ScaForward extends ClawTransformation {
         }
       }
 
+      Xblock fctCallBlock = new Xblock(fctCallAncestor);
       Directive.generateDataRegionClause(xcodeml, Collections.emptyList(),
-          creates, fctCallAncestor, fctCallAncestor);
+          creates, fctCallBlock);
     }
 
     // Serialization input
     if(_claw.hasClause(ClawClause.SAVEPOINT)) {
       List<String> inFields = _fCall.gatherArguments(xcodeml, _fctType,
-          _mod, Intent.IN, true, true);
+          _mod != null ? _mod : xcodeml, Intent.IN, true, true);
       Serialization.insertImports(xcodeml, _fCall.findParentFunction());
       if(Context.isTarget(Target.CPU)) {
         Serialization.generateWriteSavepoint(xcodeml, fctCallAncestor,
@@ -611,8 +612,8 @@ public class ScaForward extends ClawTransformation {
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
           _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
       {
-        List<String> in = _fCall.gatherArguments(xcodeml, _fctType, _mod,
-            Intent.IN, true, false);
+        List<String> in = _fCall.gatherArguments(xcodeml, _fctType,
+            _mod != null ? _mod : xcodeml, Intent.IN, true, false);
 
         Directive.generateUpdate(xcodeml, fctCallAncestor, in,
             DataMovement.HOST_TO_DEVICE);
@@ -622,8 +623,8 @@ public class ScaForward extends ClawTransformation {
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
           || _claw.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
       {
-        List<String> out = _fCall.gatherArguments(xcodeml, _fctType, _mod,
-            Intent.OUT, true, false);
+        List<String> out = _fCall.gatherArguments(xcodeml, _fctType,
+            _mod != null ? _mod : xcodeml, Intent.OUT, true, false);
 
         if(_fctType.isFunction()) {
           String returnValue = XnodeUtil.gatherReturnValue(xcodeml, _fCall);
@@ -645,7 +646,7 @@ public class ScaForward extends ClawTransformation {
     // Serialization output
     if(_claw.hasClause(ClawClause.SAVEPOINT)) {
       List<String> outFieldsName = _fCall.gatherArguments(xcodeml, _fctType,
-          _mod, Intent.OUT, true, true);
+          _mod != null ? _mod : xcodeml, Intent.OUT, true, true);
       Serialization.insertImports(xcodeml, _fCall.findParentFunction());
       Serialization.generateWriteSavepoint(xcodeml, postHook,
           _claw.getMetadataMap(), outFieldsName,

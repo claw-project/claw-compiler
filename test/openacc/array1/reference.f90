@@ -13,12 +13,14 @@ SUBROUTINE claw ( )
  DO j = 0 , 10 , 1
   vec1 ( j ) = j
  END DO
+!$acc data present(vec1(:))
 !$acc parallel
 !$acc loop gang vector
  DO claw_induction_0 = 1 , size ( vec1 , 1 )
   vec1 ( claw_induction_0 ) = vec1 ( claw_induction_0 ) + 10
  END DO
 !$acc end parallel
+!$acc end data
  PRINT * , vec1
 END SUBROUTINE claw
 
