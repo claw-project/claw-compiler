@@ -352,14 +352,17 @@ function claw::exit_without_error()
 ###################################################################
 # Display warning message
 # Arguments:
-#   $1: filename
-#   $2: line number
-#   $3: character number
-#   $3: Warning message
+#   $1: warning switch
+#   $2: filename
+#   $3: line number
+#   $4: character number
+#   $5: Warning message
 ###################################################################
 function claw::warning()
 {
-  claw::status_message "warning" "$1" "$2" "$3" "$4"
+  if [[ $1 == true ]]; then
+    claw::status_message "warning" "$2" "$3" "$4" "$5"
+  fi
 }
 
 ###################################################################
@@ -694,7 +697,7 @@ function claw::process_dependencies() {
       # with regular expression
       for directory in "${module_search_path[@]}"; do
         for ext in "${fortran_ext[@]}"; do
-          found_file=("$(grep -s -l -i "^ *MODULE *${module_name}" \
+          found_file=("$(grep -s -l -i "^ *MODULE *${module_name}[[:blank:]]*\$" \
             "${directory}"/*"${ext}" | grep -v ".*\\.claw\\..*")")
           if [[ ${#found_file[@]} -gt 1 ]]; then
             break
@@ -750,6 +753,7 @@ function claw::process_dependencies() {
     ### Preprocess file ###
     base_file=${source_mod_file}
     dep_basename="$(basename "${base_file%.*}")"
+
     # shellcheck disable=SC2154
     local file_pp
     file_pp="$(claw::get_pp_filename "${base_file}")"

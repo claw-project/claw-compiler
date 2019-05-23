@@ -32,6 +32,7 @@ public enum ClawClause {
   UPDATE,
   TARGET,
   CONSTRAINT,
+  SAVEPOINT,
   SCALAR,
   CREATE,
   CLEANUP,

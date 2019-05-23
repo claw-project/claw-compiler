@@ -26,8 +26,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * ClawTranslatorDriver is the class driving the translation. It creates the
@@ -169,9 +167,8 @@ public class ClawTranslatorDriver {
       }
       _translator.addTransformation(_translationUnit, transformation);
     } catch(Exception ex) {
-      Logger.getAnonymousLogger().log(Level.SEVERE,
-          "Cannot generate transformation " + gc.getName());
-      Logger.getAnonymousLogger().log(Level.SEVERE, ex.getMessage());
+      System.err.println("Cannot generate transformation " + gc.getName());
+      System.err.println(ex.getMessage());
       abort();
     }
   }

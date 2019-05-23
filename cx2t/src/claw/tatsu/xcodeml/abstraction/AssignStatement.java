@@ -8,9 +8,9 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import org.w3c.dom.Element;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Abstraction of assignment statement to be able to categorize them and
@@ -110,13 +110,10 @@ public class AssignStatement extends Xnode {
    * @return Set of variable names.
    */
   private Set<String> filterVars(List<Xnode> vars) {
-    Set<String> names = new HashSet<>();
-    for(Xnode var : vars) {
-      if(var.isNotArrayIndex()) {
-        names.add(var.value());
-      }
-    }
-    return names;
+    return vars.stream()
+        .filter(Xnode::isNotArrayIndex)
+        .map(Xnode::value)
+        .collect(Collectors.toSet());
   }
 
   /**

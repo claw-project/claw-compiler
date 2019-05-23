@@ -4,11 +4,11 @@
  */
 package claw.tatsu.primitive;
 
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.Xname;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,13 +35,8 @@ public final class Condition {
     if(!Xnode.isOfCode(condition, Xcode.CONDITION) || variables.isEmpty()) {
       return false;
     }
-    List<Xnode> vars = condition.matchAll(Xcode.VAR);
-    for(Xnode var : vars) {
-      if(var.isNotArrayIndex() && variables.contains(var.value())) {
-        return true;
-      }
-    }
-    return false;
+    return condition.matchAll(Xcode.VAR).stream()
+        .anyMatch(v -> v.isNotArrayIndex() && variables.contains(v.value()));
   }
 
   /**
@@ -55,19 +50,10 @@ public final class Condition {
     if(!Xnode.isOfCode(condition, Xcode.CONDITION)) {
       return false;
     }
-
-    List<Xnode> nodes = condition.matchAll(Xcode.FUNCTION_CALL);
-    if(nodes.isEmpty()) {
-      return false;
-    }
-
-    for(Xnode node : nodes) {
-      Xnode name = node.matchSeq(Xcode.NAME);
-      if(name.value().equals(Xname.F_INTR_ALLOCATED)) {
-        return true;
-      }
-    }
-    return false;
+    return condition.matchAll(Xcode.FUNCTION_CALL).stream()
+        .map(FunctionCall::new)
+        .map(FunctionCall::getFctName)
+        .anyMatch(Xname.F_INTR_ALLOCATED::equalsIgnoreCase);
   }
 
 }

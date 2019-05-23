@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
@@ -66,13 +67,13 @@ public class XnodeUtilTest {
     List<Xnode> functionCalls = xcodeml.matchAll(Xcode.FUNCTION_CALL);
     assertEquals(1, functionCalls.size());
 
-    Xnode fctCall = functionCalls.get(0);
+    FunctionCall fctCall = new FunctionCall(functionCalls.get(0));
     assertSame(fctCall.opcode(), Xcode.FUNCTION_CALL);
 
     FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(fctCall);
 
-    List<String> allArguments =
-        XnodeUtil.gatherArguments(xcodeml, fctCall, fctType, xcodeml, Intent.ANY, false);
+    List<String> allArguments = fctCall.gatherArguments(xcodeml, fctType,
+        xcodeml, Intent.ANY, false, false);
     assertEquals(5, allArguments.size());
     assertEquals(arg1, allArguments.get(0));
     assertEquals(arg2, allArguments.get(1));
@@ -80,8 +81,8 @@ public class XnodeUtilTest {
     assertEquals(arg4, allArguments.get(3));
     assertEquals(arg5, allArguments.get(4));
 
-    List<String> inArguments =
-        XnodeUtil.gatherArguments(xcodeml, fctCall, fctType, xcodeml, Intent.IN, false);
+    List<String> inArguments = fctCall.gatherArguments(xcodeml, fctType,
+        xcodeml, Intent.IN, false, false);
     assertEquals(5, inArguments.size());
     assertEquals(arg1, inArguments.get(0));
     assertEquals(arg2, inArguments.get(1));
@@ -89,29 +90,29 @@ public class XnodeUtilTest {
     assertEquals(arg4, inArguments.get(3));
     assertEquals(arg5, inArguments.get(4));
 
-    List<String> outArguments =
-        XnodeUtil.gatherArguments(xcodeml, fctCall, fctType, xcodeml, Intent.OUT, false);
+    List<String> outArguments = fctCall.gatherArguments(xcodeml, fctType,
+        xcodeml, Intent.OUT, false, false);
     assertEquals(3, outArguments.size());
     assertEquals(arg2, outArguments.get(0));
     assertEquals(arg3, outArguments.get(1));
     assertEquals(arg4, outArguments.get(2));
 
-    List<String> inArrayArguments =
-        XnodeUtil.gatherArguments(xcodeml, fctCall, fctType, xcodeml, Intent.IN, true);
+    List<String> inArrayArguments = fctCall.gatherArguments(xcodeml, fctType,
+        xcodeml, Intent.IN, true, false);
     assertEquals(3, inArrayArguments.size());
     assertEquals(arg2, inArrayArguments.get(0));
     assertEquals(arg3, inArrayArguments.get(1));
     assertEquals(arg4, inArrayArguments.get(2));
 
-    List<String> outArrayArguments =
-        XnodeUtil.gatherArguments(xcodeml, fctCall, fctType, xcodeml, Intent.OUT, true);
+    List<String> outArrayArguments = fctCall.gatherArguments(xcodeml, fctType,
+        xcodeml, Intent.OUT, true, false);
     assertEquals(3, outArrayArguments.size());
     assertEquals(arg2, outArrayArguments.get(0));
     assertEquals(arg3, outArrayArguments.get(1));
     assertEquals(arg4, outArrayArguments.get(2));
 
-    List<String> inOutArrayArguments =
-        XnodeUtil.gatherArguments(xcodeml, fctCall, fctType, xcodeml, Intent.INOUT, true);
+    List<String> inOutArrayArguments = fctCall.gatherArguments(xcodeml, fctType,
+        xcodeml, Intent.INOUT, true, false);
     assertEquals(3, inOutArrayArguments.size());
     assertEquals(arg2, inOutArrayArguments.get(0));
     assertEquals(arg3, inOutArrayArguments.get(1));

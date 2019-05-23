@@ -5,6 +5,7 @@
 package claw.tatsu.xcodeml.xnode.fortran;
 
 import claw.tatsu.primitive.Body;
+import claw.tatsu.primitive.Loop;
 import claw.tatsu.primitive.Xmod;
 import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
@@ -13,6 +14,8 @@ import claw.tatsu.xcodeml.xnode.common.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The FfunctionDefinition represents the FfunctionDefinition (5.3) element in
@@ -158,11 +161,9 @@ public class FfunctionDefinition extends Xnode {
     if(body() == null) {
       return Collections.emptyList();
     }
-    List<AssignStatement> statements = new ArrayList<>();
-    for(Xnode n : body().matchAll(Xcode.F_ASSIGN_STATEMENT)) {
-      statements.add(new AssignStatement(n.element()));
-    }
-    return statements;
+    return body().matchAll(Xcode.F_ASSIGN_STATEMENT).stream()
+        .map(Xnode::element)
+        .map(AssignStatement::new).collect(Collectors.toList());
   }
 
   /**
@@ -176,14 +177,10 @@ public class FfunctionDefinition extends Xnode {
     if(body() == null) {
       return Collections.emptyList();
     }
-    List<AssignStatement> statements = new ArrayList<>();
-    for(Xnode n : body().matchAll(Xcode.F_ASSIGN_STATEMENT)) {
-      AssignStatement as = new AssignStatement(n.element());
-      if(as.getLhsName().equals(var)) {
-        statements.add(as);
-      }
-    }
-    return statements;
+    return body().matchAll(Xcode.F_ASSIGN_STATEMENT).stream()
+        .map(Xnode::element).map(AssignStatement::new)
+        .filter(x -> x.getLhsName().equalsIgnoreCase(var))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -232,7 +229,7 @@ public class FfunctionDefinition extends Xnode {
         if((parameters && isParameterVariable(bt, onlyArray))
             || (temporary && isTemporaryVariable(bt, onlyArray)))
         {
-            variables.add(name.value());
+          variables.add(name.value());
         }
       }
     }
@@ -262,6 +259,54 @@ public class FfunctionDefinition extends Xnode {
   private boolean isTemporaryVariable(FbasicType bt, boolean onlyArray) {
     return bt != null && bt.getIntent() == Intent.NONE
         && (!onlyArray || bt.isArray());
+  }
+
+  /**
+   * Detect all induction variables in the function body.
+   *
+   * @return Set of induction variables stored in a set.
+   */
+  public Set<String> detectInductionVariables()
+  {
+    return body().matchAll(Xcode.F_DO_STATEMENT).stream()
+        .map(Loop::extractInductionVariable).collect(Collectors.toSet());
+  }
+
+  /**
+   * Find the id element in the current function definition or in parent
+   * function definition if nested.
+   *
+   * @param name   Id name to be searched for.
+   * @return The id if found. Null otherwise.
+   */
+  public Xid findId(String name) {
+    if(getSymbolTable().contains(name)) {
+      return getSymbolTable().get(name);
+    }
+    FfunctionDefinition upperDef = findParentFunction();
+    if(upperDef == null) {
+      return null;
+    }
+    return upperDef.findId(name);
+  }
+
+
+  /**
+   * Find the declaration element in the current function definition or in
+   * parent if nested.
+   *
+   * @param name   Declaration name to be searched for.
+   * @return The element if found. Null otherwise.
+   */
+  public Xnode findDecl(String name) {
+    if(getSymbolTable().contains(name)) {
+      return getDeclarationTable().get(name);
+    }
+    FfunctionDefinition upperDef = findParentFunction();
+    if(upperDef == null) {
+      return null;
+    }
+    return upperDef.findDecl(name);
   }
 
 }

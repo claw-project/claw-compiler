@@ -25,7 +25,6 @@ import claw.wani.language.ClawPragma;
 import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Single Column Abstraction (SCA) CPU target transformation. This
@@ -466,9 +465,8 @@ public class ScaCPUvectorizeGroup extends Sca {
    */
   private boolean shouldBePromoted(AssignStatement assign) {
     return (assign.getRhs() != null)
-        && !XnodeUtil.findAllReferences(assign.getRhs()).stream().
-        filter(_arrayFieldsInOut::contains).collect(Collectors.toList()).
-        isEmpty();
+        && XnodeUtil.findAllReferences(assign.getRhs()).stream().
+        anyMatch(_arrayFieldsInOut::contains);
   }
 
 }

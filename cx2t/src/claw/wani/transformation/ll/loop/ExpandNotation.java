@@ -6,9 +6,13 @@ package claw.wani.transformation.ll.loop;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.common.Context;
+import claw.tatsu.common.Target;
+import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.directive.common.Directive;
-import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Range;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
+import claw.tatsu.xcodeml.abstraction.Xblock;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
@@ -18,12 +22,14 @@ import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 import claw.wani.language.ClawPragma;
 import claw.wani.language.ClawClause;
+import claw.wani.serialization.Serialization;
+import claw.wani.serialization.SerializationStep;
 import claw.wani.transformation.ClawBlockTransformation;
+import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <pre>
@@ -66,10 +72,8 @@ public class ExpandNotation extends ClawBlockTransformation {
       // TODO Analyse dependency between assignments. cf array9 example.
 
       // Find assignments with vector notation
-      List<Xnode> foundAssignments =
-          XnodeUtil.getArrayAssignInBlock(_clawStart.getPragma(),
-              _clawEnd.getPragma().value()
-          );
+      List<Xnode> foundAssignments = XnodeUtil.getArrayAssignInBlock(
+          _clawStart.getPragma(), _clawEnd.getPragma());
 
       if(foundAssignments.isEmpty()) {
         xcodeml.addError(
@@ -125,12 +129,9 @@ public class ExpandNotation extends ClawBlockTransformation {
         return false;
       }
 
-      List<Xnode> ranges = new ArrayList<>();
-      for(Xnode el : stmt.child(0).children()) {
-        if(Xnode.isOfCode(el, Xcode.INDEX_RANGE)) {
-          ranges.add(el);
-        }
-      }
+      List<Xnode> ranges = stmt.firstChild().children().stream()
+          .filter(x -> x.is(Xcode.INDEX_RANGE)).collect(Collectors.toList());
+
       if(ranges.isEmpty()) {
         xcodeml.addError("Assign statement is not an array notation",
             _clawStart.getPragma().lineNo());
@@ -171,11 +172,71 @@ public class ExpandNotation extends ClawBlockTransformation {
 
     // 1. Find the function/module declaration TODO handle module/program ?
     FfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
-    Xnode grip = _clawStart.getPragma();
-    for(int i = 0; i < _groupedAssignStmts.size(); ++i) {
-      grip = generateDoStmtNotation(xcodeml, ct, fctDef,
-          _groupIterationRanges.get(i), _groupedAssignStmts.get(i), grip);
+
+    Xnode from = _clawStart.getPragma();
+    Xnode to = _clawEnd != null ? _clawEnd.getPragma() : null;
+
+    List<String> readArrays = XnodeUtil.getReadArraysInRegion(from, to);
+    List<String> writtenArrays = XnodeUtil.getWrittenArraysInRegion(from, to);
+    Set<String> presents = new HashSet<>(readArrays);
+    presents.addAll(writtenArrays);
+
+    Xblock doStmtsBlock = null;
+    Xblock dataRegionBlock = null;
+
+    if(Context.isTarget(Target.GPU)) {
+      Xblock crtBlock;
+      for(int i = 0; i < _groupedAssignStmts.size(); ++i) {
+        crtBlock = generateDoStmtNotation(xcodeml, ct, fctDef,
+            _groupIterationRanges.get(i), _groupedAssignStmts.get(i), from);
+        if(doStmtsBlock == null) {
+          doStmtsBlock = new Xblock(crtBlock.getStart());
+        } else {
+          doStmtsBlock.setEnd(crtBlock.getEnd());
+        }
+      }
+
+      Xblock parallelRegionBlock;
+      Xblock updateRegionBlock = null;
+      if(_clawStart.hasClause(ClawClause.PARALLEL)) {
+        List<String> privates = Collections.emptyList();
+
+        String clauses = _clawStart.hasClause(ClawClause.ACC)
+            ? _clawStart.value(ClawClause.ACC) : "";
+        parallelRegionBlock = Directive.generateParallelLoopClause(xcodeml,
+            privates, doStmtsBlock.getStart(), doStmtsBlock.getEnd(), clauses,
+            _groupedAssignStmts.size());
+
+        if(_clawStart.hasClause(ClawClause.UPDATE)) {
+          updateRegionBlock = generateUpdateClause(xcodeml, parallelRegionBlock,
+              readArrays, writtenArrays);
+        }
+
+        if(updateRegionBlock == null) {
+          updateRegionBlock = parallelRegionBlock;
+        }
+        List<String> presentLst = new ArrayList<>(presents);
+        dataRegionBlock = Directive.generateDataRegionClause(xcodeml, presentLst,
+            Collections.emptyList(), updateRegionBlock);
+      }
+    } else {
+      doStmtsBlock = new Xblock(_clawStart.getPragma());
+      if(_clawEnd != null) {
+        doStmtsBlock.setEnd(_clawEnd.getPragma());
+      } else {
+        doStmtsBlock.setEnd(_clawStart.getPragma().nextSibling());
+      }
     }
+
+    if(_clawStart.hasClause(ClawClause.SAVEPOINT) && Configuration.get().
+        getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+    {
+      if(dataRegionBlock == null) {
+        dataRegionBlock = doStmtsBlock;
+      }
+      generateSavepoint(xcodeml, dataRegionBlock, readArrays, writtenArrays);
+    }
+
     removePragma();
     transformed();
   }
@@ -195,20 +256,23 @@ public class ExpandNotation extends ClawBlockTransformation {
    *                   be included in the nested do statements.
    * @param doStmtGrip Grip for the code insertion. Do statements will be
    *                   inserted after the grip element.
-   * @return The last stmt created to be used as a grip for next insertion.
+   * @return Block surrounding the do statements generated.
    */
-  private Xnode generateDoStmtNotation(XcodeProgram xcodeml,
-                                       ClawTranslator translator,
-                                       FfunctionDefinition fctDef,
-                                       List<Xnode> ranges,
-                                       List<Xnode> statements,
-                                       Xnode doStmtGrip)
+  private Xblock generateDoStmtNotation(XcodeProgram xcodeml,
+                                        ClawTranslator translator,
+                                        FfunctionDefinition fctDef,
+                                        List<Xnode> ranges,
+                                        List<Xnode> statements, Xnode doStmtGrip)
       throws IllegalTransformationException
   {
     String[] inductionVars = new String[ranges.size()];
     Xnode[] doStmts = new Xnode[ranges.size()];
     Xnode var =
         statements.get(0).matchSeq(Xcode.F_ARRAY_REF, Xcode.VAR_REF, Xcode.VAR);
+    if(var == null) {
+      var = statements.get(0).matchSeq(Xcode.F_ARRAY_REF,
+          Xcode.VAR_REF, Xcode.F_MEMBER_REF);
+    }
     // 1. Create do statements with induction variables
     for(int i = 0; i < ranges.size(); ++i) {
       // 1.1 Create induction variables
@@ -273,31 +337,93 @@ public class ExpandNotation extends ClawBlockTransformation {
         }
       }
 
-      List<Xnode> fctCalls = stmt.matchAll(Xcode.FUNCTION_CALL);
-      for(Xnode fctCall : fctCalls) {
-        if(Function.isIntrinsicCall(fctCall, Xintrinsic.SUM)) {
-          Function.adaptIntrinsicSumCall(fctCall);
-        }
-      }
+      stmt.matchAll(Xcode.FUNCTION_CALL).stream().map(FunctionCall::new)
+          .filter(x -> x.isIntrinsicCall(Xintrinsic.SUM))
+          .forEach(FunctionCall::adaptIntrinsicSumCall);
+
+      stmt.matchAll(Xcode.FUNCTION_CALL).stream().map(FunctionCall::new)
+          .filter(x -> x.isIntrinsicCall(Xintrinsic.SPREAD))
+          .forEach(FunctionCall::adaptIntrinsicSpreadCall);
 
       // 4. Move assignment statement inside the most inner loop
       doStmts[ranges.size() - 1].body().append(stmt, true);
       stmt.delete();
     }
 
-    Xnode grip = null;
-    if(_clawStart.hasClause(ClawClause.PARALLEL)) {
-      List<String> privates = Collections.emptyList();
+    // Add any additional transformation defined in the directive clauses
+    translator.generateAdditionalTransformation(_clawStart, xcodeml, doStmts[0]);
 
-      String clauses = _clawStart.hasClause(ClawClause.ACC)
-          ? _clawStart.value(ClawClause.ACC) : "";
-      grip = Directive.generateParallelLoopClause(xcodeml, privates, doStmts[0],
-          doStmts[0], clauses, doStmts.length);
+    return new Xblock(doStmts[0]);
+  }
+
+  /**
+   * Generate update device/host directives to manage data before and after the
+   * expand block.
+   *
+   * @param xcodeml Current XcodeML translation unit.
+   * @param hook    Block around which directives are generated
+   */
+  private Xblock generateUpdateClause(XcodeProgram xcodeml, Xblock hook,
+                                      List<String> readArrays,
+                                      List<String> writtenArrays)
+  {
+    Xnode startNode;
+    Xnode endNode;
+
+    // Generate host to device movement
+    if(_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
+        || _clawStart.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
+    {
+      startNode = Directive.generateUpdate(xcodeml, hook.getStart(), readArrays,
+          DataMovement.HOST_TO_DEVICE);
+    } else {
+      startNode = hook.getStart();
     }
 
-    // Add any additional transformation defined in the directive clauses
-    translator.generateAdditionalTransformation(_clawStart, xcodeml,
-        doStmts[0]);
-    return grip == null ? doStmts[0] : grip;
+    // Generate device to host movement
+    if(_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
+        || _clawStart.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
+    {
+      endNode = Directive.generateUpdate(xcodeml, hook.getEnd(), writtenArrays,
+          DataMovement.DEVICE_TO_HOST);
+    } else {
+      endNode = hook.getEnd();
+    }
+    return new Xblock(startNode, endNode);
+  }
+
+  /**
+   * Generate serialization savepoints before and after the expand block.
+   *
+   * @param xcodeml Current XcodeML translation unit.
+   * @param hook    Block around which serialization are generated
+   */
+  private Xblock generateSavepoint(XcodeProgram xcodeml, Xblock hook,
+                                   List<String> readArrays,
+                                   List<String> writtenArrays)
+  {
+    Serialization.insertImports(xcodeml, hook.getStart().findParentFunction());
+
+    Xnode start = null;
+    Xnode end;
+
+    if(Context.isTarget(Target.GPU)) {
+      // Read inputs
+      start = Serialization.generateReadSavepoint(xcodeml, hook.getStart(),
+          _clawStart.getMetadataMap(), readArrays,
+          _clawStart.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
+    } else if(Context.isTarget(Target.CPU)) {
+      // Write inputs
+      start = Serialization.generateWriteSavepoint(xcodeml, hook.getStart(),
+          _clawStart.getMetadataMap(), readArrays,
+          _clawStart.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
+    }
+
+    // Write outputs
+    end = Serialization.generateWriteSavepoint(xcodeml, hook.getEnd(),
+        _clawStart.getMetadataMap(), writtenArrays,
+        _clawStart.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
+
+    return new Xblock(start, end);
   }
 }

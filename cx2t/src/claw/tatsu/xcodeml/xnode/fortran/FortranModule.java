@@ -4,8 +4,8 @@
  */
 package claw.tatsu.xcodeml.xnode.fortran;
 
-import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Xmod;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.common.*;
 import org.w3c.dom.Document;
 
@@ -86,16 +86,9 @@ public class FortranModule extends XcodeML {
    * False otherwise.
    */
   private boolean isInterfaceDeclaration(String interfaceName) {
-    List<Xnode> interfaceDecls = matchAll(Xcode.F_INTERFACE_DECL);
-    for(Xnode interfaceDecl : interfaceDecls) {
-      if(interfaceDecl.getAttribute(Xattr.NAME) != null
-          && interfaceDecl.getAttribute(Xattr.NAME).
-          equalsIgnoreCase(interfaceName))
-      {
-        return true;
-      }
-    }
-    return false;
+    return matchAll(Xcode.F_INTERFACE_DECL).stream()
+        .anyMatch(i -> i.getAttribute(Xattr.NAME) != null
+            && i.getAttribute(Xattr.NAME).equalsIgnoreCase(interfaceName));
   }
 
   /**
@@ -104,22 +97,17 @@ public class FortranModule extends XcodeML {
    * @param fctCall Actual function call.
    * @return Matched function type if can be found. Null otherwise.
    */
-  private FfunctionType findFunctionTypeMatchingFctCall(Xnode fctCall) {
-    String fctName = Function.getFctNameFromFctCall(fctCall);
-    if(fctName == null) {
+  private FfunctionType findFunctionTypeMatchingFctCall(FunctionCall fctCall) {
+    if(fctCall.getFctName() == null) {
       return null;
     }
-    Set<String> fctTypes = getInterfaceImplementation(fctName);
-    int nbArgs = Function.getNbOfArgsFromFctCall(fctCall);
+    Set<String> fctTypes = getInterfaceImplementation(fctCall.getFctName());
+    long nbArgs = fctCall.arguments().size();
     for(String type : fctTypes) {
       FfunctionType tmp = getTypeTable().getFunctionType(type);
       if(tmp != null) {
-        int nbParams = 0;
-        for(Xnode param : tmp.getParameters()) {
-          if(!param.hasAttribute(Xattr.IS_INSERTED)) {
-            ++nbParams;
-          }
-        }
+        long nbParams = tmp.getParameters().stream()
+            .filter(x -> !x.hasAttribute(Xattr.IS_INSERTED)).count();
         // TODO several function might have same number of args.
         if(nbArgs == nbParams) {
           return tmp;
@@ -161,16 +149,15 @@ public class FortranModule extends XcodeML {
    * @param fctCall Function call node.
    * @return Function type if found. Null otherwise.
    */
-  public FfunctionType findFunctionTypeFromCall(Xnode fctCall) {
-    String fctName = Function.getFctNameFromFctCall(fctCall);
-    if(fctName == null) {
+  public FfunctionType findFunctionTypeFromCall(FunctionCall fctCall) {
+    if(fctCall.getFctName() == null) {
       return null;
     }
-    FfunctionType fctType = findFunctionType(fctName);
+    FfunctionType fctType = findFunctionType(fctCall.getFctName());
 
     // Make sure it is not the generic function type for the interface
     if(fctType != null && fctType.getParameters().isEmpty()
-        && isInterfaceDeclaration(fctName))
+        && isInterfaceDeclaration(fctCall.getFctName()))
     {
       fctType = findFunctionTypeMatchingFctCall(fctCall);
     }

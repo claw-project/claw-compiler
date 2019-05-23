@@ -6,6 +6,7 @@ package claw.wani.transformation.ll.utility;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
@@ -17,6 +18,7 @@ import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * An array access to function call transformation replace the access to an
@@ -59,16 +61,18 @@ public class ArrayToFctCall extends ClawTransformation {
         getFunctionDefinition(_claw.value(ClawClause.FCT_NAME));
     if(_replaceFct == null) {
       FmoduleDefinition parentModule = _claw.getPragma().findParentModule();
-      _replaceFct = parentModule.getFunctionDefinition(
-          _claw.value(ClawClause.FCT_NAME));
 
-      if(_replaceFct == null) {
+      Optional<FfunctionDefinition> replaceFct =
+          parentModule.getFunctionDefinition(_claw.value(ClawClause.FCT_NAME));
+
+      if(!replaceFct.isPresent()) {
         xcodeml.addError("Function " +
                 _claw.value(ClawClause.FCT_NAME) +
                 " not found in current file.",
             _claw.getPragma().lineNo());
         return false;
       }
+      _replaceFct = replaceFct.get();
     }
 
     return true; // skeleton
@@ -92,11 +96,11 @@ public class ArrayToFctCall extends ClawTransformation {
     FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(_replaceFct);
 
     // Prepare the function call
-    Xnode fctCall = xcodeml.createFctCall(fctType.getReturnType(),
+    FunctionCall fctCall = xcodeml.createFctCall(fctType.getReturnType(),
         _claw.value(ClawClause.FCT_NAME), _replaceFct.getType());
-    Xnode args = fctCall.matchSeq(Xcode.ARGUMENTS);
     for(String arg : _claw.values(ClawClause.FCT_PARAMETERS)) {
-      args.append(xcodeml.createVar(FortranType.INTEGER, arg, Xscope.LOCAL));
+      fctCall.addArguments(
+          xcodeml.createVar(FortranType.INTEGER, arg, Xscope.LOCAL));
     }
 
     List<Xnode> refs =

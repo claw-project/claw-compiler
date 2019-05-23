@@ -31,6 +31,16 @@ public final class Xmod {
   private static final String CLAW_MOD_SUFFIX = "claw";
   private static final String XMOD_FILE_EXTENSION = ".xmod";
 
+  private static final List<Xattr> SYNCABLE_ATTR = Arrays.asList(
+      Xattr.IS_ELEMENTAL,
+      Xattr.IS_PURE,
+      Xattr.IS_FORCE_ASSUMED,
+      Xattr.IS_RECURSIVE,
+      Xattr.IS_PROGRAM,
+      Xattr.IS_INTERNAL,
+      Xattr.WAS_ELEMENTAL
+  );
+
   // Avoid instantiation of this class
   private Xmod() {
   }
@@ -47,6 +57,22 @@ public final class Xmod {
     if(moduleSuffix == null) {
       moduleSuffix = "";
     }
+    FortranModule clawModule = findModuleInPath(moduleName, moduleSuffix);
+    return clawModule != null ?
+        clawModule : findModuleInPath(moduleName, XMOD_FILE_EXTENSION);
+  }
+
+  /**
+   * Find module by name.
+   *
+   * @param moduleName   Name of the module.
+   * @param moduleSuffix Suffix to the module name.
+   * @return A FortranModule object representing the module if found.
+   * Null otherwise.
+   */
+  private static FortranModule findModuleInPath(String moduleName,
+                                                String moduleSuffix)
+  {
     for(String dir : Context.get().getModuleCache().getSearchPaths()) {
       String path = dir + "/" + moduleName + moduleSuffix;
       File f = new File(path);
@@ -222,10 +248,9 @@ public final class Xmod {
     }
 
     // Sync attribute between local fct type and module fct type.
-    for(Xattr attr : Arrays.asList(Xattr.IS_ELEMENTAL, Xattr.IS_PURE,
-        Xattr.IS_FORCE_ASSUMED, Xattr.IS_RECURSIVE, Xattr.IS_PROGRAM,
-        Xattr.IS_INTERNAL)) {
+    for(Xattr attr : SYNCABLE_ATTR) {
       fctType.syncBooleanAttribute(fctTypeMod, attr);
     }
+
   }
 }

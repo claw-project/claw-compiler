@@ -4,6 +4,7 @@
  */
 package claw.tatsu.xcodeml.xnode;
 
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
@@ -23,6 +24,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The class XnodeUtil contains only static method to help manipulating the
@@ -92,74 +94,33 @@ public class XnodeUtil {
    * @return A list if indexRanges elements.
    */
   public static List<Xnode> getIdxRangesFromArrayRef(Xnode arrayRef) {
-    List<Xnode> ranges = new ArrayList<>();
     if(!Xnode.isOfCode(arrayRef, Xcode.F_ARRAY_REF)) {
-      return ranges;
+      return Collections.emptyList();
     }
-    for(Xnode el : arrayRef.children()) {
-      if(el.is(Xcode.INDEX_RANGE)) {
-        ranges.add(el);
-      }
-    }
-    return ranges;
+    return arrayRef.children().stream()
+        .filter(x -> x.is(Xcode.INDEX_RANGE)).collect(Collectors.toList());
   }
 
   /**
-   * <pre>
-   * Intersect two sets of elements in XPath 1.0
+   * Find all array assignment statement from a node until the to node.
    *
-   * This method use Xpath to select the correct nodes. Xpath 1.0 does not have
-   * the intersect operator but only union. By using the Kaysian Method, we can
-   * it is possible to express the intersection of two node sets.
-   *
-   *       $set1[count(.|$set2)=count($set2)]
-   *
-   * </pre>
-   *
-   * @param s1 First set of element.
-   * @param s2 Second set of element.
-   * @return Xpath query that performs the intersect operator between s1 and s2.
-   */
-  private static String xPathIntersect(String s1, String s2) {
-    return String.format("%s[count(.|%s)=count(%s)]", s1, s2, s2);
-  }
-
-  /**
-   * <pre>
-   * Find all assignment statement from a node until the end pragma.
-   *
-   * We intersect all assign statements which are next siblings of
-   * the "from" element with all the assign statements which are previous
-   * siblings of the ending pragma.
-   * </pre>
-   *
-   * @param from      The element from which the search is initiated.
-   * @param endPragma Value of the end pragma. Search will be performed until
-   *                  there.
+   * @param from Node from which the search is initiated.
+   * @param to   Node until the search is done.
    * @return A list of all assign statements found. List is empty if no
    * statements are found.
    */
-  public static List<Xnode> getArrayAssignInBlock(Xnode from, String endPragma)
-  {
-    /* Define all the assign element with array refs which are next siblings of
-     * the "from" element */
-    String s1 = String.format(
-        "following-sibling::%s[%s]",
-        Xname.F_ASSIGN_STATEMENT,
-        Xname.F_ARRAY_REF
-    );
-    /* Define all the assign element with array refs which are previous siblings
-     * of the end pragma element */
-    String s2 = String.format(
-        "following-sibling::%s[text()=\"%s\"]/preceding-sibling::%s[%s]",
-        Xname.F_PRAGMA_STMT,
-        endPragma,
-        Xname.F_ASSIGN_STATEMENT,
-        Xname.F_ARRAY_REF
-    );
-    // Use the Kaysian method to express the intersect operator
-    String intersect = XnodeUtil.xPathIntersect(s1, s2);
-    return getFromXpath(from, intersect);
+  public static List<Xnode> getArrayAssignInBlock(Xnode from, Xnode to) {
+    List<Xnode> assignments = new ArrayList<>();
+    Xnode crt = from.nextSibling();
+    while(crt != null && !crt.equals(to)) {
+      if(crt.is(Xcode.F_ASSIGN_STATEMENT) && crt.firstChild() != null
+          && crt.firstChild().is(Xcode.F_ARRAY_REF))
+      {
+        assignments.add(crt);
+      }
+      crt = crt.nextSibling();
+    }
+    return assignments;
   }
 
   /**
@@ -406,12 +367,10 @@ public class XnodeUtil {
       return names;
     }
 
-    List<Xnode> vars = parent.matchAll(Xcode.VAR);
-    for(Xnode var : vars) {
-      if(var.isNotArrayIndex()) {
-        names.add(var.value());
-      }
-    }
+    names.addAll(parent.matchAll(Xcode.VAR).stream()
+        .filter(Xnode::isNotArrayIndex)
+        .map(Xnode::value)
+        .collect(Collectors.toList()));
     return names;
   }
 
@@ -424,17 +383,10 @@ public class XnodeUtil {
    * @return A list of all var elements found.
    */
   public static List<Xnode> findAllReferences(Xnode parent, String id) {
-    List<Xnode> vars = parent.matchAll(Xcode.VAR);
-    List<Xnode> realReferences = new ArrayList<>();
-    for(Xnode var : vars) {
-      if(!((Element) var.element().getParentNode()).getTagName().
-          equals(Xcode.ARRAY_INDEX.code())
-          && var.value().equalsIgnoreCase(id))
-      {
-        realReferences.add(var);
-      }
-    }
-    return realReferences;
+    return parent.matchAll(Xcode.VAR).stream()
+        .filter(Xnode::isNotArrayIndex)
+        .filter(x -> x.value().equalsIgnoreCase(id))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -467,10 +419,10 @@ public class XnodeUtil {
    * @return List of statement found.
    */
   public static List<Xnode> getNodes(Xnode root, List<Xcode> nodeOpcodes) {
-    List<Xnode> unsupportedStatements = new ArrayList<>();
     if(root == null) {
-      return unsupportedStatements;
+      return Collections.emptyList();
     }
+    List<Xnode> unsupportedStatements = new ArrayList<>();
     for(Xcode opcode : nodeOpcodes) {
       unsupportedStatements.addAll(root.matchAll(opcode));
     }
@@ -482,24 +434,24 @@ public class XnodeUtil {
    *
    * @param from        Node from.
    * @param to          Node to.
-   * @param nodeOpcodes List of statements to look for.
+   * @param nodeOpCodes List of statements to look for.
    * @return List of statement found.
    */
   public static List<Xnode> getNodes(Xnode from, Xnode to,
-                                     List<Xcode> nodeOpcodes)
+                                     List<Xcode> nodeOpCodes)
   {
     List<Xnode> unsupportedStatements = new ArrayList<>();
     Xnode crt = from;
     while(crt != null && crt.element() != to.element()) {
-      if(nodeOpcodes.contains(crt.opcode())) {
+      if(nodeOpCodes.contains(crt.opcode())) {
         unsupportedStatements.add(crt);
       }
       // Get all nodes matching in the subtree
-      unsupportedStatements.addAll(getNodes(crt, nodeOpcodes));
+      unsupportedStatements.addAll(getNodes(crt, nodeOpCodes));
       crt = crt.nextSibling();
     }
 
-    if(crt != null && crt.equals(to) && nodeOpcodes.contains(crt.opcode())) {
+    if(crt != null && crt.equals(to) && nodeOpCodes.contains(crt.opcode())) {
       unsupportedStatements.add(crt);
     }
     return unsupportedStatements;
@@ -605,98 +557,105 @@ public class XnodeUtil {
     if(xcodeml.getTypeTable().isBasicType(returnNode) &&
         xcodeml.getTypeTable().getBasicType(returnNode).isArray())
     {
-      return returnNode.constructRepresentation(false);
+      return returnNode.constructRepresentation(false, false);
     }
     return null;
   }
 
-  /**
-   * Gather arguments of a function call.
-   *
-   * @param xcodeml       Current XcodeML translation unit.
-   * @param fctCall       functionCall node in which the arguments are
-   *                      retrieved.
-   * @param fctType       FfunctionType information for parameters.
-   * @param fctTypeHolder XcodeML holding the function type information. Might
-   *                      be identical to fctCall.
-   * @param intent        Intent to use for gathering.
-   * @param arrayOnly     If true, gather only arrays arguments.
-   * @return List of arguments as their string representation.
-   */
-  public static List<String> gatherArguments(XcodeProgram xcodeml,
-                                             Xnode fctCall,
-                                             FfunctionType fctType,
-                                             XcodeML fctTypeHolder,
-                                             Intent intent, boolean arrayOnly)
-  {
-    List<String> gatheredArguments = new ArrayList<>();
-    if(!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL)) {
-      return gatheredArguments;
-    }
-    Xnode argumentsNode = fctCall.matchDescendant(Xcode.ARGUMENTS);
-    if(argumentsNode == null) {
-      return gatheredArguments;
-    }
-
-    // Retrieve function type to check intents and types of parameters
-    List<Xnode> parameters = fctType.getParameters();
-    List<Xnode> arguments = argumentsNode.children();
-
-    for(int i = 0; i < parameters.size(); ++i) {
-      // TODO handle optional arguments, named value args
-
-      if(i >= arguments.size()) { // avoid getting args out of list
-        break;
-      }
-
-      Xnode parameter = parameters.get(i);
-      Xnode arg = arguments.get(i);
-
-      if(Xnode.isOfCode(arg, Xcode.NAMED_VALUE)) {
-        arg = arg.firstChild();
-      }
-
-      String nodeRepresentation = "";
-      if(FortranType.isBuiltInType(arg.getType()) && !arrayOnly
-          && fctTypeHolder.getTypeTable().isBasicType(parameter))
-      {
-        FbasicType btParameter = xcodeml.getTypeTable().getBasicType(parameter);
-        if(!intent.isCompatible(btParameter.getIntent())) {
-          continue;
-        }
-        nodeRepresentation = arg.constructRepresentation(false);
-      } else if(fctTypeHolder.getTypeTable().isBasicType(parameter)
-          && xcodeml.getTypeTable().isBasicType(arg))
-      {
-        FbasicType btParameter =
-            fctTypeHolder.getTypeTable().getBasicType(parameter);
-        FbasicType btArg = xcodeml.getTypeTable().getBasicType(arg);
-        if((arrayOnly && !btArg.isArray() && !btArg.isAllocatable())
-            || !intent.isCompatible(btParameter.getIntent()))
-        {
-          continue;
-        }
-        nodeRepresentation = arg.constructRepresentation(false);
-      }
-      if(nodeRepresentation != null && !nodeRepresentation.isEmpty()) {
-        gatheredArguments.add(nodeRepresentation);
-      }
-    }
-    return gatheredArguments;
-  }
-
   public static Set<String> getAllVariables(Xnode begin, Xnode end) {
-    Set<String> values = new HashSet<>();
-
     // Locate all declarations in the model-data block
     List<Xnode> decls = XnodeUtil.getNodes(begin, end,
         Collections.singletonList(Xcode.VAR_DECL));
 
-    // Save variables for SCA usage
-    for(Xnode varDecl : decls) {
-      Xnode name = varDecl.matchSeq(Xcode.NAME);
-      values.add(name.value());
+    return decls.stream().map(x -> x.matchSeq(Xcode.NAME))
+        .map(Xnode::value).collect(Collectors.toSet());
+  }
+
+  /**
+   * Gather all nodes at the same level between from and to.
+   *
+   * @param from Node from which the block starts.
+   * @param to   Node to which the block ends.
+   * @return List of nodes in the block.
+   */
+  private static List<Xnode> getSiblingsBetween(Xnode from, Xnode to) {
+    List<Xnode> siblingsInRegion = new LinkedList<>();
+    Xnode current = from.nextSibling();
+    while(current != null && !current.equals(to)) {
+      siblingsInRegion.add(current);
+      current = current.nextSibling();
     }
-    return values;
+    return siblingsInRegion;
+  }
+
+  /**
+   * Gather all array identifiers written in the given block.
+   *
+   * @param from Node from which the block starts.
+   * @param to   Node to which the block ends.
+   * @return List of array identifiers written to in the block.
+   */
+  public static List<String> getWrittenArraysInRegion(Xnode from, Xnode to) {
+    Set<String> writtenArraysIds = new HashSet<>();
+    List<Xnode> firstLevelNodesInRegion;
+    if(to == null) {
+      firstLevelNodesInRegion = Collections.singletonList(from.nextSibling());
+    } else {
+      firstLevelNodesInRegion = getSiblingsBetween(from, to);
+    }
+    for(Xnode node : firstLevelNodesInRegion) {
+      List<AssignStatement> assignements;
+      if(node.is(Xcode.F_ASSIGN_STATEMENT)) {
+        assignements =
+            Collections.singletonList(new AssignStatement(node.element()));
+      } else {
+        assignements = node.matchAll(Xcode.F_ASSIGN_STATEMENT).stream()
+            .map(Xnode::element)
+            .map(AssignStatement::new).collect(Collectors.toList());
+      }
+      for(AssignStatement as : assignements) {
+        Xnode lhs = as.getLhs();
+        if(lhs.is(Xcode.F_ARRAY_REF)) {
+          writtenArraysIds.add(lhs.constructRepresentation(false, false));
+        }
+      }
+    }
+    return new ArrayList<>(writtenArraysIds);
+  }
+
+  /**
+   * Gather all array identifiers read in the given block.
+   *
+   * @param from Node from which the block starts.
+   * @param to   Node to which the block ends.
+   * @return List of array identifiers read to in the block.
+   */
+  public static List<String> getReadArraysInRegion(Xnode from, Xnode to) {
+    Set<String> readArrayIds = new HashSet<>();
+    List<Xnode> firstLevelNodesInRegion;
+    if(to == null) {
+      firstLevelNodesInRegion = Collections.singletonList(from.nextSibling());
+    } else {
+      firstLevelNodesInRegion = getSiblingsBetween(from, to);
+    }
+    for(Xnode node : firstLevelNodesInRegion) {
+      List<Xnode> arrayRefs = node.matchAll(Xcode.F_ARRAY_REF);
+      for(Xnode arrayRef : arrayRefs) {
+        if(arrayRef.ancestorIs(Xcode.F_ASSIGN_STATEMENT)
+            && arrayRef.ancestor().firstChild().equals(arrayRef)
+            || arrayRef.matchAncestor(Xcode.F_ARRAY_REF) != null)
+        {
+          continue;
+        }
+
+        if(arrayRef.matchAncestor(Xcode.F_MEMBER_REF) != null) {
+          readArrayIds.add(arrayRef.matchAncestor(Xcode.F_MEMBER_REF).
+              constructRepresentation(false, false));
+        } else {
+          readArrayIds.add(arrayRef.constructRepresentation(false, false));
+        }
+      }
+    }
+    return new ArrayList<>(readArrayIds);
   }
 }

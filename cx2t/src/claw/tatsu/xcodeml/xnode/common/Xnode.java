@@ -14,6 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -145,11 +146,13 @@ public class Xnode {
    * Set the element value.
    *
    * @param value The element value.
+   * @return Current object to allow chaining.
    */
-  public void setValue(String value) {
+  public Xnode setValue(String value) {
     if(_baseElement != null) {
       _baseElement.setTextContent(value);
     }
+    return this;
   }
 
   /**
@@ -157,9 +160,10 @@ public class Xnode {
    *
    * @param attrCode Attribute code.
    * @param value    Boolean value to set.
+   * @return Current object to allow chaining.
    */
-  public void setBooleanAttribute(Xattr attrCode, boolean value) {
-    setBooleanAttribute(attrCode.toString(), value);
+  public Xnode setBooleanAttribute(Xattr attrCode, boolean value) {
+    return setBooleanAttribute(attrCode.toString(), value);
   }
 
   /**
@@ -167,13 +171,11 @@ public class Xnode {
    *
    * @param attrCode Attribute code.
    * @param value    Boolean value to set.
+   * @return Current object to allow chaining.
    */
-  private void setBooleanAttribute(String attrCode, boolean value) {
-    if(value) {
-      setAttribute(attrCode, Xname.TRUE);
-    } else {
-      setAttribute(attrCode, Xname.FALSE);
-    }
+  private Xnode setBooleanAttribute(String attrCode, boolean value) {
+    setAttribute(attrCode, value ? Xname.TRUE : Xname.FALSE);
+    return this;
   }
 
   /**
@@ -181,9 +183,10 @@ public class Xnode {
    *
    * @param attrCode Attribute code.
    * @param value    Value of the attribute.
+   * @return Current object to allow chaining.
    */
-  public void setAttribute(Xattr attrCode, String value) {
-    setAttribute(attrCode.toString(), value);
+  public Xnode setAttribute(Xattr attrCode, String value) {
+    return setAttribute(attrCode.toString(), value);
   }
 
   /**
@@ -191,11 +194,13 @@ public class Xnode {
    *
    * @param attrCode Attribute code.
    * @param value    Value of the attribute.
+   * @return Current object to allow chaining.
    */
-  private void setAttribute(String attrCode, String value) {
+  private Xnode setAttribute(String attrCode, String value) {
     if(_baseElement != null && value != null) {
       _baseElement.setAttribute(attrCode, value);
     }
+    return this;
   }
 
   /**
@@ -316,8 +321,9 @@ public class Xnode {
    * @param node  The element to append.
    * @param clone If true, the element is cloned before being appended. If
    *              false, the element is directly appended.
+   * @return Current object to allow chaining.
    */
-  public void append(Xnode node, boolean clone) {
+  public Xnode append(Xnode node, boolean clone) {
     if(node != null && _baseElement != null) {
       if(clone) {
         _baseElement.appendChild(node.cloneRawNode());
@@ -325,15 +331,18 @@ public class Xnode {
         _baseElement.appendChild(node.element());
       }
     }
+    return this;
   }
 
   /**
    * Append an element ot the children of this element. Node is not cloned.
    *
    * @param node The element to append.
+   * @return Current object to allow chaining.
    */
-  public void append(Xnode node) {
+  public Xnode append(Xnode node) {
     append(node, false);
+    return this;
   }
 
   /**
@@ -358,9 +367,11 @@ public class Xnode {
    * Insert as first child.
    *
    * @param node Node to be inserted.
+   * @return Current object to allow chaining.
    */
-  public void insert(Xnode node) {
+  public Xnode insert(Xnode node) {
     insert(node, false);
+    return this;
   }
 
   /**
@@ -379,8 +390,10 @@ public class Xnode {
    * @return Line number. 0 if the attribute is not defined.
    */
   public int lineNo() {
-    return hasAttribute(Xattr.LINENO) ?
-        Integer.parseInt(getAttribute(Xattr.LINENO)) : 0;
+    if(hasAttribute(Xattr.LINENO)) {
+      return Integer.parseInt(getAttribute(Xattr.LINENO));
+    }
+    return getClosestLineNo();
   }
 
   /**
@@ -588,20 +601,7 @@ public class Xnode {
    * @return The matched node. Null if nothing matched.
    */
   public Xnode matchDirectDescendant(Xcode opcode) {
-    if(_baseElement == null) {
-      return null;
-    }
-    NodeList nodeList = _baseElement.getChildNodes();
-    for(int i = 0; i < nodeList.getLength(); i++) {
-      Node nextNode = nodeList.item(i);
-      if(nextNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) nextNode;
-        if(element.getTagName().equals(opcode.code())) {
-          return new Xnode(element);
-        }
-      }
-    }
-    return null;
+    return matchDirectDescendant(Collections.singletonList(opcode));
   }
 
   /**
@@ -802,6 +802,19 @@ public class Xnode {
   }
 
   /**
+   * Check is the current node is one of the constant node.
+   *
+   * @return True if the node is a constant node. False otherwise.
+   */
+  public boolean isConstant() {
+    return opcode() == Xcode.F_REAL_CONSTANT
+        || opcode() == Xcode.F_INT_CONSTANT
+        || opcode() == Xcode.F_COMPLEX_CONSTANT
+        || opcode() == Xcode.F_CHARACTER_CONSTANT
+        || opcode() == Xcode.F_LOGICAL_CONSTANT;
+  }
+
+  /**
    * Check whether the given node is of the given opcode.
    *
    * @param node   Node to be checked.
@@ -870,8 +883,8 @@ public class Xnode {
    *
    * @param type FbasicType to be associated with this node.
    */
-  public void setType(FbasicType type) {
-    setAttribute(Xattr.TYPE, type.getType());
+  public Xnode setType(FbasicType type) {
+    return setAttribute(Xattr.TYPE, type.getType());
   }
 
   /**
@@ -879,8 +892,11 @@ public class Xnode {
    *
    * @param value Type value.
    */
-  public void setType(String value) {
-    setAttribute(Xattr.TYPE, value);
+  public Xnode setType(String value) {
+    if(value != null && !value.isEmpty()) {
+      setAttribute(Xattr.TYPE, value);
+    }
+    return this;
   }
 
   /**
@@ -888,9 +904,11 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  public String constructRepresentation(boolean withNamedValue)
+  public String constructRepresentation(boolean withNamedValue,
+                                        boolean nameOnly)
   {
     switch(opcode()) {
       case F_INT_CONSTANT:
@@ -901,15 +919,16 @@ public class Xnode {
       case LOWER_BOUND:
       case UPPER_BOUND:
       case VAR_REF:
-        return constructSimpleRepresentation(withNamedValue);
+        return constructSimpleRepresentation(withNamedValue, nameOnly);
       case INDEX_RANGE:
-        return constructIndexRangeRepresentation(withNamedValue);
+        return nameOnly
+            ? "" : constructIndexRangeRepresentation(withNamedValue, nameOnly);
       case F_ARRAY_REF:
-        return constructArrayRefRepresentation(withNamedValue);
+        return constructArrayRefRepresentation(withNamedValue, nameOnly);
       case F_MEMBER_REF:
-        return constructMemberRefRepresentation(withNamedValue);
+        return constructMemberRefRepresentation(withNamedValue, nameOnly);
       case NAMED_VALUE:
-        return constructNamedValueRepresentation(withNamedValue);
+        return constructNamedValueRepresentation(withNamedValue, nameOnly);
       default:
         return "";
     }
@@ -920,18 +939,21 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  private String constructIndexRangeRepresentation(boolean withNamedValue) {
+  private String constructIndexRangeRepresentation(boolean withNamedValue,
+                                                   boolean nameOnly)
+  {
     if(getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)) {
       return ":";
     }
     Xnode child0 = child(0);
     Xnode child1 = child(1);
     return ((child0 != null) ?
-        child0.constructRepresentation(withNamedValue) : "") + ":" +
+        child0.constructRepresentation(withNamedValue, nameOnly) : "") + ":" +
         ((child1 != null) ?
-            child1.constructRepresentation(withNamedValue) : "");
+            child1.constructRepresentation(withNamedValue, nameOnly) : "");
   }
 
   /**
@@ -939,11 +961,15 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  private String constructSimpleRepresentation(boolean withNamedValue) {
+  private String constructSimpleRepresentation(boolean withNamedValue,
+                                               boolean nameOnly)
+  {
     Xnode n = firstChild();
-    return (n != null) ? n.constructRepresentation(withNamedValue) : "";
+    return (n != null)
+        ? n.constructRepresentation(withNamedValue, nameOnly) : "";
   }
 
   /**
@@ -951,18 +977,26 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  private String constructArrayRefRepresentation(boolean withNamedValue) {
+  private String constructArrayRefRepresentation(boolean withNamedValue,
+                                                 boolean nameOnly)
+  {
     List<Xnode> childs = children();
     if(childs.size() == 1) {
-      return childs.get(0).constructRepresentation(withNamedValue);
+      return childs.get(0).constructRepresentation(withNamedValue, nameOnly);
     } else {
       StringBuilder str = new StringBuilder();
-      str.append(childs.get(0).constructRepresentation(withNamedValue));
+      str.append(childs.get(0).constructRepresentation(withNamedValue,
+          nameOnly));
+      if(nameOnly) {
+        return str.toString();
+      }
       str.append("(");
       for(int i = 1; i < childs.size(); ++i) {
-        str.append(childs.get(i).constructRepresentation(withNamedValue));
+        str.append(childs.get(i).constructRepresentation(withNamedValue,
+            nameOnly));
         if(i != childs.size() - 1) {
           str.append(",");
         }
@@ -977,12 +1011,15 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  private String constructMemberRefRepresentation(boolean withNamedValue) {
+  private String constructMemberRefRepresentation(boolean withNamedValue,
+                                                  boolean nameOnly)
+  {
     Xnode n = firstChild();
     return ((n != null) ?
-        n.constructRepresentation(withNamedValue) + "%" +
+        n.constructRepresentation(withNamedValue, nameOnly) + "%" +
             getAttribute(Xattr.MEMBER) : "");
   }
 
@@ -991,15 +1028,18 @@ public class Xnode {
    *
    * @param withNamedValue If true, keeps the named value, otherwise, just
    *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
    * @return String representation. Null if node is null.
    */
-  private String constructNamedValueRepresentation(boolean withNamedValue) {
+  private String constructNamedValueRepresentation(boolean withNamedValue,
+                                                   boolean nameOnly)
+  {
     Xnode n = firstChild();
     if(withNamedValue) {
       return ((n != null) ? getAttribute(Xattr.NAME) + "=" +
-          n.constructRepresentation(true) : "");
+          n.constructRepresentation(true, nameOnly) : "");
     }
-    return (n != null) ? n.constructRepresentation(false) : "";
+    return (n != null) ? n.constructRepresentation(false, nameOnly) : "";
   }
 
   /**
@@ -1098,5 +1138,21 @@ public class Xnode {
    */
   public boolean isNotArrayIndex() {
     return !Xnode.isOfCode(ancestor(), Xcode.ARRAY_INDEX);
+  }
+
+  /**
+   * Find meaningful line number for error reporting.
+   *
+   * @return First line number found in ancestors.
+   */
+  private int getClosestLineNo() {
+    Xnode crtAncestor = ancestor();
+    while(crtAncestor != null) {
+      if(crtAncestor.hasAttribute(Xattr.LINENO)) {
+        return crtAncestor.lineNo();
+      }
+      crtAncestor = crtAncestor.ancestor();
+    }
+    return 0; // Default if not found
   }
 }

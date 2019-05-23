@@ -27,10 +27,9 @@ public enum AcceleratorLocalStrategy {
       return PRIVATE;
     }
     switch(value) {
-      case LOCAL_STRATEGY_PRIVATE:
-        return PRIVATE;
       case LOCAL_STRATEGY_PROMOTE:
         return PROMOTE;
+      case LOCAL_STRATEGY_PRIVATE:
       default:
         return PRIVATE;
     }

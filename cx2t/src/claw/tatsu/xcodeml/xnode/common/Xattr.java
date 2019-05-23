@@ -88,7 +88,8 @@ public enum Xattr {
   // FortranModule extension to share promotion information
   IS_INSERTED(Xname.ATTR_IS_INSERTED),
   IS_FORCE_ASSUMED(Xname.ATTR_IS_FORCE_ASSUMED),
-  PROMOTION_INFO(Xname.ATTR_PROMOTION_INFO);
+  PROMOTION_INFO(Xname.ATTR_PROMOTION_INFO),
+  WAS_ELEMENTAL(Xname.ATTR_WAS_ELEMENTAL);
 
   private static final Map<String, Xattr> _stringToEnum = new HashMap<>();
 

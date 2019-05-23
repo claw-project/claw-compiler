@@ -9,9 +9,9 @@ import claw.tatsu.xcodeml.xnode.common.Xattr;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The FfunctionType represents the FfunctionType (3.4) element in XcodeML
@@ -176,11 +176,7 @@ public class FfunctionType extends Xnode {
    * @return List of string.
    */
   public List<String> getParamsNames() {
-    List<String> parametersName = new ArrayList<>();
-    for(Xnode n : _parameters) {
-      parametersName.add(n.value());
-    }
-    return parametersName;
+    return _parameters.stream().map(Xnode::value).collect(Collectors.toList());
   }
 
   /**
@@ -201,12 +197,9 @@ public class FfunctionType extends Xnode {
    * otherwise.
    */
   public boolean hasParam(String paramName) {
-    for(Xnode param : _parameters) {
-      if(param.value().equalsIgnoreCase(paramName)) {
-        return true;
-      }
-    }
-    return false;
+    return _parameters.stream()
+        .map(Xnode::value)
+        .anyMatch(paramName::equalsIgnoreCase);
   }
 
   @Override

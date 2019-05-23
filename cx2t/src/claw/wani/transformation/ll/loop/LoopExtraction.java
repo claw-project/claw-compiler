@@ -4,14 +4,12 @@
  */
 package claw.wani.transformation.ll.loop;
 
-// ClawX2T import
-
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.Message;
 import claw.tatsu.directive.common.Directive;
-import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Loop;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.*;
@@ -30,9 +28,7 @@ import claw.wani.x2t.translator.ClawTranslator;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-
-// OMNI import
-// Java import
+import java.util.Optional;
 
 /**
  * A LoopExtraction transformation is an independent transformation. The
@@ -47,7 +43,7 @@ public class LoopExtraction extends ClawTransformation {
 
   private final Map<String, ClawMapping> _fctMappingMap;
   private final Map<String, ClawMapping> _argMappingMap;
-  private Xnode _fctCall = null;
+  private FunctionCall _fctCall = null;
   private Xnode _extractedLoop = null;
   private FfunctionDefinition _fctDef = null; // Fct holding the fct call
   private FfunctionDefinition _fctDefToExtract = null;
@@ -108,7 +104,7 @@ public class LoopExtraction extends ClawTransformation {
    */
   private boolean checkMappingInformation(XcodeProgram xcodeml) {
     for(Map.Entry<String, ClawMapping> map : _argMappingMap.entrySet()) {
-      if(Function.findArg(_fctCall, map.getKey()) == null) {
+      if(!_fctCall.findArg(map.getKey()).isPresent()) {
         xcodeml.addError("Mapped variable " + map.getKey() +
                 " not found in function call arguments",
             _claw.getPragma().lineNo());
@@ -136,12 +132,13 @@ public class LoopExtraction extends ClawTransformation {
     }
 
     // Find function CALL
-    _fctCall = _exprStmt.matchDescendant(Xcode.FUNCTION_CALL);
-    if(_fctCall == null) {
+    Xnode fctCallNode = _exprStmt.matchDescendant(Xcode.FUNCTION_CALL);
+    if(fctCallNode == null) {
       xcodeml.addError("No function call detected after loop-extract",
           _claw.getPragma().lineNo());
       return false;
     }
+    _fctCall = new FunctionCall(fctCallNode);
 
     Xnode fctDef = _fctCall.matchAncestor(Xcode.F_FUNCTION_DEFINITION);
     if(fctDef == null) {
@@ -282,8 +279,8 @@ public class LoopExtraction extends ClawTransformation {
       Message.debug("Apply mapping (" + mapping.getMappedDimensions() + ") ");
       for(ClawMappingVar var : mapping.getMappedVariables()) {
         Message.debug("  Var: " + var);
-        Xnode argument = Function.findArg(_fctCall, var.getArgMapping());
-        if(argument == null) {
+        Optional<Xnode> argument = _fctCall.findArg(var.getArgMapping());
+        if(!argument.isPresent()) {
           continue;
         }
 
@@ -299,8 +296,8 @@ public class LoopExtraction extends ClawTransformation {
          *    2.2 insert clone of base variable in varRef
          * 3. Create arrayRef element with varRef + arrayIndex
          */
-        if(argument.is(Xcode.VAR)) {
-          FbasicType type = xcodeml.getTypeTable().getBasicType(argument);
+        if(argument.get().is(Xcode.VAR)) {
+          FbasicType type = xcodeml.getTypeTable().getBasicType(argument.get());
 
           // Demotion cannot be applied as type dimension is smaller
           if(type.getDimensions() < mapping.getMappedDimensions()) {
@@ -313,9 +310,9 @@ public class LoopExtraction extends ClawTransformation {
           newArg.setType(type.getRef());
 
           Xnode varRef = xcodeml.createNode(Xcode.VAR_REF);
-          varRef.setType(argument.getType());
+          varRef.setType(argument.get().getType());
 
-          varRef.append(argument, true);
+          varRef.append(argument.get(), true);
           newArg.append(varRef);
 
           //  create arrayIndex
@@ -333,8 +330,8 @@ public class LoopExtraction extends ClawTransformation {
             newArg.append(arrayIndex);
           }
 
-          argument.insertAfter(newArg);
-          argument.delete();
+          argument.get().insertAfter(newArg);
+          argument.get().delete();
         }
         // Case 2: ArrayRef (n arrayIndex) --> ArrayRef (n+m arrayIndex)
 

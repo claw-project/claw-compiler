@@ -7,6 +7,7 @@ package claw.tatsu.primitive;
 import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Message;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
 import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
@@ -480,12 +481,11 @@ public final class Loop {
 
     // upper bound
     Xnode up = xcodeml.createNode(Xcode.UPPER_BOUND);
-    Xnode sizeCall =
+    FunctionCall sizeCall =
         xcodeml.createIntrinsicFctCall(FortranType.INTEGER, Xintrinsic.SIZE);
-    Xnode varArg = xcodeml.createVar(fbt.getType(), arrayName, Xscope.LOCAL);
-    Xnode dimArg = xcodeml.createIntConstant(dimId);
-    sizeCall.matchDescendant(Xcode.ARGUMENTS).append(varArg);
-    sizeCall.matchDescendant(Xcode.ARGUMENTS).append(dimArg);
+    sizeCall.addArguments(
+        xcodeml.createVar(fbt.getType(), arrayName, Xscope.LOCAL));
+    sizeCall.addArguments(xcodeml.createIntConstant(dimId));
     up.append(sizeCall);
 
     // step
