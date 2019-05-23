@@ -462,7 +462,7 @@ public class ScaForward extends ClawTransformation {
         {
           List<Xnode> arrayIndexes = arg.matchAll(Xcode.ARRAY_INDEX);
           for(Xnode n : arrayIndexes) {
-            if(XnodeUtil.isInductionIndex(n,
+            if(_doStatements != null && XnodeUtil.isInductionIndex(n,
                 _doStatements.getInductionVariables()))
             {
               n.insertAfter(xcodeml.createEmptyAssumedShaped());
@@ -592,7 +592,7 @@ public class ScaForward extends ClawTransformation {
     // Serialization input
     if(_claw.hasClause(ClawClause.SAVEPOINT)) {
       List<String> inFields = _fCall.gatherArguments(xcodeml, _fctType,
-          _mod != null ? _mod : xcodeml, Intent.IN, true, true);
+          _mod != null ? _mod : xcodeml, Intent.IN, true, false);
       Serialization.insertImports(xcodeml, _fCall.findParentFunction());
       if(Context.isTarget(Target.CPU)) {
         Serialization.generateWriteSavepoint(xcodeml, fctCallAncestor,
@@ -645,11 +645,11 @@ public class ScaForward extends ClawTransformation {
 
     // Serialization output
     if(_claw.hasClause(ClawClause.SAVEPOINT)) {
-      List<String> outFieldsName = _fCall.gatherArguments(xcodeml, _fctType,
-          _mod != null ? _mod : xcodeml, Intent.OUT, true, true);
+      List<String> outFields = _fCall.gatherArguments(xcodeml, _fctType,
+          _mod != null ? _mod : xcodeml, Intent.OUT, true, false);
       Serialization.insertImports(xcodeml, _fCall.findParentFunction());
       Serialization.generateWriteSavepoint(xcodeml, postHook,
-          _claw.getMetadataMap(), outFieldsName,
+          _claw.getMetadataMap(), outFields,
           _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
     }
   }
