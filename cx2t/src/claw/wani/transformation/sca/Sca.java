@@ -193,12 +193,16 @@ public class Sca extends ClawTransformation {
 
         _arrayFieldsInOut.add(dataInfo.getKey());
 
+        String layoutName = dataInfo.getValue();
         ModelConfig global = Configuration.get().getModelConfig();
-        if(dataInfo.getValue() != null
-            && global.hasLayout(dataInfo.getValue()))
-        {
-          _claw.getLocalModelConfig().putLayout(dataInfo.getKey(),
-              global.getLayout(dataInfo.getKey()));
+        ModelConfig local = _claw.getLocalModelConfig();
+
+        if(layoutName != null && global.hasLayout(layoutName)) {
+          if(!local.hasLayout(layoutName)) {
+            local.putLayout(layoutName, global.getLayout(layoutName));
+          }
+
+          local.putLayout(dataInfo.getKey(), local.getLayout(layoutName));
         }
       }
       return true;
