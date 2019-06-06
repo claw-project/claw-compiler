@@ -929,6 +929,87 @@ public class Xnode {
         return constructMemberRefRepresentation(withNamedValue, nameOnly);
       case NAMED_VALUE:
         return constructNamedValueRepresentation(withNamedValue, nameOnly);
+      case MINUS_EXPR:
+      case PLUS_EXPR:
+      case MUL_EXPR:
+      case DIV_EXPR:
+      case F_CONCAT_EXPR:
+      case F_POWER_EXPR:
+      case LOG_AND_EXPR:
+      case LOG_EQ_EXPR:
+      case LOG_EQV_EXPR:
+      case LOG_GE_EXPR:
+      case LOG_GT_EXPR:
+      case LOG_LE_EXPR:
+      case LOG_LT_EXPR:
+      case LOG_NEQ_EXPR:
+      case LOG_NEWV_EXPR:
+      case LOG_OR_EXPR:
+        return constructBinaryExprRepresentation(withNamedValue, nameOnly);
+      default:
+        return "";
+    }
+  }
+
+  /**
+   * Construct string representation of the binary expression node.
+   *
+   * @param withNamedValue If true, keeps the named value, otherwise, just
+   *                       constructs the argument.
+   * @param nameOnly       If true, index part of array is not constructed.
+   * @return String representation. Empty if node is null.
+   */
+  private String constructBinaryExprRepresentation(boolean withNamedValue,
+                                                   boolean nameOnly)
+  {
+    Xnode child0 = child(0);
+    Xnode child1 = child(1);
+    return ((child0 != null) ?
+        child0.constructRepresentation(withNamedValue, nameOnly) : "") +
+        getBinaryOpRepresentation()
+        + ((child1 != null) ?
+        child1.constructRepresentation(withNamedValue, nameOnly) : "");
+  }
+
+  /**
+   * Get string representation of binary operator.
+   *
+   * @return Binary operator.
+   */
+  private String getBinaryOpRepresentation() {
+    switch(opcode()) {
+      case MINUS_EXPR:
+        return "-";
+      case PLUS_EXPR:
+        return "+";
+      case MUL_EXPR:
+        return "*";
+      case DIV_EXPR:
+        return "/";
+      case F_CONCAT_EXPR:
+        return "//";
+      case F_POWER_EXPR:
+        return "**";
+      case LOG_AND_EXPR:
+        return ".and.";
+      case LOG_EQ_EXPR:
+        return ".eq.";
+      case LOG_EQV_EXPR:
+        return ".eqv.";
+      case LOG_GE_EXPR:
+        return ".ge.";
+      case LOG_GT_EXPR:
+        return ".gt.";
+      case LOG_LE_EXPR:
+        return ".le.";
+      case LOG_LT_EXPR:
+        return ".lt";
+      case LOG_NEQ_EXPR:
+        return ".neq";
+      case LOG_NEWV_EXPR:
+        return ".newv";
+      case LOG_OR_EXPR:
+        return ".or.";
       default:
         return "";
     }
