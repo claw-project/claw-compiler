@@ -2,7 +2,7 @@
 
 First of all, thanks for taking time to contribute!
 
-## Using pull request
+### Using pull request
 Pull requests are much welcome!!
 * To fix an issue, PR must reference the issue it fixes.
 * For PR implementing a language specification, the PR must reference the
