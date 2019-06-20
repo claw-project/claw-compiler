@@ -77,9 +77,10 @@ public class Serialization {
    * @return Newly created exprStmt node encapsulating the function call.
    */
   private static Xnode createWriteFieldCall(XcodeProgram xcodeml,
-                                            String savepointName, String field)
+                                            String savepointName, String field,
+                                            String fieldName)
   {
-    return createReadWriteFctCall(xcodeml, savepointName, field,
+    return createReadWriteFctCall(xcodeml, savepointName, field, fieldName,
         SerializationCall.SER_WRITE);
   }
 
@@ -92,9 +93,10 @@ public class Serialization {
    * @return Newly created exprStmt node encapsulating the function call.
    */
   private static Xnode createReadFieldCall(XcodeProgram xcodeml,
-                                           String savepointName, String field)
+                                           String savepointName, String field,
+                                           String fieldName)
   {
-    return createReadWriteFctCall(xcodeml, savepointName, field,
+    return createReadWriteFctCall(xcodeml, savepointName, field, fieldName,
         SerializationCall.SER_READ);
   }
 
@@ -154,11 +156,11 @@ public class Serialization {
   private static Xnode createReadWriteFctCall(XcodeProgram xcodeml,
                                               String savepointName,
                                               String field,
+                                              String fieldName,
                                               SerializationCall callType)
   {
     // Create the char constant type
-    Xnode nameArg = xcodeml.createCharConstant(savepointName + "_" +
-        cleanUpFieldName(field));
+    Xnode nameArg = xcodeml.createCharConstant(savepointName + "_" + fieldName);
     Xnode varArg =
         xcodeml.createVar(FortranType.REAL, field, Xscope.GLOBAL);
     FunctionCall serCall = createBaseSerFctCall(xcodeml, callType);
@@ -283,11 +285,23 @@ public class Serialization {
     }
 
     Set<String> uniqueFields = new HashSet<>(fields);
+    Map<String, Integer> fieldNames = new HashMap<>();
     for(String field : uniqueFields) {
+      String fieldName = cleanUpFieldName(field);
+      if(fieldNames.containsKey(fieldName)) {
+        int counter = fieldNames.get(fieldName) + 1;
+        fieldNames.replace(fieldName, counter);
+        fieldName = String.format("%s_%d", fieldName, counter);
+      } else {
+        fieldNames.put(fieldName, 0);
+      }
+
       if(mode == SerializationMode.WRITE) {
-        nodes.add(createWriteFieldCall(xcodeml, savepointName, field));
+        nodes.add(createWriteFieldCall(xcodeml, savepointName, field,
+            fieldName));
       } else if(mode == SerializationMode.READ) {
-        nodes.add(createReadFieldCall(xcodeml, savepointName, field));
+        nodes.add(createReadFieldCall(xcodeml, savepointName, field,
+            fieldName));
       }
     }
 
