@@ -156,8 +156,7 @@ public class XcodeML extends Xnode {
   }
 
   /**
-   * Create a copy of a variable element or an integer constant from a XcodeML
-   * unit to this unit.
+   * Create a copy of a binary expression from a XcodeML unit to this unit.
    *
    * @param base       Base element to be copied.
    * @param xcodemlSrc Source XcodeML unit.
@@ -165,22 +164,50 @@ public class XcodeML extends Xnode {
    * @throws IllegalTransformationException If the variable element doesn't meet
    *                                        the criteria.
    */
-  public Xnode importConstOrVar(Xnode base, XcodeML xcodemlSrc)
+  public Xnode importBinaryExpr(Xnode base, XcodeML xcodemlSrc)
       throws IllegalTransformationException
   {
-    if(!Xnode.isOfCode(base, Xcode.F_INT_CONSTANT)
-        && !Xnode.isOfCode(base, Xcode.VAR))
-    {
-      throw new IllegalTransformationException(
-          String.format("Lower/upper bound type currently not supported (%s)",
-              base.opcode().toString())
-      );
+    Xnode lhs = base.child(Xnode.LHS);
+    Xnode rhs = base.child(Xnode.RHS);
+    Xnode binaryExpr = createNode(base.opcode());
+    binaryExpr.append(importElement(lhs, xcodemlSrc));
+    binaryExpr.append(importElement(rhs, xcodemlSrc));
+    return binaryExpr;
+  }
+
+  /**
+   * Create a copy of an element from a XcodeML unit to this unit.
+   *
+   * @param base       Base element to be copied.
+   * @param xcodemlSrc Source XcodeML unit.
+   * @return The newly created element in the current XcodeML unit.
+   * @throws IllegalTransformationException If the variable element doesn't meet
+   *                                        the criteria.
+   */
+  public Xnode importElement(Xnode base, XcodeML xcodemlSrc)
+      throws IllegalTransformationException
+  {
+
+    if(base == null) {
+      throw new
+          IllegalTransformationException("Impossible to import null element!");
     }
 
-    if(Xnode.isOfCode(base, Xcode.VAR)) {
-      return importVar(base, xcodemlSrc);
-    } else {
-      return createIntConstant(Integer.parseInt(base.value()));
+    switch(base.opcode()) {
+      case VAR:
+        return importVar(base, xcodemlSrc);
+      case F_INT_CONSTANT:
+        return createIntConstant(Integer.parseInt(base.value()));
+      case PLUS_EXPR:
+      case MINUS_EXPR:
+      case DIV_EXPR:
+      case MUL_EXPR:
+        return importBinaryExpr(base, xcodemlSrc);
+      default:
+        throw new IllegalTransformationException(
+            String.format("Lower/upper bound type currently not supported (%s)",
+                base.opcode().toString())
+        );
     }
   }
 

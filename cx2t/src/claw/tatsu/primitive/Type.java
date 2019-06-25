@@ -127,21 +127,7 @@ public class Type {
     }
 
     Xnode bound = xcodemlDst.createNode(baseBound.opcode());
-    if(boundChild.is(Xcode.F_INT_CONSTANT) || boundChild.is(Xcode.VAR)) {
-      bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
-    } else if(boundChild.is(Xcode.PLUS_EXPR)) {
-      Xnode lhs = boundChild.child(Xnode.LHS);
-      Xnode rhs = boundChild.child(Xnode.RHS);
-      Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUS_EXPR);
-      bound.append(plusExpr);
-      plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
-      plusExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc));
-    } else {
-      throw new IllegalTransformationException(
-          String.format("Lower/upper bound type currently not supported (%s)",
-              boundChild.opcode().toString())
-      );
-    }
+    bound.append(xcodemlDst.importElement(boundChild, xcodemlSrc));
     return bound;
   }
 }
