@@ -106,7 +106,7 @@ public class FunctionCall extends Xnode {
     if(namedValue != null && namedValue.hasAttribute(Xattr.NAME)
         && namedValue.getAttribute(Xattr.NAME).equalsIgnoreCase("dim"))
     {
-      long nbIndexRanges = matchAll(Xcode.INDEX_RANGE).stream().count();
+      long nbIndexRanges = matchAll(Xcode.INDEX_RANGE).size();
 
       long nbAssumedShape = matchAll(Xcode.INDEX_RANGE).stream().
           filter(x -> x.getBooleanAttribute(Xattr.IS_ASSUMED_SHAPE)).count();

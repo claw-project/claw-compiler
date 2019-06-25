@@ -23,7 +23,6 @@ import claw.wani.language.ClawClause;
 import claw.wani.serialization.Serialization;
 import claw.wani.serialization.SerializationStep;
 import claw.wani.transformation.ClawTransformation;
-import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;

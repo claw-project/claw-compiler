@@ -469,7 +469,7 @@ public final class Directive {
    * @param xcodeml        Current XcodeML program unit.
    *                       representation in which the pragmas will be
    *                       generated.
-   * @param hook
+   * @param hook           Hook node to insert pragmas around.
    * @param startDirective String value of the start directive.
    * @param endDirective   String value of the end directive.
    * @return Last stmt inserted or null if nothing is inserted.
