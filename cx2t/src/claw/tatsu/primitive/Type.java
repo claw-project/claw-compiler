@@ -127,20 +127,28 @@ public class Type {
     }
 
     Xnode bound = xcodemlDst.createNode(baseBound.opcode());
-    if(boundChild.is(Xcode.F_INT_CONSTANT) || boundChild.is(Xcode.VAR)) {
-      bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
-    } else if(boundChild.is(Xcode.PLUS_EXPR)) {
-      Xnode lhs = boundChild.child(Xnode.LHS);
-      Xnode rhs = boundChild.child(Xnode.RHS);
-      Xnode plusExpr = xcodemlDst.createNode(Xcode.PLUS_EXPR);
-      bound.append(plusExpr);
-      plusExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
-      plusExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc));
-    } else {
-      throw new IllegalTransformationException(
-          String.format("Lower/upper bound type currently not supported (%s)",
-              boundChild.opcode().toString())
-      );
+
+    switch(boundChild.opcode()) {
+      case F_INT_CONSTANT:
+      case VAR:
+        bound.append(xcodemlDst.importConstOrVar(boundChild, xcodemlSrc));
+        break;
+      case PLUS_EXPR:
+      case MINUS_EXPR:
+      case DIV_EXPR:
+      case MUL_EXPR:
+        Xnode lhs = boundChild.child(Xnode.LHS);
+        Xnode rhs = boundChild.child(Xnode.RHS);
+        Xnode binaryExpr = xcodemlDst.createNode(boundChild.opcode());
+        bound.append(binaryExpr);
+        binaryExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
+        binaryExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc));
+        break;
+      default:
+        throw new IllegalTransformationException(
+            String.format("Lower/upper bound type currently not supported (%s)",
+                boundChild.opcode().toString())
+        );
     }
     return bound;
   }
