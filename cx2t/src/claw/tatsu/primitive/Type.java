@@ -137,12 +137,15 @@ public class Type {
       case MINUS_EXPR:
       case DIV_EXPR:
       case MUL_EXPR:
-        Xnode lhs = boundChild.child(Xnode.LHS);
+
+        bound.append(xcodemlDst.importBinaryExpr(boundChild, xcodemlSrc));
+
+        /*Xnode lhs = boundChild.child(Xnode.LHS);
         Xnode rhs = boundChild.child(Xnode.RHS);
         Xnode binaryExpr = xcodemlDst.createNode(boundChild.opcode());
         bound.append(binaryExpr);
         binaryExpr.append(xcodemlDst.importConstOrVar(lhs, xcodemlSrc));
-        binaryExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc));
+        binaryExpr.append(xcodemlDst.importConstOrVar(rhs, xcodemlSrc));*/
         break;
       default:
         throw new IllegalTransformationException(

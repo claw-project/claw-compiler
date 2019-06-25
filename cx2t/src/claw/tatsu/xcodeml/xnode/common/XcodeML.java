@@ -185,6 +185,26 @@ public class XcodeML extends Xnode {
   }
 
   /**
+   * Create a copy of a binary expression from a XcodeML unit to this unit.
+   *
+   * @param base       Base element to be copied.
+   * @param xcodemlSrc Source XcodeML unit.
+   * @return The newly created element in the current XcodeML unit.
+   * @throws IllegalTransformationException If the variable element doesn't meet
+   *                                        the criteria.
+   */
+  public Xnode importBinaryExpr(Xnode base, XcodeML xcodemlSrc)
+      throws IllegalTransformationException
+  {
+    Xnode lhs = base.child(Xnode.LHS);
+    Xnode rhs = base.child(Xnode.RHS);
+    Xnode binaryExpr = createNode(base.opcode());
+    binaryExpr.append(importConstOrVar(lhs, xcodemlSrc));
+    binaryExpr.append(importConstOrVar(rhs, xcodemlSrc));
+    return binaryExpr;
+  }
+
+  /**
    * Create a copy with a new hash type of an integer variable element from one
    * XcodeML unit to the current unit.
    *
