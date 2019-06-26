@@ -1,8 +1,8 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
-## [1.3] - Unreleased
-* SCA: basic support for transformation in ELEMENTAL function/subroutine for
+## [2.0] - Unreleased
+* SCA: support for transformation in ELEMENTAL function/subroutine for
   GPU target
 * low-level: block directive like `loop-hoist` can now be nested on the same
   depth.
