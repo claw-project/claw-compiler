@@ -9,9 +9,9 @@ All notable changes to the CLAW Compiler project are documented in this file.
 * driver: `_CRAYFTN` macro is passed directly when Cray preprocessor is used.
 * `array-transform` directive as been renamed `expand` as specified in v2.0 of
   the CLAW Directive Language Specification.
-* `parallel` clause for `expand` directive is implemented.   
+* `parallel` clause for `expand` directive is implemented.
 * OMNI Compiler submodule now pointing to
-  omni-compiler/xcodeml-tools@6dfda5a2bb16ed04487d9e3c688dbba27072944e
+  omni-compiler/xcodeml-tools@772cf79077ac5f04cfc204fc7e0b53755a362d8b
 * Java 1.8 or newer is now required for CX2T.
 
 ## [1.2.3] - 2019-04-10
