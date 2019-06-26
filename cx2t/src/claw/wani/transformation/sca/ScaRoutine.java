@@ -35,15 +35,10 @@ public class ScaRoutine extends Sca {
   @Override
   public boolean analyze(XcodeProgram xcodeml, Translator translator) {
     if(!detectParentFunction(xcodeml)) {
-      return false;
-    }
-
-    if(!_fctType.isElemental()) {
-      xcodeml.addError("Parent function/subroutine must be ELEMENTAL.",
+      xcodeml.addError("Cannot find parent subroutine/function.",
           _claw.getPragma());
       return false;
     }
-
     return true;
   }
 
@@ -55,8 +50,10 @@ public class ScaRoutine extends Sca {
 
       DirectiveGenerator dirGen = Context.get().getGenerator();
 
-      _fctType.removeAttribute(Xattr.IS_PURE);
-      _fctType.removeAttribute(Xattr.IS_ELEMENTAL);
+      if(_fctType.isElemental()) {
+        _fctType.removeAttribute(Xattr.IS_PURE);
+        _fctType.removeAttribute(Xattr.IS_ELEMENTAL);
+      }
 
       if(Directive.hasDirectives(_fctDef)) {
         xcodeml.addWarning(String.format("%s %s", SCA_DEBUG_PREFIX,
