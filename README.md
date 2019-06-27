@@ -5,7 +5,7 @@
 <a target="_blank" href="https://claw-project.github.io/">![Doc](https://img.shields.io/badge/Documentation-link-lightgray.svg)</a>
 ![](https://img.shields.io/spack/v/claw.svg)
 
-<a target="_blank" href="https://github.com/claw-project/claw-language-specification/blob/master/claw_language_specifications.pdf">![CLAW-Language-spec](https://img.shields.io/badge/CLAW_Language-1.1-blue.svg)</a>
+<a target="_blank" href="https://github.com/claw-project/claw-language-specification/blob/master/claw_language_specifications.pdf">![CLAW-Language-spec](https://img.shields.io/badge/CLAW_Language-2.0.1-blue.svg)</a>
 
 
 > Who is in charge here?
