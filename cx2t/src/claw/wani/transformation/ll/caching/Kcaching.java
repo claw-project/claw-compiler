@@ -12,6 +12,7 @@ import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.*;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.wani.language.ClawPragma;
 import claw.wani.language.ClawClause;
@@ -82,6 +83,7 @@ public class Kcaching extends ClawTransformation {
 
     // 1. Find the function/module declaration
     FfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
+    FmoduleDefinition modDef = _claw.getPragma().findParentModule();
 
     for(String data : _claw.values(ClawClause.DATA)) {
       Xnode stmt = XnodeUtil.getFirstArrayAssign(_claw.getPragma(), data);
@@ -101,9 +103,9 @@ public class Kcaching extends ClawTransformation {
       }
 
       if(stmt != null && standardArrayRef) {
-        transformAssignStmt(xcodeml, fctDef, data, stmt, translator);
+        transformAssignStmt(xcodeml, fctDef, modDef, data, stmt, translator);
       } else {
-        transformData(xcodeml, fctDef, data, translator);
+        transformData(xcodeml, fctDef, modDef, data, translator);
       }
 
     }
@@ -114,18 +116,20 @@ public class Kcaching extends ClawTransformation {
    * Apply the transformation for the data list.
    *
    * @param xcodeml    The XcodeML on which the transformations are applied.
-   * @param fctDef     Function/module definition in which the data are nested.
+   * @param fctDef     Function definition in which the data are nested.
+   * @param modDef     Module definition in which the data are nested.
    * @param data       Array identifier on which the caching is done.
    * @param translator Current instance of the translator.
    * @throws Exception If something prevent the transformation to be done.
    */
   private void transformData(XcodeProgram xcodeml, FfunctionDefinition fctDef,
+                             FmoduleDefinition modDef,
                              String data,
                              Translator translator)
       throws Exception
   {
 
-    List<Xnode> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
+    List<Xnode> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, modDef, data);
 
     // Generate the cache variable and its assignment
     String type = aRefs.get(0).getType();
@@ -144,7 +148,8 @@ public class Kcaching extends ClawTransformation {
    * Apply the transformation for the LHS array reference.
    *
    * @param xcodeml    The XcodeML on which the transformations are applied.
-   * @param fctDef     Function/module definition in which the data are nested.
+   * @param fctDef     Function definition in which the data are nested.
+   * @param modDef     Module definition in which the data are nested.
    * @param data       Array identifier on which the caching is done.
    * @param stmt       First statement including the array ref on the lhs.
    * @param translator The translator used to applied the transformations.
@@ -152,12 +157,13 @@ public class Kcaching extends ClawTransformation {
    */
   private void transformAssignStmt(XcodeProgram xcodeml,
                                    FfunctionDefinition fctDef,
+                                   FmoduleDefinition modDef,
                                    String data,
                                    Xnode stmt,
                                    Translator translator) throws Exception
   {
     String type = stmt.matchDirectDescendant(Xcode.F_ARRAY_REF).getType();
-    List<Xnode> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, data);
+    List<Xnode> aRefs = checkOffsetAndGetArrayRefs(xcodeml, fctDef, modDef, data);
 
     Xnode cacheVar =
         generateCacheVarAndAssignStmt(xcodeml, data, type, fctDef, stmt, stmt);
@@ -248,21 +254,27 @@ public class Kcaching extends ClawTransformation {
    * @param xcodeml The current program
    * @param fctDef  The function definition which holds the variable
    *                information.
+   * @param modDef  The module definition which which is used to check
+   *                for the variable if not found in function.
    * @param var     The variable on which the offset are inferred.
    * @return List of integer representing the offset for the given variable.
    * @throws IllegalTransformationException if symbol id is not found.
    */
   private List<Integer> generateInferredOffsets(XcodeProgram xcodeml,
                                                 FfunctionDefinition fctDef,
+                                                FmoduleDefinition modDef,
                                                 String var)
       throws IllegalTransformationException
   {
     Xid id = fctDef.getSymbolTable().get(var);
     if(id == null) {
-      throw new IllegalTransformationException("Variable " + var +
-          " defined in the data clause has not been found",
-          _claw.getPragma().lineNo()
-      );
+      id = modDef.getSymbolTable().get(var);
+      if(id == null) {
+        throw new IllegalTransformationException("Variable " + var +
+                " defined in the data clause has not been found",
+                _claw.getPragma().lineNo()
+        );
+      }
     }
     FbasicType basicType = xcodeml.getTypeTable().getBasicType(id);
     int dim = basicType.getDimensions();
@@ -361,12 +373,13 @@ public class Kcaching extends ClawTransformation {
 
   private List<Xnode> checkOffsetAndGetArrayRefs(XcodeProgram xcodeml,
                                                  FfunctionDefinition fctDef,
+                                                 FmoduleDefinition modDef,
                                                  String var)
       throws IllegalTransformationException
   {
     List<Integer> offsets = _claw.getOffsets();
     if(offsets.isEmpty()) {
-      offsets = generateInferredOffsets(xcodeml, fctDef, var);
+      offsets = generateInferredOffsets(xcodeml, fctDef, modDef, var);
     }
 
     List<Xnode> arrayRefs =
