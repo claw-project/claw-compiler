@@ -1,3 +1,9 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+! Helper module to provide some arrays that can be imported
+!
 module helper_module
   implicit none
 
