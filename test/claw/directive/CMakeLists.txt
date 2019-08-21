@@ -19,5 +19,11 @@
 set(CLAW_FLAGS_compile-guard2 --directive=openmp)
 set(CLAW_FLAGS_compile-guard4 --directive=openmp)
 
+set(COMPARE_kcache1 ON)
+set(COMPARE_kcache2 ON)
+set(COMPARE_kcache3 ON)
+set(COMPARE_kcache4 ON)
+set(COMPARE_kcache5 ON)
+
 claw_add_basic_test_set(
   NAME claw-directive DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})

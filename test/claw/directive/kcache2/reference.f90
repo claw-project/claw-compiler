@@ -1,7 +1,7 @@
 PROGRAM claw_test
  INTEGER :: istart = 0
  INTEGER :: iend = 10
- INTEGER :: jstart = 0
+ INTEGER :: jstart = 1
  INTEGER :: jend = 20
 
  CALL kcache ( istart , iend , jstart , jend )
@@ -25,10 +25,10 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
  REAL ( KIND= 8 ) :: array9_k_m1
 
  DO i = istart , iend , 1
-  array6 ( i , 1 ) = 1.0
-  array7 ( i , 1 ) = 2.0
-  array8 ( i , 1 ) = 3.0
-  array9 ( i , 1 ) = 4.0
+  array6 ( i , jstart ) = 1.0
+  array7 ( i , jstart ) = 2.0
+  array8 ( i , jstart ) = 3.0
+  array9 ( i , jstart ) = 4.0
  END DO
  DO i = istart , iend , 1
   DO j = jstart + 1 , jend , 1
@@ -40,11 +40,13 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
    END IF
    array6_k_m1 = array6 ( i , j - 1 ) * 2.0
    array6 ( i , j ) = array6_k_m1
-   array7_k_m1 = array7 ( i , j - 1 ) * 2.0 + array6_k_m1
+   array7_k_m1 = array7 ( i , j - 1 ) * 2.0 + array6 ( i , j )
    array7 ( i , j ) = array7_k_m1
-   array8_k_m1 = array8 ( i , j - 1 ) * 2.0 + array6_k_m1 + array7_k_m1
+   array8_k_m1 = array8 ( i , j - 1 ) * 2.0 + array6 ( i , j ) + array7 ( i ,&
+    j )
    array8 ( i , j ) = array8_k_m1
-   array9_k_m1 = array9 ( i , j - 1 ) * 2.0 + array6_k_m1 + array8_k_m1
+   array9_k_m1 = array9 ( i , j - 1 ) * 2.0 + array6 ( i , j ) + array8 ( i ,&
+    j )
    array9 ( i , j ) = array9_k_m1
   END DO
  END DO
