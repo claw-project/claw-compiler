@@ -1,12 +1,13 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
-## [2.0] - Unreleased
+## [2.0] - 2019-08-23
 * `array-transform` directive as been renamed `expand` as specified in v2.0 of
   the CLAW Directive Language Specification.
 * `parallel` clause for `expand` directive is implemented.
 * `update` clause for `expand` directive is implemented.
 * beta serialization support for `expand` and `sca` elemental directives.
+  * Support Serialbox 2 at the moment (https://github.com/eth-cscs/serialbox2)
 * SCA: support for transformation in ELEMENTAL function/subroutine for
   GPU target
 * low-level: block directive like `loop-hoist` can now be nested on the same
