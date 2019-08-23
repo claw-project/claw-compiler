@@ -195,6 +195,12 @@ public class ExpandNotation extends ClawBlockTransformation {
         }
       }
 
+      if(doStmtsBlock == null) {
+        throw new IllegalTransformationException(
+            "Problem occurred during expand transformation",
+            _clawStart.getPragma().lineNo());
+      }
+
       Xblock parallelRegionBlock;
       Xblock updateRegionBlock = null;
       if(_clawStart.hasClause(ClawClause.PARALLEL)) {
