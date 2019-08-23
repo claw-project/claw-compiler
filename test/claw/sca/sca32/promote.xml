@@ -2,7 +2,7 @@
  This file is released under terms of BSD license
  See LICENSE file for more information
 -->
-<claw version="1.0">
+<claw version="2.0">
   <global type="extension">
     <!-- Override default behavior -->
     <parameter key="accelerator_local_strategy" value="promote" />

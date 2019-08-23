@@ -98,7 +98,8 @@ public final class Field {
       fieldInfo.setPromotionType(PromotionInfo.PromotionType.SCALAR_TO_ARRAY);
       Intent newIntent = crtType != null ? crtType.getIntent() : Intent.NONE;
       if(returnTypePromotion) {
-        newType = xcodeml.createBasicType(type, crtType.getRef(), newIntent);
+        newType = xcodeml.createBasicType(type,
+            crtType != null ? crtType.getRef() : "", newIntent);
       } else {
         newType = xcodeml.createBasicType(type, id.getType(), newIntent);
       }
