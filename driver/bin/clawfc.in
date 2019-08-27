@@ -56,6 +56,7 @@ pipe_workflow=true
 keep_comment=false
 add_paren=false
 omni_ffront_debug=false
+omni_ffront_no_module_cache=false
 
 ### Warning switches
 warn_dep_solver=false
@@ -125,6 +126,7 @@ readonly pipe_workflow
 readonly keep_comment
 readonly add_paren
 readonly omni_ffront_debug
+readonly omni_ffront_no_module_cache
 
 ### sed constant ###
 readonly claw_sed_ignore="s/\\!\$claw ignore//"
@@ -167,6 +169,10 @@ fi
 ### Add front-end option to keep the comment
 if [[ ${keep_comment} == true ]]; then
   OMNI_F2X_OPT="${OMNI_F2X_OPT} -fleave-comment"
+fi
+
+if [[ ${omni_ffront_no_module_cache} == true ]]; then
+  OMNI_F2X_OPT="${OMNI_F2X_OPT} -no-module-cache"
 fi
 
 readonly OMNI_F2X_OPT
