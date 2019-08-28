@@ -1,4 +1,4 @@
-<claw version="1.0">
+<claw version="2.0">
   <!-- This configuration is just an extension of the default one -->
   <global type="extension">
     <parameter key="accelerator_collapse" value="true" />

@@ -14,7 +14,7 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
  */
 public class Xblock {
 
-  private Xnode _startNode;
+  private final Xnode _startNode;
   private Xnode _endNode;
 
   public Xblock(Xnode start) {

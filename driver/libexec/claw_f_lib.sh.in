@@ -48,6 +48,7 @@ CLAW Compiler options:
    --show-env                 : show environment variables.
    --no-dep                   : don't generate .mod or .xmod file for
                                 dependencies.
+   --no-module-cache          : Deactivate module cache in the front-end.
    -f,--force                 : force the translation of files without
                                 directives.
    --force-pure               : force compiler to exit when transformation
@@ -191,9 +192,8 @@ function claw::set_parameters() {
       enable_debug_omni=true
       pipe_workflow=false
       ;;
-    --debug-ffront)
-      omni_ffront_debug=true
-      ;;
+    --debug-ffront) omni_ffront_debug=true ;;
+    --no-module-cache) omni_ffront_no_module_cache=true ;;
     --stop-pp)
       verbose=true
       stop_pp=true

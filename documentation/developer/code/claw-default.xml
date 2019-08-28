@@ -1,4 +1,4 @@
-<claw version="1.0">
+<claw version="2.0">
   <!-- Global transformation parameters -->
   <global type="root">
     <!-- Define the translator to be used. -->
