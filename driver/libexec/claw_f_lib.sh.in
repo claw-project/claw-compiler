@@ -700,12 +700,14 @@ function claw::process_dependencies() {
           found_file=("$(grep -s -l -i "^ *MODULE *${module_name}[[:blank:]]*\$" \
             "${directory}"/*"${ext}" | grep -v ".*\\.claw\\..*")")
           if [[ ${#found_file[@]} -gt 1 ]]; then
+            claw::debug "${claw_debug_lvl_dep}" "found too many file with module definition for ${module_name}"
             break
           else
             potential_module_file=${found_file[0]}
             if [[ ${#potential_module_file} -gt 0 ]]; then
               source_mod_file=${potential_module_file}
               source_mod_file_found=true
+              claw::debug "${claw_debug_lvl_dep}" "found source file ${potential_module_file} with module definition ${module_name}"
               break
             fi
           fi
