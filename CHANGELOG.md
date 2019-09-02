@@ -3,6 +3,7 @@ All notable changes to the CLAW Compiler project are documented in this file.
 
 ## [2.0.1] - Unreleased
 * Serialization is now disabled by default.
+* SCA: fix inserted module use in automatic serialization when serialization is disabled.
 
 ## [2.0] - 2019-08-23
 * `array-transform` directive as been renamed `expand` as specified in v2.0 of
