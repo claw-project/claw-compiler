@@ -212,7 +212,10 @@ public class ExpandNotation extends ClawBlockTransformation {
             privates, doStmtsBlock.getStart(), doStmtsBlock.getEnd(), clauses,
             _groupedAssignStmts.size());
 
-        if(_clawStart.hasClause(ClawClause.UPDATE)) {
+        if(_clawStart.hasClause(ClawClause.UPDATE)
+            && Configuration.get()
+            .getBooleanParameter(Configuration.SCA_FORWARD_UPDATE_ENABLED))
+        {
           updateRegionBlock = generateUpdateClause(xcodeml, parallelRegionBlock,
               readArrays, writtenArrays);
         }
