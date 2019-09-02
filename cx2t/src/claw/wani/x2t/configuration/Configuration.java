@@ -93,6 +93,8 @@ public class Configuration {
       "sca_elemental_promotion_assumed";
   public static final String SCA_SERIALIZATION_ENABLED =
       "sca_serialization_enabled";
+  public static final String SCA_FORWARD_UPDATE_ENABLED =
+      "sca_forward_update_enabled";
 
   // env var
   private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";

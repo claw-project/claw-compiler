@@ -23,6 +23,7 @@ import claw.wani.language.ClawClause;
 import claw.wani.serialization.Serialization;
 import claw.wani.serialization.SerializationStep;
 import claw.wani.transformation.ClawTransformation;
+import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
 
 import java.util.*;
@@ -606,7 +607,10 @@ public class ScaForward extends ClawTransformation {
 
     Xnode postHook = fctCallAncestor;
 
-    if(_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)) {
+    if(_claw.hasClause(ClawClause.UPDATE)
+        && Context.isTarget(Target.GPU) && Configuration.get().
+        getBooleanParameter(Configuration.SCA_FORWARD_UPDATE_ENABLED))
+    {
       // Generate update from HOST TO DEVICE
       if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
           _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
@@ -635,11 +639,11 @@ public class ScaForward extends ClawTransformation {
         postHook = Directive.generateUpdate(xcodeml, fctCallAncestor, out,
             DataMovement.DEVICE_TO_HOST);
       }
+    }
 
-      if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
-        Directive.generateParallelRegion(xcodeml, fctCallAncestor,
-            fctCallAncestor);
-      }
+    if(_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU)) {
+      Directive.generateParallelRegion(xcodeml, fctCallAncestor,
+          fctCallAncestor);
     }
 
     // Serialization output
