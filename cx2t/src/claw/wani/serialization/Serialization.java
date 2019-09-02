@@ -344,7 +344,7 @@ public class Serialization {
   public static void insertImports(XcodeProgram xcodeml,
                                    FfunctionDefinition fctDef)
   {
-    if(Configuration.get().
+    if(!Configuration.get().
         getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
     {
       return;
