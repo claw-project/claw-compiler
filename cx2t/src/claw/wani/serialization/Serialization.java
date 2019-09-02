@@ -344,6 +344,11 @@ public class Serialization {
   public static void insertImports(XcodeProgram xcodeml,
                                    FfunctionDefinition fctDef)
   {
+    if(Configuration.get().
+        getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+    {
+      return;
+    }
     fctDef.getDeclarationTable().insertUseDecl(xcodeml, SER_MODULE_M_SERIALIZE);
     fctDef.getDeclarationTable().insertUseDecl(xcodeml, SER_MODULE_UTILS_PPSER);
   }
