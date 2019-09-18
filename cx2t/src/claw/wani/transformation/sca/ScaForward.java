@@ -612,8 +612,9 @@ public class ScaForward extends ClawTransformation {
         getBooleanParameter(Configuration.SCA_FORWARD_UPDATE_ENABLED))
     {
       // Generate update from HOST TO DEVICE
-      if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
+      if((_claw.getUpdateClauseValue() == DataMovement.TWO_WAY ||
           _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
+          && Configuration.get().updateAtInput())
       {
         List<String> in = _fCall.gatherArguments(xcodeml, _fctType,
             _mod != null ? _mod : xcodeml, Intent.IN, true, false);
@@ -623,8 +624,9 @@ public class ScaForward extends ClawTransformation {
       }
 
       // Generate update from DEVICE to HOST
-      if(_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
+      if((_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
           || _claw.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
+          && Configuration.get().updateAtOutput())
       {
         List<String> out = _fCall.gatherArguments(xcodeml, _fctType,
             _mod != null ? _mod : xcodeml, Intent.OUT, true, false);
