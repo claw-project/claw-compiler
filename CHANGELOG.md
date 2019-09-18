@@ -1,10 +1,14 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
-## [2.0.1] - Unreleased
+## [2.0.1] - 2019-09-18
 * Serialization is now disabled by default.
-* Driver: Add option `sca_forward_update_disabled` to switch globally updates
-* SCA: fix inserted module use in automatic serialization when serialization is disabled.
+* Driver: Add option `sca_forward_update_disabled` to switch globally updates.
+* Driver: Add option `sca_forward_update_direction` to fine tuned updates.
+* Driver: Add option `sca_serialization_enabled_direction` to fine tuned
+  serialization.
+* SCA: fix inserted module use in automatic serialization when serialization
+  is disabled.
 
 ## [2.0] - 2019-08-23
 * `array-transform` directive as been renamed `expand` as specified in v2.0 of
