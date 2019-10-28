@@ -272,6 +272,13 @@ public class Serialization {
       return hook;
     }
 
+    if((Configuration.get().seriliazeRead() && mode != SerializationMode.READ)
+        || (Configuration.get().seriliazeWrite()
+        && mode != SerializationMode.WRITE))
+    {
+      return hook;
+    }
+
     savepointName = String.format("%s_%s", savepointName,
         step == SerializationStep.SER_IN
             ? SAVEPOINT_IN_SUFFIX : SAVEPOINT_OUT_SUFFIX);
@@ -344,6 +351,11 @@ public class Serialization {
   public static void insertImports(XcodeProgram xcodeml,
                                    FfunctionDefinition fctDef)
   {
+    if(!Configuration.get().
+        getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+    {
+      return;
+    }
     fctDef.getDeclarationTable().insertUseDecl(xcodeml, SER_MODULE_M_SERIALIZE);
     fctDef.getDeclarationTable().insertUseDecl(xcodeml, SER_MODULE_UTILS_PPSER);
   }

@@ -92,8 +92,19 @@ refer to the developer's guide
     -->
     <parameter key="sca_elemental_promotion_assumed" value="true" />
 
+    <!--
+      This option allows to disable the update before/after sca forward in
+      case the clause is specified. This also impacts the expand directive
+      update clause.
+    -->
+    <parameter key="sca_forward_update_enabled" value="true" />
+    <!-- value can be in, out or inout -->
+    <parameter key="sca_forward_update_enabled_direction" value="inout" />
+
     <!-- Enable generation of Serialbox2 library calls in SCA -->
-    <parameter key="sca_serialization_enabled" value="true" />
+    <parameter key="sca_serialization_enabled" value="false" />
+    <!-- value can be read, write or all -->
+    <parameter key="sca_serialization_enabled_direction" value="all" />
   </global>
 
   <!-- Transformation sets -->
