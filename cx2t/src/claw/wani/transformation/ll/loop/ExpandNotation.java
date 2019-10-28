@@ -195,6 +195,12 @@ public class ExpandNotation extends ClawBlockTransformation {
         }
       }
 
+      if(doStmtsBlock == null) {
+        throw new IllegalTransformationException(
+            "Problem occurred during expand transformation",
+            _clawStart.getPragma().lineNo());
+      }
+
       Xblock parallelRegionBlock;
       Xblock updateRegionBlock = null;
       if(_clawStart.hasClause(ClawClause.PARALLEL)) {
@@ -206,7 +212,10 @@ public class ExpandNotation extends ClawBlockTransformation {
             privates, doStmtsBlock.getStart(), doStmtsBlock.getEnd(), clauses,
             _groupedAssignStmts.size());
 
-        if(_clawStart.hasClause(ClawClause.UPDATE)) {
+        if(_clawStart.hasClause(ClawClause.UPDATE)
+            && Configuration.get()
+            .getBooleanParameter(Configuration.SCA_FORWARD_UPDATE_ENABLED))
+        {
           updateRegionBlock = generateUpdateClause(xcodeml, parallelRegionBlock,
               readArrays, writtenArrays);
         }
@@ -370,8 +379,9 @@ public class ExpandNotation extends ClawBlockTransformation {
     Xnode endNode;
 
     // Generate host to device movement
-    if(_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
+    if((_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
         || _clawStart.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
+        && Configuration.get().updateAtInput())
     {
       startNode = Directive.generateUpdate(xcodeml, hook.getStart(), readArrays,
           DataMovement.HOST_TO_DEVICE);
@@ -380,8 +390,9 @@ public class ExpandNotation extends ClawBlockTransformation {
     }
 
     // Generate device to host movement
-    if(_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
+    if((_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
         || _clawStart.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
+        && Configuration.get().updateAtOutput())
     {
       endNode = Directive.generateUpdate(xcodeml, hook.getEnd(), writtenArrays,
           DataMovement.DEVICE_TO_HOST);

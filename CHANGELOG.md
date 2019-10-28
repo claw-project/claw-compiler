@@ -1,15 +1,27 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
-## [2.0] - Unreleased
+## [2.0.1] - 2019-09-18
+* Serialization is now disabled by default.
+* Driver: Add option `sca_forward_update_disabled` to switch globally updates.
+* Driver: Add option `sca_forward_update_direction` to fine tuned updates.
+* Driver: Add option `sca_serialization_enabled_direction` to fine tuned
+  serialization.
+* SCA: fix inserted module use in automatic serialization when serialization
+  is disabled.
+
+## [2.0] - 2019-08-23
+* `array-transform` directive as been renamed `expand` as specified in v2.0 of
+  the CLAW Directive Language Specification.
+* `parallel` clause for `expand` directive is implemented.
+* `update` clause for `expand` directive is implemented.
+* beta serialization support for `expand` and `sca` elemental directives.
+  * Support Serialbox 2 at the moment (https://github.com/eth-cscs/serialbox2)
 * SCA: support for transformation in ELEMENTAL function/subroutine for
   GPU target
 * low-level: block directive like `loop-hoist` can now be nested on the same
   depth.
 * driver: `_CRAYFTN` macro is passed directly when Cray preprocessor is used.
-* `array-transform` directive as been renamed `expand` as specified in v2.0 of
-  the CLAW Directive Language Specification.
-* `parallel` clause for `expand` directive is implemented.
 * OMNI Compiler submodule now pointing to
   omni-compiler/xcodeml-tools@772cf79077ac5f04cfc204fc7e0b53755a362d8b
 * Java 1.8 or newer is now required for CX2T.

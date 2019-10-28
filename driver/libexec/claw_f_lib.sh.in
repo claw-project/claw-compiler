@@ -48,6 +48,7 @@ CLAW Compiler options:
    --show-env                 : show environment variables.
    --no-dep                   : don't generate .mod or .xmod file for
                                 dependencies.
+   --no-module-cache          : Deactivate module cache in the front-end.
    -f,--force                 : force the translation of files without
                                 directives.
    --force-pure               : force compiler to exit when transformation
@@ -191,9 +192,8 @@ function claw::set_parameters() {
       enable_debug_omni=true
       pipe_workflow=false
       ;;
-    --debug-ffront)
-      omni_ffront_debug=true
-      ;;
+    --debug-ffront) omni_ffront_debug=true ;;
+    --no-module-cache) omni_ffront_no_module_cache=true ;;
     --stop-pp)
       verbose=true
       stop_pp=true
@@ -625,7 +625,7 @@ function claw::process_dependencies() {
   while IFS= read -r line; do
     if [[ ${line} =~ ${module_regex} ]]; then
       module_name="${BASH_REMATCH[3]}"
-      if [[ ! ${dependencies[*]} =~ ${module_name} ]]; then
+      if [[ ! ${dependencies[*]} =~ ^${module_name}$ ]]; then
         dependencies+=("${module_name}")
       fi
     fi
@@ -700,12 +700,14 @@ function claw::process_dependencies() {
           found_file=("$(grep -s -l -i "^ *MODULE *${module_name}[[:blank:]]*\$" \
             "${directory}"/*"${ext}" | grep -v ".*\\.claw\\..*")")
           if [[ ${#found_file[@]} -gt 1 ]]; then
+            claw::debug "${claw_debug_lvl_dep}" "found too many file with module definition for ${module_name}"
             break
           else
             potential_module_file=${found_file[0]}
             if [[ ${#potential_module_file} -gt 0 ]]; then
               source_mod_file=${potential_module_file}
               source_mod_file_found=true
+              claw::debug "${claw_debug_lvl_dep}" "found source file ${potential_module_file} with module definition ${module_name}"
               break
             fi
           fi

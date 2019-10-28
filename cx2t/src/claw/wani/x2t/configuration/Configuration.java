@@ -93,6 +93,18 @@ public class Configuration {
       "sca_elemental_promotion_assumed";
   public static final String SCA_SERIALIZATION_ENABLED =
       "sca_serialization_enabled";
+  public static final String SCA_SERIALIZATION_ENABLED_DIRECTION =
+      "sca_serialization_enabled_direction";
+  public static final String SCA_SERIALIZATION_READ = "read";
+  public static final String SCA_SERIALIZATION_WRITE = "write";
+  public static final String SCA_SERIALIZATION_READ_WRITE = "all";
+  public static final String SCA_FORWARD_UPDATE_ENABLED =
+      "sca_forward_update_enabled";
+  public static final String SCA_FORWARD_UPDATE_DIRECTION =
+      "sca_forward_update_enabled_direction";
+  public static final String SCA_FORWARD_UPDATE_IN = "in";
+  public static final String SCA_FORWARD_UPDATE_OUT = "out";
+  public static final String SCA_FORWARD_UPDATE_INOUT = "inout";
 
   // env var
   private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";
@@ -642,6 +654,54 @@ public class Configuration {
     if(option != null) {
       _parameters.put(DEFAULT_TARGET, option);
     }
+  }
+
+  /**
+   * Check if SCA forward update is applied at input.
+   *
+   * @return True if applied.
+   */
+  public boolean updateAtInput() {
+    return getParameter(SCA_FORWARD_UPDATE_DIRECTION).
+        equals(SCA_FORWARD_UPDATE_IN)
+        || getParameter(SCA_FORWARD_UPDATE_DIRECTION).
+        equals(SCA_FORWARD_UPDATE_INOUT);
+  }
+
+  /**
+   * Check if SCA forward update is applied at output.
+   *
+   * @return True if applied.
+   */
+  public boolean updateAtOutput() {
+    return getParameter(SCA_FORWARD_UPDATE_DIRECTION).
+        equals(SCA_FORWARD_UPDATE_OUT)
+        || getParameter(SCA_FORWARD_UPDATE_DIRECTION).
+        equals(SCA_FORWARD_UPDATE_INOUT);
+  }
+
+  /**
+   * Check if SCA serialization is applied at read savepoints.
+   *
+   * @return True if applied.
+   */
+  public boolean seriliazeRead(){
+    return getParameter(SCA_SERIALIZATION_ENABLED_DIRECTION).
+        equalsIgnoreCase(SCA_SERIALIZATION_READ)
+        || getParameter(SCA_SERIALIZATION_ENABLED_DIRECTION).
+        equalsIgnoreCase(SCA_SERIALIZATION_READ_WRITE);
+  }
+
+  /**
+   * Check if SCA serialization is applied at write savepoints.
+   *
+   * @return True if applied.
+   */
+  public boolean seriliazeWrite(){
+    return getParameter(SCA_SERIALIZATION_ENABLED_DIRECTION).
+        equalsIgnoreCase(SCA_SERIALIZATION_WRITE)
+        || getParameter(SCA_SERIALIZATION_ENABLED_DIRECTION).
+        equalsIgnoreCase(SCA_SERIALIZATION_READ_WRITE);
   }
 
   /**

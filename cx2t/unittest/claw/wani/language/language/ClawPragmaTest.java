@@ -191,6 +191,7 @@ public class ClawPragmaTest {
                                                List<Target> targets)
   {
     ClawPragma l = analyze(raw, ClawDirective.LOOP_INTERCHANGE);
+    assertNotNull(l);
     if(indexes != null) {
       assertTrue(l.hasClause(ClawClause.INTERCHANGE_INDEXES));
       assertEquals(indexes.size(),
