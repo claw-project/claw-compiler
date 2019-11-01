@@ -92,5 +92,11 @@ This work was initially funded by the ETH zürich, MeteoSwiss and the PASC
 initiative under the [ENIAC](http://www.pasc-ch.org/projects/2017-2020/eniac/)
 project.
 
+#### Support
+The CLAW compiler is currently not actively developed. Issues may be reported in the Github 
+issue section but response time is not garanteed.
+If you have questions regarding further developments of the CLAW compiler or collaborations
+please contact xavier.lapillonne AT meteoswiss.ch or katherine.osterried AT env.ethz.ch .
+
 ---
 Logo by [adrienbachmann.ch](http://www.adrienbachmann.ch)
