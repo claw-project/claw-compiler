@@ -421,7 +421,7 @@ public class ScaCPUvectorizeGroup extends Sca {
       Field.adaptScalarRefToArrayRef(_promotions.get(var), _fctDef,
           _claw.getDefaultLayout(), xcodeml);
     } else {
-      Field.adaptArrayRef(_promotions.get(var), _fctDef.body(), xcodeml);
+      Field.adaptArrayRef(_promotions.get(var), _fctDef.body(), false, xcodeml);
       Field.adaptAllocate(_promotions.get(var), _fctDef.body(), xcodeml);
     }
     promotionInfo.setRefAdapted();

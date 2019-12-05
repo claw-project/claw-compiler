@@ -319,14 +319,18 @@ public class Sca extends ClawTransformation {
     // Promote all array fields with new dimensions.
     promoteFields(xcodeml);
 
+    boolean adaptedNakedArrayRef = Context.get().getTarget() == Target.GPU;
+
     // Adapt array references.
     if(_claw.hasClause(ClawClause.DATA_OVER)) {
       for(String id : _claw.getDataOverClauseValues()) {
-        Field.adaptArrayRef(_promotions.get(id), _fctDef.body(), xcodeml);
+        Field.adaptArrayRef(_promotions.get(id), _fctDef.body(),
+            adaptedNakedArrayRef, xcodeml);
       }
     } else {
       for(String id : _arrayFieldsInOut) {
-        Field.adaptArrayRef(_promotions.get(id), _fctDef.body(), xcodeml);
+        Field.adaptArrayRef(_promotions.get(id), _fctDef.body(),
+            adaptedNakedArrayRef, xcodeml);
       }
     }
 
