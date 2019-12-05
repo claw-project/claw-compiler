@@ -22,7 +22,7 @@ CONTAINS
     q ( proma , k ) = t ( k - 1 , proma ) + t ( k , proma ) * c
    END DO
    q ( proma , nz ) = q ( proma , nz ) * c
-   res = t
+   res ( : , proma ) = t ( : , proma )
   END DO
 !$acc end parallel
 !$acc end data

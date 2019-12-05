@@ -49,8 +49,9 @@
 # sca44: unsupported statement (GOTO)
 # sca45: sca routine
 # sca46: simple RETURN transformation
+# sca47: Issue #578 regression
 
-foreach(loop_var RANGE 1 46)
+foreach(loop_var RANGE 1 47)
   if(NOT ${loop_var} EQUAL 30)
     set(CLAW_FLAGS_TARGET_CPU_sca${loop_var} --directive=none)
   endif()

@@ -32,7 +32,7 @@ import java.util.*;
  * The Single Column Abstraction (SCA) forward transformation applies the
  * changes in the subroutine signatures to function call and function in which
  * the call is nested if needed.
- *
+ * <p>
  * During the transformation, a new "CLAW" XcodeML module file is generated
  * if the transformation has to be applied across several file unit. This
  * file will be located in the same directory as the original XcodeML module
@@ -786,7 +786,7 @@ public class ScaForward extends ClawTransformation {
           // Adapt the reference in the assignment statement
           for(String id : _promotedVar) {
             _promotions.get(id).resetFlags();
-            Field.adaptArrayRef(_promotions.get(id), assignment, xcodeml);
+            Field.adaptArrayRef(_promotions.get(id), assignment, false, xcodeml);
           }
 
           // If the array is a target, check if we have to promote a pointer
