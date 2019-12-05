@@ -1222,6 +1222,16 @@ public class Xnode {
   }
 
   /**
+   * Check whether current node is not an array reference node.
+   *
+   * @return True if the node is not an array reference node. False otherwise.
+   */
+  public boolean isNotArrayRef() {
+    return !ancestor().ancestorIs(Xcode.F_ARRAY_REF)
+        && !ancestorIs(Xcode.F_ARRAY_REF);
+  }
+
+  /**
    * Find meaningful line number for error reporting.
    *
    * @return First line number found in ancestors.

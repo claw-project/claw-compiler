@@ -472,9 +472,11 @@ public final class Field {
       }
 
       if(adaptNakedArray) {
-        List<Xnode> assumedRefs = XnodeUtil.getAllVarReferences(parent, promotionInfo.getIdentifier());
+        List<Xnode> assumedRefs = XnodeUtil.getAllVarReferences(parent,
+            promotionInfo.getIdentifier());
         for(Xnode ref : assumedRefs) {
-          if(!ref.ancestorIs(Xcode.F_ARRAY_REF)) { // Fortran array passed without assumed dimensions
+          // Fortran array passed without assumed dimensions
+          if(ref.isNotArrayRef()) {
             Xnode arrayRef = xcodeml.createNode(Xcode.F_ARRAY_REF);
             Xnode varRef = xcodeml.createNode(Xcode.VAR_REF);
             arrayRef.setType(ref.getType());
