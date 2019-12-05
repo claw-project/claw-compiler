@@ -10,7 +10,7 @@ CONTAINS
   INTEGER :: i
   INTEGER :: j
 
-  CALL set_p ( vert , p ( i , j , : ) )
+  CALL set_p ( vert , p )
  END SUBROUTINE top_p
 
  SUBROUTINE set_p ( vert , p )
