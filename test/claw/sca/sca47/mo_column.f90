@@ -1,3 +1,10 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+! Test the CLAW abstraction model with one additional dimension.
+!
+
 module test_index_mod
    implicit none
 contains
