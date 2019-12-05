@@ -594,7 +594,7 @@ function claw::norm_file_name() {
 function claw::debug() {
   if [[ ${enable_debug} == true ]]; then
     # shellcheck disable=SC2154
-    if [[ "$1" == "${claw_debug_lvl_dep}" ]] && [[ ! -z ${CLAW_DEBUG_DEP+x} ]]; then
+    if [[ "$1" == "${claw_debug_lvl_dep}" ]] && [[ -n ${CLAW_DEBUG_DEP+x} ]]; then
       # shellcheck disable=SC2154
       echo "${claw_debug_prefix}: [dependency] $2"
     fi
