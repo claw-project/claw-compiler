@@ -56,14 +56,9 @@ matrix:
         - gfortran-7
         - ant
         - ant-optional
-cache:
-  directories:
-  - "$HOME/.ghc"
-  - "$HOME/.stack"
 before_install:
 - git submodule init
 - git submodule update
-- travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
 - wget https://dl.bintray.com/sonarsource/SonarQube/org/sonarsource/scanner/cli/sonar-scanner-cli/3.2.0.1227/sonar-scanner-cli-3.2.0.1227-linux.zip
 - unzip sonar-scanner-cli-3.2.0.1227-linux.zip
 - export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-3.2.0.1227-linux/bin
