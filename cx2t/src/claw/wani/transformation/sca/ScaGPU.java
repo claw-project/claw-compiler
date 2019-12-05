@@ -455,7 +455,7 @@ public class ScaGPU extends Sca {
       Field.promote(promotionInfo, _fctDef, xcodeml);
       _promotions.put(arrayIdentifier, promotionInfo);
 
-      Field.adaptArrayRef(promotionInfo, _fctDef.body(), xcodeml);
+      Field.adaptArrayRef(promotionInfo, _fctDef.body(), false, xcodeml);
       Field.adaptAllocate(promotionInfo, _fctDef.body(), xcodeml);
     }
     return createList;

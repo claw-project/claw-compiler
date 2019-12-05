@@ -405,12 +405,13 @@ public final class Field {
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
    *
-   * @param promotionInfo Promotion information used for the promotion of the
-   *                      field.
-   * @param parent        Root node of the tree in which the adaptation is done.
-   * @param xcodeml       Current XcodeML translation unit.
+   * @param promotionInfo   Promotion information used for the promotion of the
+   *                        field.
+   * @param parent          Root node of the tree in which the adaptation is done.
+   * @param adaptNakedArray Adapt arrayRef with no index (e.g. p instead of p(:))
+   * @param xcodeml         Current XcodeML translation unit.
    */
-  public static void adaptArrayRef(PromotionInfo promotionInfo, Xnode parent,
+  public static void adaptArrayRef(PromotionInfo promotionInfo, Xnode parent, boolean adaptNakedArray,
                                    XcodeProgram xcodeml)
   {
     if(promotionInfo.isRefAdapted()) {
@@ -469,7 +470,35 @@ public final class Field {
           }
         }
       }
+
+      if(adaptNakedArray) {
+        List<Xnode> assumedRefs = XnodeUtil.getAllVarReferences(parent, promotionInfo.getIdentifier());
+        for(Xnode ref : assumedRefs) {
+          if(!ref.ancestorIs(Xcode.F_ARRAY_REF)) { // Fortran array passed without assumed dimensions
+            Xnode arrayRef = xcodeml.createNode(Xcode.F_ARRAY_REF);
+            Xnode varRef = xcodeml.createNode(Xcode.VAR_REF);
+            arrayRef.setType(ref.getType());
+            varRef.setType(promotionInfo.getTargetType());
+            ref.setType(promotionInfo.getTargetType());
+            ref.insertAfter(arrayRef);
+            arrayRef.append(varRef);
+            varRef.append(ref);
+
+            // Simply generate all arrayIndex in order
+            for(DimensionDefinition dim : promotionInfo.getDimensions()) {
+              arrayRef.append(dim.generateArrayIndex(xcodeml));
+            }
+
+            for(int i = 0; i < promotionInfo.getBaseDimension(); ++i) {
+              arrayRef.append(xcodeml.createEmptyAssumedShaped());
+            }
+          }
+        }
+      }
+
     }
+
+
     promotionInfo.setRefAdapted();
   }
 
