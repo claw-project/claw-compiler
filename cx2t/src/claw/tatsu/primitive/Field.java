@@ -405,12 +405,14 @@ public final class Field {
    * Adapt all the array references of the variable in the data clause in the
    * current function/subroutine definition.
    *
-   * @param promotionInfo Promotion information used for the promotion of the
-   *                      field.
-   * @param parent        Root node of the tree in which the adaptation is done.
-   * @param xcodeml       Current XcodeML translation unit.
+   * @param promotionInfo   Promotion information used for the promotion of the
+   *                        field.
+   * @param parent          Root node of the tree in which the adaptation is done.
+   * @param adaptNakedArray Adapt arrayRef with no index (e.g. p instead of p(:))
+   * @param xcodeml         Current XcodeML translation unit.
    */
   public static void adaptArrayRef(PromotionInfo promotionInfo, Xnode parent,
+                                   boolean adaptNakedArray,
                                    XcodeProgram xcodeml)
   {
     if(promotionInfo.isRefAdapted()) {
@@ -427,14 +429,7 @@ public final class Field {
           continue;
         }
 
-        Xnode arrayRef = xcodeml.createNode(Xcode.F_ARRAY_REF);
-        Xnode varRef = xcodeml.createNode(Xcode.VAR_REF);
-        arrayRef.setType(ref.getType());
-        varRef.setType(promotionInfo.getTargetType());
-        ref.setType(promotionInfo.getTargetType());
-        ref.insertAfter(arrayRef);
-        arrayRef.append(varRef);
-        varRef.append(ref);
+        Xnode arrayRef = convertVarToArrayRef(promotionInfo, ref, xcodeml);
 
         // Simply generate all arrayIndex in order
         for(DimensionDefinition dim : promotionInfo.getDimensions()) {
@@ -448,29 +443,83 @@ public final class Field {
         if(ref.matchAncestor(Xcode.F_ALLOCATE_STATEMENT) != null) {
           continue;
         }
-        int beforePositionIndex = 0; // First arrayIndex after varRef at pos 0
-        int inMiddlePositionIndex = 1;
-        for(DimensionDefinition dim : promotionInfo.getDimensions()) {
-          switch(dim.getInsertionPosition()) {
-            case BEFORE:
-              ref.child(beforePositionIndex).
-                  insertAfter(dim.generateArrayIndex(xcodeml));
-              ++beforePositionIndex;
-              ++inMiddlePositionIndex;
-              break;
-            case IN_MIDDLE:
-              ref.child(inMiddlePositionIndex).
-                  insertAfter(dim.generateArrayIndex(xcodeml));
-              ++inMiddlePositionIndex;
-              break;
-            case AFTER:
-              ref.append(dim.generateArrayIndex(xcodeml));
-              break;
+        insertPromotionDimensions(promotionInfo, ref, xcodeml);
+      }
+
+      if(adaptNakedArray) {
+        List<Xnode> assumedRefs = XnodeUtil.getAllVarReferences(parent,
+            promotionInfo.getIdentifier());
+        for(Xnode ref : assumedRefs) {
+          // Fortran array passed without assumed dimensions
+          if(ref.isNotArrayRef()) {
+            Xnode arrayRef = convertVarToArrayRef(promotionInfo, ref, xcodeml);
+            for(int i = 0; i < promotionInfo.getBaseDimension(); ++i) {
+              arrayRef.append(xcodeml.createEmptyAssumedShaped());
+            }
+            insertPromotionDimensions(promotionInfo, arrayRef, xcodeml);
           }
         }
       }
     }
+
     promotionInfo.setRefAdapted();
+  }
+
+  /**
+   * Convert a var to an arry reference with dimensions from promotion
+   * information.
+   *
+   * @param promotionInfo Promotion information used for the promotion of the
+   *                      field.
+   * @param ref           Var node to be converted.
+   * @param xcodeml       Current XcodeML translation unit.
+   * @return FarrayRef node created.
+   */
+  private static Xnode convertVarToArrayRef(PromotionInfo promotionInfo,
+                                            Xnode ref, XcodeML xcodeml)
+  {
+    Xnode arrayRef = xcodeml.createNode(Xcode.F_ARRAY_REF);
+    Xnode varRef = xcodeml.createNode(Xcode.VAR_REF);
+    arrayRef.setType(ref.getType());
+    varRef.setType(promotionInfo.getTargetType());
+    ref.setType(promotionInfo.getTargetType());
+    ref.insertAfter(arrayRef);
+    arrayRef.append(varRef);
+    varRef.append(ref);
+    return arrayRef;
+  }
+
+  /**
+   * Insert newly added dimension from promotion information at the right place.
+   *
+   * @param promotionInfo Promotion information used for the promotion of the
+   *                      field.
+   * @param ref           Current array reference.
+   * @param xcodeml       Current XcodeML translation unit.
+   */
+  private static void insertPromotionDimensions(PromotionInfo promotionInfo,
+                                                Xnode ref, XcodeML xcodeml)
+  {
+    int beforePositionIndex = 0; // First arrayIndex after varRef at pos 0
+    int inMiddlePositionIndex = 1;
+    for(DimensionDefinition dim : promotionInfo.getDimensions()) {
+      switch(dim.getInsertionPosition()) {
+        case BEFORE:
+          ref.child(beforePositionIndex).
+              insertAfter(dim.generateArrayIndex(xcodeml));
+          ++beforePositionIndex;
+          ++inMiddlePositionIndex;
+          break;
+        case IN_MIDDLE:
+          ref.child(inMiddlePositionIndex).
+              insertAfter(dim.generateArrayIndex(xcodeml));
+          ++inMiddlePositionIndex;
+          break;
+        case AFTER:
+          ref.append(dim.generateArrayIndex(xcodeml));
+          break;
+      }
+    }
   }
 
   /**
