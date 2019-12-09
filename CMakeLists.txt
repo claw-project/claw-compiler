@@ -90,8 +90,8 @@ if(BUILD_OMNI)
         ${OMNI_COMPILER_SUBMODULE}/Makefile.in
       && CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
       FC=${CMAKE_Fortran_COMPILER} JAVAC=${Java_JAVAC_EXECUTABLE}
-      ${OMNI_COMPILER_SUBMODULE}/configure
       CFLAGS=${CMAKE_C_FLAGS}
+      ${OMNI_COMPILER_SUBMODULE}/configure
       --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION}
       ${OMNI_MPI_CC} ${OMNI_MPI_FC}
     BUILD_COMMAND make -j 1 # Not safe yet with -j
