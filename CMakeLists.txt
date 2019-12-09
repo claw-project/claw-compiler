@@ -82,18 +82,13 @@ if(BUILD_OMNI)
     omni-compiler
     SOURCE_DIR ${OMNI_COMPILER_SUBMODULE}
     CONFIGURE_COMMAND
-      touch
-        ${OMNI_COMPILER_SUBMODULE}/configure.ac
-        ${OMNI_COMPILER_SUBMODULE}/aclocal.m4
-        ${OMNI_COMPILER_SUBMODULE}/configure
-        ${OMNI_COMPILER_SUBMODULE}/Makefile.am
-        ${OMNI_COMPILER_SUBMODULE}/Makefile.in
-      && CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
+      CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
       FC=${CMAKE_Fortran_COMPILER} JAVAC=${Java_JAVAC_EXECUTABLE}
+      CFLAGS=${CMAKE_C_FLAGS}
       ${OMNI_COMPILER_SUBMODULE}/configure
       --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION}
       ${OMNI_MPI_CC} ${OMNI_MPI_FC}
-    BUILD_COMMAND make -j 1 # Not safe yet with -j
+    BUILD_COMMAND make -j 1 # OMNI build is not thread safe
     BUILD_IN_SOURCE 1
   )
 endif()
