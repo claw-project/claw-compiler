@@ -1,5 +1,5 @@
 sudo: required
-dist: trusty
+dist: xenial
 language: cpp
 git:
   submodules: false
@@ -22,8 +22,6 @@ matrix:
         - gfortran-5
         - ant
         - ant-optional
-        - cabal-install
-        - ghc
   - compiler: gcc
     env:
     - CXX_COMPILER=g++-6
@@ -41,8 +39,6 @@ matrix:
         - gfortran-6
         - ant
         - ant-optional
-        - cabal-install
-        - ghc
   - compiler: gcc
     env:
     - CXX_COMPILER=g++-7
@@ -60,20 +56,9 @@ matrix:
         - gfortran-7
         - ant
         - ant-optional
-        - cabal-install
-        - ghc
-cache:
-  directories:
-  - "$HOME/.ghc"
-  - "$HOME/.cabal"
-  - "$HOME/.stack"
 before_install:
 - git submodule init
 - git submodule update
-- travis_retry sudo apt-get install -qq openmpi-bin libopenmpi-dev
-- cabal update && cabal install ShellCheck
-- export PATH=$PATH:$HOME/.cabal/bin
-- shellcheck --version
 - wget https://dl.bintray.com/sonarsource/SonarQube/org/sonarsource/scanner/cli/sonar-scanner-cli/3.2.0.1227/sonar-scanner-cli-3.2.0.1227-linux.zip
 - unzip sonar-scanner-cli-3.2.0.1227-linux.zip
 - export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-3.2.0.1227-linux/bin

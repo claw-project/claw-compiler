@@ -594,7 +594,7 @@ function claw::norm_file_name() {
 function claw::debug() {
   if [[ ${enable_debug} == true ]]; then
     # shellcheck disable=SC2154
-    if [[ "$1" == "${claw_debug_lvl_dep}" ]] && [[ ! -z ${CLAW_DEBUG_DEP+x} ]]; then
+    if [[ "$1" == "${claw_debug_lvl_dep}" ]] && [[ -n ${CLAW_DEBUG_DEP+x} ]]; then
       # shellcheck disable=SC2154
       echo "${claw_debug_prefix}: [dependency] $2"
     fi
@@ -754,22 +754,32 @@ function claw::process_dependencies() {
 
     ### Preprocess file ###
     base_file=${source_mod_file}
-    dep_basename="$(basename "${base_file%.*}")"
 
     # shellcheck disable=SC2154
     local file_pp
     file_pp="$(claw::get_pp_filename "${base_file}")"
 
+    claw::applyPreprocessorPass "${base_file}" "${file_pp}"
+
     # shellcheck disable=SC2154
     if [[ "${fpp_redirect}" == true ]]; then
+      local file_pp1
+      file_pp1="$(claw::get_pp1_filename "${base_file}")"
+
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} ${OMNI_FPP_OPT} \
-        ${other_args[@]} "${base_file}" > "${file_pp}"
+        ${other_args[@]} "${file_pp}" > "${file_pp1}"
+
+      mv "${file_pp1}" "${file_pp}"
     else
+      local preprocessor_output
+      preprocessor_output="$(basename "${file_pp%.*}")"
+
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} ${OMNI_FPP_OPT} \
-        ${other_args[@]} "${base_file}"
-      mv "${dep_basename}.i" "${file_pp}"
+        ${other_args[@]} "${file_pp1}"
+
+      mv "${preprocessor_output}.i" "${file_pp}"
     fi
 
     # Recurse to get dependencies in the right order
@@ -779,6 +789,15 @@ function claw::process_dependencies() {
     fi
 
     claw::debug "${claw_debug_lvl_dep}" "calling OMNI front-end on ${source_mod_file}"
+
+    # Adapt filename in XcodeML/F to report correctly errors and warnings
+    local basefile_name
+    basefile_name="$(claw::get_basefile "${base_file}")"
+    local base_pp
+    base_pp="$(basename "${file_pp}")"
+    sed -i.bak "s:${base_pp}:${basefile_name}:g" "${file_pp}"
+    sed -i.bak "s:${temp_dir}/::g" "${file_pp}"
+
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086,SC2068
     ${OMNI_F2X_CMD} ${include_opt[@]} ${module_opt[@]} \
