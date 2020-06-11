@@ -894,41 +894,265 @@ end function
 
 ! IEEE_SUPPORT_* generic functions
 #if defined(HAVE_GFC_REAL_10) && defined(HAVE_GFC_REAL_16)
-  interface IEEE_SUPPORT_DATATYPE ; module procedure IEEE_SUPPORT_DATATYPE_4, IEEE_SUPPORT_DATATYPE_8, IEEE_SUPPORT_DATATYPE_10, IEEE_SUPPORT_DATATYPE_16, IEEE_SUPPORT_DATATYPE_NOARG ; end interface ;   public :: IEEE_SUPPORT_DATATYPE
-  interface IEEE_SUPPORT_DENORMAL ; module procedure IEEE_SUPPORT_DENORMAL_4, IEEE_SUPPORT_DENORMAL_8, IEEE_SUPPORT_DENORMAL_10, IEEE_SUPPORT_DENORMAL_16, IEEE_SUPPORT_DENORMAL_NOARG ; end interface ;   public :: IEEE_SUPPORT_DENORMAL
-  interface IEEE_SUPPORT_DIVIDE ; module procedure IEEE_SUPPORT_DIVIDE_4, IEEE_SUPPORT_DIVIDE_8, IEEE_SUPPORT_DIVIDE_10, IEEE_SUPPORT_DIVIDE_16, IEEE_SUPPORT_DIVIDE_NOARG ; end interface ;   public :: IEEE_SUPPORT_DIVIDE
-  interface IEEE_SUPPORT_INF ; module procedure IEEE_SUPPORT_INF_4, IEEE_SUPPORT_INF_8, IEEE_SUPPORT_INF_10, IEEE_SUPPORT_INF_16, IEEE_SUPPORT_INF_NOARG ; end interface ;   public :: IEEE_SUPPORT_INF
-  interface IEEE_SUPPORT_IO ; module procedure IEEE_SUPPORT_IO_4, IEEE_SUPPORT_IO_8, IEEE_SUPPORT_IO_10, IEEE_SUPPORT_IO_16, IEEE_SUPPORT_IO_NOARG ; end interface ;   public :: IEEE_SUPPORT_IO
-  interface IEEE_SUPPORT_NAN ; module procedure IEEE_SUPPORT_NAN_4, IEEE_SUPPORT_NAN_8, IEEE_SUPPORT_NAN_10, IEEE_SUPPORT_NAN_16, IEEE_SUPPORT_NAN_NOARG ; end interface ;   public :: IEEE_SUPPORT_NAN
-  interface IEEE_SUPPORT_SQRT ; module procedure IEEE_SUPPORT_SQRT_4, IEEE_SUPPORT_SQRT_8, IEEE_SUPPORT_SQRT_10, IEEE_SUPPORT_SQRT_16, IEEE_SUPPORT_SQRT_NOARG ; end interface ;   public :: IEEE_SUPPORT_SQRT
-  interface IEEE_SUPPORT_STANDARD ; module procedure IEEE_SUPPORT_STANDARD_4, IEEE_SUPPORT_STANDARD_8, IEEE_SUPPORT_STANDARD_10, IEEE_SUPPORT_STANDARD_16, IEEE_SUPPORT_STANDARD_NOARG ; end interface ;   public :: IEEE_SUPPORT_STANDARD
+  interface IEEE_SUPPORT_DATATYPE
+    module procedure IEEE_SUPPORT_DATATYPE_4,  &
+                   & IEEE_SUPPORT_DATATYPE_8,  &
+                   & IEEE_SUPPORT_DATATYPE_10, &
+                   & IEEE_SUPPORT_DATATYPE_16, &
+                   & IEEE_SUPPORT_DATATYPE_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DATATYPE
+
+  interface IEEE_SUPPORT_DENORMAL
+    module procedure IEEE_SUPPORT_DENORMAL_4,  &
+                   & IEEE_SUPPORT_DENORMAL_8,  &
+                   & IEEE_SUPPORT_DENORMAL_10, &
+                   & IEEE_SUPPORT_DENORMAL_16, &
+                   & IEEE_SUPPORT_DENORMAL_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DENORMAL
+
+  interface IEEE_SUPPORT_DIVIDE
+    module procedure IEEE_SUPPORT_DIVIDE_4,  &
+                   & IEEE_SUPPORT_DIVIDE_8,  &
+                   & IEEE_SUPPORT_DIVIDE_10, &
+                   & IEEE_SUPPORT_DIVIDE_16, &
+                   & IEEE_SUPPORT_DIVIDE_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DIVIDE
+
+  interface IEEE_SUPPORT_INF
+    module procedure IEEE_SUPPORT_INF_4,  &
+                   & IEEE_SUPPORT_INF_8,  &
+                   & IEEE_SUPPORT_INF_10, &
+                   & IEEE_SUPPORT_INF_16, &
+                   & IEEE_SUPPORT_INF_NOARG
+  end interface
+  public :: IEEE_SUPPORT_INF
+
+  interface IEEE_SUPPORT_IO
+    module procedure IEEE_SUPPORT_IO_4,  &
+                   & IEEE_SUPPORT_IO_8,  &
+                   & IEEE_SUPPORT_IO_10, &
+                   & IEEE_SUPPORT_IO_16, &
+                   & IEEE_SUPPORT_IO_NOARG
+  end interface
+  public :: IEEE_SUPPORT_IO
+
+  interface IEEE_SUPPORT_NAN
+    module procedure IEEE_SUPPORT_NAN_4,  &
+                   & IEEE_SUPPORT_NAN_8,  &
+                   & IEEE_SUPPORT_NAN_10, &
+                   & IEEE_SUPPORT_NAN_16, &
+                   & IEEE_SUPPORT_NAN_NOARG
+  end interface
+  public :: IEEE_SUPPORT_NAN
+
+  interface IEEE_SUPPORT_SQRT
+    module procedure IEEE_SUPPORT_SQRT_4,  &
+                   & IEEE_SUPPORT_SQRT_8,  &
+                   & IEEE_SUPPORT_SQRT_10, &
+                   & IEEE_SUPPORT_SQRT_16, &
+                   & IEEE_SUPPORT_SQRT_NOARG
+  end interface
+  public :: IEEE_SUPPORT_SQRT
+
+  interface IEEE_SUPPORT_STANDARD
+    module procedure IEEE_SUPPORT_STANDARD_4,  &
+                   & IEEE_SUPPORT_STANDARD_8,  &
+                   & IEEE_SUPPORT_STANDARD_10, &
+                   & IEEE_SUPPORT_STANDARD_16, &
+                   & IEEE_SUPPORT_STANDARD_NOARG
+  end interface
+  public :: IEEE_SUPPORT_STANDARD
+
 #elif defined(HAVE_GFC_REAL_10)
-  interface IEEE_SUPPORT_DATATYPE ; module procedure IEEE_SUPPORT_DATATYPE_4, IEEE_SUPPORT_DATATYPE_8, IEEE_SUPPORT_DATATYPE_10, IEEE_SUPPORT_DATATYPE_NOARG ; end interface ;   public :: IEEE_SUPPORT_DATATYPE
-  interface IEEE_SUPPORT_DENORMAL ; module procedure IEEE_SUPPORT_DENORMAL_4, IEEE_SUPPORT_DENORMAL_8, IEEE_SUPPORT_DENORMAL_10, IEEE_SUPPORT_DENORMAL_NOARG ; end interface ;   public :: IEEE_SUPPORT_DENORMAL
-  interface IEEE_SUPPORT_DIVIDE ; module procedure IEEE_SUPPORT_DIVIDE_4, IEEE_SUPPORT_DIVIDE_8, IEEE_SUPPORT_DIVIDE_10, IEEE_SUPPORT_DIVIDE_NOARG ; end interface ;   public :: IEEE_SUPPORT_DIVIDE
-  interface IEEE_SUPPORT_INF ; module procedure IEEE_SUPPORT_INF_4, IEEE_SUPPORT_INF_8, IEEE_SUPPORT_INF_10, IEEE_SUPPORT_INF_NOARG ; end interface ;   public :: IEEE_SUPPORT_INF
-  interface IEEE_SUPPORT_IO ; module procedure IEEE_SUPPORT_IO_4, IEEE_SUPPORT_IO_8, IEEE_SUPPORT_IO_10, IEEE_SUPPORT_IO_NOARG ; end interface ;   public :: IEEE_SUPPORT_IO
-  interface IEEE_SUPPORT_NAN ; module procedure IEEE_SUPPORT_NAN_4, IEEE_SUPPORT_NAN_8, IEEE_SUPPORT_NAN_10, IEEE_SUPPORT_NAN_NOARG ; end interface ;   public :: IEEE_SUPPORT_NAN
-  interface IEEE_SUPPORT_SQRT ; module procedure IEEE_SUPPORT_SQRT_4, IEEE_SUPPORT_SQRT_8, IEEE_SUPPORT_SQRT_10, IEEE_SUPPORT_SQRT_NOARG ; end interface ;   public :: IEEE_SUPPORT_SQRT
-  interface IEEE_SUPPORT_STANDARD ; module procedure IEEE_SUPPORT_STANDARD_4, IEEE_SUPPORT_STANDARD_8, IEEE_SUPPORT_STANDARD_10, IEEE_SUPPORT_STANDARD_NOARG ; end interface ;   public :: IEEE_SUPPORT_STANDARD
+  interface IEEE_SUPPORT_DATATYPE
+    module procedure IEEE_SUPPORT_DATATYPE_4,  &
+                   & IEEE_SUPPORT_DATATYPE_8,  &
+                   & IEEE_SUPPORT_DATATYPE_10, &
+                   & IEEE_SUPPORT_DATATYPE_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DATATYPE
+
+  interface IEEE_SUPPORT_DENORMAL
+    module procedure IEEE_SUPPORT_DENORMAL_4,  &
+                   & IEEE_SUPPORT_DENORMAL_8,  &
+                   & IEEE_SUPPORT_DENORMAL_10, &
+                   & IEEE_SUPPORT_DENORMAL_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DENORMAL
+
+  interface IEEE_SUPPORT_DIVIDE
+    module procedure IEEE_SUPPORT_DIVIDE_4,  &
+                   & IEEE_SUPPORT_DIVIDE_8,  &
+                   & IEEE_SUPPORT_DIVIDE_10, &
+                   & IEEE_SUPPORT_DIVIDE_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DIVIDE
+
+  interface IEEE_SUPPORT_INF
+    module procedure IEEE_SUPPORT_INF_4,  &
+                   & IEEE_SUPPORT_INF_8,  &
+                   & IEEE_SUPPORT_INF_10, &
+                   & IEEE_SUPPORT_INF_NOARG
+  end interface
+  public :: IEEE_SUPPORT_INF
+
+  interface IEEE_SUPPORT_IO
+    module procedure IEEE_SUPPORT_IO_4,  &
+                   & IEEE_SUPPORT_IO_8,  &
+                   & IEEE_SUPPORT_IO_10, &
+                   & IEEE_SUPPORT_IO_NOARG
+  end interface
+  public :: IEEE_SUPPORT_IO
+
+  interface IEEE_SUPPORT_NAN
+    module procedure IEEE_SUPPORT_NAN_4,  &
+                   & IEEE_SUPPORT_NAN_8,  &
+                   & IEEE_SUPPORT_NAN_10, &
+                   & IEEE_SUPPORT_NAN_NOARG
+  end interface
+  public :: IEEE_SUPPORT_NAN
+
+  interface IEEE_SUPPORT_SQRT
+    module procedure IEEE_SUPPORT_SQRT_4,  &
+                   & IEEE_SUPPORT_SQRT_8,  &
+                   & IEEE_SUPPORT_SQRT_10, &
+                   & IEEE_SUPPORT_SQRT_NOARG
+  end interface
+  public :: IEEE_SUPPORT_SQRT
+
+  interface IEEE_SUPPORT_STANDARD
+    module procedure IEEE_SUPPORT_STANDARD_4,  &
+                   & IEEE_SUPPORT_STANDARD_8,  &
+                   & IEEE_SUPPORT_STANDARD_10, &
+                   & IEEE_SUPPORT_STANDARD_NOARG
+  end interface
+  public :: IEEE_SUPPORT_STANDARD
+
 #elif defined(HAVE_GFC_REAL_16)
-  interface IEEE_SUPPORT_DATATYPE ; module procedure IEEE_SUPPORT_DATATYPE_4, IEEE_SUPPORT_DATATYPE_8, IEEE_SUPPORT_DATATYPE_16, IEEE_SUPPORT_DATATYPE_NOARG ; end interface ;   public :: IEEE_SUPPORT_DATATYPE
-  interface IEEE_SUPPORT_DENORMAL ; module procedure IEEE_SUPPORT_DENORMAL_4, IEEE_SUPPORT_DENORMAL_8, IEEE_SUPPORT_DENORMAL_16, IEEE_SUPPORT_DENORMAL_NOARG ; end interface ;   public :: IEEE_SUPPORT_DENORMAL
-  interface IEEE_SUPPORT_DIVIDE ; module procedure IEEE_SUPPORT_DIVIDE_4, IEEE_SUPPORT_DIVIDE_8, IEEE_SUPPORT_DIVIDE_16, IEEE_SUPPORT_DIVIDE_NOARG ; end interface ;   public :: IEEE_SUPPORT_DIVIDE
-  interface IEEE_SUPPORT_INF ; module procedure IEEE_SUPPORT_INF_4, IEEE_SUPPORT_INF_8, IEEE_SUPPORT_INF_16, IEEE_SUPPORT_INF_NOARG ; end interface ;   public :: IEEE_SUPPORT_INF
-  interface IEEE_SUPPORT_IO ; module procedure IEEE_SUPPORT_IO_4, IEEE_SUPPORT_IO_8, IEEE_SUPPORT_IO_16, IEEE_SUPPORT_IO_NOARG ; end interface ;   public :: IEEE_SUPPORT_IO
-  interface IEEE_SUPPORT_NAN ; module procedure IEEE_SUPPORT_NAN_4, IEEE_SUPPORT_NAN_8, IEEE_SUPPORT_NAN_16, IEEE_SUPPORT_NAN_NOARG ; end interface ;   public :: IEEE_SUPPORT_NAN
-  interface IEEE_SUPPORT_SQRT ; module procedure IEEE_SUPPORT_SQRT_4, IEEE_SUPPORT_SQRT_8, IEEE_SUPPORT_SQRT_16, IEEE_SUPPORT_SQRT_NOARG ; end interface ;   public :: IEEE_SUPPORT_SQRT
-  interface IEEE_SUPPORT_STANDARD ; module procedure IEEE_SUPPORT_STANDARD_4, IEEE_SUPPORT_STANDARD_8, IEEE_SUPPORT_STANDARD_16, IEEE_SUPPORT_STANDARD_NOARG ; end interface ;   public :: IEEE_SUPPORT_STANDARD
+  interface IEEE_SUPPORT_DATATYPE
+    module procedure IEEE_SUPPORT_DATATYPE_4,  &
+                   & IEEE_SUPPORT_DATATYPE_8,  &
+                   & IEEE_SUPPORT_DATATYPE_16, &
+                   & IEEE_SUPPORT_DATATYPE_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DATATYPE
+
+  interface IEEE_SUPPORT_DENORMAL
+    module procedure IEEE_SUPPORT_DENORMAL_4,  &
+                   & IEEE_SUPPORT_DENORMAL_8,  &
+                   & IEEE_SUPPORT_DENORMAL_16, &
+                   & IEEE_SUPPORT_DENORMAL_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DENORMAL
+
+  interface IEEE_SUPPORT_DIVIDE
+    module procedure IEEE_SUPPORT_DIVIDE_4,  &
+                   & IEEE_SUPPORT_DIVIDE_8,  &
+                   & IEEE_SUPPORT_DIVIDE_16, &
+                   & IEEE_SUPPORT_DIVIDE_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DIVIDE
+
+  interface IEEE_SUPPORT_INF
+    module procedure IEEE_SUPPORT_INF_4,  &
+                   & IEEE_SUPPORT_INF_8,  &
+                   & IEEE_SUPPORT_INF_16, &
+                   & IEEE_SUPPORT_INF_NOARG
+  end interface
+  public :: IEEE_SUPPORT_INF
+
+  interface IEEE_SUPPORT_IO
+    module procedure IEEE_SUPPORT_IO_4,  &
+                   & IEEE_SUPPORT_IO_8,  &
+                   & IEEE_SUPPORT_IO_16, &
+                   & IEEE_SUPPORT_IO_NOARG
+  end interface
+  public :: IEEE_SUPPORT_IO
+
+  interface IEEE_SUPPORT_NAN
+    module procedure IEEE_SUPPORT_NAN_4,  &
+                   & IEEE_SUPPORT_NAN_8,  &
+                   & IEEE_SUPPORT_NAN_16, &
+                   & IEEE_SUPPORT_NAN_NOARG
+  end interface
+  public :: IEEE_SUPPORT_NAN
+
+  interface IEEE_SUPPORT_SQRT
+    module procedure IEEE_SUPPORT_SQRT_4,  &
+                   & IEEE_SUPPORT_SQRT_8,  &
+                   & IEEE_SUPPORT_SQRT_16, &
+                   & IEEE_SUPPORT_SQRT_NOARG
+  end interface
+  public :: IEEE_SUPPORT_SQRT
+
+  interface IEEE_SUPPORT_STANDARD
+    module procedure IEEE_SUPPORT_STANDARD_4,  &
+                   & IEEE_SUPPORT_STANDARD_8,  &
+                   & IEEE_SUPPORT_STANDARD_16, &
+                   & IEEE_SUPPORT_STANDARD_NOARG
+  end interface
+  public :: IEEE_SUPPORT_STANDARD
+
 #else
-  interface IEEE_SUPPORT_DATATYPE ; module procedure IEEE_SUPPORT_DATATYPE_4, IEEE_SUPPORT_DATATYPE_8, IEEE_SUPPORT_DATATYPE_NOARG ; end interface ;   public :: IEEE_SUPPORT_DATATYPE
-  interface IEEE_SUPPORT_DENORMAL ; module procedure IEEE_SUPPORT_DENORMAL_4, IEEE_SUPPORT_DENORMAL_8, IEEE_SUPPORT_DENORMAL_NOARG ; end interface ;   public :: IEEE_SUPPORT_DENORMAL
-  interface IEEE_SUPPORT_DIVIDE ; module procedure IEEE_SUPPORT_DIVIDE_4, IEEE_SUPPORT_DIVIDE_8, IEEE_SUPPORT_DIVIDE_NOARG ; end interface ;   public :: IEEE_SUPPORT_DIVIDE
-  interface IEEE_SUPPORT_INF ; module procedure IEEE_SUPPORT_INF_4, IEEE_SUPPORT_INF_8, IEEE_SUPPORT_INF_NOARG ; end interface ;   public :: IEEE_SUPPORT_INF
-  interface IEEE_SUPPORT_IO ; module procedure IEEE_SUPPORT_IO_4, IEEE_SUPPORT_IO_8, IEEE_SUPPORT_IO_NOARG ; end interface ;   public :: IEEE_SUPPORT_IO
-  interface IEEE_SUPPORT_NAN ; module procedure IEEE_SUPPORT_NAN_4, IEEE_SUPPORT_NAN_8, IEEE_SUPPORT_NAN_NOARG ; end interface ;   public :: IEEE_SUPPORT_NAN
-  interface IEEE_SUPPORT_SQRT ; module procedure IEEE_SUPPORT_SQRT_4, IEEE_SUPPORT_SQRT_8, IEEE_SUPPORT_SQRT_NOARG ; end interface ;   public :: IEEE_SUPPORT_SQRT
-  interface IEEE_SUPPORT_STANDARD ; module procedure IEEE_SUPPORT_STANDARD_4, IEEE_SUPPORT_STANDARD_8, IEEE_SUPPORT_STANDARD_NOARG ; end interface ;   public :: IEEE_SUPPORT_STANDARD
+  interface IEEE_SUPPORT_DATATYPE
+    module procedure IEEE_SUPPORT_DATATYPE_4,  &
+                   & IEEE_SUPPORT_DATATYPE_8,  &
+                   & IEEE_SUPPORT_DATATYPE_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DATATYPE
+
+  interface IEEE_SUPPORT_DENORMAL
+    module procedure IEEE_SUPPORT_DENORMAL_4,  &
+                   & IEEE_SUPPORT_DENORMAL_8,  &
+                   & IEEE_SUPPORT_DENORMAL_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DENORMAL
+
+  interface IEEE_SUPPORT_DIVIDE
+    module procedure IEEE_SUPPORT_DIVIDE_4,  &
+                   & IEEE_SUPPORT_DIVIDE_8,  &
+                   & IEEE_SUPPORT_DIVIDE_NOARG
+  end interface
+  public :: IEEE_SUPPORT_DIVIDE
+
+  interface IEEE_SUPPORT_INF
+    module procedure IEEE_SUPPORT_INF_4,  &
+                   & IEEE_SUPPORT_INF_8,  &
+                   & IEEE_SUPPORT_INF_NOARG
+  end interface
+  public :: IEEE_SUPPORT_INF
+
+  interface IEEE_SUPPORT_IO
+    module procedure IEEE_SUPPORT_IO_4,  &
+                   & IEEE_SUPPORT_IO_8,  &
+                   & IEEE_SUPPORT_IO_NOARG
+  end interface
+  public :: IEEE_SUPPORT_IO
+
+  interface IEEE_SUPPORT_NAN
+    module procedure IEEE_SUPPORT_NAN_4,  &
+                   & IEEE_SUPPORT_NAN_8,  &
+                   & IEEE_SUPPORT_NAN_NOARG
+  end interface
+  public :: IEEE_SUPPORT_NAN
+
+  interface IEEE_SUPPORT_SQRT
+    module procedure IEEE_SUPPORT_SQRT_4,  &
+                   & IEEE_SUPPORT_SQRT_8,  &
+                   & IEEE_SUPPORT_SQRT_NOARG
+  end interface
+  public :: IEEE_SUPPORT_SQRT
+
+  interface IEEE_SUPPORT_STANDARD
+    module procedure IEEE_SUPPORT_STANDARD_4,  &
+                   & IEEE_SUPPORT_STANDARD_8,  &
+                   & IEEE_SUPPORT_STANDARD_NOARG
+  end interface
+  public :: IEEE_SUPPORT_STANDARD
+
 #endif
 
 contains
