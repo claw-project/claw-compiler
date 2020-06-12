@@ -259,10 +259,13 @@ public class Kcaching extends ClawTransformation {
   {
     Xid id = fctDef.getSymbolTable().get(var);
     if(id == null) {
-      throw new IllegalTransformationException("Variable " + var +
-          " defined in the data clause has not been found",
-          _claw.getPragma().lineNo()
-      );
+      id = fctDef.findParentModule().getSymbolTable().get(var);
+      if(id == null) {
+        throw new IllegalTransformationException("Variable " + var +
+                " defined in the data clause has not been found",
+                _claw.getPragma().lineNo()
+        );
+      }
     }
     FbasicType basicType = xcodeml.getTypeTable().getBasicType(id);
     int dim = basicType.getDimensions();
