@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
+## [2.0.2] - 2020-07-27
+* OMNI Compiler submodule now pointing to
+  omni-compiler/xcodeml-tools@3bbc8ec4caa31113a7f67ae7371e678c28d613fc
+* Added support for NAG compiler
+* Various bug fixes
+
 ## [2.0.1] - 2019-09-18
 * Serialization is now disabled by default.
 * Driver: Add option `sca_forward_update_disabled` to switch globally updates.
