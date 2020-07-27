@@ -1,3 +1,8 @@
+!
+! This file is released under terms of BSD license
+! See LICENSE file for more information
+!
+!
 ! @author skosukhin
 ! @brief  This file is used as a signatutre only module to generate .xmod file.
 !         These files are needed during a full parse with the OMNI Compiler.
