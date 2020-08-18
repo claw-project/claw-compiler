@@ -33,11 +33,7 @@ toml.jar=cava-toml.jar
 toml.dep=${ivy.dir}/${toml.jar}
 
 # OMNI compiler libraries and paths
-omni.dir=${antfile.dir}/../../omni-compiler
-omni.xcodeml-common.dir=${omni.dir}/XcodeML-Common/build
-omni.backend.dir=${omni.dir}/F-BackEnd/build
-omni.common.jar=om-common.jar
-omni.xcodeml-common.dep=${omni.xcodeml-common.dir}/${omni.common.jar}
+omni.xcodeml-common.dep=@OMNI_JAR_TOOLS@
 
 # CLAW X2T libraries
 claw.wani.jar=claw-x2t-wani.jar

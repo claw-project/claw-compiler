@@ -9,6 +9,7 @@ configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/claw/ClawVersion.java
   @ONLY
 )
+
 if(NOT OFFLINE)
   # Bootstrap the compilation process
   add_custom_target(claw-init ALL)
