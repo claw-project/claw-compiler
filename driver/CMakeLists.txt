@@ -73,7 +73,6 @@ install(
 
 
 # Only to run tests, we use the local build
-set(OMNI_HOME "${CMAKE_SOURCE_DIR}/omni-compiler")
 set(OMNI_DRIVER_DIR "${OMNI_HOME}/Driver/libexec")
 set(OMNI_BIN_DIR "${OMNI_HOME}/F-FrontEnd/src")
 set(OMNI_JAR_TOOLS "${BUILD_OMNI_JAR_TOOLS}")

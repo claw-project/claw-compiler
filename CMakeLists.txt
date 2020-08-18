@@ -23,8 +23,6 @@ include(cmake/omni_compiler.cmake)
 # Load all variables from file
 include(properties.cmake)
 
-set(OMNI_COMPILER_SUBMODULE ${CMAKE_SOURCE_DIR}/omni-compiler)
-
 if(OFFLINE)
   message(STATUS "CLAW Compiler offline compilation enabled")
 endif()
@@ -32,10 +30,6 @@ endif()
 # Recover commit hash for the top repositiory
 git_get_rev_hash(${CMAKE_SOURCE_DIR} CLAWFC_GIT_HASH)
 message(STATUS "CLAW Compiler version ${CLAWFC_GIT_HASH}")
-
-# Recover commit hash for the OMNI Compiler subumodule
-git_get_rev_hash(${OMNI_COMPILER_SUBMODULE} OMNI_GIT_HASH)
-message(STATUS "OMNI Compiler version ${OMNI_GIT_HASH}")
 
 # Set the default install directory
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
@@ -78,20 +72,36 @@ if(OMNI_ENABLE_GNU_INTRINSIC)
   list(APPEND OMNI_CONF_OPTION "--enable-gnu-extension")
 endif()
 
+option(BUILD_OMNI "Build OMNI Compiler" ON)
+
 # Build OMNI compiler
 if(BUILD_OMNI)
+  find_package(LibXml2 REQUIRED)
+  get_filename_component(LIBXML2_LIB_DIR ${LIBXML2_LIBRARY} DIRECTORY)
+  set(OMNI_COMPILER_SRC_DIR ${CMAKE_BINARY_DIR}/omni-compiler)
   ExternalProject_Add(
     omni-compiler
-    SOURCE_DIR ${OMNI_COMPILER_SUBMODULE}
+    GIT_REPOSITORY ${OMNI_GIT_REPOSITORY}
+    GIT_TAG ${OMNI_GIT_COMMIT_HASH}
+    GIT_SHALLOW ON
+    GIT_PROGRESS ON
+    GIT_REMOTE_UPDATE_STRATEGY CHECKOUT
+    SOURCE_DIR ${OMNI_COMPILER_SRC_DIR}
+    INSTALL_DIR ${OMNI_HOME}
     CONFIGURE_COMMAND
-      CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
-      FC=${CMAKE_Fortran_COMPILER} JAVAC=${Java_JAVAC_EXECUTABLE}
-      CFLAGS=${CMAKE_C_FLAGS}
-      ${OMNI_COMPILER_SUBMODULE}/configure
-      --prefix=${CMAKE_INSTALL_PREFIX} ${OMNI_TARGET} ${OMNI_CONF_OPTION}
-      ${OMNI_MPI_CC} ${OMNI_MPI_FC}
+      CC=${CMAKE_C_COMPILER}
+      ${OMNI_COMPILER_SRC_DIR}/configure
+      --without-native-fortran-compiler
+      --with-libxml2-include=${LIBXML2_INCLUDE_DIR}
+      --with-libxml2-lib=${LIBXML2_LIB_DIR}
+      --with-java=${Java_JAVA_EXECUTABLE}
+      --with-javac=${Java_JAVAC_EXECUTABLE}
+      --with-jar=${Java_JAR_EXECUTABLE}
+      --prefix=${OMNI_HOME}
+      ${OMNI_CONF_OPTION}
+    BUILD_IN_SOURCE ON
     BUILD_COMMAND make -j 1 # OMNI build is not thread safe
-    BUILD_IN_SOURCE 1
+    INSTALL_COMMAND make install
   )
 endif()
 

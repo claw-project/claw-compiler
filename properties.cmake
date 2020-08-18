@@ -35,7 +35,14 @@ set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 #
 # OMNI Compiler variables
 #
-set(OMNI_HOME "${CMAKE_INSTALL_PREFIX}")
+set(OMNI_VERSION "1.3.0")
+set(OMNI_GIT_COMMIT_HASH "abda39259ee04cabf2167fc7736c96406e19dd69" CACHE STRING
+    "OMNI compiler tools GIT commit hash")
+set(OMNI_GIT_REPOSITORY "https://github.com/MeteoSwiss-APN/xcodeml-tools.git" CACHE STRING
+    "OMNI compiler tools GIT repository URL")
+set(OMNI_GIT_BRANCH "master" CACHE STRING "OMNI compiler tools GIT repository branch")
+set(OMNI_VERSION_TAG "${OMNI_GIT_COMMIT}")
+set(OMNI_HOME "${CMAKE_BINARY_DIR}/omni-compiler-install")
 set(OMNI_CLASSPATH "${OMNI_HOME}/share")
 set(OMNI_DRIVER_DIR "${OMNI_HOME}/libexec")
 set(OMNI_XMOD_GENERIC "${OMNI_HOME}/fincludes")
