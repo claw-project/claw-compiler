@@ -36,19 +36,24 @@ set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 # OMNI Compiler variables
 #
 set(OMNI_VERSION "1.3.0")
-set(OMNI_GIT_COMMIT_HASH "abda39259ee04cabf2167fc7736c96406e19dd69" CACHE STRING
+set(OMNI_GIT_COMMIT_HASH "8d1584849f45de8d561e9224a1b7860db6fa42a7" CACHE STRING
     "OMNI compiler tools GIT commit hash")
 set(OMNI_GIT_REPOSITORY "https://github.com/MeteoSwiss-APN/xcodeml-tools.git" CACHE STRING
     "OMNI compiler tools GIT repository URL")
 set(OMNI_GIT_BRANCH "master" CACHE STRING "OMNI compiler tools GIT repository branch")
-set(OMNI_VERSION_TAG "${OMNI_GIT_COMMIT}")
-set(OMNI_HOME "${CMAKE_BINARY_DIR}/omni-compiler-install")
+set(OMNI_VERSION_TAG ${OMNI_GIT_COMMIT_HASH})
+if(BUILD_OMNI_XCODEML_TOOLS)
+    set(OMNI_HOME "${CMAKE_BINARY_DIR}/omni-compiler-install")
+else()
+    if(NOT DEFINED OMNI_HOME)
+        message(FATAL_ERROR "When BUILD_OMNI_XCODEML_TOOLS is off, OMNI_HOME variable must be set to path to the xcodeml-tools install")
+    endif()
+endif(BUILD_OMNI_XCODEML_TOOLS)
 set(OMNI_CLASSPATH "${OMNI_HOME}/share")
 set(OMNI_DRIVER_DIR "${OMNI_HOME}/libexec")
 set(OMNI_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 set(OMNI_BIN_DIR "${OMNI_HOME}/bin")
 set(OMNI_F_FRONT "${OMNI_BIN_DIR}/F_Front")
-set(OMNI_C_FRONT "${OMNI_BIN_DIR}/C_Front")
 set(OMNI_JAR_TOOLS "${OMNI_CLASSPATH}/om-common.jar")
 set(OMNI_JAR_F_BACKEND "${OMNI_CLASSPATH}/om-f-back.jar")
 set(OMNI_JAR_C_BACKEND "${OMNI_CLASSPATH}/om-c-back.jar")
@@ -56,21 +61,6 @@ set(OMNI_F2X_FLAGS "")
 
 # Common module files
 set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
-
-# Define OMNI Compiler jar archives build location.
-set(
-  BUILD_OMNI_JAR_TOOLS
-  "${CMAKE_SOURCE_DIR}/omni-compiler/XcodeML-Common/build/om-common.jar"
-)
-set(
-  BUILD_OMNI_JAR_F_BACKEND
-  "${CMAKE_SOURCE_DIR}/omni-compiler/F-BackEnd/build/om-f-back.jar"
-)
-set(
-  BUILD_OMNI_JAR_C_BACKEND
-  "${CMAKE_SOURCE_DIR}/omni-compiler/C-BackEnd/build/om-c-back.jar"
-)
-
 
 #
 # Third party libraries

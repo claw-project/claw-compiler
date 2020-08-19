@@ -20,6 +20,8 @@ include(ExternalProject)
 include(cmake/git.cmake)
 include(cmake/omni_compiler.cmake)
 
+option(BUILD_OMNI_XCODEML_TOOLS "Build OMNI Compiler Tools" ON)
+option(ADD_OMNI_XCODEML_TOOLS_TO_INSTALL "Copy OMNI Compiler Tools to CLAW install directory" ON)
 # Load all variables from file
 include(properties.cmake)
 
@@ -65,17 +67,14 @@ message(
 
 # Option to build OMNI Compiler as a submodule. Should be ON as CLAW uses a
 # specific version of OMNI Compiler at the moment.
-option(BUILD_OMNI "Build OMNI Compiler" ON)
 option(OMNI_ENABLE_GNU_INTRINSIC "OMNI Compiler - Enable GNU intrinsic extensions" ON)
 
 if(OMNI_ENABLE_GNU_INTRINSIC)
   list(APPEND OMNI_CONF_OPTION "--enable-gnu-extension")
 endif()
 
-option(BUILD_OMNI "Build OMNI Compiler" ON)
-
 # Build OMNI compiler
-if(BUILD_OMNI)
+if(BUILD_OMNI_XCODEML_TOOLS)
   find_package(LibXml2 REQUIRED)
   get_filename_component(LIBXML2_LIB_DIR ${LIBXML2_LIBRARY} DIRECTORY)
   set(OMNI_COMPILER_SRC_DIR ${CMAKE_BINARY_DIR}/omni-compiler)
@@ -103,7 +102,36 @@ if(BUILD_OMNI)
     BUILD_COMMAND make -j 1 # OMNI build is not thread safe
     INSTALL_COMMAND make install
   )
-endif()
+  if(ADD_OMNI_XCODEML_TOOLS_TO_INSTALL)
+      install( CODE
+                  "
+                  message(STATUS \"Copying OMNI XCodeMLTools into CLAW install\")
+                  execute_process(COMMAND make DESTDIR=${CMAKE_INSTALL_PREFIX} install
+                                  WORKING_DIRECTORY ${OMNI_COMPILER_SRC_DIR})
+                  ")
+  endif(ADD_OMNI_XCODEML_TOOLS_TO_INSTALL)
+else()
+  function(get_xcodemltools_version_tag _output_version_tag)
+      execute_process(
+        COMMAND ${OMNI_F_FRONT} --version-tag
+        ERROR_VARIABLE output_version_tag
+        OUTPUT_VARIABLE output_version_tag
+        RESULT_VARIABLE return_code
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+      if(NOT(${return_code} EQUAL "0"))
+            message(FATAL_ERROR "get_omni_version_tag failed")
+      endif()
+      set(${_output_version_tag} ${output_version_tag} PARENT_SCOPE)
+  endfunction()
+  get_xcodemltools_version_tag(xcodemltools_version)
+  if(NOT (${xcodemltools_version} STREQUAL ${OMNI_VERSION_TAG}))
+    message(FATAL_ERROR "OMNI XCodeMLTools version tag \"${xcodemltools_version}\" does not match expected \"${OMNI_VERSION_TAG}\"")
+  endif()
+  add_custom_target(omni-compiler
+    COMMENT "Checking OMNI XCodeMLTools version"
+  )
+endif(BUILD_OMNI_XCODEML_TOOLS)
 
 # translator library and xcodeml manipulation library
 add_subdirectory(cx2t)
