@@ -10,7 +10,10 @@
     <dirname property="antfile.dir" file="${ant.file}"/>
 
     <import file="../common-targets.xml"/>
-    <property file="../claw.properties"/>
+
+    <!-- Value set externally-->
+    <property name="claw.properties.dir" value=""/>
+    <property file="${claw.properties.dir}/claw.properties"/>
 
     <!-- Java sources -->
     <property name="src.translator.parser"

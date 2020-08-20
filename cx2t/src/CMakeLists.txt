@@ -19,6 +19,7 @@ if(NOT OFFLINE)
     ${ANT_FLAGS}
     -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
+    -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
     init
     COMMENT "Resolving dependencies for the build"
   )
@@ -32,6 +33,7 @@ add_custom_command(
   ${ANT_FLAGS}
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
+  -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
   -Dantlr4.jar="${ANTLR4_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
   ${DISABLE_RESOLVE}

@@ -3,7 +3,7 @@
 
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/claw.properties.in
-  ${CMAKE_CURRENT_SOURCE_DIR}/claw.properties
+  ${CMAKE_CURRENT_BINARY_DIR}/claw.properties
   @ONLY
 )
 
