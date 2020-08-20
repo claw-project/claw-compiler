@@ -71,15 +71,6 @@ install(
     ${CMAKE_INSTALL_PREFIX}/etc
 )
 
-
-# Only to run tests, we use the local build
-set(OMNI_DRIVER_DIR "${OMNI_HOME}/Driver/libexec")
-set(OMNI_BIN_DIR "${OMNI_HOME}/F-FrontEnd/src")
-set(OMNI_JAR_TOOLS "${BUILD_OMNI_JAR_TOOLS}")
-set(OMNI_JAR_F_BACKEND "${BUILD_OMNI_JAR_F_BACKEND}")
-set(OMNI_JAR_C_BACKEND "${BUILD_OMNI_JAR_C_BACKEND}")
-set(OMNI_XMOD_GENERIC "${OMNI_HOME}/F-FrontEnd/src/fincludes/")
-
 set(CLAW_X2T_CONFIG_PATH "${CMAKE_SOURCE_DIR}/driver/etc/")
 set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_SOURCE_DIR}/driver/libexec/")
 set(CLAW_X2T_TATSU_JAR "${CMAKE_BINARY_DIR}/build/${CLAW_X2T_TATSU}.jar")
