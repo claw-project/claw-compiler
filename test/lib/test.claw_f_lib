@@ -1,9 +1,19 @@
 #!/bin/bash
 
+if [[ -z "${CMAKE_SOURCE_DIR}" ]]; then
+    echo "CMAKE_SOURCE_DIR not set in environment" 1>&2
+    exit 1
+fi
+
+if [[ -z "${CMAKE_BINARY_DIR}" ]]; then
+    echo "CMAKE_BINARY_DIR not set in environment" 1>&2
+    exit 1
+fi
+
 # source the library
-. ../../driver/libexec/claw_f_lib.sh.in
+. ${CMAKE_SOURCE_DIR}/driver/libexec/claw_f_lib.sh.in
 #shellcheck disable=SC1091
-. ../../driver/etc/claw_f.conf
+. ${CMAKE_BINARY_DIR}/driver/etc/claw_f.conf
 
 # Test the claw::norm_file_name function
 function test_claw::norm_file_name()
