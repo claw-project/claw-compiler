@@ -6,7 +6,7 @@
 # file.
 
 # Third-party libraries
-ivy.dir=${antfile.dir}/../lib
+ivy.dir=${lib.dir.prefix}/lib
 st4.jar=ST4.jar
 st4.dep=${ivy.dir}/${st4.jar}
 antlr.jar=antlr-runtime.jar

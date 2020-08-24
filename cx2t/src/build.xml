@@ -72,7 +72,7 @@
                destdir="${build.dir}" classpathref="build.path" debug="on" />
     </target>
 
-    <!-- Pacakge compiled files into their own library -->
+    <!-- Package compiled files into their own library -->
     <target name="jar" depends="compile" description="package, output to JAR">
         <mkdir dir="${dist.dir}"/>
         <!-- CLAW X2T TATSU -->

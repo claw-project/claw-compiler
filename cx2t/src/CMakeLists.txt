@@ -20,6 +20,7 @@ if(NOT OFFLINE)
     -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
     -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
+    -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
     init
     COMMENT "Resolving dependencies for the build"
   )
@@ -34,6 +35,7 @@ add_custom_command(
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
   -Dantlr4.jar="${ANTLR4_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
   ${DISABLE_RESOLVE}
@@ -50,11 +52,11 @@ install(
     ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_TATSU}.jar
     ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_SHENRON}.jar
     ${PROJECT_BINARY_DIR}/build/${CLAW_X2T_WANI}.jar
-    ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_NAME}.jar
-    ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR4_RUNTIME_NAME}.jar
-    ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${ANTLR_RUNTIME_NAME}.jar
-    ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${COMMON_CLI_NAME}.jar
-    ${CMAKE_CURRENT_SOURCE_DIR}/../lib/${TOML_NAME}.jar
+    ${CMAKE_CURRENT_BINARY_DIR}/../lib/${ANTLR4_NAME}.jar
+    ${CMAKE_CURRENT_BINARY_DIR}/../lib/${ANTLR4_RUNTIME_NAME}.jar
+    ${CMAKE_CURRENT_BINARY_DIR}/../lib/${ANTLR_RUNTIME_NAME}.jar
+    ${CMAKE_CURRENT_BINARY_DIR}/../lib/${COMMON_CLI_NAME}.jar
+    ${CMAKE_CURRENT_BINARY_DIR}/../lib/${TOML_NAME}.jar
   DESTINATION
     ${CMAKE_INSTALL_PREFIX}/share/claw/
 )
