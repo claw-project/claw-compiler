@@ -27,8 +27,11 @@
   <!-- Java sources directory -->
   <property name="src.dir" location="." />
 
+  <!-- Generated source directory, set externally -->
+  <property name="gen.src.dir" value="" />
+
   <!-- Java compiled classes directory, set externally -->
-  <property name="build.dir" value=""/>
+  <property name="build.dir" value="" />
 
   <!-- Classpath for dependencies -->
   <path id="build.path">
@@ -54,8 +57,13 @@
   <!-- Compile java sources -->
   <target name="compile" depends="common.resolve"
           description="compile the source">
-    <javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}"
-           classpathref="build.path" debug="on" />
+    <javac includeantruntime="false" destdir="${build.dir}"
+           classpathref="build.path" debug="on" >
+      <src>
+        <pathelement path="${src.dir}"/>
+        <pathelement path="${gen.src.dir}"/>
+      </src>
+    </javac>
   </target>
 
   <!-- Package compiled files into their own library -->
@@ -115,6 +123,7 @@
         </classfiles>
         <sourcefiles encoding="UTF-8">
           <fileset dir="${src.dir}"/>
+          <fileset dir="${gen.src.dir}"/>
         </sourcefiles>
       </structure>
       <html destdir="${test.reports}"/>
@@ -164,6 +173,7 @@
         </classfiles>
         <sourcefiles encoding="UTF-8">
           <fileset dir="${src.dir}"/>
+          <fileset dir="${gen.src.dir}"/>
         </sourcefiles>
       </structure>
       <html destdir="${test.reports}"/>
@@ -215,6 +225,7 @@
         </classfiles>
         <sourcefiles encoding="UTF-8">
           <fileset dir="${src.dir}"/>
+          <fileset dir="${gen.src.dir}"/>
         </sourcefiles>
       </structure>
       <html destdir="${test.reports}"/>

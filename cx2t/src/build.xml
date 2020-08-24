@@ -9,6 +9,9 @@
 
     <dirname property="antfile.dir" file="${ant.file}"/>
 
+    <!-- Generated source directory, set externally -->
+    <property name="gen.src.dir" value=""/>
+
     <import file="../common-targets.xml"/>
 
     <!-- Value set externally-->
@@ -68,8 +71,13 @@
     <!-- Compile the java code for the two libraries -->
     <target name="compile" depends="common.resolve, antlr"
             description="compile the source">
-        <javac includeantruntime="false" srcdir="${src.base}"
-               destdir="${build.dir}" classpathref="build.path" debug="on" />
+        <javac includeantruntime="false" srcdir=""
+               destdir="${build.dir}" classpathref="build.path" debug="on">
+            <src>
+                <pathelement path="${src.base}"/>
+                <pathelement path="${gen.src.dir}"/>
+            </src>
+        </javac>
     </target>
 
     <!-- Package compiled files into their own library -->
