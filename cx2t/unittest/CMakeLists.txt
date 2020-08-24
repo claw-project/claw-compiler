@@ -18,6 +18,7 @@ if(NOT OFFLINE)
     COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
     ${ANT_FLAGS}
     -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+    -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
     -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
     -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
@@ -35,6 +36,7 @@ add_custom_command(
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   ${ANT_FLAGS}
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
   -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
@@ -52,6 +54,7 @@ add_test(
   NAME junit-tatsu
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
@@ -68,6 +71,7 @@ add_test(
   NAME junit-shenron
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
@@ -84,6 +88,7 @@ add_test(
   NAME junit-wani
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
+  -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
