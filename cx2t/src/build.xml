@@ -19,8 +19,8 @@
     <property file="${claw.properties.dir}/claw.properties"/>
 
     <!-- Java sources -->
-    <property name="src.translator.parser"
-              value="claw/wani/language/parser"/>
+    <property name="src.translator.parser.dir"
+              value="${gen.src.dir}/claw/wani/language/parser"/>
     <property name="src.base" value="."/>
 
     <!-- Java compiled classes directory, set externally -->
@@ -49,12 +49,13 @@
             description="Initialize build directories">
         <tstamp/>
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${src.translator.parser.dir}"/>
     </target>
 
     <!-- Check if parser is up-to-date or need to be re-generated -->
     <uptodate property="antlr.required"
-              targetfile="claw/wani/language/parser/Claw.g4">
-        <srcfiles dir="${src.translator.parser}" includes="*.java"/>
+              targetfile="claw/wani/language/parser/Claw.g4" >
+        <srcfiles dir="${src.translator.parser.dir}" includes="*.java" erroronmissingdir="false" />
     </uptodate>
 
     <!-- Generate the CLAW parser from the ANTLR grammar file -->
@@ -62,9 +63,11 @@
             description="Generate the parser from ANTLR grammar file">
         <java classname="org.antlr.v4.Tool" fork="true" failonerror="true"
               classpathref="antlr.path">
+            <arg value="-o"/>
+            <arg value="${src.translator.parser.dir}"/>
             <arg value="-package"/>
             <arg value="claw.wani.language.parser"/>
-            <arg line="${src.translator.parser}/Claw.g4"/>
+            <arg line="claw/wani/language/parser/Claw.g4"/>
         </java>
     </target>
 
