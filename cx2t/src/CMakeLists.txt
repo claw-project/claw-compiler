@@ -21,6 +21,7 @@ if(NOT OFFLINE)
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
     -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
     -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+    -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
     init
     COMMENT "Resolving dependencies for the build"
   )
@@ -36,6 +37,7 @@ add_custom_command(
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
   -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dantlr4.jar="${ANTLR4_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
   ${DISABLE_RESOLVE}

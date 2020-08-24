@@ -20,8 +20,8 @@
               value="claw/wani/language/parser"/>
     <property name="src.base" value="."/>
 
-    <!-- Java classes -->
-    <property name="build.dir" location="bin"/>
+    <!-- Java compiled classes directory, set externally -->
+    <property name="build.dir" value=""/>
 
     <!-- Classpath for the CX2T Translator library -->
     <path id="build.path">

@@ -27,8 +27,8 @@
   <!-- Java sources directory -->
   <property name="src.dir" location="." />
 
-  <!-- Java compiled classes directory -->
-  <property name="build.dir" location="bin" />
+  <!-- Java compiled classes directory, set externally -->
+  <property name="build.dir" value=""/>
 
   <!-- Classpath for dependencies -->
   <path id="build.path">

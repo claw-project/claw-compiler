@@ -21,6 +21,7 @@ if(NOT OFFLINE)
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
     -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
     -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+    -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
     init
     COMMENT "Resolving dependencies for the build"
   )
@@ -36,6 +37,7 @@ add_custom_command(
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
   -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   ${DISABLE_RESOLVE}
   COMMENT "Building CLAW XcodeML/F to XcodeML/F unit tests"
 )
@@ -52,6 +54,7 @@ add_test(
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
   -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   ${DISABLE_RESOLVE}
   junit-tatsu
 )
@@ -66,6 +69,7 @@ add_test(
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
   -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   ${DISABLE_RESOLVE}
   junit-shenron
 )
@@ -80,6 +84,7 @@ add_test(
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
   -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   ${DISABLE_RESOLVE}
   junit-wani
 )
