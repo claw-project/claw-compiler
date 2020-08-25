@@ -260,7 +260,8 @@ function(claw_add_advanced_test_set)
 
       claw_add_advanced_test(
         NAME ${TEST_SET}-${t_name}
-        WORKING_DIRECTORY ${claw_add_advanced_test_set_DIRECTORY}/${t_name}
+        INPUT_DIRECTORY ${claw_add_advanced_test_set_DIRECTORY}/${t_name}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${t_name}
         CLAW_FLAGS ${CLAW_FLAGS_${t_name}}
         CLAW_FLAGS_TARGET_CPU ${CLAW_FLAGS_TARGET_CPU_${t_name}}
         CLAW_FLAGS_TARGET_ACC ${CLAW_FLAGS_TARGET_ACC_${t_name}}
@@ -275,7 +276,7 @@ endfunction()
 
 function(claw_add_advanced_test)
   set(options DEBUG COMPILE COMPARE IGNORE)
-  set(oneValueArgs NAME WORKING_DIRECTORY)
+  set(oneValueArgs NAME WORKING_DIRECTORY INPUT_DIRECTORY)
   set(multiValueArgs CLAW_FLAGS CLAW_FLAGS_TARGET_CPU CLAW_FLAGS_TARGET_ACC CLAW_FLAGS_TARGET_OMP)
   cmake_parse_arguments(claw_add_advanced_test "${options}" "${oneValueArgs}"
     "${multiValueArgs}" ${ARGN})
@@ -284,9 +285,15 @@ function(claw_add_advanced_test)
     message(FATAL_ERROR "claw_add_advanced_test NAME is required")
   endif()
 
+  if("${claw_add_advanced_test_INPUT_DIRECTORY}" STREQUAL "")
+    set(claw_add_advanced_test_INPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  endif()
+
   if("${claw_add_advanced_test_WORKING_DIRECTORY}" STREQUAL "")
     set(claw_add_advanced_test_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
   endif()
+
+  file(COPY ${claw_add_advanced_test_INPUT_DIRECTORY} DESTINATION ${claw_add_advanced_test_WORKING_DIRECTORY}/../)
 
   # Specifiy the output directory if the module files
   set(CMAKE_Fortran_MODULE_DIRECTORY ${claw_add_advanced_test_WORKING_DIRECTORY})
@@ -674,7 +681,7 @@ endfunction()
 
 function(claw_add_failure_test)
   set(options DEBUG)
-  set(oneValueArgs NAME WORKING_DIRECTORY CLAW_TARGET CLAW_DIRECTIVE SET)
+  set(oneValueArgs NAME WORKING_DIRECTORY INPUT_DIRECTORY CLAW_TARGET CLAW_DIRECTIVE SET)
   set(multiValueArgs CLAW_FLAGS)
   cmake_parse_arguments(claw_add_failure_test "${options}" "${oneValueArgs}"
     "${multiValueArgs}" ${ARGN})
@@ -683,9 +690,15 @@ function(claw_add_failure_test)
     message(FATAL_ERROR "claw_add_failure_test NAME is required")
   endif()
 
-  if("${claw_add_failure_test_WORKING_DIRECTORY}" STREQUAL "")
-    set(claw_add_failure_test_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  if("${claw_add_failure_test_INPUT_DIRECTORY}" STREQUAL "")
+    message(FATAL_ERROR "claw_add_failure_test INPUT_DIRECTORY is required")
   endif()
+
+  if("${claw_add_failure_test_WORKING_DIRECTORY}" STREQUAL "")
+    message(FATAL_ERROR "claw_add_failure_test WORKING_DIRECTORY is required")
+  endif()
+
+  file(COPY ${claw_add_failure_test_INPUT_DIRECTORY} DESTINATION ${claw_add_failure_test_WORKING_DIRECTORY}/../)
 
   if(claw_add_failure_test_CLAW_TARGET)
     set(claw_add_failure_test_CLAW_TARGET

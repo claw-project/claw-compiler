@@ -90,7 +90,8 @@ claw_add_advanced_test_set(
 # Specific "fail" test to check correct failure
 claw_add_failure_test(
   NAME claw-sca-sca30
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/sca30
+  INPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/sca30
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sca30
   SET claw-sca
   CLAW_TARGET gpu
   CLAW_DIRECTIVE openacc
@@ -98,7 +99,8 @@ claw_add_failure_test(
 
 claw_add_failure_test(
   NAME claw-sca-sca44
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/sca44
+  INPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/sca44
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sca44
   SET claw-sca
   CLAW_TARGET gpu
   CLAW_DIRECTIVE openacc
