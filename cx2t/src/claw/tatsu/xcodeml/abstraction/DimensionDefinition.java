@@ -229,6 +229,27 @@ public class DimensionDefinition {
   }
 
   /**
+   * Generate the correct iterationRange element with iterationLowerBound,
+   * iterationUpperBound and step from the current dimension.
+   *
+   * @param xcodeml  Current XcodeML program unit in which elements will be
+   *                 created.
+   * @param withStep IF true, step element is created.
+   * @return A new indexRange elements.
+   */
+  public Xnode generateIterationRange(XcodeML xcodeml, boolean withStep) {
+    Xnode range = xcodeml.createNode(Xcode.INDEX_RANGE);
+    range.append(_iterationLowerBound.generate(xcodeml));
+    range.append(_iterationUpperBound.generate(xcodeml));
+    if(withStep) {
+      Xnode step = xcodeml.createNode(Xcode.STEP);
+      step.append(xcodeml.createIntConstant(DEFAULT_STEP_VALUE));
+      range.append(step);
+    }
+    return range;
+  }
+
+  /**
    * Generate the array index that will be placed in the array reference for
    * this additional dimension.
    *

@@ -453,6 +453,32 @@ public class Sca extends ClawTransformation {
               bt.getType(), _fctType);
           param.setBooleanAttribute(Xattr.IS_INSERTED, true);
         }
+
+        // Create the parameter for the iteration lower bound
+        if(dimension.getIterationLowerBound().isVar()) {
+          xcodeml.createIdAndDecl(dimension.getIterationLowerBound().getValue(),
+              bt.getType(), XstorageClass.F_PARAM, _fctDef,
+              DeclarationPosition.FIRST);
+
+          // Add parameter to the local type table
+          Xnode param = xcodeml.createAndAddParam(
+              dimension.getIterationLowerBound().getValue(),
+              bt.getType(), _fctType);
+          param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+        }
+
+        // Create parameter for the upper bound
+        if(dimension.getIterationUpperBound().isVar()) {
+          xcodeml.createIdAndDecl(dimension.getIterationUpperBound().getValue(),
+              bt.getType(), XstorageClass.F_PARAM, _fctDef,
+              DeclarationPosition.FIRST);
+
+          // Add parameter to the local type table
+          Xnode param = xcodeml.createAndAddParam(
+              dimension.getIterationUpperBound().getValue(),
+              bt.getType(), _fctType);
+          param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+        }
       }
       // Create induction variable declaration
       xcodeml.createIdAndDecl(dimension.getIdentifier(), FortranType.INTEGER,
