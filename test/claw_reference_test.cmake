@@ -13,7 +13,7 @@ set(__reference_test YES)
 
 function(claw_add_basic_test)
   set(options DEBUG COMPILE COMPARE IGNORE)
-  set(oneValueArgs NAME ORIGINAL TRANSFORMED REFERENCE WORKING_DIRECTORY)
+  set(oneValueArgs NAME ORIGINAL TRANSFORMED REFERENCE WORKING_DIRECTORY INPUT_DIRECTORY)
   set(multiValueArgs CLAW_FLAGS)
   cmake_parse_arguments(claw_add_basic_test "${options}" "${oneValueArgs}"
     "${multiValueArgs}" ${ARGN})
@@ -22,9 +22,15 @@ function(claw_add_basic_test)
     message(FATAL_ERROR "claw_add_basic_test NAME is required")
   endif()
 
-  if("${claw_add_basic_test_WORKING_DIRECTORY}" STREQUAL "")
-    set(claw_add_basic_test_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+  if("${claw_add_basic_test_INPUT_DIRECTORY}" STREQUAL "")
+    message(FATAL_ERROR "claw_add_basic_test INPUT_DIRECTORY is required")
   endif()
+
+  if("${claw_add_basic_test_WORKING_DIRECTORY}" STREQUAL "")
+    message(FATAL_ERROR "claw_add_basic_test WORKING_DIRECTORY is required")
+  endif()
+
+  file(COPY ${claw_add_basic_test_INPUT_DIRECTORY} DESTINATION ${claw_add_basic_test_WORKING_DIRECTORY}/../)
 
   # Define input and output file name
   if("${claw_add_basic_test_ORIGINAL}" STREQUAL "")
@@ -200,7 +206,8 @@ function(claw_add_basic_test_set)
 
     claw_add_basic_test(
       NAME ${TEST_SET}-${t_name}
-      WORKING_DIRECTORY ${claw_add_basic_test_set_DIRECTORY}/${t_name}
+      INPUT_DIRECTORY ${claw_add_basic_test_set_DIRECTORY}/${t_name}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${t_name}
       CLAW_FLAGS ${CLAW_FLAGS_${t_name}}
       ${test_option_compile}
       ${test_option_compare}

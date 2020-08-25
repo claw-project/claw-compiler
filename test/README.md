@@ -18,7 +18,8 @@ claw_add_basic_test(
   [ORIGINAL <original_code.f90>] # Original source code
   [TRANSFORMED <transformed_code.f90>] # Transformed code
   [REFERENCE <reference.f90>] # Reference code for compare test
-  [WORKING_DIRECTORY <path>] # Directory where code is located
+  [INPUT_DIRECTORY <path>] # Directory where the input files are located
+  [WORKING_DIRECTORY <path>] # Directory where intermideate files will be placed
   [CLAW_FLAGS <flags>] # Additional flags passed to clawfc
   [DEBUG]   # Enable debug
   [COMPILE] # Compile original and transformed code
