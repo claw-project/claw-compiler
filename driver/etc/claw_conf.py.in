@@ -83,11 +83,17 @@ class _CFG:
     def SHA1SUM_CMD(self): return self.__SHA1SUM_CMD
 
     def __init__(self):
-        self.__OMNI_HOME = os.environ.get('OMNI_HOME', "@OMNI_HOME@")
+        DEFAULT_CLAW_HOME = os.path.abspath(join_path(THIS_DIR_PATH, '..'))
+        self.__OMNI_HOME = os.environ.get('OMNI_HOME')
+        if self.__OMNI_HOME is None:
+            if "@ADD_OMNI_XCODEML_TOOLS_TO_INSTALL@".lower() == "on":
+                self.__OMNI_HOME = DEFAULT_CLAW_HOME
+            else:
+                self.__OMNI_HOME = "@OMNI_HOME@"
         self.__OMNI_DRIVER_DIR = join_path(self.__OMNI_HOME, 'libexec')
         self.__OMNI_BIN_DIR = join_path(self.__OMNI_HOME, 'bin')
         self.__OMNI_XMOD_GENERIC = join_path(self.__OMNI_HOME, 'fincludes')
-        self.__CLAW_HOME = os.environ.get('CLAW_HOME', os.path.abspath(join_path(THIS_DIR_PATH, '..')))
+        self.__CLAW_HOME = os.environ.get('CLAW_HOME', DEFAULT_CLAW_HOME)
         self.__CLAW_XMOD_GENERIC = join_path(self.__CLAW_HOME, 'fincludes')
         self.__OMNI_F2X_CMD = join_path(self.__OMNI_HOME, 'bin/F_Front')
         self.__CLAW_JAVA = os.environ.get('CLAW_JAVA', "@Java_JAVA_EXECUTABLE@")

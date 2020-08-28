@@ -40,14 +40,18 @@ set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 # OMNI Compiler variables
 #
 set(OMNI_VERSION "1.3.0")
-set(OMNI_GIT_COMMIT_HASH "8d1584849f45de8d561e9224a1b7860db6fa42a7" CACHE STRING
+set(OMNI_GIT_COMMIT_HASH "dd9fbd8a08141e582e83ad8dd5f5267889a23a54" CACHE STRING
     "OMNI compiler tools GIT commit hash")
 set(OMNI_GIT_REPOSITORY "https://github.com/MeteoSwiss-APN/xcodeml-tools.git" CACHE STRING
     "OMNI compiler tools GIT repository URL")
 set(OMNI_GIT_BRANCH "master" CACHE STRING "OMNI compiler tools GIT repository branch")
 set(OMNI_VERSION_TAG ${OMNI_GIT_COMMIT_HASH})
 if(BUILD_OMNI_XCODEML_TOOLS)
-    set(OMNI_HOME "${CMAKE_BINARY_DIR}/omni-compiler-install")
+    if(ADD_OMNI_XCODEML_TOOLS_TO_INSTALL)
+        set(OMNI_HOME "${INT_CLAW_HOME}")
+    else()
+        set(OMNI_HOME "${CMAKE_BINARY_DIR}/omni-compiler-install")
+    endif(ADD_OMNI_XCODEML_TOOLS_TO_INSTALL)
 else()
     if(NOT DEFINED OMNI_HOME)
         message(FATAL_ERROR "When BUILD_OMNI_XCODEML_TOOLS is off, OMNI_HOME variable must be set to path to the xcodeml-tools install")

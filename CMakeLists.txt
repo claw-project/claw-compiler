@@ -127,20 +127,13 @@ if(BUILD_OMNI_XCODEML_TOOLS)
       --with-java=${Java_JAVA_EXECUTABLE}
       --with-javac=${Java_JAVAC_EXECUTABLE}
       --with-jar=${Java_JAR_EXECUTABLE}
+      --with-version-tag=${OMNI_GIT_COMMIT_HASH}
       --prefix=${OMNI_HOME}
       ${OMNI_CONF_OPTION}
     BUILD_IN_SOURCE ON
     BUILD_COMMAND make -j 1 # OMNI build is not thread safe
     INSTALL_COMMAND make install
   )
-  if(ADD_OMNI_XCODEML_TOOLS_TO_INSTALL)
-      install( CODE
-                  "
-                  message(STATUS \"Copying OMNI XCodeMLTools into CLAW install\")
-                  execute_process(COMMAND make DESTDIR=${CMAKE_INSTALL_PREFIX} install
-                                  WORKING_DIRECTORY ${OMNI_COMPILER_SRC_DIR})
-                  ")
-  endif(ADD_OMNI_XCODEML_TOOLS_TO_INSTALL)
 else()
   function(get_xcodemltools_version_tag _output_version_tag)
       execute_process(
