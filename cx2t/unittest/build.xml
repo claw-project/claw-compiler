@@ -57,7 +57,7 @@
   <!-- Compile java sources -->
   <target name="compile" depends="common.resolve"
           description="compile the source">
-    <javac includeantruntime="false" destdir="${build.dir}"
+    <javac executable="${javac.exec}" fork="yes" includeantruntime="false" destdir="${build.dir}"
            classpathref="build.path" debug="on" >
       <src>
         <pathelement path="${src.dir}"/>
@@ -91,7 +91,7 @@
     <mkdir dir="${test.reports}" />
 
     <jacoco:coverage destfile="${test.reports}/${jacoco.file}">
-      <junit fork="yes" printsummary="no" haltonfailure="yes">
+      <junit jvm="${java.exec}" fork="yes" printsummary="no" haltonfailure="yes">
         <classpath path="${claw.tatsu.ut.dep}" />
         <classpath path="${claw.tatsu.dep}" />
         <classpath path="${junit.dep}" />
@@ -140,7 +140,7 @@
   <target name="junit-shenron" depends="compile, jar">
     <mkdir dir="${test.reports}" />
     <jacoco:coverage destfile="${test.reports}/${jacoco.file}" >
-    <junit fork="yes" printsummary="no" haltonfailure="yes">
+    <junit jvm="${java.exec}" fork="yes" printsummary="no" haltonfailure="yes">
       <classpath path="${claw.shenron.ut.dep}" />
       <classpath path="${claw.tatsu.dep}" />
       <classpath path="${claw.shenron.dep}" />
@@ -190,7 +190,7 @@
   <target name="junit-wani" depends="compile, jar">
     <mkdir dir="${test.reports}" />
     <jacoco:coverage destfile="${test.reports}/${jacoco.file}" >
-    <junit fork="yes" printsummary="no" haltonfailure="yes">
+    <junit jvm="${java.exec}" fork="yes" printsummary="no" haltonfailure="yes">
       <classpath path="${claw.wani.ut.dep}" />
       <classpath path="${claw.tatsu.dep}" />
       <classpath path="${claw.shenron.dep}" />

@@ -5,6 +5,12 @@
 # Path are relative to build.xml files. So one level deeper than the current
 # file.
 
+# Java installation
+
+java.exec = @Java_JAVA_EXECUTABLE@
+javac.exec = @Java_JAVAC_EXECUTABLE@
+jar.exec = @Java_JAR_EXECUTABLE@
+
 # Third-party libraries
 ivy.dir=${lib.dir}
 st4.jar=ST4.jar

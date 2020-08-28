@@ -17,8 +17,8 @@ enable_testing()
 
 find_package(Java 8 REQUIRED)
 # Warning!!! After finding the first version, find_package(Java) does NOT look for others. CMAKE_FIND_PACKAGE_SORT_ORDER
-# and CMAKE_FIND_PACKAGE_SORT_DIRECTION have no effect. To override the "default" java version, set both cmake and
-# environment variables JAVA_HOME to desired java installation path.
+# and CMAKE_FIND_PACKAGE_SORT_DIRECTION have no effect. To override the "default" java version, set cmake variable
+# JAVA_HOME to desired java installation path.
 
 if(Java_VERSION_MAJOR GREATER 13)
     message(FATAL_ERROR "Java ${Java_VERSION_MAJOR} is not supported")

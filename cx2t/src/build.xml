@@ -61,7 +61,7 @@
     <!-- Generate the CLAW parser from the ANTLR grammar file -->
     <target name="antlr" depends="common.resolve" if="antlr.required"
             description="Generate the parser from ANTLR grammar file">
-        <java classname="org.antlr.v4.Tool" fork="true" failonerror="true"
+        <java jvm="${java.exec}" classname="org.antlr.v4.Tool" fork="true" failonerror="true"
               classpathref="antlr.path">
             <arg value="-o"/>
             <arg value="${src.translator.parser.dir}"/>
@@ -74,7 +74,7 @@
     <!-- Compile the java code for the two libraries -->
     <target name="compile" depends="common.resolve, antlr"
             description="compile the source">
-        <javac includeantruntime="false" srcdir=""
+        <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir=""
                destdir="${build.dir}" classpathref="build.path" debug="on">
             <src>
                 <pathelement path="${src.base}"/>
