@@ -1,0 +1,132 @@
+#!/usr/bin/env python
+#-*- coding: utf-8 -*-
+
+__author__ = "Mikhail Zhigun"
+__copyright__ = "Copyright 2020, MeteoSwiss"
+
+""" This module contains settings necessary to run clawfc driver
+"""
+
+import os, inspect, argparse
+from os.path import join as join_path
+
+THIS_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
+
+class _CFG:
+    @property
+    def CLAW_HOME(self): return self.__CLAW_HOME
+
+    # OMNI Compiler directories
+    @property
+    def OMNI_HOME(self): return self.__OMNI_HOME
+    @property
+    def OMNI_DRIVER_DIR(self): return self.__OMNI_DRIVER_DIR
+    @property
+    def OMNI_BIN_DIR(self): return self.__OMNI_BIN_DIR
+    @property
+    def OMNI_XMOD_GENERIC(self): return self.__OMNI_XMOD_GENERIC
+    @property
+    def CLAW_XMOD_GENERIC(self): return self.__CLAW_XMOD_GENERIC
+
+    # Preprocessor
+    @property
+    def CPP_OPT(self): return "@CPP_OPT@"
+    @property
+    def OMNI_FPP_CMD(self): return "@FPP@"
+    @property
+    def OMNI_FPP_OPT(self): return "@FPPFLAGS@"
+
+    # OMNI FrontEnd
+    @property
+    def OMNI_F2X_CMD(self): return self.__OMNI_F2X_CMD
+    @property
+    def OMNI_F2X_MUST_OPT(self): return ""
+    @property
+    def OMNI_F2X_OPT(self): return self.OMNI_F2X_MUST_OPT + " @OMNI_F2X_FLAGS@"
+
+    # OMNI Compiler
+    @property
+    def CLAW_JAVA(self): return self.__CLAW_JAVA
+    @property
+    def OMNI_FX2X_CMD(self): return self.CLAW_JAVA
+    @property
+    def OMNI_JAR_TOOLS(self): return self.__OMNI_JAR_TOOLS
+    @property
+    def OMNI_JAR_F_BACKEND(self): return self.__OMNI_JAR_F_BACKEND
+    @property
+    def OMNI_JAR_C_BACKEND(self): return self.__OMNI_JAR_C_BACKEND
+
+    # Translator
+    @property
+    def CLAW_X2T_TATSU_JAR(self): return self.__CLAW_X2T_TATSU_JAR
+    @property
+    def CLAW_X2T_SHENRON_JAR(self): return self.__CLAW_X2T_SHENRON_JAR
+    @property
+    def CLAW_X2T_WANI_JAR(self): return self.__CLAW_X2T_WANI_JAR
+    @property
+    def CLAW_X2T_CONFIG_PATH(self): return self.__CLAW_X2T_CONFIG_PATH
+    @property
+    def ANTLR4(self): return self.__ANTLR4
+    @property
+    def ANTLR4_RUNTIME(self): return self.__ANTLR4_RUNTIME
+    @property
+    def COMMON_CLI(self): return self.__COMMON_CLI
+    @property
+    def TOML(self): return self.__TOML
+
+    # Driver
+    @property
+    def OMNI_FX2X_MUST_OPT(self): return self.__OMNI_FX2X_MUST_OPT
+    @property
+    def OMNI_FX2X_OPT(self): return self.__OMNI_FX2X_OPT
+    @property
+    def SHA1SUM_CMD(self): return self.__SHA1SUM_CMD
+
+    def __init__(self):
+        self.__OMNI_HOME = os.environ.get('OMNI_HOME', "@OMNI_HOME@")
+        self.__OMNI_DRIVER_DIR = join_path(self.__OMNI_HOME, 'libexec')
+        self.__OMNI_BIN_DIR = join_path(self.__OMNI_HOME, 'bin')
+        self.__OMNI_XMOD_GENERIC = join_path(self.__OMNI_HOME, 'fincludes')
+        self.__CLAW_HOME = os.environ.get('CLAW_HOME', os.path.abspath(join_path(THIS_DIR_PATH, '..')))
+        self.__CLAW_XMOD_GENERIC = join_path(self.__CLAW_HOME, 'fincludes')
+        self.__OMNI_F2X_CMD = join_path(self.__OMNI_HOME, 'bin/F_Front')
+        self.__CLAW_JAVA = os.environ.get('CLAW_JAVA', "@Java_JAVA_EXECUTABLE@")
+        self.__OMNI_JAR_TOOLS = join_path(self.OMNI_HOME, 'share/om-common.jar')
+        self.__OMNI_JAR_F_BACKEND = join_path(self.OMNI_HOME, 'share/om-f-back.jar')
+        self.__OMNI_JAR_C_BACKEND = join_path(self.OMNI_HOME, 'share/om-c-back.jar')
+        self.__CLAW_X2T_TATSU_JAR = join_path(self.CLAW_HOME, 'share/claw/claw-x2t-tatsu.jar')
+        self.__CLAW_X2T_SHENRON_JAR = join_path(self.CLAW_HOME, 'share/claw/claw-x2t-shenron.jar')
+        self.__CLAW_X2T_WANI_JAR = join_path(self.CLAW_HOME, 'share/claw/claw-x2t-wani.jar')
+        self.__CLAW_X2T_CONFIG_PATH = join_path(self.CLAW_HOME, 'etc')
+        self.__ANTLR4 = join_path(self.CLAW_HOME, 'share/claw/antlr4.jar')
+        self.__ANTLR4_RUNTIME = join_path(self.CLAW_HOME, 'share/claw/antlr4-runtime.jar')
+        self.__COMMON_CLI = join_path(self.CLAW_HOME, 'share/claw/commons-cli.jar')
+        self.__TOML = join_path(self.CLAW_HOME, 'share/claw/cava-toml.jar')
+        s = self
+        trans_jars = [s.OMNI_JAR_TOOLS, s.OMNI_JAR_F_BACKEND, s.OMNI_JAR_C_BACKEND, s.CLAW_X2T_TATSU_JAR,
+                      s.CLAW_X2T_SHENRON_JAR, s.CLAW_X2T_WANI_JAR, s.COMMON_CLI, s.ANTLR4, s.ANTLR4_RUNTIME, s.TOML]
+        trans_jars_str = ':'.join(trans_jars)
+        self.__OMNI_FX2X_MUST_OPT = '-cp %s claw.ClawX2T' % trans_jars_str
+        self.__OMNI_FX2X_OPT = '@JAVA_OPT@ %s @OMNI_X2X_FLAGS@' % self.__OMNI_FX2X_MUST_OPT
+        self.__SHA1SUM_CMD = '@SHA1SUM_CMD@'
+
+CFG = _CFG()
+
+
+def dir_exists(path):
+    return os.path.exists(path) and os.path.isdir(path)
+
+
+def is_prop(v):
+    return isinstance(v, property)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Generates shell script with settings for clawfc driver')
+    parser.add_argument('-o', '--output-dir', type=str, help='Output directory', default=THIS_DIR_PATH)
+    p_args = parser.parse_args()
+    assert dir_exists(p_args.output_dir), 'Output directory not found'
+    out_file = join_path(p_args.output_dir, 'claw_f.conf')
+    with open(out_file, 'w') as f:
+        for name, value in inspect.getmembers(_CFG, is_prop):
+            f.write('readonly %s="%s"\n' % (name, getattr(CFG, name)))

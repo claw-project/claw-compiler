@@ -10,7 +10,7 @@ set(__omni_compiler YES)
 # Generate the .xmod file for a given source file
 #
 function(omni_generate_xmod)
-  set(oneValueArgs TARGET SOURCE DEPENDS)
+  set(oneValueArgs TARGET SOURCE DEPENDS OUTPUT)
   cmake_parse_arguments(omni_generate_xmod "" "${oneValueArgs}" "" ${ARGN})
 
   if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${omni_generate_xmod_SOURCE})
@@ -22,6 +22,8 @@ function(omni_generate_xmod)
   endif()
 
   add_custom_target(${omni_generate_xmod_TARGET} ALL)
+
+  add_dependencies(${omni_generate_xmod_TARGET} create_int_install_dir)
 
   set(FPP_ARG_LIST ${FPPFLAGS})
   separate_arguments(FPP_ARG_LIST)
@@ -35,6 +37,8 @@ function(omni_generate_xmod)
       COMMAND
         ${OMNI_F_FRONT} -M${CMAKE_CURRENT_BINARY_DIR}
         ${CMAKE_CURRENT_BINARY_DIR}/"${CRAY_PP_OUTPUT}.i" > /dev/null
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/fincludes
+      COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/${omni_generate_xmod_OUTPUT} ${INT_CLAW_HOME}/fincludes/
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${omni_generate_xmod_SOURCE}
       COMMENT "Generating .xmod file for ${omni_generate_xmod_SOURCE}"
     )
@@ -44,6 +48,8 @@ function(omni_generate_xmod)
       COMMAND ${CMAKE_Fortran_COMPILER} ${FPP_ARG_LIST}
         ${CMAKE_CURRENT_SOURCE_DIR}/${omni_generate_xmod_SOURCE} |
         ${OMNI_F_FRONT} > /dev/null
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/fincludes
+      COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/${omni_generate_xmod_OUTPUT} ${INT_CLAW_HOME}/fincludes/
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${omni_generate_xmod_SOURCE}
       COMMENT "Generating .xmod file for ${omni_generate_xmod_SOURCE}"
     )

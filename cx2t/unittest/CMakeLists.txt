@@ -21,7 +21,7 @@ if(NOT OFFLINE)
     -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
     -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-    -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+    -Dlib.dir=${3RDPARTY_LIB_DIR}
     -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
     -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
     init
@@ -39,7 +39,7 @@ add_custom_command(
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-  -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dlib.dir=${3RDPARTY_LIB_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}
@@ -58,7 +58,7 @@ add_test(
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-  -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dlib.dir=${3RDPARTY_LIB_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}
@@ -75,7 +75,7 @@ add_test(
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-  -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dlib.dir=${3RDPARTY_LIB_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}
@@ -92,7 +92,7 @@ add_test(
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-  -Dlib.dir.prefix=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dlib.dir=${3RDPARTY_LIB_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}

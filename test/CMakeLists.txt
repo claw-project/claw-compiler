@@ -8,7 +8,7 @@ if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
 endif()
 
 # Set up some common env variable for the transformation flow
-set(CLAWFC ${CMAKE_BINARY_DIR}/driver/clawfc_test)
+set(CLAWFC bash ${INT_CLAW_HOME}/bin/clawfc)
 set(BUILD_TEST_TARGET transformation)
 set(CLEAN_TEST_TARGET clean-transformation)
 
@@ -35,6 +35,7 @@ add_subdirectory(utilities)
 add_test(
   NAME library-test-claw_f_lib
   COMMAND ${CMAKE_COMMAND} -E env
+    CLAW_HOME=${INT_CLAW_HOME}
     CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR}
     CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}
      ./test.claw_f_lib

@@ -25,6 +25,18 @@ if(Java_VERSION_MAJOR GREATER 13)
 endif()
 
 find_package(Ant 1.7.1 REQUIRED)
+find_package(Python REQUIRED)
+
+if(Python_VERSION_MAJOR LESS 2)
+    message(FATAL_ERROR "Python ${Python_VERSION} is not supported")
+endif()
+
+if(Python_VERSION_MAJOR EQUAL 2)
+    if(Python_VERSION_MINOR LESS 6)
+        message(FATAL_ERROR "Python ${Python_VERSION} is not supported")
+    endif()
+endif()
+
 include(ExternalProject)
 include(cmake/git.cmake)
 include(cmake/omni_compiler.cmake)
@@ -81,6 +93,14 @@ option(OMNI_ENABLE_GNU_INTRINSIC "OMNI Compiler - Enable GNU intrinsic extension
 if(OMNI_ENABLE_GNU_INTRINSIC)
   list(APPEND OMNI_CONF_OPTION "--enable-gnu-extension")
 endif()
+
+add_custom_target(create_int_install_dir ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME})
+
+install(
+    DIRECTORY ${INT_CLAW_HOME}/
+    DESTINATION ${CMAKE_INSTALL_PREFIX}
+    FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
 
 # Build OMNI compiler
 if(BUILD_OMNI_XCODEML_TOOLS)
@@ -156,3 +176,7 @@ add_subdirectory(test)
 
 # Build documentation
 add_subdirectory(documentation)
+
+set(ADDITIONAL_CLEAN_FILES "")
+LIST(APPEND ADDITIONAL_CLEAN_FILES ${INT_CLAW_HOME})
+SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ADDITIONAL_CLEAN_FILES}")

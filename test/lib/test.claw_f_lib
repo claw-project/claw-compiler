@@ -11,9 +11,9 @@ if [[ -z "${CMAKE_BINARY_DIR}" ]]; then
 fi
 
 # source the library
-. ${CMAKE_SOURCE_DIR}/driver/libexec/claw_f_lib.sh.in
+. ${CLAW_HOME}/libexec/claw_f_lib.sh
 #shellcheck disable=SC1091
-. ${CMAKE_BINARY_DIR}/driver/etc/claw_f.conf
+. ${CLAW_HOME}/etc/claw_f.conf
 
 # Test the claw::norm_file_name function
 function test_claw::norm_file_name()

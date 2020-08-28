@@ -14,9 +14,12 @@
 
 ## TODO cp original file in case of error
 
+THIS_DIR=$(dirname "$(readlink -f "$0")")
+CLAW_HOME=${THIS_DIR}/..
+
 ### Read configration file and library ###
-claw_x2t_driver_conf_dir=@CLAW_X2T_CONFIG_PATH@
-claw_x2t_driver_lib_dir=@CLAW_X2T_DRIVER_LIB_DIR@
+claw_x2t_driver_conf_dir=${CLAW_HOME}/etc
+claw_x2t_driver_lib_dir=${CLAW_HOME}/libexec
 compiler_macro="@COMPILER_MACRO@"
 # shellcheck source=../etc/claw_f.conf.in
 . ${claw_x2t_driver_conf_dir}/@CLAW_CONF_FILE@
@@ -161,21 +164,23 @@ if [[ ${show_config} == true ]]; then
   exit 0
 fi
 
+OMNI_F2X_RUN_OPT=${OMNI_F2X_OPT}
+
 ### Add front-end debug option
 if [[ ${omni_ffront_debug} == true ]]; then
-  OMNI_F2X_OPT="${OMNI_F2X_OPT} -d"
+  OMNI_F2X_RUN_OPT="${OMNI_F2X_RUN_OPT} -d"
 fi
 
 ### Add front-end option to keep the comment
 if [[ ${keep_comment} == true ]]; then
-  OMNI_F2X_OPT="${OMNI_F2X_OPT} -fleave-comment"
+  OMNI_F2X_RUN_OPT="${OMNI_F2X_RUN_OPT} -fleave-comment"
 fi
 
 if [[ ${omni_ffront_no_module_cache} == true ]]; then
-  OMNI_F2X_OPT="${OMNI_F2X_OPT} -no-module-cache"
+  OMNI_F2X_RUN_OPT="${OMNI_F2X_RUN_OPT} -no-module-cache"
 fi
 
-readonly OMNI_F2X_OPT
+readonly OMNI_F2X_RUN_OPT
 
 # Add debug flag for the translator options
 if [[ ${enable_debug} == true ]]; then
@@ -233,8 +238,9 @@ done
 ### TODO check if f_files_transformation has any files in ...
 
 ### Preprocessor ###
+OMNI_FPP_RUN_OPT=${OMNI_FPP_OPT}
 [[ ${only_pp} == true ]] && [[ -f "${output_file}" ]] && rm "${output_file}"
-[[ ${enable_cpp} == true ]] && OMNI_FPP_OPT="${OMNI_FPP_OPT} ${CPP_OPT}"
+[[ ${enable_cpp} == true ]] && OMNI_FPP_RUN_OPT="${OMNI_FPP_RUN_OPT} ${CPP_OPT}"
 for input_file in "${f_files_transformation[@]}"; do
   claw::verbose "Prepocessing file ${input_file}"
 
@@ -255,27 +261,27 @@ for input_file in "${f_files_transformation[@]}"; do
       # Debug output
       [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Preprocessing (redirect)"
       [[ ${enable_debug_omni} == true ]] && echo "${OMNI_FPP_CMD} ${include_opt[*]} \
-        ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp} > \
+        ${pp_add_opt[*]} ${OMNI_FPP_RUN_OPT} ${other_args[*]} ${file_pp} > \
         ${file_pp2}"
 
       # Call to the preprocessor
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
-        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}" > ${file_pp2}
+        ${OMNI_FPP_RUN_OPT} ${other_args[@]} "${file_pp}" > ${file_pp2}
 
       mv "${file_pp2}" "${file_pp}"
     else
       # Debug output
       [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Preprocessing"
       [[ ${enable_debug_omni} == true ]] && echo "${OMNI_FPP_CMD} ${include_opt[*]} \
-        ${pp_add_opt[*]} ${OMNI_FPP_OPT} ${other_args[*]} ${file_pp}"
+        ${pp_add_opt[*]} ${OMNI_FPP_RUN_OPT} ${other_args[*]} ${file_pp}"
       [[ ${enable_debug_omni} == true ]] && echo "mv ${preprocessor_output}.i \
         ${file_pp}"
 
       # Call to the preprocessor
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} \
-        ${OMNI_FPP_OPT} ${other_args[@]} "${file_pp}"
+        ${OMNI_FPP_RUN_OPT} ${other_args[@]} "${file_pp}"
 
       mv "${preprocessor_output}.i" "${file_pp}"
     fi
@@ -354,7 +360,7 @@ if [[ ${pipe_workflow} == true ]]; then
       if [[ "${file_out_f}" != "" ]]; then
         # shellcheck disable=SC2086,SC2068
         ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-          "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
+          "${frontend_add_opt[@]}" ${OMNI_F2X_RUN_OPT} "${file_pp}" |
           ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
             ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
             ${CLAW_X2T_CONFIG_OPT} ${CLAW_X2T_MODEL_CONFIG_OPT} \
@@ -366,7 +372,7 @@ if [[ ${pipe_workflow} == true ]]; then
       else
         # shellcheck disable=SC2086,SC2068
         ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-          "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" |
+          "${frontend_add_opt[@]}" ${OMNI_F2X_RUN_OPT} "${file_pp}" |
           ${OMNI_FX2X_CMD} ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} \
             ${CLAW_X2T_TARGET_OPT} ${CLAW_X2T_DIRECTIVE_OPT} \
             ${CLAW_X2T_CONFIG_OPT} ${CLAW_X2T_MODEL_CONFIG_OPT} \
@@ -429,13 +435,13 @@ for input_file in "${f_files_transformation[@]}"; do
 
   # shellcheck disable=SC2153,SC2086
   [[ ${enable_debug_omni} == true ]] && echo "${OMNI_F2X_CMD} \
-    ${include_opt[*]} ${module_opt[*]} ${frontend_add_opt[*]} ${OMNI_F2X_OPT} \
+    ${include_opt[*]} ${module_opt[*]} ${frontend_add_opt[*]} ${OMNI_F2X_RUN_OPT} \
     ${file_pp} -o  ${file_in_x}"
 
   # Call F_Front with the correct arguments
   # shellcheck disable=SC2153,SC2086
   ${OMNI_F2X_CMD} "${include_opt[@]}" "${module_opt[@]}" \
-    "${frontend_add_opt[@]}" ${OMNI_F2X_OPT} "${file_pp}" \
+    "${frontend_add_opt[@]}" ${OMNI_F2X_RUN_OPT} "${file_pp}" \
     -o "${file_in_x}"
 done
 [[ ${stop_frontend} == true ]] && claw::exit_without_error

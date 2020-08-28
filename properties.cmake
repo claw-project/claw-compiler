@@ -8,6 +8,9 @@
 # CLAW X2T variables
 #
 
+# Intermediate target directory used during build
+set(INT_CLAW_HOME "${CMAKE_BINARY_DIR}/home")
+
 # Libraries names and paths
 set(CLAW_X2T_TATSU "claw-x2t-tatsu")
 set(CLAW_X2T_SHENRON "claw-x2t-shenron")
@@ -28,6 +31,7 @@ set(CLAW_X2T_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/etc/")
 
 # Driver files
 set(CLAW_CONF_FILE "claw_f.conf")
+set(CLAW_PY_CONF_FILE "claw_conf.py")
 set(CLAW_COMPILER_FILE "clawfc")
 set(CLAW_LIB_SH "claw_f_lib.sh")
 set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
@@ -65,6 +69,8 @@ set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 #
 # Third party libraries
 #
+set(3RDPARTY_LIB_DIR "${CMAKE_BINARY_DIR}/build/lib")
+
 set(ANTLR4_NAME "antlr4")
 set(ANTLR4_RUNTIME_NAME "antlr4-runtime")
 set(ANTLR_RUNTIME_NAME "antlr-runtime")
@@ -74,19 +80,19 @@ set(ANTLR4_RUNTIME "${CLAW_X2T_JAR_INSTALL_PATH}/${ANTLR4_RUNTIME_NAME}.jar")
 
 set(COMMON_CLI_NAME "commons-cli")
 set(COMMON_CLI "${CLAW_X2T_JAR_INSTALL_PATH}/${COMMON_CLI_NAME}.jar")
-set(BUILD_COMMON_CLI "${CMAKE_BINARY_DIR}/cx2t/lib/${COMMON_CLI_NAME}.jar")
+set(BUILD_COMMON_CLI "${3RDPARTY_LIB_DIR}/${COMMON_CLI_NAME}.jar")
 
-set(BUILD_ANTLR4 "${CMAKE_BINARY_DIR}/cx2t/lib/${ANTLR4_NAME}.jar")
-set( BUILD_ANTLR4_RUNTIME "${CMAKE_BINARY_DIR}/cx2t/lib/${ANTLR4_RUNTIME_NAME}.jar")
+set(BUILD_ANTLR4 "${3RDPARTY_LIB_DIR}/${ANTLR4_NAME}.jar")
+set( BUILD_ANTLR4_RUNTIME "${3RDPARTY_LIB_DIR}/${ANTLR4_RUNTIME_NAME}.jar")
 
 set(ASM "asm.jar")
 set(ASM_COMMON "asm-commons.jar")
 set(ASM_TREE "asm-tree.jar")
-set(ASM_BUILD "${CMAKE_BINARY_DIR}/cx2t/lib/${ASM}:${CMAKE_BINARY_DIR}/cx2t/lib/${ASM_COMMON}:${CMAKE_BINARY_DIR}/cx2t/lib/${ASM_TREE}")
+set(ASM_BUILD "${3RDPARTY_LIB_DIR}/${ASM}:${3RDPARTY_LIB_DIR}/${ASM_COMMON}:${3RDPARTY_LIB_DIR}/${ASM_TREE}")
 
 set(TOML_NAME "cava-toml")
 set(TOML "${CLAW_X2T_JAR_INSTALL_PATH}/${TOML_NAME}.jar")
-set(BUILD_TOML "${CMAKE_BINARY_DIR}/cx2t/lib/${TOML_NAME}.jar")
+set(BUILD_TOML "${3RDPARTY_LIB_DIR}/${TOML_NAME}.jar")
 
 set(FPP "${CMAKE_Fortran_COMPILER}")
 set(CPP_OPT "${FPPFLAGS}")

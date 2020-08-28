@@ -6,31 +6,31 @@
 # file.
 
 # Third-party libraries
-ivy.dir=${lib.dir.prefix}/lib
+ivy.dir=${lib.dir}
 st4.jar=ST4.jar
-st4.dep=${ivy.dir}/${st4.jar}
+st4.dep=${lib.dir}/${st4.jar}
 antlr.jar=antlr-runtime.jar
-antlr.dep=${ivy.dir}/${antlr.jar}
+antlr.dep=${lib.dir}/${antlr.jar}
 antlr4.jar=antlr4.jar
 antlr4.runtime.jar=antlr4-runtime.jar
-antlr4.dep=${ivy.dir}/${antlr4.jar}
-antlr4.runtime.dep=${ivy.dir}/${antlr4.runtime.jar}
-junit.dep=${ivy.dir}/junit.jar
-hamcrest.dep=${ivy.dir}/hamcrest-core.jar
+antlr4.dep=${lib.dir}/${antlr4.jar}
+antlr4.runtime.dep=${lib.dir}/${antlr4.runtime.jar}
+junit.dep=${lib.dir}/junit.jar
+hamcrest.dep=${lib.dir}/hamcrest-core.jar
 commoncli.jar=commons-cli.jar
-commoncli.dep=${ivy.dir}/${commoncli.jar}
+commoncli.dep=${lib.dir}/${commoncli.jar}
 jacoco.jar=org.jacoco.ant.jar
-jacoco.dep=${ivy.dir}/${jacoco.jar}
+jacoco.dep=${lib.dir}/${jacoco.jar}
 jacoco-core.jar=org.jacoco.core.jar
-jacoco-core.dep=${ivy.dir}/${jacoco-core.jar}
+jacoco-core.dep=${lib.dir}/${jacoco-core.jar}
 jacoco-report.jar=org.jacoco.report.jar
-jacoco-report.dep=${ivy.dir}/${jacoco-report.jar}
+jacoco-report.dep=${lib.dir}/${jacoco-report.jar}
 jacoco-agent.jar=org.jacoco.agent.jar
-jacoco-agent.dep=${ivy.dir}/${jacoco-agent.jar}
+jacoco-agent.dep=${lib.dir}/${jacoco-agent.jar}
 asm.jar=asm.jar
-asm.dep=${ivy.dir}/${asm.jar}
+asm.dep=${lib.dir}/${asm.jar}
 toml.jar=cava-toml.jar
-toml.dep=${ivy.dir}/${toml.jar}
+toml.dep=${lib.dir}/${toml.jar}
 
 # OMNI compiler libraries and paths
 omni.xcodeml-common.dep=@OMNI_JAR_TOOLS@
