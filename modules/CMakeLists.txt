@@ -11,4 +11,9 @@ omni_generate_xmod(
 omni_generate_xmod(
   TARGET xmod-ieee_arithmetic SOURCE ieee_arithmetic.f90 DEPENDS omni-compiler OUTPUT "ieee_arithmetic.xmod")
 
+if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
+  omni_generate_xmod(
+    TARGET xmod-ifcore SOURCE intel/ifcore.f90 DEPENDS omni-compiler OUTPUT "ifcore.xmod")
+endif()
+
 add_dependencies(xmod-ieee_arithmetic xmod-ieee_exceptions)
