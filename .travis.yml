@@ -87,6 +87,8 @@ script:
 - if [[ "${TRAVIS_PULL_REQUEST_SLUG}" == "claw-project/claw-compiler" ]]; then sonar-scanner -Dsonar.login=$SONAR_TOKEN; fi
 - if [[ "${TRAVIS_REPO_SLUG}" == "claw-project/claw-compiler" ]] && [[ "${TRAVIS_PULL_REQUEST_SLUG}" == "" ]]; then sonar-scanner -Dsonar.login=$SONAR_TOKEN; fi
 notifications:
+  slack:
+    secure: NTIZzmDqsxEInCI7hwFB7uQZXWNTRHkGWIYZO5ZOr+2Tyksrff1j+vEGmHXwtbbFs4OgDTKz8uGfePsBrTdcUmGkMM7QdQm1pkWaA4VU4MJtviOiHkomypURBI3kwofhohRa7mvvAdiWcECkHGgZqtQYVTJve8LcgutNo2Zv0a0d9piTVCugyh3ONP/MvTSt/wRZ1Tkl59pXBpWCsbRDxZzoSh4feohPNwXtIvcvGBPy4jG14rDvrX3FIxFr56/RmBC89ldJuWkSIRHnTR3pm44W8PEduJ55hr+9EvDIDJJmIqlcanAJjbLBT8DZhXA3JbVoz6qF6t4I9daRK29jjaP6AVmPN61NOxL2HzzGTLl5X/7bEQQilBI8i3208jsIA53ZZmEzDkdu52SKUAEEQxEtrdo8ACvkav377MuuCX/LnmWNbvMlNEPmyKLwZNZaBas3s+ANoU1pMe92zw8oaG0MAxB9K2ejZcvwHDwSvXcTbZ5JXdYfmROyPLINf3s8uLJJaDMPLIPROOHMnGRIekLhUd4ELD1mLpPFqa0Z97xr0lIonAQqF2OedL9yCcX97ZDvooKARD0HRL9aqHeuc97RQsQAT1Y1wZ1zoEdZyX/I2338jmpnk2VIEyFH/rm8/OMgbIpHNo6eKIjLoozm8s3VHphl+FItLCdfBJWFVsE=
   email:
     on_success: never
     on_failure: never
