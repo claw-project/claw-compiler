@@ -10,10 +10,10 @@ if [[ -z "${CMAKE_BINARY_DIR}" ]]; then
     exit 1
 fi
 
-# source the library
-. ${CLAW_HOME}/libexec/claw_f_lib.sh
-#shellcheck disable=SC1091
-. ${CLAW_HOME}/etc/claw_f.conf
+# shellcheck source=/dev/null
+. "${CLAW_HOME}/libexec/claw_f_lib.sh"
+# shellcheck source=/dev/null
+. "${CLAW_HOME}/etc/claw_f.conf"
 
 # Test the claw::norm_file_name function
 function test_claw::norm_file_name()

@@ -35,15 +35,11 @@ fi
 
 # Check driver scripts
 cd ../driver/bin || exit 1
-if ! shellcheck ../etc/claw_f.conf; then
-  echo 'Script ./driver/claw_f.conf failed!'
-  exit 1
-fi
 if ! shellcheck ../libexec/claw_f_lib.sh.in; then
   echo 'Script ./libexec/claw_f_lib.sh.in failed!'
   exit 1
 fi
-if ! shellcheck clawfc.in ../libexec/claw_f_lib.sh.in ../etc/claw_f.conf.in; then
+if ! shellcheck clawfc.in ../libexec/claw_f_lib.sh.in ; then
   echo 'Script ./driver/bin/clawfc.in failed!'
   exit 1
 fi

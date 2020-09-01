@@ -21,10 +21,10 @@ CLAW_HOME=${THIS_DIR}/..
 claw_x2t_driver_conf_dir=${CLAW_HOME}/etc
 claw_x2t_driver_lib_dir=${CLAW_HOME}/libexec
 compiler_macro="@COMPILER_MACRO@"
-# shellcheck source=../etc/claw_f.conf.in
-. ${claw_x2t_driver_conf_dir}/@CLAW_CONF_FILE@
+# shellcheck source=/dev/null
+. "${claw_x2t_driver_conf_dir}/@CLAW_CONF_FILE@"
 # shellcheck source=../libexec/claw_f_lib.sh.in
-. ${claw_x2t_driver_lib_dir}/@CLAW_LIB_SH@
+. "${claw_x2t_driver_lib_dir}/@CLAW_LIB_SH@"
 
 ### Directory for saving intermediate files ###
 temp_dir=$(mktemp -d)
