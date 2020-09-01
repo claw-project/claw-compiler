@@ -82,8 +82,8 @@ script:
 - cd scripts
 - "./run.shellcheck"
 - cd ..
-- export CLAW_BUILD=$(CLAW_SRC)/build
-- export OMNI_HOME=$(CLAW_BUILD)/home
+- export CLAW_BUILD=${CLAW_SRC}/build
+- export OMNI_HOME=${CLAW_BUILD}/home
 - if [[ "${TRAVIS_PULL_REQUEST_SLUG}" == "claw-project/claw-compiler" ]]; then sonar-scanner -Dsonar.login=$SONAR_TOKEN; fi
 - if [[ "${TRAVIS_REPO_SLUG}" == "claw-project/claw-compiler" ]] && [[ "${TRAVIS_PULL_REQUEST_SLUG}" == "" ]]; then sonar-scanner -Dsonar.login=$SONAR_TOKEN; fi
 notifications:
