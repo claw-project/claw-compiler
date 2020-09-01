@@ -21,7 +21,7 @@ CLAW Compiler (clawfc) uses XCodeML tools (Fortran frontend and backend) from [O
 They can be packaged and built together with the CLAW Compiler.
 
 
-To build and install the CLAW Compiler, use the followings commands.
+To build and install the CLAW Compiler, use the following commands.
 
 In source build:
 ```bash
@@ -55,11 +55,11 @@ directory in cmake variable `OMNI_HOME`.
 ```cmake -DBUILD_OMNI_XCODEML_TOOLS=OFF -DOMNI_HOME=<xcodeml_tools_install_dir> ... ```
 
 Note however that each version of the CLAW Compiler is tightly bound to the specific version of the XCodeML tools, 
-therefore only the version from [CLAW repo](https://github.com/claw-project/xcodeml-tools) with the same GIT commit
+therefore only the version from [CLAW repository](https://github.com/claw-project/xcodeml-tools) with the same GIT commit
 as the one specified in cmake variable 'OMNI_GIT_COMMIT_HASH' will be compatible.
 
 ##### External XCodeML tools at runtime
-By default CLAW Compiler will package XCodeML tools in its install directory. This can be disabled by setting cmake 
+By default CLAW Compiler will add XCodeML tools to its install directory. This can be disabled by setting cmake 
 option `ADD_OMNI_XCODEML_TOOLS_TO_INSTALL` to `OFF`. Additionally, runtime path to the XCodeML tools can be overridden
 by setting the environment variable `OMNI_HOME` before running the CLAW compiler.
 
