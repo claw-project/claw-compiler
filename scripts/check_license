@@ -20,7 +20,7 @@ do
     (( license_error++ ))
     echo "${file} has no license information."
   fi
-done < <(find . -path ./omni-compiler -prune -o -iname "*.java" -print0)
+done < <(find . -path ./build/omni-compiler -prune -o -iname "*.java" -print0)
 
 while IFS= read -r -d '' file
 do
@@ -28,7 +28,7 @@ do
     (( license_error++ ))
     echo "${file} has no license information."
   fi
-done < <(find . ! -path "*/__omni_tmp__/*" -a ! -path "*/build/*" \
+done < <(find . ! -path "*/__omni_tmp__/*" -a ! -path "./build/*" \
   -a ! -path "*/omni-compiler/*" -a ! -path "*/documentation/*" \
   -type f -name "*.f90"  -a ! -iname "transformed_*" \
   -a ! -iname "reference*" -print0)
