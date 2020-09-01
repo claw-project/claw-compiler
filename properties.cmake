@@ -39,9 +39,9 @@ set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 #
 # OMNI Compiler variables
 #
-set(OMNI_GIT_COMMIT_HASH "dd9fbd8a08141e582e83ad8dd5f5267889a23a54" CACHE STRING
+set(OMNI_GIT_COMMIT_HASH "92a35f9dbe3601f6177b099825d318cbc3285945" CACHE STRING
     "OMNI compiler tools GIT commit hash")
-set(OMNI_GIT_REPOSITORY "https://github.com/MeteoSwiss-APN/xcodeml-tools.git" CACHE STRING
+set(OMNI_GIT_REPOSITORY "https://github.com/claw-project/xcodeml-tools.git" CACHE STRING
     "OMNI compiler tools GIT repository URL")
 set(OMNI_GIT_BRANCH "master" CACHE STRING "OMNI compiler tools GIT repository branch")
 set(OMNI_VERSION_TAG ${OMNI_GIT_COMMIT_HASH})
