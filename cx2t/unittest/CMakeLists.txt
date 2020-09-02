@@ -17,11 +17,9 @@ if(NOT OFFLINE)
     TARGET claw-ut-init
     COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
     ${ANT_FLAGS}
-    -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
     -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
     -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-    -Dlib.dir=${3RDPARTY_LIB_DIR}
     -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
     -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
     init
@@ -35,11 +33,9 @@ add_custom_command(
   TARGET claw-ut
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   ${ANT_FLAGS}
-  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-  -Dlib.dir=${3RDPARTY_LIB_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}
@@ -53,12 +49,10 @@ endif()
 add_test(
   NAME junit-tatsu
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
-  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-  -Dlib.dir=${3RDPARTY_LIB_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}
@@ -70,12 +64,10 @@ ENVIRONMENT CLASSPATH=${ASM_BUILD}:$ENV{CLASSPATH})
 add_test(
   NAME junit-shenron
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
-  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-  -Dlib.dir=${3RDPARTY_LIB_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}
@@ -87,12 +79,10 @@ ENVIRONMENT CLASSPATH=${ASM_BUILD}:$ENV{CLASSPATH})
 add_test(
   NAME junit-wani
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
-  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-  -Dlib.dir=${3RDPARTY_LIB_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}

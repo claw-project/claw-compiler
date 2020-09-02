@@ -17,11 +17,9 @@ if(NOT OFFLINE)
     TARGET claw-init
     COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
     ${ANT_FLAGS}
-    -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
     -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
     -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-    -Dlib.dir=${3RDPARTY_LIB_DIR}
     -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
     -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}/claw
     init
@@ -36,11 +34,9 @@ add_custom_command(
   TARGET claw-cx2t
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   ${ANT_FLAGS}
-  -Dantfile.dir=${CMAKE_CURRENT_SOURCE_DIR}
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
-  -Dlib.dir=${3RDPARTY_LIB_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}/claw
   -Dantlr4.jar="${ANTLR4_NAME}.jar"

@@ -11,32 +11,37 @@ java.exec = @Java_JAVA_EXECUTABLE@
 javac.exec = @Java_JAVAC_EXECUTABLE@
 jar.exec = @Java_JAR_EXECUTABLE@
 
+# Common
+
+common.dir = @CX2T_COMMON_DIR@
+3rdparty.lib.dir = @3RDPARTY_LIB_DIR@
+
 # Third-party libraries
-ivy.dir=${lib.dir}
+ivy.dir=${3rdparty.lib.dir}
 st4.jar=ST4.jar
-st4.dep=${lib.dir}/${st4.jar}
+st4.dep=${3rdparty.lib.dir}/${st4.jar}
 antlr.jar=antlr-runtime.jar
-antlr.dep=${lib.dir}/${antlr.jar}
+antlr.dep=${3rdparty.lib.dir}/${antlr.jar}
 antlr4.jar=antlr4.jar
 antlr4.runtime.jar=antlr4-runtime.jar
-antlr4.dep=${lib.dir}/${antlr4.jar}
-antlr4.runtime.dep=${lib.dir}/${antlr4.runtime.jar}
-junit.dep=${lib.dir}/junit.jar
-hamcrest.dep=${lib.dir}/hamcrest-core.jar
+antlr4.dep=${3rdparty.lib.dir}/${antlr4.jar}
+antlr4.runtime.dep=${3rdparty.lib.dir}/${antlr4.runtime.jar}
+junit.dep=${3rdparty.lib.dir}/junit.jar
+hamcrest.dep=${3rdparty.lib.dir}/hamcrest-core.jar
 commoncli.jar=commons-cli.jar
-commoncli.dep=${lib.dir}/${commoncli.jar}
+commoncli.dep=${3rdparty.lib.dir}/${commoncli.jar}
 jacoco.jar=org.jacoco.ant.jar
-jacoco.dep=${lib.dir}/${jacoco.jar}
+jacoco.dep=${3rdparty.lib.dir}/${jacoco.jar}
 jacoco-core.jar=org.jacoco.core.jar
-jacoco-core.dep=${lib.dir}/${jacoco-core.jar}
+jacoco-core.dep=${3rdparty.lib.dir}/${jacoco-core.jar}
 jacoco-report.jar=org.jacoco.report.jar
-jacoco-report.dep=${lib.dir}/${jacoco-report.jar}
+jacoco-report.dep=${3rdparty.lib.dir}/${jacoco-report.jar}
 jacoco-agent.jar=org.jacoco.agent.jar
-jacoco-agent.dep=${lib.dir}/${jacoco-agent.jar}
+jacoco-agent.dep=${3rdparty.lib.dir}/${jacoco-agent.jar}
 asm.jar=asm.jar
-asm.dep=${lib.dir}/${asm.jar}
+asm.dep=${3rdparty.lib.dir}/${asm.jar}
 toml.jar=cava-toml.jar
-toml.dep=${lib.dir}/${toml.jar}
+toml.dep=${3rdparty.lib.dir}/${toml.jar}
 
 # OMNI compiler libraries and paths
 omni.xcodeml-common.dep=@OMNI_JAR_TOOLS@

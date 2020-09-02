@@ -7,9 +7,7 @@
          xmlns:jacoco="antlib:org.jacoco.ant">
   <description>Build CLAWX2T unit tests</description>
 
-  <dirname property="antfile.dir" file="${ant.file}"/>
-
-  <import file="../common-targets.xml"/>
+  <import file="../common/targets.xml"/>
   <!-- Value set externally-->
   <property name="claw.properties.dir" value=""/>
   <property file="${claw.properties.dir}/claw.properties"/>

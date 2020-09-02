@@ -7,12 +7,10 @@
 <project name="claw" default="main" basedir=".">
     <description>Build CX2T libraries</description>
 
-    <dirname property="antfile.dir" file="${ant.file}"/>
-
     <!-- Generated source directory, set externally -->
     <property name="gen.src.dir" value=""/>
 
-    <import file="../common-targets.xml"/>
+    <import file="../common/targets.xml"/>
 
     <!-- Value set externally-->
     <property name="claw.properties.dir" value=""/>
