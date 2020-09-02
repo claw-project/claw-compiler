@@ -17,10 +17,7 @@ if(NOT OFFLINE)
     TARGET claw-init
     COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
     ${ANT_FLAGS}
-    -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
-    -Ddist.dir=${CMAKE_BINARY_DIR}/build
     -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-    -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
     init
     COMMENT "Resolving dependencies for the build"
   )
@@ -33,19 +30,16 @@ add_custom_command(
   TARGET claw-cx2t
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   ${ANT_FLAGS}
-  -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
-  -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   -Dantlr4.jar="${ANTLR4_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
   ${DISABLE_RESOLVE}
   COMMENT "Building CLAW X2T libraries"
   COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/share/claw
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CMAKE_BINARY_DIR}/build/${CLAW_X2T_TATSU}.jar
-      ${CMAKE_BINARY_DIR}/build//${CLAW_X2T_SHENRON}.jar
-      ${CMAKE_BINARY_DIR}/build/${CLAW_X2T_WANI}.jar
+      ${CX2T_DIST_DIR}/${CLAW_X2T_TATSU}.jar
+      ${CX2T_DIST_DIR}/${CLAW_X2T_SHENRON}.jar
+      ${CX2T_DIST_DIR}/${CLAW_X2T_WANI}.jar
       ${3RDPARTY_LIB_DIR}/${ANTLR4_NAME}.jar
       ${3RDPARTY_LIB_DIR}/${ANTLR4_RUNTIME_NAME}.jar
       ${3RDPARTY_LIB_DIR}/${ANTLR_RUNTIME_NAME}.jar
@@ -57,8 +51,4 @@ if(NOT OFFLINE)
   add_dependencies(claw-cx2t claw-init)
   add_dependencies(claw-cx2t omni-compiler)
 endif()
-
-add_custom_target(copy_cx2t_libs_to_int_install ALL
-
-    )
 

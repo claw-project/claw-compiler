@@ -22,9 +22,6 @@
     </classpath>
   </taskdef>
 
-  <!-- Java compiled classes directory, set externally -->
-  <property name="build.dir" value="" />
-
   <!-- Classpath for dependencies -->
   <path id="build.path">
     <pathelement path="${junit.dep}" />
@@ -43,13 +40,13 @@
   <!-- Initialization step -->
   <target name="init" depends="common.bootstrap">
     <tstamp />
-    <mkdir dir="${build.dir}" />
+    <mkdir dir="${ut.classes.dir}" />
   </target>
 
   <!-- Compile java sources -->
   <target name="compile" depends="common.resolve"
           description="compile the source">
-    <javac executable="${javac.exec}" fork="yes" includeantruntime="false" destdir="${build.dir}"
+    <javac executable="${javac.exec}" fork="yes" includeantruntime="false" destdir="${ut.classes.dir}"
            classpathref="build.path" debug="on" >
       <src>
         <pathelement path="${ut.src.dir}"/>
@@ -60,29 +57,28 @@
 
   <!-- Package compiled files into their own library -->
   <target name="jar" depends="compile" description="package, output to JAR">
-    <mkdir dir="${dist.dir}" />
-    <jar jarfile="${dist.dir}/${claw.tatsu.ut.jar}" basedir="${build.dir}"
+    <mkdir dir="${ut.dist.dir}" />
+    <jar jarfile="${ut.dist.dir}/${claw.tatsu.ut.jar}" basedir="${ut.classes.dir}"
          includes="claw/tatsu/** helper/**" />
-    <jar jarfile="${dist.dir}/${claw.shenron.ut.jar}" basedir="${build.dir}"
+    <jar jarfile="${ut.dist.dir}/${claw.shenron.ut.jar}" basedir="${ut.classes.dir}"
          includes="claw/shenron/** helper/**" />
-    <jar jarfile="${dist.dir}/${claw.wani.ut.jar}" basedir="${build.dir}"
+    <jar jarfile="${ut.dist.dir}/${claw.wani.ut.jar}" basedir="${ut.classes.dir}"
          includes="claw/wani/** helper/**" />
   </target>
 
   <!-- Clean build -->
   <target name="clean" description="clean up">
-    <delete dir="${build.dir}" />
-    <delete dir="${ivy.dir}" />
-    <delete file="${dist.dir}/${claw.tatsu.ut.jar}" />
-    <delete file="${dist.dir}/${claw.shenron.ut.jar}" />
-    <delete file="${dist.dir}/${claw.wani.ut.jar}" />
+    <delete dir="${ut.classes.dir}" />
+    <delete file="${ut.dist.dir}/${claw.tatsu.ut.jar}" />
+    <delete file="${ut.dist.dir}/${claw.shenron.ut.jar}" />
+    <delete file="${ut.dist.dir}/${claw.wani.ut.jar}" />
   </target>
 
   <!-- Execution of JUnit tests -->
   <target name="junit-tatsu" depends="compile, jar">
-    <mkdir dir="${test.reports}" />
+    <mkdir dir="${ut.reports.dir}" />
 
-    <jacoco:coverage destfile="${test.reports}/${jacoco.file}">
+    <jacoco:coverage destfile="${ut.reports.dir}/${jacoco.file}">
       <junit jvm="${java.exec}" fork="yes" printsummary="no" haltonfailure="yes">
         <classpath path="${claw.tatsu.ut.dep}" />
         <classpath path="${claw.tatsu.dep}" />
@@ -95,8 +91,8 @@
 
         <formatter type="xml" />
 
-        <batchtest fork="yes" todir="${test.reports}">
-          <fileset dir="${build.dir}">
+        <batchtest fork="yes" todir="${ut.reports.dir}">
+          <fileset dir="${ut.classes.dir}">
             <include name="claw/tatsu/**/*Test*.class"/>
             <exclude name="**/TestConstant.class"/>
             <exclude name="**/*$*.class"/>
@@ -107,31 +103,31 @@
 
     <jacoco:report>
       <executiondata>
-        <file file="${test.reports}/${jacoco.file}"/>
+        <file file="${ut.reports.dir}/${jacoco.file}"/>
       </executiondata>
       <structure name="${ant.project.name}">
         <classfiles>
-          <fileset dir="${build.dir}"/>
+          <fileset dir="${ut.classes.dir}"/>
         </classfiles>
         <sourcefiles encoding="UTF-8">
           <fileset dir="${ut.src.dir}"/>
           <fileset dir="${ut.gen.src.dir}"/>
         </sourcefiles>
       </structure>
-      <html destdir="${test.reports}"/>
+      <html destdir="${ut.reports.dir}"/>
     </jacoco:report>
 
-    <junitreport todir="${test.reports}">
-      <fileset dir="${test.reports}">
+    <junitreport todir="${ut.reports.dir}">
+      <fileset dir="${ut.reports.dir}">
         <include name="TEST-*.xml" />
       </fileset>
-      <report todir="${test.reports}" />
+      <report todir="${ut.reports.dir}" />
     </junitreport>
   </target>
 
   <target name="junit-shenron" depends="compile, jar">
-    <mkdir dir="${test.reports}" />
-    <jacoco:coverage destfile="${test.reports}/${jacoco.file}" >
+    <mkdir dir="${ut.reports.dir}" />
+    <jacoco:coverage destfile="${ut.reports.dir}/${jacoco.file}" >
     <junit jvm="${java.exec}" fork="yes" printsummary="no" haltonfailure="yes">
       <classpath path="${claw.shenron.ut.dep}" />
       <classpath path="${claw.tatsu.dep}" />
@@ -145,8 +141,8 @@
 
       <formatter type="xml" />
 
-      <batchtest fork="yes" todir="${test.reports}">
-        <fileset dir="${build.dir}">
+      <batchtest fork="yes" todir="${ut.reports.dir}">
+        <fileset dir="${ut.classes.dir}">
           <include name="claw/shenron/**/*Test*.class"/>
           <exclude name="**/TestConstant.class"/>
           <exclude name="**/*$*.class"/>
@@ -157,31 +153,31 @@
 
     <jacoco:report>
       <executiondata>
-        <file file="${test.reports}/${jacoco.file}"/>
+        <file file="${ut.reports.dir}/${jacoco.file}"/>
       </executiondata>
       <structure name="${ant.project.name}">
         <classfiles>
-          <fileset dir="${build.dir}"/>
+          <fileset dir="${ut.classes.dir}"/>
         </classfiles>
         <sourcefiles encoding="UTF-8">
           <fileset dir="${ut.src.dir}"/>
           <fileset dir="${ut.gen.src.dir}"/>
         </sourcefiles>
       </structure>
-      <html destdir="${test.reports}"/>
+      <html destdir="${ut.reports.dir}"/>
     </jacoco:report>
 
-    <junitreport todir="${test.reports}">
-      <fileset dir="${test.reports}">
+    <junitreport todir="${ut.reports.dir}">
+      <fileset dir="${ut.reports.dir}">
         <include name="TEST-*.xml" />
       </fileset>
-      <report todir="${test.reports}" />
+      <report todir="${ut.reports.dir}" />
     </junitreport>
   </target>
 
   <target name="junit-wani" depends="compile, jar">
-    <mkdir dir="${test.reports}" />
-    <jacoco:coverage destfile="${test.reports}/${jacoco.file}" >
+    <mkdir dir="${ut.reports.dir}" />
+    <jacoco:coverage destfile="${ut.reports.dir}/${jacoco.file}" >
     <junit jvm="${java.exec}" fork="yes" printsummary="no" haltonfailure="yes">
       <classpath path="${claw.wani.ut.dep}" />
       <classpath path="${claw.tatsu.dep}" />
@@ -197,8 +193,8 @@
 
       <formatter type="xml" />
 
-      <batchtest fork="yes" todir="${test.reports}">
-        <fileset dir="${build.dir}">
+      <batchtest fork="yes" todir="${ut.reports.dir}">
+        <fileset dir="${ut.classes.dir}">
           <include name="claw/wani/**/*Test*.class"/>
           <exclude name="**/TestConstant.class"/>
           <exclude name="**/*$*.class"/>
@@ -209,25 +205,25 @@
 
     <jacoco:report>
       <executiondata>
-        <file file="${test.reports}/${jacoco.file}"/>
+        <file file="${ut.reports.dir}/${jacoco.file}"/>
       </executiondata>
       <structure name="${ant.project.name}">
         <classfiles>
-          <fileset dir="${build.dir}"/>
+          <fileset dir="${ut.classes.dir}"/>
         </classfiles>
         <sourcefiles encoding="UTF-8">
           <fileset dir="${ut.src.dir}"/>
           <fileset dir="${ut.gen.src.dir}"/>
         </sourcefiles>
       </structure>
-      <html destdir="${test.reports}"/>
+      <html destdir="${ut.reports.dir}"/>
     </jacoco:report>
 
-    <junitreport todir="${test.reports}">
-      <fileset dir="${test.reports}">
+    <junitreport todir="${ut.reports.dir}">
+      <fileset dir="${ut.reports.dir}">
         <include name="TEST-*.xml" />
       </fileset>
-      <report todir="${test.reports}" />
+      <report todir="${ut.reports.dir}" />
     </junitreport>
   </target>
 

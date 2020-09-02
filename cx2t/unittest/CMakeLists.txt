@@ -17,10 +17,7 @@ if(NOT OFFLINE)
     TARGET claw-ut-init
     COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
     ${ANT_FLAGS}
-    -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
-    -Ddist.dir=${CMAKE_BINARY_DIR}/build
     -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-    -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
     init
     COMMENT "Resolving dependencies for the build"
   )
@@ -32,10 +29,7 @@ add_custom_command(
   TARGET claw-ut
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   ${ANT_FLAGS}
-  -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
-  -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   ${DISABLE_RESOLVE}
   COMMENT "Building CLAW XcodeML/F to XcodeML/F unit tests"
 )
@@ -47,11 +41,7 @@ endif()
 add_test(
   NAME junit-tatsu
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
-  -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
-  -Ddist.dir=${CMAKE_BINARY_DIR}/build
-  -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   ${DISABLE_RESOLVE}
   junit-tatsu
 )
@@ -61,11 +51,7 @@ ENVIRONMENT CLASSPATH=${ASM_BUILD}:$ENV{CLASSPATH})
 add_test(
   NAME junit-shenron
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
-  -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
-  -Ddist.dir=${CMAKE_BINARY_DIR}/build
-  -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   ${DISABLE_RESOLVE}
   junit-shenron
 )
@@ -75,11 +61,7 @@ ENVIRONMENT CLASSPATH=${ASM_BUILD}:$ENV{CLASSPATH})
 add_test(
   NAME junit-wani
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
-  -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
-  -Ddist.dir=${CMAKE_BINARY_DIR}/build
-  -Dtest.reports=${CMAKE_BINARY_DIR}/reports
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
   ${DISABLE_RESOLVE}
   junit-wani
 )

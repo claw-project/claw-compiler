@@ -17,8 +17,13 @@ common.dir=@CX2T_COMMON_DIR@
 3rdparty.lib.dir=@3RDPARTY_LIB_DIR@
 src.dir=@CX2T_SRC_DIR@
 gen.src.dir=@CX2T_GEN_SRC_DIR@
+classes.dir=@CX2T_CLASSES_DIR@
+dist.dir=@CX2T_DIST_DIR@
 ut.src.dir=@CX2T_UT_SRC_DIR@
 ut.gen.src.dir=@CX2T_UT_GEN_SRC_DIR@
+ut.classes.dir=@CX2T_UT_CLASSES_DIR@
+ut.dist.dir=@CX2T_UT_DIST_DIR@
+ut.reports.dir=@CX2T_UT_REPORTS_DIR@
 
 # Third-party libraries
 ivy.dir=${3rdparty.lib.dir}
@@ -69,9 +74,5 @@ claw.tatsu.ut.dep=${dist.dir}/${claw.tatsu.ut.jar}
 # External transformation set
 external.jar=claw-external-set.jar
 
-# Output directory
-dist.dir=
 
-# Test report output directory
-test.reports=
 jacoco.file=jacoco.exec
