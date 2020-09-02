@@ -56,7 +56,7 @@ set(CLAW_FLAGS_target2 --target=gpu --directive=openmp)
 
 set(CLAW_FLAGS_external1 --force --config=external_config.xml)
 set(NOCOMPILE_external1 ON)
-set(CLAW_TRANS_SET_PATH "${PROJECT_BINARY_DIR}/build/")
+set(CLAW_TRANS_SET_PATH "${CX2T_DIST_DIR}")
 
 set(CLAW_FLAGS_keep_comment --force --keep-comment)
 

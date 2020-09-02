@@ -7,14 +7,14 @@
 <project name="common" xmlns:ivy="antlib:org.apache.ivy.ant">
   <!-- Check whether ivy is present already -->
   <target name="check-ivy">
-    <available file="${3rdparty.lib.dir}/ivy.jar" property="ivy.present"/>
+    <available file="${3rdparty.dist.dir}/ivy.jar" property="ivy.present"/>
   </target>
 
   <!-- Get the ivy jar to be able to resolve dependencies -->
   <target name="bootstrap" depends="check-ivy" unless="ivy.present"
           description="Install ivy jar if not present">
-      <mkdir dir="${3rdparty.lib.dir}"/>
-      <get dest="${3rdparty.lib.dir}/ivy.jar"
+      <mkdir dir="${3rdparty.dist.dir}"/>
+      <get dest="${3rdparty.dist.dir}/ivy.jar"
            src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/2.5.0/ivy-2.5.0.jar"/>
   </target>
 
@@ -25,10 +25,11 @@
     <!-- Needed for older version of ANT -->
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
       <classpath>
-        <pathelement location="${3rdparty.lib.dir}/ivy.jar"/>
+        <pathelement location="${3rdparty.dist.dir}/ivy.jar"/>
       </classpath>
     </taskdef>
     <ivy:retrieve log="quiet" file="${common.dir}/ivy.xml"
-                  pattern="${3rdparty.lib.dir}/[artifact](-[classifier]).[ext]"/>
+                  pattern="${3rdparty.dist.dir}/[artifact](-[classifier]).[ext]"/>
   </target>
+
 </project>

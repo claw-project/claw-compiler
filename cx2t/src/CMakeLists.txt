@@ -31,8 +31,6 @@ add_custom_command(
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   ${ANT_FLAGS}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  -Dantlr4.jar="${ANTLR4_NAME}.jar"
-  -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
   ${DISABLE_RESOLVE}
   COMMENT "Building CLAW X2T libraries"
   COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/share/claw
@@ -40,11 +38,11 @@ add_custom_command(
       ${CX2T_DIST_DIR}/${CLAW_X2T_TATSU}.jar
       ${CX2T_DIST_DIR}/${CLAW_X2T_SHENRON}.jar
       ${CX2T_DIST_DIR}/${CLAW_X2T_WANI}.jar
-      ${3RDPARTY_LIB_DIR}/${ANTLR4_NAME}.jar
-      ${3RDPARTY_LIB_DIR}/${ANTLR4_RUNTIME_NAME}.jar
-      ${3RDPARTY_LIB_DIR}/${ANTLR_RUNTIME_NAME}.jar
-      ${3RDPARTY_LIB_DIR}/${COMMON_CLI_NAME}.jar
-      ${3RDPARTY_LIB_DIR}/${TOML_NAME}.jar
+      ${CX2T_3RDPARTY_DIST_DIR}/${ANTLR4_NAME}.jar
+      ${CX2T_3RDPARTY_DIST_DIR}/${ANTLR4_RUNTIME_NAME}.jar
+      ${CX2T_3RDPARTY_DIST_DIR}/${ANTLR_RUNTIME_NAME}.jar
+      ${CX2T_3RDPARTY_DIST_DIR}/${COMMON_CLI_NAME}.jar
+      ${CX2T_3RDPARTY_DIST_DIR}/${TOML_NAME}.jar
       ${INT_CLAW_HOME}/share/claw
 )
 if(NOT OFFLINE)

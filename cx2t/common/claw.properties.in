@@ -14,7 +14,7 @@ jar.exec = @Java_JAR_EXECUTABLE@
 # Common
 
 common.dir=@CX2T_COMMON_DIR@
-3rdparty.lib.dir=@3RDPARTY_LIB_DIR@
+3rdparty.dist.dir=@CX2T_3RDPARTY_DIST_DIR@
 src.dir=@CX2T_SRC_DIR@
 gen.src.dir=@CX2T_GEN_SRC_DIR@
 classes.dir=@CX2T_CLASSES_DIR@
@@ -26,31 +26,31 @@ ut.dist.dir=@CX2T_UT_DIST_DIR@
 ut.reports.dir=@CX2T_UT_REPORTS_DIR@
 
 # Third-party libraries
-ivy.dir=${3rdparty.lib.dir}
+ivy.dir=${3rdparty.dist.dir}
 st4.jar=ST4.jar
-st4.dep=${3rdparty.lib.dir}/${st4.jar}
+st4.dep=${3rdparty.dist.dir}/${st4.jar}
 antlr.jar=antlr-runtime.jar
-antlr.dep=${3rdparty.lib.dir}/${antlr.jar}
-antlr4.jar=antlr4.jar
+antlr.dep=${3rdparty.dist.dir}/${antlr.jar}
+antlr4.jar=@ANTLR4_NAME@.jar
 antlr4.runtime.jar=antlr4-runtime.jar
-antlr4.dep=${3rdparty.lib.dir}/${antlr4.jar}
-antlr4.runtime.dep=${3rdparty.lib.dir}/${antlr4.runtime.jar}
-junit.dep=${3rdparty.lib.dir}/junit.jar
-hamcrest.dep=${3rdparty.lib.dir}/hamcrest-core.jar
-commoncli.jar=commons-cli.jar
-commoncli.dep=${3rdparty.lib.dir}/${commoncli.jar}
+antlr4.dep=${3rdparty.dist.dir}/${antlr4.jar}
+antlr4.runtime.dep=${3rdparty.dist.dir}/${antlr4.runtime.jar}
+junit.dep=${3rdparty.dist.dir}/junit.jar
+hamcrest.dep=${3rdparty.dist.dir}/hamcrest-core.jar
+commoncli.jar=@COMMON_CLI_NAME@.jar
+commoncli.dep=${3rdparty.dist.dir}/${commoncli.jar}
 jacoco.jar=org.jacoco.ant.jar
-jacoco.dep=${3rdparty.lib.dir}/${jacoco.jar}
+jacoco.dep=${3rdparty.dist.dir}/${jacoco.jar}
 jacoco-core.jar=org.jacoco.core.jar
-jacoco-core.dep=${3rdparty.lib.dir}/${jacoco-core.jar}
+jacoco-core.dep=${3rdparty.dist.dir}/${jacoco-core.jar}
 jacoco-report.jar=org.jacoco.report.jar
-jacoco-report.dep=${3rdparty.lib.dir}/${jacoco-report.jar}
+jacoco-report.dep=${3rdparty.dist.dir}/${jacoco-report.jar}
 jacoco-agent.jar=org.jacoco.agent.jar
-jacoco-agent.dep=${3rdparty.lib.dir}/${jacoco-agent.jar}
+jacoco-agent.dep=${3rdparty.dist.dir}/${jacoco-agent.jar}
 asm.jar=asm.jar
-asm.dep=${3rdparty.lib.dir}/${asm.jar}
+asm.dep=${3rdparty.dist.dir}/${asm.jar}
 toml.jar=cava-toml.jar
-toml.dep=${3rdparty.lib.dir}/${toml.jar}
+toml.dep=${3rdparty.dist.dir}/${toml.jar}
 
 # OMNI compiler libraries and paths
 omni.xcodeml-common.dep=@OMNI_JAR_TOOLS@
@@ -65,11 +65,11 @@ claw.tatsu.dep=${dist.dir}/${claw.tatsu.jar}
 
 # CLAW X2T unittests libraries
 claw.wani.ut.jar=claw-x2t-wani-ut.jar
-claw.wani.ut.dep=${dist.dir}/${claw.wani.ut.jar}
+claw.wani.ut.dep=${ut.dist.dir}/${claw.wani.ut.jar}
 claw.shenron.ut.jar=claw-x2t-shenron-ut.jar
-claw.shenron.ut.dep=${dist.dir}/${claw.shenron.ut.jar}
+claw.shenron.ut.dep=${ut.dist.dir}/${claw.shenron.ut.jar}
 claw.tatsu.ut.jar=claw-x2t-tatsu-ut.jar
-claw.tatsu.ut.dep=${dist.dir}/${claw.tatsu.ut.jar}
+claw.tatsu.ut.dep=${ut.dist.dir}/${claw.tatsu.ut.jar}
 
 # External transformation set
 external.jar=claw-external-set.jar
