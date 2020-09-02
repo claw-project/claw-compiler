@@ -6,7 +6,7 @@
 # Configure files depending on a path
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/helper/TestConstant.java.in
-  ${CMAKE_CURRENT_BINARY_DIR}/helper/TestConstant.java
+  ${CX2T_UT_GEN_SRC_DIR}/helper/TestConstant.java
   @ONLY
 )
 
@@ -19,9 +19,8 @@ if(NOT OFFLINE)
     ${ANT_FLAGS}
     -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
-    -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
+    -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
     -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
-    -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
     init
     COMMENT "Resolving dependencies for the build"
   )
@@ -35,9 +34,8 @@ add_custom_command(
   ${ANT_FLAGS}
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
-  -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
-  -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}
   COMMENT "Building CLAW XcodeML/F to XcodeML/F unit tests"
 )
@@ -52,9 +50,8 @@ add_test(
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
-  -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
-  -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}
   junit-tatsu
 )
@@ -67,9 +64,8 @@ add_test(
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
-  -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
-  -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}
   junit-shenron
 )
@@ -82,9 +78,8 @@ add_test(
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
   -Dtest.reports=${CMAKE_BINARY_DIR}/reports
-  -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
-  -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}
   ${DISABLE_RESOLVE}
   junit-wani
 )

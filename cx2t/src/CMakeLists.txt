@@ -6,7 +6,7 @@
 # Generate file with version number for Configuration check
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/claw/ClawVersion.java.in
-  ${CMAKE_CURRENT_BINARY_DIR}/claw/ClawVersion.java
+  ${CX2T_GEN_SRC_DIR}/claw/ClawVersion.java
   @ONLY
 )
 
@@ -19,9 +19,8 @@ if(NOT OFFLINE)
     ${ANT_FLAGS}
     -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
     -Ddist.dir=${CMAKE_BINARY_DIR}/build
-    -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
+    -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
     -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
-    -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}/claw
     init
     COMMENT "Resolving dependencies for the build"
   )
@@ -36,9 +35,8 @@ add_custom_command(
   ${ANT_FLAGS}
   -Dbuild.dir=${CMAKE_BINARY_DIR}/classes
   -Ddist.dir=${CMAKE_BINARY_DIR}/build
-  -Dclaw.properties.dir=${CMAKE_CURRENT_BINARY_DIR}/..
+  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   -Dbin.dir=${CMAKE_CURRENT_BINARY_DIR}/bin
-  -Dgen.src.dir=${CMAKE_CURRENT_BINARY_DIR}/claw
   -Dantlr4.jar="${ANTLR4_NAME}.jar"
   -Dcommoncli.jar="${COMMON_CLI_NAME}.jar"
   ${DISABLE_RESOLVE}

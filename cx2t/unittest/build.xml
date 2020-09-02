@@ -7,10 +7,10 @@
          xmlns:jacoco="antlib:org.jacoco.ant">
   <description>Build CLAWX2T unit tests</description>
 
-  <import file="../common/targets.xml"/>
   <!-- Value set externally-->
   <property name="claw.properties.dir" value=""/>
   <property file="${claw.properties.dir}/claw.properties"/>
+  <import file="${common.dir}/targets.xml"/>
 
   <!-- JaCoCo code coverage -->
   <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
@@ -24,9 +24,6 @@
 
   <!-- Java sources directory -->
   <property name="src.dir" location="." />
-
-  <!-- Generated source directory, set externally -->
-  <property name="gen.src.dir" value="" />
 
   <!-- Java compiled classes directory, set externally -->
   <property name="build.dir" value="" />
@@ -60,6 +57,7 @@
       <src>
         <pathelement path="${src.dir}"/>
         <pathelement path="${gen.src.dir}"/>
+        <pathelement path="${ut.gen.src.dir}"/>
       </src>
     </javac>
   </target>
@@ -122,6 +120,7 @@
         <sourcefiles encoding="UTF-8">
           <fileset dir="${src.dir}"/>
           <fileset dir="${gen.src.dir}"/>
+          <fileset dir="${ut.gen.src.dir}"/>
         </sourcefiles>
       </structure>
       <html destdir="${test.reports}"/>
@@ -172,6 +171,7 @@
         <sourcefiles encoding="UTF-8">
           <fileset dir="${src.dir}"/>
           <fileset dir="${gen.src.dir}"/>
+          <fileset dir="${ut.gen.src.dir}"/>
         </sourcefiles>
       </structure>
       <html destdir="${test.reports}"/>
@@ -224,6 +224,7 @@
         <sourcefiles encoding="UTF-8">
           <fileset dir="${src.dir}"/>
           <fileset dir="${gen.src.dir}"/>
+          <fileset dir="${ut.gen.src.dir}"/>
         </sourcefiles>
       </structure>
       <html destdir="${test.reports}"/>

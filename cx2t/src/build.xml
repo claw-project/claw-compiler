@@ -7,18 +7,17 @@
 <project name="claw" default="main" basedir=".">
     <description>Build CX2T libraries</description>
 
-    <!-- Generated source directory, set externally -->
-    <property name="gen.src.dir" value=""/>
-
-    <import file="../common/targets.xml"/>
 
     <!-- Value set externally-->
     <property name="claw.properties.dir" value=""/>
     <property file="${claw.properties.dir}/claw.properties"/>
 
+    <import file="${common.dir}/targets.xml"/>
+
     <!-- Java sources -->
     <property name="src.translator.parser.dir"
               value="${gen.src.dir}/claw/wani/language/parser"/>
+
     <property name="src.base" value="."/>
 
     <!-- Java compiled classes directory, set externally -->

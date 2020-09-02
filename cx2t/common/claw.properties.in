@@ -13,8 +13,10 @@ jar.exec = @Java_JAR_EXECUTABLE@
 
 # Common
 
-common.dir = @CX2T_COMMON_DIR@
-3rdparty.lib.dir = @3RDPARTY_LIB_DIR@
+common.dir=@CX2T_COMMON_DIR@
+3rdparty.lib.dir=@3RDPARTY_LIB_DIR@
+gen.src.dir=@CX2T_GEN_SRC_DIR@
+ut.gen.src.dir=@CX2T_UT_GEN_SRC_DIR@
 
 # Third-party libraries
 ivy.dir=${3rdparty.lib.dir}
