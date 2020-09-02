@@ -46,6 +46,7 @@ add_custom_command(
       ${INT_CLAW_HOME}/share/claw
 )
 if(NOT OFFLINE)
+  add_dependencies(claw-init claw-deps)
   add_dependencies(claw-cx2t claw-init)
   add_dependencies(claw-cx2t omni-compiler)
 endif()

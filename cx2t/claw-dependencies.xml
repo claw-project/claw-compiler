@@ -1,0 +1,18 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+-->
+
+<!-- CLAW X2T build process -->
+<project name="claw" default="main" basedir=".">
+    <description>Download CLAW java dependencies</description>
+
+    <!-- Value set externally-->
+    <property name="claw.properties.dir" value=""/>
+    <property file="${claw.properties.dir}/claw.properties"/>
+
+    <import file="${common.dir}/common-targets.xml"/>
+
+    <!-- Default target -->
+    <target name="main" depends="common.main"/>
+</project>

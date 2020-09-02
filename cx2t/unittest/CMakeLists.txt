@@ -34,6 +34,7 @@ add_custom_command(
   COMMENT "Building CLAW XcodeML/F to XcodeML/F unit tests"
 )
 if(NOT OFFLINE)
+  add_dependencies(claw-ut-init claw-deps)
   add_dependencies(claw-ut claw-ut-init)
 endif()
 

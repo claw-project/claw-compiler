@@ -32,4 +32,7 @@
                   pattern="${3rdparty.dist.dir}/[artifact](-[classifier]).[ext]"/>
   </target>
 
+  <!-- Default target -->
+    <target name="main" depends="bootstrap, check-ivy, resolve"/>
+
 </project>
