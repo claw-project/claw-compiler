@@ -2,7 +2,7 @@
 # See LICENSE file for more information
 
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/common/claw.properties.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/claw.properties.in
   ${CX2T_PROPERTIES_DIR}/claw.properties
   @ONLY
 )

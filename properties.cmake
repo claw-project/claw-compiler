@@ -74,7 +74,7 @@ set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 
 set(CX2T_BUILD_DIR "${CMAKE_BINARY_DIR}/cx2t")
 
-set(CX2T_COMMON_DIR "${CMAKE_SOURCE_DIR}/cx2t/common")
+set(CX2T_COMMON_DIR "${CMAKE_SOURCE_DIR}/cx2t")
 set(CX2T_3RDPARTY_DIST_DIR "${CX2T_BUILD_DIR}/3rdparty/dist")
 
 set(CX2T_SRC_DIR "${CMAKE_SOURCE_DIR}/cx2t/src")

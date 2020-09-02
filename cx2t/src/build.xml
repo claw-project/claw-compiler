@@ -12,7 +12,7 @@
     <property name="claw.properties.dir" value=""/>
     <property file="${claw.properties.dir}/claw.properties"/>
 
-    <import file="${common.dir}/targets.xml"/>
+    <import file="${common.dir}/common-targets.xml"/>
 
     <!-- Java sources -->
     <property name="src.translator.parser.dir"
