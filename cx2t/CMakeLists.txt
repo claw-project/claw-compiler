@@ -2,8 +2,10 @@
 # See LICENSE file for more information
 
 set(CX2T_COMMON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/common")
+set(CX2T_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(CX2T_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/generated-src")
 set(CX2T_UT_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/ut-generated-src")
+set(CX2T_UT_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/unittest")
 set(CX2T_PROPERTIES_DIR "${CMAKE_CURRENT_BINARY_DIR}/common")
 
 configure_file(

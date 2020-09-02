@@ -22,9 +22,6 @@
     </classpath>
   </taskdef>
 
-  <!-- Java sources directory -->
-  <property name="src.dir" location="." />
-
   <!-- Java compiled classes directory, set externally -->
   <property name="build.dir" value="" />
 
@@ -55,8 +52,7 @@
     <javac executable="${javac.exec}" fork="yes" includeantruntime="false" destdir="${build.dir}"
            classpathref="build.path" debug="on" >
       <src>
-        <pathelement path="${src.dir}"/>
-        <pathelement path="${gen.src.dir}"/>
+        <pathelement path="${ut.src.dir}"/>
         <pathelement path="${ut.gen.src.dir}"/>
       </src>
     </javac>
@@ -118,8 +114,7 @@
           <fileset dir="${build.dir}"/>
         </classfiles>
         <sourcefiles encoding="UTF-8">
-          <fileset dir="${src.dir}"/>
-          <fileset dir="${gen.src.dir}"/>
+          <fileset dir="${ut.src.dir}"/>
           <fileset dir="${ut.gen.src.dir}"/>
         </sourcefiles>
       </structure>
@@ -169,8 +164,7 @@
           <fileset dir="${build.dir}"/>
         </classfiles>
         <sourcefiles encoding="UTF-8">
-          <fileset dir="${src.dir}"/>
-          <fileset dir="${gen.src.dir}"/>
+          <fileset dir="${ut.src.dir}"/>
           <fileset dir="${ut.gen.src.dir}"/>
         </sourcefiles>
       </structure>
@@ -222,8 +216,7 @@
           <fileset dir="${build.dir}"/>
         </classfiles>
         <sourcefiles encoding="UTF-8">
-          <fileset dir="${src.dir}"/>
-          <fileset dir="${gen.src.dir}"/>
+          <fileset dir="${ut.src.dir}"/>
           <fileset dir="${ut.gen.src.dir}"/>
         </sourcefiles>
       </structure>

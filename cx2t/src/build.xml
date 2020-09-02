@@ -18,8 +18,6 @@
     <property name="src.translator.parser.dir"
               value="${gen.src.dir}/claw/wani/language/parser"/>
 
-    <property name="src.base" value="."/>
-
     <!-- Java compiled classes directory, set externally -->
     <property name="build.dir" value=""/>
 
@@ -74,7 +72,7 @@
         <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir=""
                destdir="${build.dir}" classpathref="build.path" debug="on">
             <src>
-                <pathelement path="${src.base}"/>
+                <pathelement path="${src.dir}"/>
                 <pathelement path="${gen.src.dir}"/>
             </src>
         </javac>

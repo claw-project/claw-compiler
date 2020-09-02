@@ -15,7 +15,9 @@ jar.exec = @Java_JAR_EXECUTABLE@
 
 common.dir=@CX2T_COMMON_DIR@
 3rdparty.lib.dir=@3RDPARTY_LIB_DIR@
+src.dir=@CX2T_SRC_DIR@
 gen.src.dir=@CX2T_GEN_SRC_DIR@
+ut.src.dir=@CX2T_UT_SRC_DIR@
 ut.gen.src.dir=@CX2T_UT_GEN_SRC_DIR@
 
 # Third-party libraries
