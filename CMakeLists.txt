@@ -15,13 +15,19 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/module")
 enable_language(Fortran)
 enable_testing()
 
-find_package(Java 8 REQUIRED)
+find_package(Java 1.8 REQUIRED)
 # Warning!!! After finding the first version, find_package(Java) does NOT look for others. CMAKE_FIND_PACKAGE_SORT_ORDER
 # and CMAKE_FIND_PACKAGE_SORT_DIRECTION have no effect. To override the "default" java version, set cmake variable
 # JAVA_HOME to desired java installation path.
 
-if(Java_VERSION_MAJOR GREATER 13)
-    message(FATAL_ERROR "Java ${Java_VERSION_MAJOR} is not supported")
+if(Java_VERSION_MAJOR EQUAL 1)
+  if(Java_VERSION_MINOR LESS 8)
+    message(FATAL_ERROR "Java ${Java_VERSION_STRING} is not supported")
+  endif()
+else()
+  if((Java_VERSION_MAJOR LESS 8) OR (Java_VERSION_MAJOR GREATER 13) )
+    message(FATAL_ERROR "Java ${Java_VERSION_STRING} is not supported")
+  endif()
 endif()
 
 find_package(Ant 1.7.1 REQUIRED)
