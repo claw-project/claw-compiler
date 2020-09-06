@@ -294,10 +294,9 @@ function claw::set_parameters() {
 ###################################################################
 function claw::print_version() {
   local version_str
-  version_str="@PROJECT_NAME@ @PROJECT_VERSION@"
-  version_str="${version_str} @CLAWFC_GIT_HASH@"
-  version_str="${version_str} (@CMAKE_Fortran_COMPILER_ID@ Preprocessor)"
-  version_str="${version_str} (OMNI Compiler @OMNI_GIT_HASH@)"
+  version_str="${CLAW_NAME} ${CLAW_VERSION}"
+  version_str="${version_str} ${CLAWFC_GIT_HASH}"
+  version_str="${version_str} (${OMNI_VERSION_STRING})"
   echo "${version_str}"
 }
 

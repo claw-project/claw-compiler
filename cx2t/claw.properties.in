@@ -19,11 +19,18 @@ src.dir=@CX2T_SRC_DIR@
 gen.src.dir=@CX2T_GEN_SRC_DIR@
 classes.dir=@CX2T_CLASSES_DIR@
 dist.dir=@CX2T_DIST_DIR@
+
+# Unit tests
 ut.src.dir=@CX2T_UT_SRC_DIR@
 ut.gen.src.dir=@CX2T_UT_GEN_SRC_DIR@
 ut.classes.dir=@CX2T_UT_CLASSES_DIR@
 ut.dist.dir=@CX2T_UT_DIST_DIR@
 ut.reports.dir=@CX2T_UT_REPORTS_DIR@
+
+# Driver
+driver.src.dir=@CLAWFC_SRC_DIR@
+driver.classes.dir=@CLAWFC_CLASSES_DIR@
+driver.dist.dir=@CLAWFC_DIST_DIR@
 
 # Third-party libraries
 ivy.dir=${3rdparty.dist.dir}
@@ -51,6 +58,8 @@ asm.jar=asm.jar
 asm.dep=${3rdparty.dist.dir}/${asm.jar}
 toml.jar=cava-toml.jar
 toml.dep=${3rdparty.dist.dir}/${toml.jar}
+argparse4j.jar=argparse4j.jar
+argparse4j.dep=${3rdparty.dist.dir}/${argparse4j.jar}
 
 # OMNI compiler libraries and paths
 omni.xcodeml-common.dep=@OMNI_JAR_TOOLS@
@@ -62,6 +71,10 @@ claw.shenron.jar=claw-x2t-shenron.jar
 claw.shenron.dep=${dist.dir}/${claw.shenron.jar}
 claw.tatsu.jar=claw-x2t-tatsu.jar
 claw.tatsu.dep=${dist.dir}/${claw.tatsu.jar}
+
+# CLAW driver libraries
+driver.jar=clawfc.jar
+driver.dep=${dist.dir}/${driver.jar}
 
 # CLAW X2T unittests libraries
 claw.wani.ut.jar=claw-x2t-wani-ut.jar

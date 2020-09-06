@@ -35,6 +35,10 @@ set(CLAW_PY_CONF_FILE "claw_conf.py")
 set(CLAW_COMPILER_FILE "clawfc")
 set(CLAW_LIB_SH "claw_f_lib.sh")
 set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
+set(CLAWFC_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/src")
+set(CLAWFC_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/classes")
+set(CLAWFC_CONF_FILE "clawfc.properties.in")
+set(CLAWFC_DIST_DIR "${CMAKE_BINARY_DIR}/driver/dist")
 
 #
 # OMNI Compiler variables
@@ -65,6 +69,14 @@ set(OMNI_JAR_TOOLS "${OMNI_CLASSPATH}/om-common.jar")
 set(OMNI_JAR_F_BACKEND "${OMNI_CLASSPATH}/om-f-back.jar")
 set(OMNI_JAR_C_BACKEND "${OMNI_CLASSPATH}/om-c-back.jar")
 set(OMNI_F2X_FLAGS "")
+
+execute_process(
+    COMMAND ${OMNI_F_FRONT} --version
+    WORKING_DIRECTORY ${OMNI_BIN_DIR}
+    OUTPUT_VARIABLE OMNI_VERSION_STRING
+    ERROR_VARIABLE OMNI_VERSION_STRING
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
 
 # Common module files
 set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
@@ -115,6 +127,8 @@ set(ASM_BUILD "${CX2T_3RDPARTY_DIST_DIR}/${ASM}:${CX2T_3RDPARTY_DIST_DIR}/${ASM_
 set(TOML_NAME "cava-toml")
 set(TOML "${CLAW_X2T_JAR_INSTALL_PATH}/${TOML_NAME}.jar")
 set(BUILD_TOML "${CX2T_3RDPARTY_DIST_DIR}/${TOML_NAME}.jar")
+
+set(ARGPARSE_NAME "argparse4j")
 
 set(FPP "${CMAKE_Fortran_COMPILER}")
 set(CPP_OPT "${FPPFLAGS}")

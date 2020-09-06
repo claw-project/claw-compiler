@@ -10,6 +10,28 @@ else()
   set(SHA1SUM_CMD "sha1sum")
 endif()
 
+# Compile the CX2T libraries
+add_custom_target(claw-driver ALL)
+add_dependencies(claw-driver create_int_install_dir claw-cx2t)
+add_custom_command(
+  TARGET claw-driver
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/src/build.xml
+  ${ANT_FLAGS}
+  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
+  ${DISABLE_RESOLVE}
+  COMMENT "Building CLAW driver"
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/bin
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      ${CLAWFC_DIST_DIR}/${CLAW_COMPILER_FILE}.jar
+      ${INT_CLAW_HOME}/bin
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      ${CX2T_3RDPARTY_DIST_DIR}/${ARGPARSE_NAME}.jar
+      ${INT_CLAW_HOME}/share/claw
+)
+if(NOT OFFLINE)
+  add_dependencies(claw-driver claw-deps)
+endif()
+
 set(CLAW_X2T_CONFIG_PATH "${CMAKE_BINARY_DIR}/driver/etc/")
 set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_BINARY_DIR}/driver/libexec/")
 set(CLAW_X2T_TATSU_JAR "${CMAKE_BINARY_DIR}/build/${CLAW_X2T_TATSU}.jar")
@@ -30,16 +52,11 @@ configure_file(
   @ONLY
 )
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/libexec/${CLAW_LIB_SH}.in
-  ${CMAKE_CURRENT_BINARY_DIR}/libexec/${CLAW_LIB_SH}
-  @ONLY
-)
 add_custom_target(copy_driver_files_to_int_install ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/bin ${INT_CLAW_HOME}/etc ${INT_CLAW_HOME}/libexec
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/bin/${CLAW_COMPILER_FILE} ${INT_CLAW_HOME}/bin
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/etc/${CLAW_PY_CONF_FILE} ${INT_CLAW_HOME}/etc
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/libexec/${CLAW_LIB_SH} ${INT_CLAW_HOME}/libexec
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/libexec/${CLAW_LIB_SH} ${INT_CLAW_HOME}/libexec
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
       ${CMAKE_CURRENT_SOURCE_DIR}/etc/claw_config.xsd
       ${CMAKE_CURRENT_SOURCE_DIR}/etc/claw-default.xml
@@ -52,8 +69,3 @@ add_custom_target(copy_driver_files_to_int_install ALL
     )
 
 add_dependencies(copy_driver_files_to_int_install create_int_install_dir)
-
-set(ANTLR4 "${CMAKE_BINARY_DIR}/cx2t/lib/${ANTLR4_NAME}.jar")
-set(ANTLR4_RUNTIME "${CMAKE_BINARY_DIR}/cx2t/lib/${ANTLR4_RUNTIME_NAME}.jar")
-set(COMMON_CLI "${CMAKE_BINARY_DIR}/cx2t/lib/${COMMON_CLI_NAME}.jar")
-set(TOML "${CMAKE_BINARY_DIR}/cx2t/lib/${TOML_NAME}.jar")

@@ -7,14 +7,28 @@ __copyright__ = "Copyright 2020, MeteoSwiss"
 """ This module contains settings necessary to run clawfc driver
 """
 
-import os, inspect, argparse
+import os, inspect, argparse, sys
 from os.path import join as join_path
+if sys.version_info[0] > 3:
+    from typing import Any
 
 THIS_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 class _CFG:
     @property
     def CLAW_HOME(self): return self.__CLAW_HOME
+
+    # Release information
+    @property
+    def CLAW_NAME(self): return "@PROJECT_NAME@"
+    @property
+    def CLAW_VERSION(self): return "@PROJECT_VERSION@"
+
+    # OMNI Release information
+    @property
+    def OMNI_VERSION_STRING(self): return '@OMNI_VERSION_STRING@'
+    @property
+    def OMNI_VERSION_TAG(self): return "@OMNI_GIT_COMMIT_HASH@"
 
     # OMNI Compiler directories
     @property
@@ -120,10 +134,12 @@ CFG = _CFG()
 
 
 def dir_exists(path):
+    # type: (str) -> bool
     return os.path.exists(path) and os.path.isdir(path)
 
 
 def is_prop(v):
+    # type: (Any) -> bool
     return isinstance(v, property)
 
 

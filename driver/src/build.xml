@@ -1,0 +1,51 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+-->
+
+<!-- CLAWFC build process -->
+<project name="clawfc" default="main" basedir=".">
+    <description>Build CLAWFC driver</description>
+
+    <!-- Value set externally-->
+    <property name="claw.properties.dir" value=""/>
+    <property file="${claw.properties.dir}/claw.properties"/>
+
+    <!-- Classpath for the CX2T Translator library -->
+    <path id="build.path">
+        <pathelement path="${argparse4j.dep}"/>
+    </path>
+
+    <import file="${common.dir}/common-targets.xml"/>
+
+    <!-- Initialization step -->
+    <target name="init" depends="common.bootstrap"
+            description="Initialize build directories">
+        <tstamp/>
+        <mkdir dir="${driver.classes.dir}"/>
+    </target>
+
+<echo message="driver.src.dir: ${driver.src.dir}"/>
+    <!-- Compile the java code for the two libraries -->
+    <target name="compile" depends="common.resolve"
+            description="compile the source">
+        <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir="${driver.src.dir}"
+               destdir="${driver.classes.dir}" classpathref="build.path" debug="on"/>
+    </target>
+
+    <!-- Package compiled files into their own library -->
+    <target name="jar" depends="compile" description="package, output to JAR">
+        <mkdir dir="${dist.dir}"/>
+        <!-- Driver -->
+        <jar jarfile="${driver.dist.dir}/${driver.jar}" basedir="${driver.classes.dir}"
+             includes="**"/>
+    </target>
+
+    <target name="clean" description="clean up">
+        <delete dir="${driver.classes.dir}"/>
+        <delete file="${driver.dist.dir}/${driver.jar}"/>
+    </target>
+
+    <!-- Default target -->
+    <target name="main" depends="init, compile, jar"/>
+</project>
