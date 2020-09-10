@@ -38,7 +38,7 @@
         <mkdir dir="${dist.dir}"/>
         <!-- Driver -->
         <jar jarfile="${driver.dist.dir}/${driver.jar}" basedir="${driver.classes.dir}"
-             includes="**">
+             includes="clawfc/**">
             <manifest>
                 <attribute name="Main-Class" value="clawfc.Driver"/>
                 <attribute name="Class-Path" value="${driver.runtime.classpath}"/>
