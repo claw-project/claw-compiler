@@ -19,6 +19,8 @@ src.dir=@CX2T_SRC_DIR@
 gen.src.dir=@CX2T_GEN_SRC_DIR@
 classes.dir=@CX2T_CLASSES_DIR@
 dist.dir=@CX2T_DIST_DIR@
+cx2t.dir=@CX2T_DIR@
+
 
 # Unit tests
 ut.src.dir=@CX2T_UT_SRC_DIR@

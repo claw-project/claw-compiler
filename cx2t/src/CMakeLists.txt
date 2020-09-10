@@ -28,16 +28,13 @@ add_custom_target(claw-cx2t ALL)
 add_dependencies(claw-cx2t create_int_install_dir)
 add_custom_command(
   TARGET claw-cx2t
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/bin
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
   ${ANT_FLAGS}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   ${DISABLE_RESOLVE}
   COMMENT "Building CLAW X2T libraries"
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/share/claw
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CX2T_DIST_DIR}/${CLAW_X2T_TATSU}.jar
-      ${CX2T_DIST_DIR}/${CLAW_X2T_SHENRON}.jar
-      ${CX2T_DIST_DIR}/${CLAW_X2T_WANI}.jar
       ${CX2T_3RDPARTY_DIST_DIR}/${ANTLR4_NAME}.jar
       ${CX2T_3RDPARTY_DIST_DIR}/${ANTLR4_RUNTIME_NAME}.jar
       ${CX2T_3RDPARTY_DIST_DIR}/${ANTLR_RUNTIME_NAME}.jar

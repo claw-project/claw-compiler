@@ -15,18 +15,12 @@ add_custom_target(claw-driver ALL)
 add_dependencies(claw-driver create_int_install_dir claw-cx2t)
 add_custom_command(
   TARGET claw-driver
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/bin
   COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/src/build.xml
   ${ANT_FLAGS}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   ${DISABLE_RESOLVE}
   COMMENT "Building CLAW driver"
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/bin
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CLAWFC_DIST_DIR}/${CLAW_COMPILER_FILE}.jar
-      ${INT_CLAW_HOME}/bin
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CX2T_3RDPARTY_DIST_DIR}/${ARGPARSE_NAME}.jar
-      ${INT_CLAW_HOME}/share/claw
 )
 if(NOT OFFLINE)
   add_dependencies(claw-driver claw-deps)

@@ -17,7 +17,7 @@
         <pathelement path="${claw.wani.dep}"/>
     </path>
 
-    <import file="${common.dir}/common-targets.xml"/>
+    <import file="${cx2t.dir}/common-targets.xml"/>
 
     <!-- Initialization step -->
     <target name="init" depends="common.bootstrap"

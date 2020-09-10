@@ -38,7 +38,7 @@ set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 set(CLAWFC_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/src")
 set(CLAWFC_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/classes")
 set(CLAWFC_CONF_FILE "clawfc.properties.in")
-set(CLAWFC_DIST_DIR "${CMAKE_BINARY_DIR}/driver/dist")
+set(CLAWFC_DIST_DIR "${INT_CLAW_HOME}/bin")
 
 #
 # OMNI Compiler variables
@@ -83,6 +83,7 @@ set(CLAW_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 
 
 # CX2T
+set(CX2T_DIR "${CMAKE_SOURCE_DIR}/cx2t")
 
 set(CX2T_BUILD_DIR "${CMAKE_BINARY_DIR}/cx2t")
 
@@ -92,7 +93,7 @@ set(CX2T_3RDPARTY_DIST_DIR "${CX2T_BUILD_DIR}/3rdparty/dist")
 set(CX2T_SRC_DIR "${CMAKE_SOURCE_DIR}/cx2t/src")
 set(CX2T_GEN_SRC_DIR "${CX2T_BUILD_DIR}/build/generated-src")
 set(CX2T_CLASSES_DIR "${CX2T_BUILD_DIR}/build/classes")
-set(CX2T_DIST_DIR "${CX2T_BUILD_DIR}/build/dist")
+set(CX2T_DIST_DIR "${INT_CLAW_HOME}/share/claw")
 
 set(CX2T_UT_SRC_DIR "${CMAKE_SOURCE_DIR}/cx2t/unittest")
 set(CX2T_UT_GEN_SRC_DIR "${CX2T_BUILD_DIR}/unit-tests/generated-src")
