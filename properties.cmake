@@ -135,3 +135,6 @@ set(FPP "${CMAKE_Fortran_COMPILER}")
 set(CPP_OPT "${FPPFLAGS}")
 
 set(ANT_FLAGS "-quiet")
+
+# Ant projects
+set(ANT_SOLUTION "${CMAKE_SOURCE_DIR}/ant-solution.xml")

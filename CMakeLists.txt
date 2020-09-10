@@ -192,8 +192,23 @@ add_custom_target(build-claw-solution ALL)
 add_dependencies(build-claw-solution omni-compiler)
 add_custom_command(
   TARGET build-claw-solution
-  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_SOURCE_DIR}/ant-solution.xml
+  COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
   ${ANT_FLAGS} ${OFFLINE}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   COMMENT "Building CLAW solution"
 )
+
+option(GENERATE_ECLIPSE_IDE_PROJECTS "Generate Eclipse IDE projects" ON)
+if(GENERATE_ECLIPSE_IDE_PROJECTS)
+  message(STATUS "Generating Eclipse projects")
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/ide/eclipse/cx2t)
+  configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/cx2t.project.in
+                 ${CMAKE_BINARY_DIR}/ide/eclipse/cx2t/.project
+                 @ONLY)
+  configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/cx2t.classpath.in
+                 ${CMAKE_BINARY_DIR}/ide/eclipse/cx2t/.classpath
+                 @ONLY)
+  configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/cx2t.ant.builder.in
+                 ${CMAKE_BINARY_DIR}/ide/eclipse/cx2t/.externalToolBuilders/ant.launch
+                 @ONLY)
+endif()

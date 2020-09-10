@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="cx2t-src"/>
+	<classpathentry kind="src" path="cx2t-gen-src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/@ANTLR4_NAME@.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@ANTLR4_NAME@-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/@ANTLR4_RUNTIME_NAME@.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@ANTLR4_RUNTIME_NAME@-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/@ANTLR_RUNTIME_NAME@.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@ANTLR_RUNTIME_NAME@-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/@TOML_NAME@.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@TOML_NAME@-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/@COMMON_CLI_NAME@.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@COMMON_CLI_NAME@-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@INT_CLAW_HOME@/share/claw/commons-cli.jar"/>
+	<classpathentry kind="lib" path="@OMNI_JAR_TOOLS@"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
