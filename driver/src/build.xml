@@ -17,18 +17,14 @@
         <pathelement path="${claw.wani.dep}"/>
     </path>
 
-    <import file="${cx2t.dir}/common-targets.xml"/>
-
     <!-- Initialization step -->
-    <target name="init" depends="common.bootstrap"
-            description="Initialize build directories">
+    <target name="init" description="Initialize build directories">
         <tstamp/>
         <mkdir dir="${driver.classes.dir}"/>
     </target>
 
     <!-- Compile the java code for the two libraries -->
-    <target name="compile" depends="common.resolve"
-            description="compile the source">
+    <target name="compile" description="compile the source">
         <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir="${driver.src.dir}"
                destdir="${driver.classes.dir}" classpathref="build.path" debug="on"/>
     </target>

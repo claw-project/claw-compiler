@@ -20,6 +20,8 @@ gen.src.dir=@CX2T_GEN_SRC_DIR@
 classes.dir=@CX2T_CLASSES_DIR@
 dist.dir=@CX2T_DIST_DIR@
 cx2t.dir=@CX2T_DIR@
+int.home.dir=@INT_CLAW_HOME@
+root.dir=@CMAKE_SOURCE_DIR@
 
 
 # Unit tests
@@ -94,5 +96,12 @@ claw.tatsu.ut.dep=${ut.dist.dir}/${claw.tatsu.ut.jar}
 # External transformation set
 external.jar=claw-external-set.jar
 
-
 jacoco.file=jacoco.exec
+
+# Ant projects
+3rdparty-dependencies.proj=${root.dir}/cx2t/common-targets.xml
+cx2t.proj=${root.dir}/cx2t/src/build.xml
+cx2t-unit-tests.proj=${root.dir}/cx2t/unittest/build.xml
+driver.proj=${root.dir}/driver/src/build.xml
+
+

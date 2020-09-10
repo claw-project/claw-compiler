@@ -23,21 +23,6 @@ if(NOT OFFLINE)
   )
 endif()
 
-# Add target for the compilation of JUnit test cases with ANT
-add_custom_target(claw-ut ALL)
-add_custom_command(
-  TARGET claw-ut
-  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_CURRENT_SOURCE_DIR}/build.xml
-  ${ANT_FLAGS}
-  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  ${DISABLE_RESOLVE}
-  COMMENT "Building CLAW XcodeML/F to XcodeML/F unit tests"
-)
-if(NOT OFFLINE)
-  add_dependencies(claw-ut-init claw-deps)
-  add_dependencies(claw-ut claw-ut-init)
-endif()
-
 # Add test cases
 add_test(
   NAME junit-tatsu

@@ -1,0 +1,50 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+-->
+
+<!-- Combines all ant-projects used in CLAW -->
+<project name="solution" default="main" basedir=".">
+    <description>Build CLAW projects</description>
+
+    <!-- Value set externally-->
+    <property name="claw.properties.dir" value=""/>
+    <property file="${claw.properties.dir}/claw.properties"/>
+
+    <target name="prepare-int-dir">
+      <mkdir dir="${int.home.dir}"/>
+      <mkdir dir="${int.home.dir}/bin"/>
+      <mkdir dir="${int.home.dir}/etc"/>
+      <mkdir dir="${int.home.dir}/libexec"/>
+      <copy todir="${int.home.dir}/etc" overwrite="false">
+          <fileset dir="${root.dir}/driver/etc" casesensitive="yes">
+            <include name="claw_config.xsd"/>
+            <include name="claw-default.xml"/>
+            <include name="claw-external-set.xml"/>
+            <include name="claw-high-level-set.xml"/>
+            <include name="claw-internal-set.xml"/>
+            <include name="claw-low-level-set.xml"/>
+            <include name="claw_transformation_set.xsd"/>
+          </fileset>
+      </copy>
+    </target>
+
+    <target name="fetch-deps" depends="prepare-int-dir">
+        <ant antfile="${3rdparty-dependencies.proj}"/>
+    </target>
+
+    <target name="build-cx2t" depends="fetch-deps">
+        <ant antfile="${cx2t.proj}" />
+    </target>
+
+    <target name="build-cx2t-unit-tests" depends="build-cx2t">
+        <ant antfile="${cx2t-unit-tests.proj}" />
+    </target>
+
+    <target name="build-driver" depends="build-cx2t">
+        <ant antfile="${driver.proj}" />
+    </target>
+
+    <!-- Default target -->
+    <target name="main" depends="prepare-int-dir, fetch-deps, build-cx2t, build-cx2t-unit-tests, build-driver"/>
+</project>

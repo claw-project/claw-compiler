@@ -181,3 +181,19 @@ add_subdirectory(documentation)
 set(ADDITIONAL_CLEAN_FILES "")
 LIST(APPEND ADDITIONAL_CLEAN_FILES ${INT_CLAW_HOME})
 SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ADDITIONAL_CLEAN_FILES}")
+
+if(OFFLINE)
+  set(DISABLE_RESOLVE "-Doffline=true")
+else()
+  set(DISABLE_RESOLVE "-Doffline=false")
+endif()
+
+add_custom_target(build-claw-solution ALL)
+add_dependencies(build-claw-solution omni-compiler)
+add_custom_command(
+  TARGET build-claw-solution
+  COMMAND ${Ant_EXECUTABLE} -f ${CMAKE_SOURCE_DIR}/ant-solution.xml
+  ${ANT_FLAGS} ${OFFLINE}
+  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
+  COMMENT "Building CLAW solution"
+)

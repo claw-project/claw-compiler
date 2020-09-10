@@ -7,12 +7,9 @@
 <project name="claw" default="main" basedir=".">
     <description>Build CX2T libraries</description>
 
-
     <!-- Value set externally-->
     <property name="claw.properties.dir" value=""/>
     <property file="${claw.properties.dir}/claw.properties"/>
-
-    <import file="${common.dir}/common-targets.xml"/>
 
     <!-- Java sources -->
     <property name="src.translator.parser.dir"
@@ -37,8 +34,7 @@
     </path>
 
     <!-- Initialization step -->
-    <target name="init" depends="common.bootstrap"
-            description="Initialize build directories">
+    <target name="init" description="Initialize build directories">
         <tstamp/>
         <mkdir dir="${classes.dir}"/>
         <mkdir dir="${src.translator.parser.dir}"/>
@@ -51,8 +47,7 @@
     </uptodate>
 
     <!-- Generate the CLAW parser from the ANTLR grammar file -->
-    <target name="antlr" depends="common.resolve" if="antlr.required"
-            description="Generate the parser from ANTLR grammar file">
+    <target name="antlr" if="antlr.required" description="Generate the parser from ANTLR grammar file">
         <java jvm="${java.exec}" classname="org.antlr.v4.Tool" fork="true" failonerror="true"
               classpathref="antlr.path">
             <arg value="-o"/>
@@ -64,8 +59,7 @@
     </target>
 
     <!-- Compile the java code for the two libraries -->
-    <target name="compile" depends="common.resolve, antlr"
-            description="compile the source">
+    <target name="compile" depends="antlr" description="compile the source">
         <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir=""
                destdir="${classes.dir}" classpathref="build.path" debug="on">
             <src>
@@ -101,5 +95,5 @@
     </target>
 
     <!-- Default target -->
-    <target name="main" depends="init, compile, jar"/>
+    <target name="main" depends="init, antlr, compile, jar"/>
 </project>
