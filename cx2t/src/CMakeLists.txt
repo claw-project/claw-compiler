@@ -34,13 +34,6 @@ add_custom_command(
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   ${DISABLE_RESOLVE}
   COMMENT "Building CLAW X2T libraries"
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CX2T_3RDPARTY_DIST_DIR}/${ANTLR4_NAME}.jar
-      ${CX2T_3RDPARTY_DIST_DIR}/${ANTLR4_RUNTIME_NAME}.jar
-      ${CX2T_3RDPARTY_DIST_DIR}/${ANTLR_RUNTIME_NAME}.jar
-      ${CX2T_3RDPARTY_DIST_DIR}/${COMMON_CLI_NAME}.jar
-      ${CX2T_3RDPARTY_DIST_DIR}/${TOML_NAME}.jar
-      ${INT_CLAW_HOME}/share/claw
 )
 if(NOT OFFLINE)
   add_dependencies(claw-init claw-deps)

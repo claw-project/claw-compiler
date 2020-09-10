@@ -30,6 +30,17 @@
     </taskdef>
     <ivy:retrieve log="quiet" file="${common.dir}/ivy.xml"
                   pattern="${3rdparty.dist.dir}/[artifact](-[classifier]).[ext]"/>
+    <!-- Copy dependencies used at runtime -->
+    <copy todir="${dist.dir}" overwrite="false">
+      <fileset dir="${3rdparty.dist.dir}" casesensitive="yes">
+        <include name="${antlr.jar}"/>
+        <include name="${antlr4.jar}"/>
+        <include name="${antlr4.runtime.jar}"/>
+        <include name="${commoncli.jar}"/>
+        <include name="${toml.jar}"/>
+        <include name="${argparse4j.jar}"/>
+      </fileset>
+    </copy>
   </target>
 
   <!-- Default target -->
