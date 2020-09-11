@@ -39,6 +39,9 @@
                 <attribute name="Main-Class" value="clawfc.Driver"/>
                 <attribute name="Class-Path" value="${driver.runtime.classpath}"/>
             </manifest>
+            <zipfileset dir="${driver.conf.dir}"
+                includes="${driver.conf.file}"
+                fullpath="config/${driver.conf.file}"/>
         </jar>
     </target>
 

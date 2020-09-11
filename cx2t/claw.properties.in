@@ -35,6 +35,8 @@ ut.reports.dir=@CX2T_UT_REPORTS_DIR@
 driver.src.dir=@CLAWFC_SRC_DIR@
 driver.classes.dir=@CLAWFC_CLASSES_DIR@
 driver.dist.dir=@CLAWFC_DIST_DIR@
+driver.conf.dir=@CLAW_X2T_CONFIG_DIR@
+driver.conf.file=@CLAWFC_CONF_FILE@
 
 # Third-party libraries
 ivy.dir=${3rdparty.dist.dir}

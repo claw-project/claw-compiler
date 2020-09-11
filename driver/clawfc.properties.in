@@ -1,0 +1,11 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
+claw.name = @PROJECT_NAME@
+claw.version = @PROJECT_VERSION@
+claw.fc.default = @CMAKE_Fortran_COMPILER_ID@
+
+omni.version.string = @OMNI_VERSION_STRING@
+omni.version.tag = @OMNI_GIT_COMMIT_HASH@
+omni.bundled.install = @ADD_OMNI_XCODEML_TOOLS_TO_INSTALL@
+omni.home = @OMNI_HOME@

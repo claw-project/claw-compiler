@@ -37,7 +37,8 @@ set(CLAW_LIB_SH "claw_f_lib.sh")
 set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 set(CLAWFC_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/src")
 set(CLAWFC_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/classes")
-set(CLAWFC_CONF_FILE "clawfc.properties.in")
+set(CLAW_X2T_CONFIG_DIR "${CMAKE_BINARY_DIR}/driver/etc")
+set(CLAWFC_CONF_FILE "clawfc.properties")
 set(CLAWFC_DIST_DIR "${INT_CLAW_HOME}/bin")
 
 #

@@ -30,6 +30,12 @@ configure_file(
   @ONLY
 )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/${CLAWFC_CONF_FILE}.in
+  ${CLAW_X2T_CONFIG_DIR}/${CLAWFC_CONF_FILE}
+  @ONLY
+)
+
 add_custom_target(copy_driver_files_to_int_install ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME}/bin ${INT_CLAW_HOME}/etc ${INT_CLAW_HOME}/libexec
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/bin/${CLAW_COMPILER_FILE} ${INT_CLAW_HOME}/bin
