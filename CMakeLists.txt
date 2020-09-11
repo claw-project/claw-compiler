@@ -201,14 +201,16 @@ add_custom_command(
 option(GENERATE_ECLIPSE_IDE_PROJECTS "Generate Eclipse IDE projects" ON)
 if(GENERATE_ECLIPSE_IDE_PROJECTS)
   message(STATUS "Generating Eclipse projects")
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/ide/eclipse/cx2t)
-  configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/cx2t.project.in
-                 ${CMAKE_BINARY_DIR}/ide/eclipse/cx2t/.project
-                 @ONLY)
-  configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/cx2t.classpath.in
-                 ${CMAKE_BINARY_DIR}/ide/eclipse/cx2t/.classpath
-                 @ONLY)
-  configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/cx2t.ant.builder.in
-                 ${CMAKE_BINARY_DIR}/ide/eclipse/cx2t/.externalToolBuilders/ant.launch
-                 @ONLY)
+  foreach(PROJECT_NAME cx2t cx2t-driver)
+      file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/ide/eclipse/${PROJECT_NAME})
+      configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/${PROJECT_NAME}.project.in
+                     ${CMAKE_BINARY_DIR}/ide/eclipse/${PROJECT_NAME}/.project
+                     @ONLY)
+      configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/${PROJECT_NAME}.classpath.in
+                     ${CMAKE_BINARY_DIR}/ide/eclipse/${PROJECT_NAME}/.classpath
+                     @ONLY)
+      configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/${PROJECT_NAME}.ant.builder.in
+                     ${CMAKE_BINARY_DIR}/ide/eclipse/${PROJECT_NAME}/.externalToolBuilders/ant.launch
+                     @ONLY)
+  endforeach()
 endif()
