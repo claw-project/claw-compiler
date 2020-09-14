@@ -214,33 +214,18 @@ public class DimensionDefinition {
    * @param xcodeml  Current XcodeML program unit in which elements will be
    *                 created.
    * @param withStep IF true, step element is created.
+   * @param useIteration IF true, use the iterations bounds instead of the size bounds.
    * @return A new indexRange elements.
    */
-  public Xnode generateIndexRange(XcodeML xcodeml, boolean withStep) {
+  public Xnode generateIndexRange(XcodeML xcodeml, boolean withStep, boolean useIteration) {
     Xnode range = xcodeml.createNode(Xcode.INDEX_RANGE);
-    range.append(_lowerBound.generate(xcodeml));
-    range.append(_upperBound.generate(xcodeml));
-    if(withStep) {
-      Xnode step = xcodeml.createNode(Xcode.STEP);
-      step.append(xcodeml.createIntConstant(DEFAULT_STEP_VALUE));
-      range.append(step);
+    if(useIteration) {
+      range.append(_iterationLowerBound.generate(xcodeml));
+      range.append(_iterationUpperBound.generate(xcodeml));
+    } else {
+      range.append(_lowerBound.generate(xcodeml));
+      range.append(_upperBound.generate(xcodeml));
     }
-    return range;
-  }
-
-  /**
-   * Generate the correct iterationRange element with iterationLowerBound,
-   * iterationUpperBound and step from the current dimension.
-   *
-   * @param xcodeml  Current XcodeML program unit in which elements will be
-   *                 created.
-   * @param withStep IF true, step element is created.
-   * @return A new indexRange elements.
-   */
-  public Xnode generateIterationRange(XcodeML xcodeml, boolean withStep) {
-    Xnode range = xcodeml.createNode(Xcode.INDEX_RANGE);
-    range.append(_iterationLowerBound.generate(xcodeml));
-    range.append(_iterationUpperBound.generate(xcodeml));
     if(withStep) {
       Xnode step = xcodeml.createNode(Xcode.STEP);
       step.append(xcodeml.createIntConstant(DEFAULT_STEP_VALUE));
