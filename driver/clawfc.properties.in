@@ -9,3 +9,4 @@ claw.home = @INT_CLAW_HOME@
 omni.version.string = @OMNI_VERSION_STRING@
 omni.version.tag = @OMNI_GIT_COMMIT_HASH@
 omni.home = @OMNI_HOME@
+omni.fortran.frontend = @OMNI_BIN_DIR_NAME@/@OMNI_F_FRONT_NAME@
