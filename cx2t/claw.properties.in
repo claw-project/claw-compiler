@@ -37,6 +37,7 @@ driver.classes.dir=@CLAWFC_CLASSES_DIR@
 driver.dist.dir=@CLAWFC_DIST_DIR@
 driver.conf.dir=@CLAW_X2T_CONFIG_DIR@
 driver.conf.file=@CLAWFC_CONF_FILE@
+driver.runtime.conf.file=@CLAWFC_RUNTIME_CONF_FILE@
 
 # Third-party libraries
 ivy.dir=${3rdparty.dist.dir}
@@ -106,4 +107,6 @@ cx2t.proj=${root.dir}/cx2t/src/build.xml
 cx2t-unit-tests.proj=${root.dir}/cx2t/unittest/build.xml
 driver.proj=${root.dir}/driver/src/build.xml
 
-
+# Install
+claw.install.dir=@CMAKE_INSTALL_PREFIX@
+xcodeml-tools.install.dir=@OMNI_XCODEML_TOOLS_INSTALL_DIR@

@@ -45,6 +45,20 @@
         </jar>
     </target>
 
+    <!-- Update jar config after install-->
+    <target name="post-install" description="Update jar config">
+        <copy file="${driver.conf.dir}/${driver.conf.file}" tofile="${driver.conf.dir}/${driver.runtime.conf.file}"/>
+        <propertyfile file="${driver.conf.dir}/${driver.runtime.conf.file}">
+            <entry key="claw.home" value="${claw.install.dir}"/>
+            <entry key="omni.home" value="${xcodeml-tools.install.dir}"/>
+        </propertyfile>
+        <jar destfile="${claw.install.dir}/bin/${driver.jar}" update="true">
+            <zipfileset dir="${driver.conf.dir}"
+                includes="${driver.runtime.conf.file}"
+                fullpath="config/${driver.conf.file}"/>
+        </jar>
+    </target>
+
     <target name="clean" description="clean up">
         <delete dir="${driver.classes.dir}"/>
         <delete file="${driver.dist.dir}/${driver.jar}"/>

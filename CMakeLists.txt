@@ -30,7 +30,7 @@ else()
   endif()
 endif()
 
-find_package(Ant 1.7.1 REQUIRED)
+find_package(Ant 1.8 REQUIRED)
 find_package(Python REQUIRED)
 
 if(Python_VERSION_MAJOR LESS 2)
@@ -107,6 +107,8 @@ install(
     DIRECTORY ${INT_CLAW_HOME}/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
+install(CODE "execute_process(COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT_FLAGS} -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR} install-driver)"
+)
 install(CODE "execute_process(COMMAND ${Python_EXECUTABLE} ${CMAKE_INSTALL_PREFIX}/etc/${CLAW_PY_CONF_FILE})")
 install(CODE "execute_process(COMMAND rm -rf ${CMAKE_INSTALL_PREFIX}/etc/${CLAW_PY_CONF_FILE})")
 
