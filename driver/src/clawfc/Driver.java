@@ -104,6 +104,16 @@ public class Driver
         {
             System.out.print(cfg.toString());
         }
+        else if(parsedArgs.getBoolean("version"))
+        {
+            printVersion();            
+        }
+    }
+    
+    void printVersion()
+    {
+        String vStr = String.format("%s %s \"%s\" %s ", cfg.name(), cfg.version(), cfg.commit(), cfg.omniVersion());
+        System.out.print(vStr);        
     }
 
     static Namespace parseCmdlineArguments(String[] args)

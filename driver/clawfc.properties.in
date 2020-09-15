@@ -3,6 +3,7 @@
 
 claw.name = @PROJECT_NAME@
 claw.version = @PROJECT_VERSION@
+claw.commit = @CLAWFC_GIT_HASH@
 claw.fc.default = @CMAKE_Fortran_COMPILER_ID@
 claw.home = @INT_CLAW_HOME@
 

@@ -23,6 +23,11 @@ public class Configuration
     {
         return cfgProperties.getProperty("claw.version");
     }
+    
+    public String commit()
+    {
+        return cfgProperties.getProperty("claw.commit");
+    }
 
     public String defaultFortranCompilerType()
     {
@@ -87,6 +92,7 @@ public class Configuration
         StringBuilder s = new StringBuilder();
         s.append(String.format("claw.name : %s\n", name()));
         s.append(String.format("claw.version : %s\n", version()));
+        s.append(String.format("claw.commit : %s\n", commit()));
         s.append(String.format("claw.defaultFortranCompilerType : %s\n", defaultFortranCompilerType()));
         s.append(String.format("claw.installRoot : %s\n", installRoot()));
         s.append(String.format("omni.version.string : %s\n", omniVersion()));
