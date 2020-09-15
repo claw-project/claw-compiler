@@ -27,7 +27,8 @@ set(CLAW_CONFIG_SET_XSD "claw_transformation_set.xsd")
 set(CLAW_TRANS_SET_INTERNAL "claw-internal-set.xml")
 set(CLAW_TRANS_SET_LOW "claw-low-level-set.xml")
 set(CLAW_TRANS_SET_HIGH "claw-high-level-set.xml")
-set(CLAW_X2T_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/etc/")
+set(CLAW_CFG_DIR_NAME "etc")
+set(CLAW_X2T_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/${CLAW_CFG_DIR_NAME}")
 
 # Driver files
 set(CLAW_CONF_FILE "claw_f.conf")

@@ -5,7 +5,8 @@ import java.lang.ProcessBuilder;
 
 import java.util.logging.Logger;
 import java.util.Scanner;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.nio.file.Files;
 
 import java.io.InputStream;
@@ -14,13 +15,46 @@ import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.helper.HelpScreenException;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
+import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 
+import claw.ClawX2T;
+
 public class Driver
 {
     private final static Logger LOGGER = Logger.getLogger(Driver.class.getName());
+
+    /*
+     * class Options { boolean onlyPreprocess(); boolean enableCPreprocess();
+     * boolean verbose(); boolean enableDebug(); boolean enableDebugOmni(); boolean
+     * resolveDependencies(); boolean stopAfterPreprocess(); boolean
+     * stopAfterFrontend(); boolean stopAfterTranslator(); boolean
+     * stopAfterDependenciesResolution(); boolean forceTranslation(); boolean
+     * listHWTargets(); boolean listDirectiveLanguages(); boolean show_config();
+     * boolean user_target(); boolean user_config(); boolean model_config(); boolean
+     * user_directive(); boolean line_directive(); boolean decompiler_max_column();
+     * boolean dump_cx2t_args() boolean force_pure(); boolean report(); boolean
+     * pipe_workflow(); boolean keep_comment(); boolean add_paren(); boolean
+     * omni_ffront_debug(); boolean omni_ffront_no_module_cache(); };
+     */
+
+    /*
+     * class Options { boolean only_pp = false; boolean enable_cpp = true; boolean
+     * verbose = false; boolean enable_debug = false; boolean enable_debug_omni =
+     * false; boolean resolve_dependencies = true; boolean stop_pp = false; boolean
+     * stop_frontend = false; boolean stop_translator = false; boolean
+     * stop_dependencies = false; boolean force_translation = false; boolean
+     * list_target = false; boolean list_directive = false; boolean show_config =
+     * false; boolean user_target = false; boolean user_config = false; boolean
+     * model_config = false; boolean user_directive = false; boolean line_directive
+     * = false; boolean decompiler_max_column = false; boolean dump_cx2t_args =
+     * false boolean force_pure = false; boolean report = false; boolean
+     * pipe_workflow = true; boolean keep_comment = false; boolean add_paren =
+     * false; boolean omni_ffront_debug = false; boolean omni_ffront_no_module_cache
+     * = false; };
+     */
 
     public static void main(String[] args) throws Exception
     {
@@ -98,22 +132,36 @@ public class Driver
         }
     }
 
-    void execute(Namespace parsedArgs)
+    void execute(Namespace parsedArgs) throws Exception
     {
         if (parsedArgs.getBoolean("show_env"))
         {
             System.out.print(cfg.toString());
-        }
-        else if(parsedArgs.getBoolean("version"))
+        } else if (parsedArgs.getBoolean("version"))
         {
-            printVersion();            
+            printVersion();
+        } else if(parsedArgs.getBoolean("list_targets"))
+        {
+            ClawX2T.main(new String[] {"--target-list"});
+        } else if(parsedArgs.getBoolean("list_directives"))
+        {
+            ClawX2T.main(new String[] {"--directive-list"});
+        } else if(parsedArgs.getBoolean("show_config"))
+        {
+            ArrayList<String> args = new ArrayList<String>(Arrays.asList("--show-config", "--config-path=" + cfg.configDir()));
+            String cfg = parsedArgs.getString("config");
+            if(cfg != null)
+            { args.add("--config=" + cfg); }
+            ClawX2T.main(args.stream().toArray(String[]::new));
         }
+        else
+        {}
     }
-    
+
     void printVersion()
     {
         String vStr = String.format("%s %s \"%s\" %s ", cfg.name(), cfg.version(), cfg.commit(), cfg.omniVersion());
-        System.out.print(vStr);        
+        System.out.print(vStr);
     }
 
     static Namespace parseCmdlineArguments(String[] args)
@@ -122,29 +170,31 @@ public class Driver
                 + "source-to-source translator working on the XcodeML intermediate representation");
         try
         {
+            parser.addArgument("fortran-file").nargs("*").help("Input file");
+            MutuallyExclusiveGroup qOpts = parser.addMutuallyExclusiveGroup("Query options");
+            qOpts.addArgument("--list-targets", "--target-list").action(Arguments.storeTrue())
+                    .help("List available types of accelerator hardware");
+            qOpts.addArgument("--list-directives", "--directive-list").action(Arguments.storeTrue())
+                    .help("List supported accelerator directive languages");
+            qOpts.addArgument("--show-config").action(Arguments.storeTrue())
+                    .help("List the current configuration information. If used with --config, list the information"
+                            + " from the specific configuration");
+            qOpts.addArgument("--version").action(Arguments.storeTrue()).help("Print version");
+            qOpts.addArgument("--show-env").action(Arguments.storeTrue()).help("Show environment configuration");
             ArgumentGroup cOpts = parser.addArgumentGroup("Compiler options");
             cOpts.addArgument("-o", "--output-file")
                     .help("Output file for the transformed FORTRAN code. If not given, code is printed to stdout.");
             cOpts.addArgument("-I", "--include-dir").nargs("*")
                     .help("Add the directory dir to the search path for .mod and .xmod files.");
             cOpts.addArgument("-J", "--output-mod-dir").help("Output directory for compiled .mod and .xmod files.");
-            cOpts.addArgument("-t", "--target").help("Type of accelerator directive language for code generation");
-            cOpts.addArgument("--list-targets", "--target-list").action(Arguments.storeTrue())
-                    .help("List the available type of accelerator directive language supported");
+            cOpts.addArgument("-t", "--target").help("Type of target accelerator hardware");
             cOpts.addArgument("-d", "--directive")
-                    .help("Specify the type of accelerator directive language for code generation");
-            cOpts.addArgument("--list-directives", "--directive-list").action(Arguments.storeTrue())
-                    .help("List the available type of accelerator directive language supported");
+                    .help("Specify accelerator directive language to be used for code generation");
             cOpts.addArgument("--config").help("Specify a different configuration for the translator");
-            cOpts.addArgument("--show-config").action(Arguments.storeTrue())
-                    .help("List the current configuration information."
-                            + " If used with --config, list the information from the specific configuration");
             cOpts.addArgument("-m", "--model-config").help("Specific model configuration for SCA");
             cOpts.addArgument("-c", "--keep-comment").action(Arguments.storeTrue())
                     .help("Keep comments in the transformed file");
             cOpts.addArgument("-v", "--verbose").action(Arguments.storeTrue()).help("Print processing status");
-            cOpts.addArgument("--version").action(Arguments.storeTrue()).help("Print version");
-            cOpts.addArgument("--show-env").action(Arguments.storeTrue()).help("Show environment configuration");
             cOpts.addArgument("--no-dep").action(Arguments.storeTrue())
                     .help("Don't generate .mod or .xmod file for dependencies");
             cOpts.addArgument("--no-module-cache").action(Arguments.storeTrue())

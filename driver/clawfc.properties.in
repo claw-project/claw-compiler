@@ -6,6 +6,7 @@ claw.version = @PROJECT_VERSION@
 claw.commit = @CLAWFC_GIT_HASH@
 claw.fc.default = @CMAKE_Fortran_COMPILER_ID@
 claw.home = @INT_CLAW_HOME@
+claw.cfg.dir = @CLAW_CFG_DIR_NAME@
 
 omni.version.string = @OMNI_VERSION_STRING@
 omni.version.tag = @OMNI_GIT_COMMIT_HASH@

@@ -39,6 +39,11 @@ public class Configuration
         return Paths.get(cfgProperties.getProperty("claw.home"));
     }
 
+    public Path configDir()
+    {
+        return installRoot().resolve(cfgProperties.getProperty("claw.cfg.dir"));
+    }
+
     public String omniVersion()
     {
         return cfgProperties.getProperty("omni.version.string");
@@ -95,6 +100,8 @@ public class Configuration
         s.append(String.format("claw.commit : %s\n", commit()));
         s.append(String.format("claw.defaultFortranCompilerType : %s\n", defaultFortranCompilerType()));
         s.append(String.format("claw.installRoot : %s\n", installRoot()));
+        s.append(String.format("claw.cfg.dir : %s [%s]\n", configDir(),
+                cfgProperties.getProperty("claw.cfg.dir")));
         s.append(String.format("omni.version.string : %s\n", omniVersion()));
         s.append(String.format("omni.version.tag : %s\n", omniVersionTag()));
         s.append(String.format("omni.home : %s [%s]\n", omniInstallRoot().toString(),
