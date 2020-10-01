@@ -59,10 +59,10 @@ public class Type {
         switch(dim.getInsertionPosition()) {
           case BEFORE:
             // TODO control and validate the before/after
-            newType.addDimension(dim.generateIndexRange(xcodemlDst, false));
+            newType.addDimension(dim.generateIndexRange(xcodemlDst, false, false));
             break;
           case AFTER:
-            newType.addDimension(dim.generateIndexRange(xcodemlDst, false), 0);
+            newType.addDimension(dim.generateIndexRange(xcodemlDst, false, false), 0);
             break;
           case IN_MIDDLE:
             throw new IllegalTransformationException("Not supported yet. " +
