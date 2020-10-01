@@ -504,6 +504,40 @@ public class Sca extends ClawTransformation
             xcodeml.createIdAndDecl(dimension.getIdentifier(), FortranType.INTEGER, XstorageClass.F_LOCAL, _fctDef,
                     DeclarationPosition.LAST);
         }
+
+        // Create the parameter for the iteration lower bound
+        if(dimension.getIterationLowerBound().isVar()) {
+	  String itLowerBound = dimension.getIterationLowerBound().getValue();
+	  if(!itLowerBound.equals(dimension.getLowerBound().getValue())) {
+	    xcodeml.createIdAndDecl(itLowerBound, bt.getType(),
+                XstorageClass.F_PARAM, _fctDef, DeclarationPosition.FIRST);
+
+            // Add parameter to the local type table
+            Xnode param = xcodeml.createAndAddParam(
+                dimension.getIterationLowerBound().getValue(),
+                bt.getType(), _fctType);
+            param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+	  }
+        }
+
+        // Create parameter for the upper bound
+        if(dimension.getIterationUpperBound().isVar()) {
+	  String itUpperBound = dimension.getIterationUpperBound().getValue();
+	  if(!itUpperBound.equals(dimension.getUpperBound().getValue())) {
+            xcodeml.createIdAndDecl(itUpperBound, bt.getType(),
+                XstorageClass.F_PARAM, _fctDef, DeclarationPosition.FIRST);
+
+            // Add parameter to the local type table
+            Xnode param = xcodeml.createAndAddParam(
+                dimension.getIterationUpperBound().getValue(),
+                bt.getType(), _fctType);
+            param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+          }
+        }
+      }
+      // Create induction variable declaration
+      xcodeml.createIdAndDecl(dimension.getIdentifier(), FortranType.INTEGER,
+          XstorageClass.F_LOCAL, _fctDef, DeclarationPosition.LAST);
     }
 
     /**

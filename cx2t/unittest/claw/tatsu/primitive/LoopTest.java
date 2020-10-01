@@ -84,8 +84,15 @@ public class LoopTest
         Xnode l1 = xcodeml.createDoStmt(inductionI, d1.generateIndexRange(xcodeml, true));
         Xnode l2 = xcodeml.createDoStmt(inductionI, d1.generateIndexRange(xcodeml, true));
 
+<<<<<<< HEAD
         List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
         assertFalse(fctDefs.isEmpty());
+=======
+    Xnode l1 = xcodeml.createDoStmt(inductionI,
+        d1.generateIndexRange(xcodeml, true, false));
+    Xnode l2 = xcodeml.createDoStmt(inductionI,
+        d1.generateIndexRange(xcodeml, true, false));
+>>>>>>> b1ad18a3... Fix for iterations space with automated model-data promotion
 
         FfunctionDefinition f1 = fctDefs.get(0);
 
