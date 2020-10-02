@@ -802,7 +802,7 @@ function claw::process_dependencies() {
     # shellcheck disable=SC2124
     OMNI_CMD="${OMNI_F2X_CMD} ${include_opt[@]} ${module_opt[@]} ${frontend_add_opt[@]} ${OMNI_F2X_OPT} \"${file_pp}\""
     # shellcheck disable=SC2086,SC2068
-    ${OMNI_F2X_CMD} ${include_opt[@]} ${module_opt[@]} ${frontend_add_opt[@]} ${OMNI_F2X_OPT} "${file_pp}" &>> omni_ffront.log
+    ${OMNI_F2X_CMD} ${include_opt[@]} ${module_opt[@]} ${frontend_add_opt[@]} ${OMNI_F2X_OPT} "${file_pp}" &> omni_ffront.log
     retVal=$?
     if [ $retVal -ne 0 ]; then
         echo ""
