@@ -800,8 +800,16 @@ function claw::process_dependencies() {
 
     # Pass the module in the front-end to get the .xmod file
     # shellcheck disable=SC2086,SC2068
-    ${OMNI_F2X_CMD} ${include_opt[@]} ${module_opt[@]} \
-      ${frontend_add_opt[@]} ${OMNI_F2X_OPT} "${file_pp}" >/dev/null
+    OMNI_CMD="${OMNI_F2X_CMD} ${include_opt[@]} ${module_opt[@]} ${frontend_add_opt[@]} ${OMNI_F2X_OPT} \"${file_pp}\""
+    ${OMNI_F2X_CMD} ${include_opt[@]} ${module_opt[@]} ${frontend_add_opt[@]} ${OMNI_F2X_OPT} "${file_pp}" &>> omni_ffront.log
+    retVal=$?
+    if [ $retVal -ne 0 ]; then
+        echo ""
+        echo "OMNI Frontend crashed, check omni_ffront.log for debug output. Call cmd:"
+        echo ""
+        echo "${OMNI_CMD}"
+        exit ${retVal}
+    fi
   done
   claw::debug "${claw_debug_lvl_dep}" "resolution for $2 done"
 }
