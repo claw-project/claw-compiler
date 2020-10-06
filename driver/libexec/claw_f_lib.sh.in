@@ -806,7 +806,7 @@ function claw::process_dependencies() {
     retVal=$?
     if [ $retVal -ne 0 ]; then
         echo ""
-        echo "OMNI Frontend crashed, check omni_ffront.log for debug output. Call cmd:"
+        echo "OMNI Frontend error, check omni_ffront.log for debug output. Call cmd:"
         echo ""
         echo "${OMNI_CMD}"
         exit ${retVal}
