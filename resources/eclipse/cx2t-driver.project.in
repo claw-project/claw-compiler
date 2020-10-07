@@ -40,5 +40,15 @@
 			<type>2</type>
 			<location>@CX2T_GEN_SRC_DIR@</location>
 		</link>
+		<link>
+			<name>driver-gen-src</name>
+			<type>2</type>
+			<location>@CLAWFC_GEN_SRC_DIR@</location>
+		</link>
+		<link>
+			<name>driver-ut-src</name>
+			<type>2</type>
+			<location>@CMAKE_SOURCE_DIR@/driver/unittests/src</location>
+		</link>
 	</linkedResources>
 </projectDescription>

@@ -49,6 +49,10 @@
         <ant antfile="${driver.proj}" target="post-install" />
     </target>
 
+    <target name="run-driver-unit-tests">
+        <ant antfile="${driver.proj}" target="run-unit-tests" />
+    </target>
+
     <!-- Default target -->
     <target name="main" depends="prepare-int-dir, fetch-deps, build-cx2t, build-cx2t-unit-tests, build-driver"/>
 </project>

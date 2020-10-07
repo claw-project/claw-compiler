@@ -200,6 +200,17 @@ add_custom_command(
   COMMENT "Building CLAW solution"
 )
 
+add_custom_target(run-driver-unit-tests)
+add_dependencies(run-driver-unit-tests build-claw-solution)
+add_custom_command(
+  TARGET run-driver-unit-tests
+  COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
+  ${ANT_FLAGS} ${OFFLINE}
+  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
+  run-driver-unit-tests
+  COMMENT "Running CLAWFC unit-tests"
+)
+
 option(GENERATE_ECLIPSE_IDE_PROJECTS "Generate Eclipse IDE projects" ON)
 if(GENERATE_ECLIPSE_IDE_PROJECTS)
   message(STATUS "Generating Eclipse projects")
