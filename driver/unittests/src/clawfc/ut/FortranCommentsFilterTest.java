@@ -28,7 +28,7 @@ class ExtractCommentsListener
     ArrayList<String> comments = new ArrayList<String>();
     
     @Override
-    public void enterComment(FortranCommentsFilterParser.CommentContext ctx) 
+    public void exitComment(FortranCommentsFilterParser.CommentContext ctx) 
     {
         //System.out.println(ctx.getText());
         comments.add(ctx.getText());
