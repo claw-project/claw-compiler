@@ -71,6 +71,8 @@ toml.jar=cava-toml.jar
 toml.dep=${3rdparty.dist.dir}/${toml.jar}
 argparse4j.jar=argparse4j.jar
 argparse4j.dep=${3rdparty.dist.dir}/${argparse4j.jar}
+ant-contrib.jar=ant-contrib.jar
+ant-contrib.dep=${3rdparty.dist.dir}/${ant-contrib.jar}
 
 # OMNI compiler libraries and paths
 omni.xcodeml-common.dep=@OMNI_JAR_TOOLS@
@@ -85,7 +87,7 @@ claw.tatsu.dep=${dist.dir}/${claw.tatsu.jar}
 
 # CLAW driver libraries
 driver.jar=clawfc.jar
-driver.dep=${dist.dir}/${driver.jar}
+driver.dep=${driver.dist.dir}/${driver.jar}
 driver.libs.dir=../share/claw
 d.l.dir=${driver.libs.dir}
 driver.runtime.classpath=${d.l.dir}/${claw.tatsu.jar} ${d.l.dir}/${claw.wani.jar} ${d.l.dir}/${claw.shenron.jar} \

@@ -11,6 +11,8 @@
     <property name="claw.properties.dir" value=""/>
     <property file="${claw.properties.dir}/claw.properties"/>
 
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${ant-contrib.dep}"/>
+
     <!-- Classpath for the CX2T Translator library -->
     <path id="build.path">
         <pathelement path="${junit.dep}" />
@@ -41,20 +43,26 @@
         <mkdir dir="${dep.scan.parser.dir}"/>
     </target>
 
-    <!-- Check if dependencies scan parser is up-to-date or need to be re-generated -->
-    <uptodate property="antlr.required"
-              targetfile="${driver.src.dir}/clawfc/depscan/FortranDepScanner.g4" >
-        <srcfiles dir="${dep.scan.parser.dir}" includes="*.java" erroronmissingdir="false" />
-    </uptodate>
-    <!-- Generate the CLAW parser from the ANTLR grammar file -->
-    <target name="antlr" if="antlr.required" description="Generate the dependencies scan parser from ANTLR grammar file">
-        <java jvm="${java.exec}" classname="org.antlr.v4.Tool" fork="true" failonerror="true" classpathref="antlr.path">
-            <arg value="-o"/>
-            <arg value="${dep.scan.parser.dir}"/>
-            <arg value="-package"/>
-            <arg value="clawfc.depscan.parser"/>
-            <arg line="${driver.src.dir}/clawfc/depscan/FortranDepScanner.g4"/>
-        </java>
+    <!-- Check if dependencies scan parsers are up-to-date or need to be re-generated -->
+    <target name="antlr" description="Generate parsers from ANTLR grammar file">
+        <outofdate outputsources="outdated.sources">
+            <sourcefiles>
+            <fileset dir="${driver.src.dir}/clawfc/depscan" casesensitive="yes">
+              <include name="*.g4"/>
+            </fileset>
+          </sourcefiles>
+          <targetfiles path="${driver.dep}"/>
+            <sequential>
+                <echo message="  ${outdated.sources}"/>
+                <java jvm="${java.exec}" classname="org.antlr.v4.Tool" fork="true" failonerror="true" classpathref="antlr.path">
+                    <arg value="-o"/>
+                    <arg value="${dep.scan.parser.dir}"/>
+                    <arg value="-package"/>
+                    <arg value="clawfc.depscan.parser"/>
+                    <arg line="${outdated.sources}"/>
+                </java>
+            </sequential>
+        </outofdate>
     </target>
 
     <target name="compile" depends="antlr" description="compile the source">
@@ -71,7 +79,7 @@
     <target name="jar" depends="compile" description="package, output to JAR">
         <mkdir dir="${dist.dir}"/>
         <!-- Driver -->
-        <jar jarfile="${driver.dist.dir}/${driver.jar}" basedir="${driver.classes.dir}"
+        <jar jarfile="${driver.dep}" basedir="${driver.classes.dir}"
              includes="clawfc/**">
             <manifest>
                 <attribute name="Main-Class" value="clawfc.Driver"/>
@@ -100,7 +108,7 @@
     <target name="clean" description="clean up">
         <delete dir="${driver.classes.dir}"/>
         <delete dir="${driver.ut.classes.dir}"/>
-        <delete file="${driver.dist.dir}/${driver.jar}"/>
+        <delete file="${driver.dep}"/>
     </target>
 
     <path id="ut.build.path">
@@ -109,7 +117,7 @@
         <pathelement path="${antlr.dep}"/>
         <pathelement path="${antlr4.dep}"/>
         <pathelement path="${antlr4.runtime.dep}"/>
-        <pathelement path="${driver.dist.dir}/${driver.jar}"/>
+        <pathelement path="${driver.dep}"/>
     </path>
 
     <target name="compile-unit-tests" depends="compile" description="compile unit tests source">
@@ -126,7 +134,7 @@
             <pathelement path="${junit.dep}" />
             <pathelement path="${hamcrest.dep}" />
             <pathelement path="${antlr4.runtime.dep}"/>
-            <pathelement path="${driver.dist.dir}/${driver.jar}"/>
+            <pathelement path="${driver.dep}"/>
             <pathelement path="${driver.ut.classes.dir}"/>
         </path>
         <mkdir dir="${driver.ut.report.dir}"/>
@@ -134,7 +142,7 @@
             <classpath path="${junit.dep}" />
             <classpath path="${hamcrest.dep}" />
             <classpath path="${antlr4.runtime.dep}" />
-            <classpath path="${driver.dist.dir}/${driver.jar}" />
+            <classpath path="${driver.dep}" />
             <classpath path="${driver.ut.classes.dir}" />
             <formatter type="plain"/>
             <formatter type="xml"/>

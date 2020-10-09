@@ -18,5 +18,6 @@
     <dependency org="org.jacoco" name="org.jacoco.ant" rev="0.8.2" />
     <dependency org="org.ow2.asm" name="asm" rev="6.2.1"/>
     <dependency org="net.sourceforge.argparse4j" name="argparse4j" rev="0.8.1"/>
+    <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3"/>
   </dependencies>
 </ivy-module>

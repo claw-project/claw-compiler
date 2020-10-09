@@ -6,7 +6,7 @@
  */
 grammar FortranDepScanner;
 
-proc_stmt : PROC_STMT EOF;
+root : PROC_STMT EOF;
 
 PROC_STMT : SEP? (MODULE_OPEN_STMT | MODULE_CLOSE_STMT | PROGRAM_OPEN_STMT | PROGRAM_CLOSE_STMT | USE_STMT);
 

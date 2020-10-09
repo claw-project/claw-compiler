@@ -4,72 +4,79 @@
  */
 package clawfc.ut;
 
-import org.junit.Test;
-import static junit.framework.TestCase.*;
-import org.antlr.v4.runtime.*;
-import clawfc.depscan.parser.*;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ConsoleErrorListener;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Parser;
+
 import junit.framework.TestCase;
 
-public class TestDepScanParser 
+import clawfc.depscan.parser.*;
+
+public class FortranDepScannerTest
     extends TestCase 
 {
-  private FortranDepScannerParser parser;
-  private FortranDepScannerLexer lexer;
-  
-  @Override
-  protected void setUp() throws Exception 
-  {
-      lexer = new FortranDepScannerLexer(toCharStream(""));
-      lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
-      parser = new FortranDepScannerParser(toTokenStream(""));
-      parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-  }
-  
-  private static CharStream toCharStream(String str) throws IOException
-  {
-      InputStream inStrm = new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));  
-      CharStream chrStrm = CharStreams.fromStream(inStrm, StandardCharsets.UTF_8);
-      return chrStrm;
-  }
-  
-  private CommonTokenStream toTokenStream(String str) throws IOException
-  {
-      CharStream chrStrm = toCharStream(str);
-      lexer.reset();
-      lexer.setInputStream(chrStrm);
-      CommonTokenStream tokStrm = new CommonTokenStream(lexer);
-      return tokStrm;
-  }
-  
-  private void acceptString(String str) throws IOException
-  {
-      parser.reset();
-      parser.setInputStream(toTokenStream(str));
-      parser.proc_stmt();
-      assertTrue(String.format("Failed to accept string \"%s\"", str), parser.isMatchedEOF() && parser.getNumberOfSyntaxErrors() == 0);
-  }
-  
-  private void rejectString(String str) throws IOException
-  {
-      parser.reset();
-      parser.setInputStream(toTokenStream(str));
-      parser.proc_stmt();
-      assertTrue(String.format("Failed to reject string \"%s\"", str), !parser.isMatchedEOF() && parser.getNumberOfSyntaxErrors() > 0);
-  }
-  
-  private String flipChrCase(String str, int idx)
-  {
-      char c = str.charAt(idx);
-      if(c >= 'a' && c <= 'z')
-      { Character.toUpperCase(c); }
-      else 
-      { Character.toLowerCase(c); }
-      str = str.substring(0, idx) + c + str.substring(idx + 1);
-      return str;      
-  }
-
+    private FortranDepScannerParser parser;
+    private FortranDepScannerLexer lexer;
+    
+    @Override
+    protected void setUp() throws Exception 
+    {
+        lexer = new FortranDepScannerLexer(toCharStream(""));
+        lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
+        parser = new FortranDepScannerParser(toTokenStream(""));
+        parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+    }
+    
+    private static CharStream toCharStream(String str) throws IOException
+    {
+        InputStream inStrm = new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));  
+        CharStream chrStrm = CharStreams.fromStream(inStrm, StandardCharsets.UTF_8);
+        return chrStrm;
+    }
+    
+    private CommonTokenStream toTokenStream(String str) throws IOException
+    {
+        CharStream chrStrm = toCharStream(str);
+        lexer.reset();
+        lexer.setInputStream(chrStrm);
+        CommonTokenStream tokStrm = new CommonTokenStream(lexer);
+        return tokStrm;
+    }
+    
+    protected void acceptString(String str) throws IOException
+    {
+        parser.reset();
+        parser.setInputStream(toTokenStream(str));
+        parser.root();
+        assertTrue(String.format("Failed to accept string \"%s\"", str), parser.isMatchedEOF() && parser.getNumberOfSyntaxErrors() == 0);
+    }
+    
+    protected void rejectString(String str) throws IOException
+    {
+        parser.reset();
+        parser.setInputStream(toTokenStream(str));
+        parser.root();
+        assertTrue(String.format("Failed to reject string \"%s\"", str), !parser.isMatchedEOF() && parser.getNumberOfSyntaxErrors() > 0);
+    }
+    
+    protected String flipChrCase(String str, int idx)
+    {
+        char c = str.charAt(idx);
+        if(c >= 'a' && c <= 'z')
+        { Character.toUpperCase(c); }
+        else 
+        { Character.toLowerCase(c); }
+        str = str.substring(0, idx) + c + str.substring(idx + 1);
+        return str;      
+    }
   public void testIdentifier() throws Exception
   {
       for(char l = 'a'; l < 'z'; ++l)
