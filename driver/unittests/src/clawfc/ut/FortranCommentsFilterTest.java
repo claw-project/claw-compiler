@@ -4,9 +4,12 @@
  */
 package clawfc.ut;
 
+import clawfc.depscan.FortranCommentsFilter;
+import clawfc.depscan.FortranSourceRecognitionException;
 import clawfc.depscan.parser.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +43,7 @@ public class FortranCommentsFilterTest
 {
     private FortranCommentsFilterParser parser;
     private FortranCommentsFilterLexer lexer;
+    FortranCommentsFilter filter;
     
     @Override
     protected void setUp() throws Exception 
@@ -48,6 +52,7 @@ public class FortranCommentsFilterTest
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parser = new FortranCommentsFilterParser(toTokenStream(""));
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+        filter = new FortranCommentsFilter();
     }
     
     private static CharStream toCharStream(String str) throws IOException
@@ -81,6 +86,28 @@ public class FortranCommentsFilterTest
         {
             assertEquals(comments[i], listener.comments.get(i));
         }
+    } 
+    
+    private void verifyFilter(String in, String expectedOut)
+    {
+    	 InputStream inStrm = new ByteArrayInputStream(in.getBytes(StandardCharsets.US_ASCII));
+         ByteArrayOutputStream outStrm = new ByteArrayOutputStream();
+         FortranCommentsFilter filter;
+         try
+         {
+        	 filter = new FortranCommentsFilter();
+             filter.run(inStrm, outStrm);            
+         }
+         catch(FortranSourceRecognitionException e)
+         {
+             assertTrue("FortranSourceRecognitionException thrown", false);
+         }
+         catch(IOException e)
+         {
+             assertTrue("IOException thrown", false);
+         }
+         String res = outStrm.toString();
+         assertEquals(expectedOut, res);
     }
     
     public void testCommentsExtraction() throws Exception
@@ -99,5 +126,25 @@ public class FortranCommentsFilterTest
                                  "!bla2\n"+
                                  "\n"+
                                  "\"", new String[] { "!bla1\n"} );
+    }
+    
+    public void testFilter() throws Exception
+    {
+    	verifyFilter("!bla\n", "\n"); 
+    	verifyFilter("code!comment\n", "code\n"); 
+    	verifyFilter("!bla1\n"+
+                     "!bla2\n", "\n\n");
+    	verifyFilter("!bla1\n"+
+                     "'!bla2\n"+
+                      "'", 
+                      "\n"+
+                      "'!bla2\n"+
+                      "'");
+    	verifyFilter("!bla1\n"+
+                     "\"!bla2\n"+
+                     "\"", 
+                     "\n"+
+                     "\"!bla2\n"+
+                     "\"");
     }
 }
