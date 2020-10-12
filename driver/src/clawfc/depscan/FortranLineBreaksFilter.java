@@ -13,44 +13,57 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-public class FortranCommentsFilter
+public class FortranLineBreaksFilter
 {
     static class Listener
-        extends FortranCommentsFilterBaseListener
+        extends FortranLineBreaksFilterBaseListener
     {
         OutputStream outStrm;
         public ArrayList<String> comments;
         public ArrayList<IOException> errors;
+        String lineBreakSep;
         
         public Listener(OutputStream outStrm)
+        {
+        	initialise(outStrm, " ");
+        }
+        
+        public Listener(OutputStream outStrm, String lineBreakSep)
+        {
+        	initialise(outStrm, lineBreakSep);
+        }
+        
+        void initialise(OutputStream outStrm, String lineBreakSep)
         {
             this.outStrm = outStrm;
             comments = new ArrayList<String>();
             errors = new ArrayList<IOException>();
+            this.lineBreakSep = lineBreakSep;
         }
-
         @Override
-        public void exitOther(FortranCommentsFilterParser.OtherContext ctx)
+        public void exitOther(FortranLineBreaksFilterParser.OtherContext ctx)
         {
         	output(ctx.getText());
         }
 
         @Override
-        public void exitString(FortranCommentsFilterParser.StringContext ctx)
+        public void exitUnclosed_line_break(FortranLineBreaksFilterParser.Unclosed_line_breakContext ctx)
         {
-        	output(ctx.getText());
-        }
-
-        @Override
-        public void exitComment(FortranCommentsFilterParser.CommentContext ctx)
-        {
-        	output("\n");
-            String comment = ctx.getText();
-            comments.add(comment);            
+        	String text = ctx.getText();
+        	int EOLIdx = text.lastIndexOf('\n');
+        	String sep = text.substring(EOLIdx + 1);
+        	if(sep.isEmpty())
+        	{
+        		sep = this.lineBreakSep;
+        	}       
+        	output(sep);
         }
         
         void output(String s)
@@ -67,19 +80,19 @@ public class FortranCommentsFilter
         }
     }
 
-    FortranCommentsFilterLexer lexer;
-    FortranCommentsFilterParser parser;
+    FortranLineBreaksFilterLexer lexer;
+    FortranLineBreaksFilterParser parser;
 
     ParserErrorListener lexerErrorListener;
     ParserErrorListener parserErrorListener;
     
-    public FortranCommentsFilter() throws IOException
+    public FortranLineBreaksFilter() throws IOException
     {
-        lexer = new FortranCommentsFilterLexer(toCharStream(""));
+        lexer = new FortranLineBreaksFilterLexer(toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);
-        parser = new FortranCommentsFilterParser(new CommonTokenStream(lexer));
+        parser = new FortranLineBreaksFilterParser(new CommonTokenStream(lexer));
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parserErrorListener = new ParserErrorListener();
         parser.addErrorListener(parserErrorListener);

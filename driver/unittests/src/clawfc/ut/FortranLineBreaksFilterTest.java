@@ -4,9 +4,13 @@
  */
 package clawfc.ut;
 
+import clawfc.depscan.FortranCommentsFilter;
+import clawfc.depscan.FortranLineBreaksFilter;
+import clawfc.depscan.FortranSourceRecognitionException;
 import clawfc.depscan.parser.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -48,6 +52,7 @@ public class FortranLineBreaksFilterTest
 {
     private FortranLineBreaksFilterParser parser;
     private FortranLineBreaksFilterLexer lexer;
+    private FortranLineBreaksFilter filter;
     
     @Override
     protected void setUp() throws Exception 
@@ -56,6 +61,7 @@ public class FortranLineBreaksFilterTest
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parser = new FortranLineBreaksFilterParser(toTokenStream(""));
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+        filter = new FortranLineBreaksFilter();
     }
     
     private static CharStream toCharStream(String str) throws IOException
@@ -108,6 +114,29 @@ public class FortranLineBreaksFilterTest
         verifyLineBreaksFilter(str, null, breaks);
     }
     
+
+	private void verifyFilter(String in, String expectedOut)
+	{
+		 InputStream inStrm = new ByteArrayInputStream(in.getBytes(StandardCharsets.US_ASCII));
+	     ByteArrayOutputStream outStrm = new ByteArrayOutputStream();
+	     try
+	     {
+	    	 filter = new FortranLineBreaksFilter();
+	         filter.run(inStrm, outStrm);            
+	     }
+	     catch(FortranSourceRecognitionException e)
+	     {
+	         assertTrue("FortranSourceRecognitionException thrown", false);
+	     }
+	     catch(IOException e)
+	     {
+	         assertTrue("IOException thrown", false);
+	     }
+	     String res = outStrm.toString();
+	     System.out.println(res);
+	     assertEquals(expectedOut, res);
+	}
+    
     public void testFullLineBreakRemoval() throws Exception
     {
         verifyLineBreaksFilter("\n",  "\n" );
@@ -156,5 +185,39 @@ public class FortranLineBreaksFilterTest
         verifyLineBreaksFilter("module&\n"+
                                " end& \n"+
                                "x\n",  new String[] {"&\n ", "& \n"} );
+    }
+    
+    public void testFilter() throws Exception
+    {
+    	String expectedRes = "module x\n" + 
+	                         "end module x\n";
+    	verifyFilter("module x\n" + 
+    			     "end module x\n", expectedRes);
+    	verifyFilter("mod&\n" + 
+    			     "&ule x\n" +
+			         "end module x\n", expectedRes);
+    	verifyFilter("mod&\n   " + 
+			     "\r\r\n" +
+			     "   &ule x\n" +
+		         "end module x\n", expectedRes);
+    	verifyFilter("mod&\n" + 
+			         "&ule x\n" +
+		             "end mod&\n" + 
+			         "&ule x\n", expectedRes);
+    	verifyFilter("mod&\n" + 
+		         "&ule x\n" +
+	             "end&  \n"+
+		         "mod&\n" + 
+		         "&ule x\n", expectedRes);
+    	verifyFilter("mod&\n" + 
+		         "&ule x\n" +
+	             "end&  \n"+
+		         "mod&\n" + 
+		         "&ule x\n", expectedRes);
+    	verifyFilter("mod&\n" + 
+		         "&ule x\n" +
+	             "end&  \n"+
+		         " mod&\n" + 
+		         "&ule x\n", expectedRes);
     }
 }
