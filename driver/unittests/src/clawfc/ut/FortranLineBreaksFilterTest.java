@@ -133,7 +133,7 @@ public class FortranLineBreaksFilterTest
 	         assertTrue("IOException thrown", false);
 	     }
 	     String res = outStrm.toString();
-	     System.out.println(res);
+	     //System.out.println(res);
 	     assertEquals(expectedOut, res);
 	}
     
