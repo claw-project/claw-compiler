@@ -6,7 +6,7 @@ package clawfc.ut;
 
 import clawfc.depscan.FortranCommentsFilter;
 import clawfc.depscan.FortranLineBreaksFilter;
-import clawfc.depscan.FortranSourceRecognitionException;
+import clawfc.depscan.FortranSyntaxException;
 import clawfc.depscan.parser.*;
 
 import java.io.ByteArrayInputStream;
@@ -136,9 +136,9 @@ public class FortranLineBreaksFilterTest
 	    	 filter = new FortranLineBreaksFilter();
 	         filter.run(inStrm, outStrm, preserveNumLines);            
 	     }
-	     catch(FortranSourceRecognitionException e)
+	     catch(FortranSyntaxException e)
 	     {
-	         assertTrue("FortranSourceRecognitionException thrown", false);
+	         assertTrue("FortranSyntaxException thrown", false);
 	     }
 	     catch(IOException e)
 	     {

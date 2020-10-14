@@ -5,7 +5,7 @@
 package clawfc.ut;
 
 import clawfc.depscan.FortranCommentsFilter;
-import clawfc.depscan.FortranSourceRecognitionException;
+import clawfc.depscan.FortranSyntaxException;
 import clawfc.depscan.parser.*;
 
 import java.io.ByteArrayInputStream;
@@ -98,9 +98,9 @@ public class FortranCommentsFilterTest
         	 filter = new FortranCommentsFilter();
              filter.run(inStrm, outStrm);            
          }
-         catch(FortranSourceRecognitionException e)
+         catch(FortranSyntaxException e)
          {
-             assertTrue("FortranSourceRecognitionException thrown", false);
+             assertTrue("FortranSyntaxException thrown", false);
          }
          catch(IOException e)
          {

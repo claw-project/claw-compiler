@@ -9,13 +9,15 @@ import clawfc.depscan.parser.*;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.*;
+import java.util.concurrent.CancellationException;
 
 public class ParserErrorListener
     extends BaseErrorListener
 {
-    public ArrayList<FortranSourceRecognitionException> errors = new ArrayList<FortranSourceRecognitionException>();
+    public FortranSyntaxException error() { return _error; }
+    FortranSyntaxException _error = null;
     
-    public void reset() { errors.clear(); }
+    public void reset() { _error = null; }
     
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer,
@@ -25,7 +27,7 @@ public class ParserErrorListener
                             String msg,
                             RecognitionException e)
     {
-        FortranSourceRecognitionException ex = new FortranSourceRecognitionException(msg, line, charPositionInLine);
-        errors.add(ex);
+    	_error = new FortranSyntaxException(msg, line, charPositionInLine);
+        throw new CancellationException("Syntax error");
     }
 }

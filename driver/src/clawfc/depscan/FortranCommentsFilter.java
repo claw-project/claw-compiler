@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.concurrent.CancellationException;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -24,13 +25,14 @@ public class FortranCommentsFilter
     {
         OutputStream outStrm;
         public ArrayList<String> comments;
-        public ArrayList<IOException> errors;
+        public IOException error() { return _error; }
+        IOException _error;
         
         public Listener(OutputStream outStrm)
         {
             this.outStrm = outStrm;
             comments = new ArrayList<String>();
-            errors = new ArrayList<IOException>();
+            _error = null;
         }
 
         @Override
@@ -62,7 +64,8 @@ public class FortranCommentsFilter
             }
             catch(IOException e)
             {
-                errors.add(e);
+            	_error = e;
+            	throw new CancellationException("Write error");
             }
         }
     }
@@ -75,17 +78,17 @@ public class FortranCommentsFilter
     
     public FortranCommentsFilter() throws IOException
     {
-        lexer = new FortranCommentsFilterLexer(toCharStream(""));
+        lexer = new FortranCommentsFilterLexer(Utils.toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);
         parser = new FortranCommentsFilterParser(new CommonTokenStream(lexer));
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parserErrorListener = new ParserErrorListener();
-        parser.addErrorListener(parserErrorListener);
+        parser.addErrorListener(parserErrorListener);        
     }
     
-    public void run(InputStream input, OutputStream output) throws FortranSourceRecognitionException, IOException
+    public void run(InputStream input, OutputStream output) throws FortranSyntaxException, IOException
     {
         lexer.reset();
         parser.reset();
@@ -96,22 +99,22 @@ public class FortranCommentsFilter
         CommonTokenStream tokStrm = new CommonTokenStream(lexer);
         parser.setInputStream(tokStrm);
         parser.setBuildParseTree(true);
-        ParseTree tree = parser.root();
+        ParseTree tree = null;
+        try
+        { tree = parser.root(); }
+        catch(CancellationException e)
+        {}
+        if(lexerErrorListener.error() != null)
+        { throw lexerErrorListener.error(); }
+        if(parserErrorListener.error() != null)
+        { throw parserErrorListener.error(); }
         ParseTreeWalker walker = new ParseTreeWalker();
         Listener listener = new Listener(output);
-        walker.walk(listener, tree);
-        if(!lexerErrorListener.errors.isEmpty())
-        { throw lexerErrorListener.errors.get(0); }
-        if(!parserErrorListener.errors.isEmpty())
-        { throw parserErrorListener.errors.get(0); }
-        if(!listener.errors.isEmpty())
-        { throw listener.errors.get(0); }
-    }
-    
-    static CharStream toCharStream(String str) throws IOException
-    {
-        InputStream inStrm = new ByteArrayInputStream(str.getBytes(StandardCharsets.US_ASCII));  
-        CharStream chrStrm = CharStreams.fromStream(inStrm, StandardCharsets.US_ASCII);
-        return chrStrm;
+        try
+        { walker.walk(listener, tree); }
+        catch(CancellationException e)
+        {}
+        if(listener.error() != null)
+        { throw listener.error(); }
     }
 }

@@ -5,7 +5,7 @@
 package clawfc.ut;
 
 import clawfc.depscan.FortranDepStatementsRecognizer;
-import clawfc.depscan.FortranSourceRecognitionException;
+import clawfc.depscan.FortranSyntaxException;
 
 import junit.framework.TestCase;
 

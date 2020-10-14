@@ -19,8 +19,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 
 public class FortranDepStatementsRecognizer
 {
@@ -51,7 +53,6 @@ public class FortranDepStatementsRecognizer
         extends FortranDepStatementsRecognizerBaseListener
     {
         public Data data = new Data();
-        public ArrayList<IOException> errors;
         
         String useSymName;
         String useOnlySymName;
@@ -147,7 +148,7 @@ public class FortranDepStatementsRecognizer
         parser.addErrorListener(parserErrorListener);
     }
     
-    Data run(String input, Callable<ParseTree> parseStatement) throws FortranSourceRecognitionException, IOException, Exception
+    Data run(String input, Callable<ParseTree> parseStatement) throws FortranSyntaxException, IOException, Exception
     {
         lexer.reset();
         parser.reset();
@@ -159,38 +160,42 @@ public class FortranDepStatementsRecognizer
         CommonTokenStream tokStrm = new CommonTokenStream(lexer);
         parser.setInputStream(tokStrm);
         parser.setBuildParseTree(true);
-        ParseTree tree = parseStatement.call();
+        ParseTree tree = null;
+        try
+        { tree = parseStatement.call(); }
+        catch(CancellationException e)
+        {}
+        if(lexerErrorListener.error() != null)
+        { throw lexerErrorListener.error(); }
+        if(parserErrorListener.error() != null)
+        { throw parserErrorListener.error(); }        
         ParseTreeWalker walker = new ParseTreeWalker();
         Listener listener = new Listener();
         walker.walk(listener, tree);
-        if(!lexerErrorListener.errors.isEmpty())
-        { throw lexerErrorListener.errors.get(0); }
-        if(!parserErrorListener.errors.isEmpty())
-        { throw parserErrorListener.errors.get(0); }
         return listener.data;
     }
     
-    public Data parseModuleOpen(String input) throws FortranSourceRecognitionException, IOException, Exception
+    public Data parseModuleOpen(String input) throws FortranSyntaxException, IOException, Exception
     {
     	return run(input, () -> { return parser.module_open_stmt(); });
     }
     
-    public Data parseModuleClose(String input) throws FortranSourceRecognitionException, IOException, Exception
+    public Data parseModuleClose(String input) throws FortranSyntaxException, IOException, Exception
     {
     	return run(input, () -> { return parser.module_close_stmt(); });
     }
     
-    public Data parseProgramOpen(String input) throws FortranSourceRecognitionException, IOException, Exception
+    public Data parseProgramOpen(String input) throws FortranSyntaxException, IOException, Exception
     {
     	return run(input, () -> { return parser.program_open_stmt(); });
     }
     
-    public Data parseProgramClose(String input) throws FortranSourceRecognitionException, IOException, Exception
+    public Data parseProgramClose(String input) throws FortranSyntaxException, IOException, Exception
     {
     	return run(input, () -> { return parser.program_close_stmt(); });
     }
     
-    public Data parseUse(String input) throws FortranSourceRecognitionException, IOException, Exception
+    public Data parseUse(String input) throws FortranSyntaxException, IOException, Exception
     {
     	return run(input, () -> { return parser.use_stmt(); });
     }
