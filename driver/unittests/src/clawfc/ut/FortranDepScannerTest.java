@@ -66,6 +66,7 @@ public class FortranDepScannerTest
     FortranDepScannerParser parser;
     FortranDepScannerLexer lexer;
     FortranDepParser depParser;
+    FortranDepScanner depScanner;
     
     @Override
     protected void setUp() throws Exception 
@@ -75,6 +76,7 @@ public class FortranDepScannerTest
         parser = new FortranDepScannerParser(toTokenStream(""));
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
         depParser = new FortranDepParser();
+        depScanner = new FortranDepScanner();
     }
     
     private static CharStream toCharStream(String str) throws IOException
@@ -498,5 +500,95 @@ public class FortranDepScannerTest
 		  return;		  
 	  }
 	  assertTrue(false);
+  } 
+  
+  FortranFileSummary scan(String s) throws IOException, FortranException, Exception
+  {
+	  return depScanner.scan(Utils.toInputStream(s));
+  }
+  
+  void verifyScan(String s,
+		  	       FortranModuleDependencies[] expModules,
+		           FortranModuleDependencies expectedProgram) throws IOException, FortranException, Exception
+  {
+	  FortranFileSummary res = scan(s);
+	  FortranFileSummary expRes = new FortranFileSummary(expModules, expectedProgram);
+	  assertEquals(expRes, res);	  
+  }
+  
+  public void testScanning() throws IOException, FortranException, Exception
+  {
+	  verifyScan("", 
+			      new FortranModuleDependencies[0],
+			      (FortranModuleDependencies)null);
+	  verifyScan("module x\n"+
+			      "end module x\n", 
+			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[0])},
+			      (FortranModuleDependencies)null);
+	  verifyScan("module x\n"+
+		          "use y\n"+ 
+		          "end module x\n", 
+			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y"})},
+			      (FortranModuleDependencies)null);
+	  verifyScan("module x\n"+
+	              "use y\n"+ 
+	              "bla\n"+ 
+	              "use z\n"+ 
+	              "end module x\n", 
+			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"})},
+			      (FortranModuleDependencies)null);
+	  verifyScan(
+			  "module x\n"+
+              "use y\n"+ 
+              "bla\n"+ 
+              "use z\n"+ 
+              "end module x\n"+
+			  "module x1\n"+
+              "use y1\n"+ 
+              "bla\n"+ 
+              "use z1\n"+ 
+              "end module x1\n", 
+              new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"}),
+		                          new FortranModuleDependencies("x1", new String[] {"y1", "z1"})},
+		      (FortranModuleDependencies)null);
+	  verifyScan(
+			  "module x\n"+
+	          "use y\n"+ 
+	          "bla\n"+ 
+	          "use z\n"+ 
+	          "end module x\n"+
+			  "module x1\n"+
+	          "use y1\n"+ 
+	          "bla\n"+ 
+	          "use z1\n"+ 
+	          "end module x1\n"+
+			  "program p1\n"+
+	          "use y1\n"+ 
+	          "bla\n"+ 
+	          "use z1\n"+ 
+	          "end program p1\n", 
+				new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"}),
+					                            new FortranModuleDependencies("x1", new String[] {"y1", "z1"})},
+				new FortranModuleDependencies("p1", new String[] {"y1", "z1"}));
+	  
+  }
+  
+  public void testScanWithComments() throws IOException, FortranException, Exception
+  {
+	  verifyScan("module x  ! comment1 \n"+
+		         "end module x ! comment2\n", 
+		      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[0])},
+		      (FortranModuleDependencies)null);
+  }
+  
+  public void testScanWithLineBreaks() throws IOException, FortranException, Exception
+  {
+	  verifyScan("m&   \n" +
+	  		     "&od&\n" +
+	  		     "    &ule&    \n" +
+	  		     "x  ! comment1 \n"+
+		         "end module x ! comment2\n", 
+		      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[0])},
+		      (FortranModuleDependencies)null);
   }
 }
