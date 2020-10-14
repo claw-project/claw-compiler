@@ -20,7 +20,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import junit.framework.TestCase;
-
+import clawfc.depscan.*;
 import clawfc.depscan.parser.*;
 
 class FortranDepScannerListener
@@ -63,8 +63,9 @@ class FortranDepScannerListener
 public class FortranDepScannerTest
     extends TestCase 
 {
-    private FortranDepScannerParser parser;
-    private FortranDepScannerLexer lexer;
+    FortranDepScannerParser parser;
+    FortranDepScannerLexer lexer;
+    FortranDepParser depParser;
     
     @Override
     protected void setUp() throws Exception 
@@ -73,6 +74,7 @@ public class FortranDepScannerTest
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parser = new FortranDepScannerParser(toTokenStream(""));
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
+        depParser = new FortranDepParser();
     }
     
     private static CharStream toCharStream(String str) throws IOException
@@ -374,5 +376,127 @@ public class FortranDepScannerTest
 	  assertEquals("module x", res.moduleOpen.get(0));
 	  assertEquals("use y", res.use.get(0));
 	  assertEquals("end module x", res.moduleClose.get(0));	  
+  }
+  
+  FortranFileSummary parse(String s) throws IOException, FortranException, Exception
+  {
+	  return depParser.parse(Utils.toInputStream(s));
+  }
+  
+  void verifyParse(String s,
+		  	       FortranModuleDependencies[] expModules,
+		           FortranModuleDependencies expectedProgram) throws IOException, FortranException, Exception
+  {
+	  FortranFileSummary res = parse(s);
+	  FortranFileSummary expRes = new FortranFileSummary(expModules, expectedProgram);
+	  assertEquals(expRes, res);	  
+  }
+  
+  public void testParsing() throws IOException, FortranException, Exception
+  {
+	  verifyParse("", 
+			      new FortranModuleDependencies[0],
+			      (FortranModuleDependencies)null);
+	  verifyParse("module x\n"+
+			      "end module x\n", 
+			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[0])},
+			      (FortranModuleDependencies)null);
+	  verifyParse("module x\n"+
+		          "use y\n"+ 
+		          "end module x\n", 
+			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y"})},
+			      (FortranModuleDependencies)null);
+	  verifyParse("module x\n"+
+	              "use y\n"+ 
+	              "bla\n"+ 
+	              "use z\n"+ 
+	              "end module x\n", 
+			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"})},
+			      (FortranModuleDependencies)null);
+	  verifyParse(
+			  "module x\n"+
+              "use y\n"+ 
+              "bla\n"+ 
+              "use z\n"+ 
+              "end module x\n"+
+			  "module x1\n"+
+              "use y1\n"+ 
+              "bla\n"+ 
+              "use z1\n"+ 
+              "end module x1\n", 
+              new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"}),
+		                          new FortranModuleDependencies("x1", new String[] {"y1", "z1"})},
+		      (FortranModuleDependencies)null);
+	  verifyParse(
+			  "module x\n"+
+	          "use y\n"+ 
+	          "bla\n"+ 
+	          "use z\n"+ 
+	          "end module x\n"+
+			  "module x1\n"+
+	          "use y1\n"+ 
+	          "bla\n"+ 
+	          "use z1\n"+ 
+	          "end module x1\n"+
+			  "program p1\n"+
+	          "use y1\n"+ 
+	          "bla\n"+ 
+	          "use z1\n"+ 
+	          "end program p1\n", 
+				new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"}),
+					                            new FortranModuleDependencies("x1", new String[] {"y1", "z1"})},
+				new FortranModuleDependencies("p1", new String[] {"y1", "z1"}));
+	  
+  }
+  
+  public void testSyntaxError() throws IOException, FortranException, Exception
+  {
+	  try
+	  {
+		  parse("end module x\n");
+	  }
+	  catch(FortranSyntaxException e)
+	  {
+		  assertTrue(e.getMessage().contains("extraneous input 'end module x'"));
+		  assertEquals(1, e.line());
+		  return;		  
+	  }
+	  assertTrue(false);
+  }
+  
+  public void testModuleNamesMismatchError() throws IOException, FortranException, Exception
+  {
+	  try
+	  {
+		  parse("module x\n"+
+				"end module y\n");
+	  }
+	  catch(FortranSemanticException e)
+	  {
+		  assertEquals("End module name \"y\" does not match current module name \"x\"",
+				       e.getMessage());
+		  assertEquals(2, e.line());
+		  return;		  
+	  }
+	  assertTrue(false);
+  }
+  
+  public void testDoubleDefError() throws IOException, FortranException, Exception
+  {
+	  try
+	  {
+		  parse("module x\n"+
+				"end module x\n"+
+				"module x\n"+
+				"end module x\n");
+	  }
+	  catch(FortranSemanticException e)
+	  {
+		  assertEquals("Double definition of module \"x\"",
+				       e.getMessage());
+		  assertEquals(3, e.line());
+		  return;		  
+	  }
+	  assertTrue(false);
   }
 }
