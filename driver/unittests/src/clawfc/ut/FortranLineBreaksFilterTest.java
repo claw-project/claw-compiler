@@ -30,6 +30,7 @@ class LinesBreaksFilterListener
     extends FortranLineBreaksFilterBaseListener
 {
     public ArrayList<String> lineBreaks = new ArrayList<String>();
+    ByteArrayOutputStream buf = new ByteArrayOutputStream();
     public String txt;
     
     @Override
@@ -37,7 +38,17 @@ class LinesBreaksFilterListener
     {
         //System.out.println(ctx.getText());
         lineBreaks.add(ctx.getText());
-    }     
+    } 
+    
+    /*@Override
+    public void exitOther(FortranLineBreaksFilterParser.OtherContext ctx) 
+    {
+    	String s = ctx.getText();
+    	byte[] bytes = s.getBytes(StandardCharsets.US_ASCII);
+    	buf.write(bytes)
+        //System.out.println(ctx.getText());
+    } */   
+    
     @Override
     public void exitFortran_text(FortranLineBreaksFilterParser.Fortran_textContext ctx) 
     {
@@ -100,6 +111,7 @@ public class FortranLineBreaksFilterTest
         }
         if(filteredStr != null)
         { 
+        	System.out.println(listener.txt);
             assertEquals(filteredStr, listener.txt); 
         }
     }
@@ -115,14 +127,14 @@ public class FortranLineBreaksFilterTest
     }
     
 
-	private void verifyFilter(String in, String expectedOut)
+	private void verifyFilter(String in, String expectedOut, boolean preserveNumLines)
 	{
 		 InputStream inStrm = new ByteArrayInputStream(in.getBytes(StandardCharsets.US_ASCII));
 	     ByteArrayOutputStream outStrm = new ByteArrayOutputStream();
 	     try
 	     {
 	    	 filter = new FortranLineBreaksFilter();
-	         filter.run(inStrm, outStrm);            
+	         filter.run(inStrm, outStrm, preserveNumLines);            
 	     }
 	     catch(FortranSourceRecognitionException e)
 	     {
@@ -136,34 +148,11 @@ public class FortranLineBreaksFilterTest
 	     //System.out.println(res);
 	     assertEquals(expectedOut, res);
 	}
-    
-    public void testFullLineBreakRemoval() throws Exception
-    {
-        verifyLineBreaksFilter("\n",  "\n" );
-        verifyLineBreaksFilter("bla\n",  "bla\n" );
-        verifyLineBreaksFilter("abra&\n"+
-                               "&kadabra\n",  "abrakadabra\n" );
-        verifyLineBreaksFilter("abra& \r\t\n"+
-                               "&kadabra\n",  "abrakadabra\n" );
-        verifyLineBreaksFilter("abra& \r\t\n"+
-                               " \r\t&kadabra\n",  "abrakadabra\n" );
-        verifyLineBreaksFilter("abra& \r\t\n"+
-                               "\r\t\n"+
-                               " \r\t&kadabra\n",  "abrakadabra\n" );
-        verifyLineBreaksFilter("abra& \r\t\n"+
-                               " \r\t\n"+
-                               " \r\t\n"+
-                               " \r\t&kadabra\n",  "abrakadabra\n" );
-        verifyLineBreaksFilter("abra& \r\t\n"+
-                " \r\t\n"+
-                " \r\t\n"+
-                " \r\t&kadabra polu&\n"+
-                " \r\t&ndra\n",  "abrakadabra polundra\n" );
-        verifyLineBreaksFilter("module&\n"+
-                               "x\n",  
-                               "module&\n"+
-                               "x\n");
-    }
+	
+	private void verifyFilter(String in, String expectedOut)
+	{
+		verifyFilter(in, expectedOut, false);
+	}
     
     public void testUnclosedLineBreakExtraction() throws Exception
     {
@@ -219,5 +208,60 @@ public class FortranLineBreaksFilterTest
 	             "end&  \n"+
 		         " mod&\n" + 
 		         "&ule x\n", expectedRes);
+    }
+    
+    public void testFilterWithLinesNumPreservation() throws Exception
+    {
+    	{
+    		String in = "module x\n" + 
+   			            "end module x\n";
+    		String expectedRes = "module x\n" + 
+                                 "end module x\n";
+        	verifyFilter(in, expectedRes, true);
+    	}
+    	{
+    		String in = "mod&\n" + 
+   			            "&ule x\n" +
+			            "end module x\n";
+    		String expectedRes = "\n" + 
+			                     "module x\n" +
+		                         "end module x\n";
+        	verifyFilter(in, expectedRes, true);
+    	}
+    	{
+    		String in = "mod&\n   " + 
+   			            "\r\r\n" +
+   			            "   &ule x\n" +
+   		                "end module x\n";
+    		String expectedRes = "\n" + 
+			                     "\n" +
+			                     "module x\n" +
+		                         "end module x\n";;
+        	verifyFilter(in, expectedRes, true);
+    	}
+    	{
+    		String in = "mod&\n" + 
+			            "&ule x\n" +
+		                "end mod&\n" + 
+			            "&ule x\n";
+    		String expectedRes = "\n" + 
+		                         "module x\n" +
+	                             "\n" + 
+		                         "end module x\n";;
+        	verifyFilter(in, expectedRes, true);
+    	}
+    	{
+    		String in = "mod&\n" + 
+		                "&ule x\n" +
+	                    "end&  \n"+
+		                "mod&\n" + 
+		                "&ule x\n";
+    		String expectedRes = "\n" + 
+		                         "module x\n" +
+	                             "\n" + 
+	                             "\n" + 
+		                         "end module x\n";;
+        	verifyFilter(in, expectedRes, true);
+    	}
     }
 }

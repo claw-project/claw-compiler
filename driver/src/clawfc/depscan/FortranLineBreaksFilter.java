@@ -29,30 +29,70 @@ public class FortranLineBreaksFilter
         public ArrayList<String> comments;
         public ArrayList<IOException> errors;
         String lineBreakSep;
+        boolean preserveNumLines;
+        ArrayList<String> buf;
         
         public Listener(OutputStream outStrm)
         {
-        	initialise(outStrm, " ");
+        	initialise(outStrm, " ", false);
         }
         
-        public Listener(OutputStream outStrm, String lineBreakSep)
+        public Listener(OutputStream outStrm, String lineBreakSep, boolean preserveNumLines)
         {
-        	initialise(outStrm, lineBreakSep);
+        	initialise(outStrm, lineBreakSep, preserveNumLines);
         }
         
-        void initialise(OutputStream outStrm, String lineBreakSep)
+        void initialise(OutputStream outStrm, String lineBreakSep, boolean preserveNumLines)
         {
             this.outStrm = outStrm;
             comments = new ArrayList<String>();
             errors = new ArrayList<IOException>();
             this.lineBreakSep = lineBreakSep;
+            this.preserveNumLines = preserveNumLines;
+            if(this.preserveNumLines)
+            { buf = new ArrayList<String>(); }
         }
         @Override
         public void exitOther(FortranLineBreaksFilterParser.OtherContext ctx)
         {
-        	output(ctx.getText());
+        	String s = ctx.getText();
+        	if(!preserveNumLines)
+        	{ output(s); }
+        	else
+        	{ buf.add(s); }        	
         }
-
+        
+        void outputBuf()
+        {
+        	for(String s: buf)
+        	{ output(s); }
+        	buf.clear();
+        }
+        
+        @Override
+        public void exitEol(FortranLineBreaksFilterParser.EolContext ctx)
+        {
+        	if(preserveNumLines)
+        	{ outputBuf(); }
+        	output("\n");
+        }
+        
+        @Override
+        public void exitFortran_text(FortranLineBreaksFilterParser.Fortran_textContext ctx)
+        {
+        	if(preserveNumLines)
+        	{ outputBuf(); }
+        }
+        
+        void outputEOLs(String s)
+        {
+        	for(char c: s.toCharArray())
+        	{ 
+        		if(c == '\n')
+        		{ output("\n"); }
+        	}
+        }
+        
         @Override
         public void exitUnclosed_line_break(FortranLineBreaksFilterParser.Unclosed_line_breakContext ctx)
         {
@@ -62,8 +102,22 @@ public class FortranLineBreaksFilter
         	if(sep.isEmpty())
         	{
         		sep = this.lineBreakSep;
-        	}       
-        	output(sep);
+        	}
+        	if(!preserveNumLines)
+        	{ output(sep); }
+        	else
+        	{ 
+        		buf.add(sep);
+        		outputEOLs(text);
+        	}
+        }
+
+        @Override
+        public void exitClosed_line_break(FortranLineBreaksFilterParser.Closed_line_breakContext ctx)
+        {
+        	String text = ctx.getText();
+        	if(preserveNumLines)
+        	{ outputEOLs(text); }        	
         }
         
         void output(String s)
@@ -98,7 +152,7 @@ public class FortranLineBreaksFilter
         parser.addErrorListener(parserErrorListener);
     }
     
-    public void run(InputStream input, OutputStream output) throws FortranSourceRecognitionException, IOException
+    public void run(InputStream input, OutputStream output, boolean preserveNumLines) throws FortranSourceRecognitionException, IOException
     {
         lexer.reset();
         parser.reset();
@@ -111,7 +165,7 @@ public class FortranLineBreaksFilter
         parser.setBuildParseTree(true);
         ParseTree tree = parser.root();
         ParseTreeWalker walker = new ParseTreeWalker();
-        Listener listener = new Listener(output);
+        Listener listener = new Listener(output, " ", preserveNumLines);
         walker.walk(listener, tree);
         if(!lexerErrorListener.errors.isEmpty())
         { throw lexerErrorListener.errors.get(0); }
@@ -119,6 +173,11 @@ public class FortranLineBreaksFilter
         { throw parserErrorListener.errors.get(0); }
         if(!listener.errors.isEmpty())
         { throw listener.errors.get(0); }
+    }
+    
+    public void run(InputStream input, OutputStream output) throws FortranSourceRecognitionException, IOException
+    {
+    	run(input, output, false);
     }
     
     static CharStream toCharStream(String str) throws IOException
