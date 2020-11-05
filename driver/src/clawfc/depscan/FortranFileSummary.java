@@ -5,43 +5,42 @@
 package clawfc.depscan;
 
 import clawfc.depscan.parser.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 
 public class FortranFileSummary
 {
-	
-	ArrayList<FortranModuleDependencies> modules;
-	FortranModuleDependencies program;
+    List<FortranModuleDependencies> _modules;
+    FortranModuleDependencies _program;
+    
+	public List<FortranModuleDependencies> modules() { return _modules; }
+	public FortranModuleDependencies program() { return _program; };
 	
 	public FortranFileSummary(LinkedHashMap<String, LinkedHashSet<String>> moduleDependencies,
 			                  LinkedHashMap<String, LinkedHashSet<String>> programDependencies)
 	{
-		modules = new ArrayList<FortranModuleDependencies>(moduleDependencies.size());
+	    ArrayList<FortranModuleDependencies> modules = new ArrayList<FortranModuleDependencies>(moduleDependencies.size());
 		for(Map.Entry<String, LinkedHashSet<String>> entry : moduleDependencies.entrySet()) 
 		{ modules.add(new FortranModuleDependencies(entry.getKey(), entry.getValue())); }
+		_modules = Collections.unmodifiableList(modules);
 		if(!programDependencies.isEmpty())
 		{
 			Map.Entry<String, LinkedHashSet<String>> entry = programDependencies.entrySet().iterator().next();
-			program = new FortranModuleDependencies(entry.getKey(), entry.getValue());			
+			_program = new FortranModuleDependencies(entry.getKey(), entry.getValue());			
 		}		
 	}
 	
 	public FortranFileSummary(FortranModuleDependencies[] modules,
 							  FortranModuleDependencies program)
 	{
-		this.modules = new ArrayList<FortranModuleDependencies>(Arrays.asList(modules));
-		this.program = program;
+		this._modules = Collections.unmodifiableList(new ArrayList<FortranModuleDependencies>(Arrays.asList(modules)));
+		this._program = program;
 	}
 	
-	public FortranFileSummary()
+	/*public FortranFileSummary()
 	{
-		this.modules = new ArrayList<FortranModuleDependencies>();
-		this.program = null;
-	}
+		this._modules = new ArrayList<FortranModuleDependencies>();
+		this._program = null;
+	}*/
 	
 	@Override
     public boolean equals(Object obj) 
@@ -53,16 +52,16 @@ public class FortranFileSummary
         if (getClass() != obj.getClass())
         { return false; }
         FortranFileSummary other = (FortranFileSummary) obj;
-        if(!modules.equals(other.modules))
+        if(!modules().equals(other.modules()))
         { return false; }
-        if(program == null)
+        if(program() == null)
         { 
-        	if(other.program != null)
+        	if(other.program() != null)
         	{ return false; }
         }
         else
         { 
-        	if(!program.equals(other.program))
+        	if(!program().equals(other.program()))
         	{ return false; }
         }
         return true;

@@ -5,36 +5,36 @@
 package clawfc.depscan;
 
 import clawfc.depscan.parser.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 
 public class FortranModuleDependencies
 {
-	String name;
-	ArrayList<String> preqNames;
+    String _name;
+    List<String> _usedModuleNames;
+    
+	public String name() { return _name; }
+	public List<String> usedModuleNames() {return _usedModuleNames; }
 	
-	public FortranModuleDependencies(String name, LinkedHashSet<String> preqNames)
+	public FortranModuleDependencies(String name, LinkedHashSet<String> usedModuleNames)
 	{
-		this.name = name;
-		this.preqNames = new ArrayList<String>(preqNames.size());
-		for(String s: preqNames)
-		{ this.preqNames.add(s); }
+		this._name = name;
+		this._usedModuleNames = new ArrayList<String>(usedModuleNames.size());
+		for(String s: usedModuleNames)
+		{ this._usedModuleNames.add(s); }
+		this._usedModuleNames = Collections.unmodifiableList(this._usedModuleNames);
 	}
 	
-	public FortranModuleDependencies(String name, String[] preqNames)
+	public FortranModuleDependencies(String name, String[] usedModuleNames)
 	{
-		this.name = name;
-		this.preqNames = new ArrayList<String>(Arrays.asList(preqNames));
+		this._name = name;
+		this._usedModuleNames = Collections.unmodifiableList(new ArrayList<String>(Arrays.asList(usedModuleNames)));
 	}
 	
-	public FortranModuleDependencies()
+	/*public FortranModuleDependencies()
 	{
-		this.name = null;
-		this.preqNames = new ArrayList<String>();
-	}
+		this._name = null;
+		this._usedModuleNames = new ArrayList<String>();
+	}*/
 	
 	@Override
     public boolean equals(Object obj) 
@@ -46,17 +46,17 @@ public class FortranModuleDependencies
         if (getClass() != obj.getClass())
         { return false; }
         FortranModuleDependencies other = (FortranModuleDependencies) obj;
-        if(name == null)
+        if(name() == null)
         {
-        	if(other.name != null)
+        	if(other.name() != null)
         	{ return false; }
         }
         else
         {
-            if(!name.equals(other.name))
+            if(!name().equals(other.name()))
             { return false; }        	
         }
-        if(!preqNames.equals(other.preqNames))
+        if(!usedModuleNames().equals(other.usedModuleNames()))
         { return false; }
         return true;
     }

@@ -460,7 +460,7 @@ public class FortranDepScannerTest
 	  catch(FortranSyntaxException e)
 	  {
 		  assertTrue(e.getMessage().contains("extraneous input 'end module x'"));
-		  assertEquals(1, e.line());
+		  assertEquals(new Integer(1), e.line());
 		  return;		  
 	  }
 	  assertTrue(false);
@@ -477,7 +477,7 @@ public class FortranDepScannerTest
 	  {
 		  assertEquals("End module name \"y\" does not match current module name \"x\"",
 				       e.getMessage());
-		  assertEquals(2, e.line());
+		  assertEquals(new Integer(2), e.line());
 		  return;		  
 	  }
 	  assertTrue(false);
@@ -496,7 +496,7 @@ public class FortranDepScannerTest
 	  {
 		  assertEquals("Double definition of module \"x\"",
 				       e.getMessage());
-		  assertEquals(3, e.line());
+		  assertEquals(new Integer(3), e.line());
 		  return;		  
 	  }
 	  assertTrue(false);
