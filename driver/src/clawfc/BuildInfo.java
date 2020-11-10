@@ -1,8 +1,12 @@
+/*
+ * @author Mikhail Zhigun
+ * @copyright Copyright 2020, MeteoSwiss
+ */
 package clawfc;
 
 import clawfc.depscan.FortranDepScanner;
 import clawfc.depscan.FortranFileSummary;
-import clawfc.depscan.FortranModuleDependencies;
+import clawfc.depscan.FortranModuleInfo;
 import clawfc.depscan.FortranException;
 import clawfc.depscan.FortranSemanticException;
 import clawfc.depscan.FortranSyntaxException;
@@ -23,9 +27,8 @@ import java.lang.UnsupportedOperationException;
 
 public class BuildInfo
 {
-    public static final String[] FORTRAN_FILE_EXTENSIONS = new String[] {"f90", "F90", "f", "F", "f95", "f03"};
     static final Pattern FORTRAN_FILE_SEARCH_PATTERN = Pattern.compile(String.format(".+\\.(%s)", 
-                                                                       String.join("|", FORTRAN_FILE_EXTENSIONS)) );
+                                                                       String.join("|", Utils.FORTRAN_FILE_EXTENSIONS)) );
     
     Map<Path, FortranFileInfo> _fileInformation;
     Map<Path, Set<Path>> _fileDependencies;
@@ -96,15 +99,15 @@ public class BuildInfo
             }
             _definedModules = new ArrayList<String>();
             HashSet<String> usedModules = new HashSet<String>();
-            for(FortranModuleDependencies moduleDeps: depInfo.modules())
+            for(FortranModuleInfo moduleDeps: depInfo.modules)
             {
-                _definedModules.add(moduleDeps.name());
-                for(String name: moduleDeps.usedModuleNames())
+                _definedModules.add(moduleDeps.name);
+                for(String name: moduleDeps.usedModuleNames)
                 { usedModules.add(name); }                                
             }
-            if(depInfo.program() != null)
+            if(depInfo.program != null)
             { 
-                for(String name: depInfo.program().usedModuleNames())
+                for(String name: depInfo.program.usedModuleNames)
                 { usedModules.add(name); }
             }
             for(String name: _definedModules)

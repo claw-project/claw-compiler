@@ -9,9 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStream;
@@ -29,6 +27,7 @@ import clawfc.depscan.parser.FortranDepScannerParser;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 
 public class FortranDepParser
@@ -39,6 +38,10 @@ public class FortranDepParser
 		FortranDepStatementsRecognizer statementsParser;
 		public LinkedHashMap<String, LinkedHashSet<String>> moduleDependencies;	
 		public LinkedHashMap<String, LinkedHashSet<String>> programDependencies;
+		public Map<String, Integer> moduleLineStart;
+		public Map<String, Integer> moduleLineEnd;
+        public Map<String, Integer> programLineStart;
+        public Map<String, Integer> programLineEnd;
 		public Exception error() { return _error; }
 		Exception _error;
 		String currentModuleName;
@@ -51,6 +54,10 @@ public class FortranDepParser
 			this.statementsParser = statementsParser;
 			moduleDependencies = new LinkedHashMap<String, LinkedHashSet<String>>();
 			programDependencies = new LinkedHashMap<String, LinkedHashSet<String>>();
+			moduleLineStart = new HashMap<String, Integer>();
+            moduleLineEnd = new HashMap<String, Integer>();		
+            programLineStart = new HashMap<String, Integer>();
+            programLineEnd = new HashMap<String, Integer>();     	
 		}
 		
 		void onError(Exception e)
@@ -70,7 +77,9 @@ public class FortranDepParser
 	    	{ onError(e); }
 	    	if(!moduleDependencies.containsKey(currentModuleName))
 	    	{
-	    		moduleDependencies.put(currentModuleName, new LinkedHashSet<String>());   		
+	    		moduleDependencies.put(currentModuleName, new LinkedHashSet<String>());
+	            int currentModuleStartLine = ctx.start.getLine() + 1;
+	    		moduleLineStart.put(currentModuleName, currentModuleStartLine);
 	    	}
 	    	else
 	    	{
@@ -92,6 +101,8 @@ public class FortranDepParser
 	    	{ onError(e); }
 	    	if(moduleName.equals(currentModuleName))
 	    	{ 
+	            int currentModuleEndLine = ctx.start.getLine();
+	            moduleLineEnd.put(currentModuleName, currentModuleEndLine);
 	    		currentModuleName = null; 
 	    	}
 	    	else
@@ -117,6 +128,8 @@ public class FortranDepParser
 	    		if(programDependencies.isEmpty())
 	    		{
 		    		programDependencies.put(currentProgramName, new LinkedHashSet<String>());
+	                int currentProgramStartLine = ctx.start.getLine() + 1;
+	                programLineStart.put(currentProgramName, currentProgramStartLine);
 	    		}
 	    		else
 	    		{
@@ -147,6 +160,8 @@ public class FortranDepParser
 	    	{ onError(e); }
 	    	if(programName.equals(currentProgramName))
 	    	{ 
+	            int currentProgramEndLine = ctx.start.getLine();
+	            programLineEnd.put(currentProgramName, currentProgramEndLine);
 	    		currentProgramName = null; 
 	    	}
 	    	else
@@ -214,7 +229,11 @@ public class FortranDepParser
         if(listener.error() != null)
         { throw listener.error(); }
         FortranFileSummary res = new FortranFileSummary(listener.moduleDependencies, 
-                                                        listener.programDependencies);
+                                                        listener.moduleLineStart,
+                                                        listener.moduleLineEnd,
+                                                        listener.programDependencies, 
+                                                        listener.programLineStart,
+                                                        listener.programLineEnd);
     	return res;    	
     }
 	

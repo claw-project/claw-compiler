@@ -9,38 +9,45 @@ import java.util.*;
 
 public class FortranFileSummary
 {
-    List<FortranModuleDependencies> _modules;
-    FortranModuleDependencies _program;
+    public final List<FortranModuleInfo> modules;
+    public final FortranModuleInfo program;
     
-	public List<FortranModuleDependencies> modules() { return _modules; }
-	public FortranModuleDependencies program() { return _program; };
-	
-	public FortranFileSummary(LinkedHashMap<String, LinkedHashSet<String>> moduleDependencies,
-			                  LinkedHashMap<String, LinkedHashSet<String>> programDependencies)
+	public FortranFileSummary(Map<String, LinkedHashSet<String>> moduleDependencies,
+	                          Map<String, Integer> moduleLineStart,
+                              Map<String, Integer> moduleLineEnd,
+			                  Map<String, LinkedHashSet<String>> programDependencies,
+			                  Map<String, Integer> programLineStart,
+                              Map<String, Integer> programLineEnd)
 	{
-	    ArrayList<FortranModuleDependencies> modules = new ArrayList<FortranModuleDependencies>(moduleDependencies.size());
+	    ArrayList<FortranModuleInfo> modules = new ArrayList<FortranModuleInfo>(moduleDependencies.size());
 		for(Map.Entry<String, LinkedHashSet<String>> entry : moduleDependencies.entrySet()) 
-		{ modules.add(new FortranModuleDependencies(entry.getKey(), entry.getValue())); }
-		_modules = Collections.unmodifiableList(modules);
+		{ 
+		    String moduleName = entry.getKey();
+		    modules.add(new FortranModuleInfo(moduleName, 
+		                                      moduleLineStart.get(moduleName),
+		                                      moduleLineEnd.get(moduleName),
+		                                      entry.getValue())); 
+		}
+		this.modules = Collections.unmodifiableList(modules);
 		if(!programDependencies.isEmpty())
 		{
 			Map.Entry<String, LinkedHashSet<String>> entry = programDependencies.entrySet().iterator().next();
-			_program = new FortranModuleDependencies(entry.getKey(), entry.getValue());			
-		}		
+			String programName = entry.getKey();
+			program = new FortranModuleInfo(programName,
+			                                programLineStart.get(programName),
+			                                programLineEnd.get(programName),
+			                                entry.getValue());			
+		}
+		else
+		{ program = null; }
 	}
 	
-	public FortranFileSummary(FortranModuleDependencies[] modules,
-							  FortranModuleDependencies program)
+	public FortranFileSummary(List<FortranModuleInfo> modules,
+							  FortranModuleInfo program)
 	{
-		this._modules = Collections.unmodifiableList(new ArrayList<FortranModuleDependencies>(Arrays.asList(modules)));
-		this._program = program;
+		this.modules = Collections.unmodifiableList(modules);
+		this.program = program;
 	}
-	
-	/*public FortranFileSummary()
-	{
-		this._modules = new ArrayList<FortranModuleDependencies>();
-		this._program = null;
-	}*/
 	
 	@Override
     public boolean equals(Object obj) 
@@ -52,16 +59,16 @@ public class FortranFileSummary
         if (getClass() != obj.getClass())
         { return false; }
         FortranFileSummary other = (FortranFileSummary) obj;
-        if(!modules().equals(other.modules()))
+        if(!modules.equals(other.modules))
         { return false; }
-        if(program() == null)
+        if(program == null)
         { 
-        	if(other.program() != null)
+        	if(other.program != null)
         	{ return false; }
         }
         else
         { 
-        	if(!program().equals(other.program()))
+        	if(!program.equals(other.program))
         	{ return false; }
         }
         return true;

@@ -5,9 +5,10 @@
 package clawfc.ut;
 
 import clawfc.depscan.FortranFileSummary;
-import clawfc.depscan.FortranModuleDependencies;
+import clawfc.depscan.FortranModuleInfo;
 import clawfc.depscan.FortranSemanticException;
 import clawfc.BuildInfo;
+import clawfc.Utils;
 
 import junit.framework.TestCase;
 
@@ -89,7 +90,7 @@ public class FortranBuildInfoTest
                 Files.createTempFile(tmpDir, null, ".tst");                
             }
             ArrayList<Path> expFiles = new ArrayList<Path>();
-            for(String ext: BuildInfo.FORTRAN_FILE_EXTENSIONS)
+            for(String ext: Utils.FORTRAN_FILE_EXTENSIONS)
             {
                 for(int i = 0; i < 10; ++i)
                 {
@@ -123,7 +124,7 @@ public class FortranBuildInfoTest
                 {
                     Files.createTempFile(tmpDir_j, null, ".tst");                
                 }
-                for(String ext: BuildInfo.FORTRAN_FILE_EXTENSIONS)
+                for(String ext: Utils.FORTRAN_FILE_EXTENSIONS)
                 {
                     for(int i = 0; i < 10; ++i)
                     {

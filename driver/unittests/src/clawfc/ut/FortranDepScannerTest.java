@@ -8,7 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -386,8 +386,8 @@ public class FortranDepScannerTest
   }
   
   void verifyParse(String s,
-		  	       FortranModuleDependencies[] expModules,
-		           FortranModuleDependencies expectedProgram) throws IOException, FortranException, Exception
+		  	       List<FortranModuleInfo> expModules,
+		           FortranModuleInfo expectedProgram) throws IOException, FortranException, Exception
   {
 	  FortranFileSummary res = parse(s);
 	  FortranFileSummary expRes = new FortranFileSummary(expModules, expectedProgram);
@@ -397,24 +397,24 @@ public class FortranDepScannerTest
   public void testParsing() throws IOException, FortranException, Exception
   {
 	  verifyParse("", 
-			      new FortranModuleDependencies[0],
-			      (FortranModuleDependencies)null);
+			      Arrays.asList(),
+			      (FortranModuleInfo)null);
 	  verifyParse("module x\n"+
 			      "end module x\n", 
-			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[0])},
-			      (FortranModuleDependencies)null);
+			      Arrays.asList(new FortranModuleInfo("x", 2, 2, Arrays.asList())),
+			      (FortranModuleInfo)null);
 	  verifyParse("module x\n"+
 		          "use y\n"+ 
 		          "end module x\n", 
-			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y"})},
-			      (FortranModuleDependencies)null);
+			      Arrays.asList(new FortranModuleInfo("x", 2, 3, Arrays.asList("y"))),
+			      (FortranModuleInfo)null);
 	  verifyParse("module x\n"+
 	              "use y\n"+ 
 	              "bla\n"+ 
 	              "use z\n"+ 
 	              "end module x\n", 
-			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"})},
-			      (FortranModuleDependencies)null);
+			      Arrays.asList(new FortranModuleInfo("x", 2, 5, Arrays.asList("y", "z"))),
+			      (FortranModuleInfo)null);
 	  verifyParse(
 			  "module x\n"+
               "use y\n"+ 
@@ -426,9 +426,9 @@ public class FortranDepScannerTest
               "bla\n"+ 
               "use z1\n"+ 
               "end module x1\n", 
-              new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"}),
-		                          new FortranModuleDependencies("x1", new String[] {"y1", "z1"})},
-		      (FortranModuleDependencies)null);
+              Arrays.asList(new FortranModuleInfo("x", 2, 5, Arrays.asList("y", "z")),
+		                          new FortranModuleInfo("x1", 7, 10, Arrays.asList("y1", "z1"))),
+		      (FortranModuleInfo)null);
 	  verifyParse(
 			  "module x\n"+
 	          "use y\n"+ 
@@ -445,9 +445,9 @@ public class FortranDepScannerTest
 	          "bla\n"+ 
 	          "use z1\n"+ 
 	          "end program p1\n", 
-				new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"}),
-					                            new FortranModuleDependencies("x1", new String[] {"y1", "z1"})},
-				new FortranModuleDependencies("p1", new String[] {"y1", "z1"}));
+				Arrays.asList(new FortranModuleInfo("x", 2, 5, Arrays.asList("y", "z")),
+					                            new FortranModuleInfo("x1", 7, 10, Arrays.asList("y1", "z1"))),
+				new FortranModuleInfo("p1", 12, 15, Arrays.asList("y1", "z1")));
 	  
   }
   
@@ -460,7 +460,7 @@ public class FortranDepScannerTest
 	  catch(FortranSyntaxException e)
 	  {
 		  assertTrue(e.getMessage().contains("extraneous input 'end module x'"));
-		  assertEquals(new Integer(1), e.line());
+		  assertEquals(Integer.valueOf(1), e.line());
 		  return;		  
 	  }
 	  assertTrue(false);
@@ -477,7 +477,7 @@ public class FortranDepScannerTest
 	  {
 		  assertEquals("End module name \"y\" does not match current module name \"x\"",
 				       e.getMessage());
-		  assertEquals(new Integer(2), e.line());
+		  assertEquals(Integer.valueOf(2), e.line());
 		  return;		  
 	  }
 	  assertTrue(false);
@@ -496,7 +496,7 @@ public class FortranDepScannerTest
 	  {
 		  assertEquals("Double definition of module \"x\"",
 				       e.getMessage());
-		  assertEquals(new Integer(3), e.line());
+		  assertEquals(Integer.valueOf(3), e.line());
 		  return;		  
 	  }
 	  assertTrue(false);
@@ -508,8 +508,8 @@ public class FortranDepScannerTest
   }
   
   void verifyScan(String s,
-		  	       FortranModuleDependencies[] expModules,
-		           FortranModuleDependencies expectedProgram) throws IOException, FortranException, Exception
+		  	       List<FortranModuleInfo> expModules,
+		           FortranModuleInfo expectedProgram) throws IOException, FortranException, Exception
   {
 	  FortranFileSummary res = scan(s);
 	  FortranFileSummary expRes = new FortranFileSummary(expModules, expectedProgram);
@@ -519,24 +519,24 @@ public class FortranDepScannerTest
   public void testScanning() throws IOException, FortranException, Exception
   {
 	  verifyScan("", 
-			      new FortranModuleDependencies[0],
-			      (FortranModuleDependencies)null);
+			      Arrays.asList(),
+			      (FortranModuleInfo)null);
 	  verifyScan("module x\n"+
 			      "end module x\n", 
-			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[0])},
-			      (FortranModuleDependencies)null);
+			      Arrays.asList(new FortranModuleInfo("x", 2, 2, Arrays.asList())),
+			      (FortranModuleInfo)null);
 	  verifyScan("module x\n"+
 		          "use y\n"+ 
 		          "end module x\n", 
-			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y"})},
-			      (FortranModuleDependencies)null);
+		          Arrays.asList(new FortranModuleInfo("x", 2, 3, Arrays.asList("y"))),
+			      (FortranModuleInfo)null);
 	  verifyScan("module x\n"+
 	              "use y\n"+ 
 	              "bla\n"+ 
 	              "use z\n"+ 
 	              "end module x\n", 
-			      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"})},
-			      (FortranModuleDependencies)null);
+	              Arrays.asList(new FortranModuleInfo("x", 2, 5, Arrays.asList("y", "z"))),
+			      (FortranModuleInfo)null);
 	  verifyScan(
 			  "module x\n"+
               "use y\n"+ 
@@ -548,9 +548,9 @@ public class FortranDepScannerTest
               "bla\n"+ 
               "use z1\n"+ 
               "end module x1\n", 
-              new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"}),
-		                          new FortranModuleDependencies("x1", new String[] {"y1", "z1"})},
-		      (FortranModuleDependencies)null);
+              Arrays.asList(new FortranModuleInfo("x", 2, 5, Arrays.asList("y", "z")),
+		                    new FortranModuleInfo("x1", 7, 10, Arrays.asList("y1", "z1"))),
+		      (FortranModuleInfo)null);
 	  verifyScan(
 			  "module x\n"+
 	          "use y\n"+ 
@@ -567,9 +567,9 @@ public class FortranDepScannerTest
 	          "bla\n"+ 
 	          "use z1\n"+ 
 	          "end program p1\n", 
-				new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[] {"y", "z"}),
-					                            new FortranModuleDependencies("x1", new String[] {"y1", "z1"})},
-				new FortranModuleDependencies("p1", new String[] {"y1", "z1"}));
+				Arrays.asList(new FortranModuleInfo("x", 2, 5, Arrays.asList("y", "z")),
+					          new FortranModuleInfo("x1", 7, 10, Arrays.asList("y1", "z1"))),
+				              new FortranModuleInfo("p1", 12, 15, Arrays.asList("y1", "z1")));
 	  
   }
   
@@ -577,8 +577,8 @@ public class FortranDepScannerTest
   {
 	  verifyScan("module x  ! comment1 \n"+
 		         "end module x ! comment2\n", 
-		      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[0])},
-		      (FortranModuleDependencies)null);
+		      Arrays.asList(new FortranModuleInfo("x", 2, 2, Arrays.asList())),
+		      (FortranModuleInfo)null);
   }
   
   public void testScanWithLineBreaks() throws IOException, FortranException, Exception
@@ -588,7 +588,7 @@ public class FortranDepScannerTest
 	  		     "    &ule&    \n" +
 	  		     "x  ! comment1 \n"+
 		         "end module x ! comment2\n", 
-		      new FortranModuleDependencies[]{new FortranModuleDependencies("x", new String[0])},
-		      (FortranModuleDependencies)null);
+		      Arrays.asList(new FortranModuleInfo("x", 5, 5, Arrays.asList())),
+		      (FortranModuleInfo)null);
   }
 }

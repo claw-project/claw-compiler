@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import clawfc.Utils.ByteArrayIOStream;
+import java.util.*;
 
 public class FortranDepScanner
 {
@@ -20,20 +22,32 @@ public class FortranDepScanner
     		                OutputStream outWithoutComments, 
     		                OutputStream outWithoutLineBreaks) throws FortranException, IOException, Exception
     {
-    	Utils.ByteArrayIOStream inputWithoutComments = new Utils.ByteArrayIOStream();
+    	ByteArrayIOStream inputWithoutComments = new ByteArrayIOStream();
     	commentsFilter.run(input, inputWithoutComments);
-    	Utils.ByteArrayIOStream inputWithoutLineBreaks = new Utils.ByteArrayIOStream(inputWithoutComments.size());
+    	ByteArrayIOStream inputWithoutLineBreaks = new ByteArrayIOStream(inputWithoutComments.size());
     	InputStream currentInput = inputWithoutComments.getAsInputStream();
+    	/*{
+    	    Scanner s = new Scanner(currentInput).useDelimiter("\\A");
+    	    String result = s.hasNext() ? s.next() : "";
+    	    currentInput.reset();
+    	    System.out.println(result + "\n------------------\n");
+    	}*/
     	if(outWithoutComments != null)
     	{
-    		Utils.copy(currentInput, outWithoutComments);
+    	    clawfc.Utils.copy(currentInput, outWithoutComments);
     		currentInput.reset();    		
     	}
-    	lineBreaksFilter.run(currentInput, inputWithoutLineBreaks);
+    	lineBreaksFilter.run(currentInput, inputWithoutLineBreaks, true);
     	currentInput = inputWithoutLineBreaks.getAsInputStream();
+        /*{
+            Scanner s = new Scanner(currentInput).useDelimiter("\\A");
+            String result = s.hasNext() ? s.next() : "";
+            currentInput.reset();
+            System.out.println(result + "\n------------------\n");
+        }*/
     	if(outWithoutLineBreaks != null)
     	{
-    		Utils.copy(currentInput, outWithoutLineBreaks);
+    	    clawfc.Utils.copy(currentInput, outWithoutLineBreaks);
     		currentInput.reset();    		
     	}
     	FortranFileSummary res = parser.parse(currentInput);

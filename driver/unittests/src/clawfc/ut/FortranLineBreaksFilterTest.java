@@ -145,7 +145,7 @@ public class FortranLineBreaksFilterTest
 	         assertTrue("IOException thrown", false);
 	     }
 	     String res = outStrm.toString();
-	     //System.out.println(res);
+	     //System.out.println("----------\n" + res + "\\n----------\n");
 	     assertEquals(expectedOut, res);
 	}
 	
@@ -263,5 +263,18 @@ public class FortranLineBreaksFilterTest
 		                         "end module x\n";;
         	verifyFilter(in, expectedRes, true);
     	}
+        {
+            String in = "m&   \n" +
+                    "&od&\n" +
+                    "    &ule&    \n" +
+                    "x\n"+
+                    "end module x\n";
+            String expectedRes = "\n" + 
+                                 "\n" + 
+                                 "\n" + 
+                                 "module x\n" +
+                                 "end module x\n";;
+            verifyFilter(in, expectedRes, true);
+        }
     }
 }
