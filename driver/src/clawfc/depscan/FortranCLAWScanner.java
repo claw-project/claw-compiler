@@ -21,7 +21,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import clawfc.Utils.ByteArrayIOStream;
+import clawfc.utils.ByteArrayIOStream;
 import clawfc.depscan.parser.FortranCLAWScannerBaseListener;
 import clawfc.depscan.parser.FortranCLAWScannerLexer;
 import clawfc.depscan.parser.FortranCLAWScannerParser;

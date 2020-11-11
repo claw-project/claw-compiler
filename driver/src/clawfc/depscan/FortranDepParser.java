@@ -78,7 +78,7 @@ public class FortranDepParser
 	    	if(!moduleDependencies.containsKey(currentModuleName))
 	    	{
 	    		moduleDependencies.put(currentModuleName, new LinkedHashSet<String>());
-	            int currentModuleStartLine = ctx.start.getLine() + 1;
+	            int currentModuleStartLine = ctx.start.getLine();
 	    		moduleLineStart.put(currentModuleName, currentModuleStartLine);
 	    	}
 	    	else
@@ -101,7 +101,7 @@ public class FortranDepParser
 	    	{ onError(e); }
 	    	if(moduleName.equals(currentModuleName))
 	    	{ 
-	            int currentModuleEndLine = ctx.start.getLine();
+	            int currentModuleEndLine = ctx.start.getLine() - 1;
 	            moduleLineEnd.put(currentModuleName, currentModuleEndLine);
 	    		currentModuleName = null; 
 	    	}
@@ -128,7 +128,7 @@ public class FortranDepParser
 	    		if(programDependencies.isEmpty())
 	    		{
 		    		programDependencies.put(currentProgramName, new LinkedHashSet<String>());
-	                int currentProgramStartLine = ctx.start.getLine() + 1;
+	                int currentProgramStartLine = ctx.start.getLine();
 	                programLineStart.put(currentProgramName, currentProgramStartLine);
 	    		}
 	    		else
@@ -160,7 +160,7 @@ public class FortranDepParser
 	    	{ onError(e); }
 	    	if(programName.equals(currentProgramName))
 	    	{ 
-	            int currentProgramEndLine = ctx.start.getLine();
+	            int currentProgramEndLine = ctx.start.getLine() - 1;
 	            programLineEnd.put(currentProgramName, currentProgramEndLine);
 	    		currentProgramName = null; 
 	    	}
@@ -200,7 +200,7 @@ public class FortranDepParser
 	ParserErrorListener lexerErrorListener;
     ParserErrorListener parserErrorListener;
     
-    public FortranFileSummary parse(InputStream input) throws FortranException, IOException, Exception
+    public FortranFileBasicSummary parse(InputStream input) throws FortranException, IOException, Exception
     {    	
     	lexer.reset();
         parser.reset();
@@ -228,7 +228,7 @@ public class FortranDepParser
         {}
         if(listener.error() != null)
         { throw listener.error(); }
-        FortranFileSummary res = new FortranFileSummary(listener.moduleDependencies, 
+        FortranFileBasicSummary res = new FortranFileBasicSummary(listener.moduleDependencies, 
                                                         listener.moduleLineStart,
                                                         listener.moduleLineEnd,
                                                         listener.programDependencies, 

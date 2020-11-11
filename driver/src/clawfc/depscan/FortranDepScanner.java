@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import clawfc.Utils.ByteArrayIOStream;
+import clawfc.utils.*;
 import java.util.*;
 
 public class FortranDepScanner
@@ -17,8 +17,9 @@ public class FortranDepScanner
 	FortranCommentsFilter commentsFilter;
 	FortranLineBreaksFilter lineBreaksFilter;
 	FortranDepParser parser;
+	FortranCLAWScanner clawScanner;
     
-    public FortranFileSummary scan(InputStream input, 
+    public FortranFileBasicSummary basicScan(InputStream input, 
     		                OutputStream outWithoutComments, 
     		                OutputStream outWithoutLineBreaks) throws FortranException, IOException, Exception
     {
@@ -26,12 +27,6 @@ public class FortranDepScanner
     	commentsFilter.run(input, inputWithoutComments);
     	ByteArrayIOStream inputWithoutLineBreaks = new ByteArrayIOStream(inputWithoutComments.size());
     	InputStream currentInput = inputWithoutComments.getAsInputStream();
-    	/*{
-    	    Scanner s = new Scanner(currentInput).useDelimiter("\\A");
-    	    String result = s.hasNext() ? s.next() : "";
-    	    currentInput.reset();
-    	    System.out.println(result + "\n------------------\n");
-    	}*/
     	if(outWithoutComments != null)
     	{
     	    clawfc.Utils.copy(currentInput, outWithoutComments);
@@ -39,24 +34,29 @@ public class FortranDepScanner
     	}
     	lineBreaksFilter.run(currentInput, inputWithoutLineBreaks, true);
     	currentInput = inputWithoutLineBreaks.getAsInputStream();
-        /*{
-            Scanner s = new Scanner(currentInput).useDelimiter("\\A");
-            String result = s.hasNext() ? s.next() : "";
-            currentInput.reset();
-            System.out.println(result + "\n------------------\n");
-        }*/
     	if(outWithoutLineBreaks != null)
     	{
     	    clawfc.Utils.copy(currentInput, outWithoutLineBreaks);
     		currentInput.reset();    		
     	}
-    	FortranFileSummary res = parser.parse(currentInput);
+    	FortranFileBasicSummary res = parser.parse(currentInput);
     	return res;    	
+    }
+    
+    public FortranFileBasicSummary basicScan(InputStream input) throws FortranException, IOException, Exception
+    {
+    	return basicScan(input, null, null);   	
     }
     
     public FortranFileSummary scan(InputStream input) throws FortranException, IOException, Exception
     {
-    	return scan(input, null, null);   	
+        AsciiArrayIOStream inStrm = new AsciiArrayIOStream();
+        clawfc.Utils.copy(input, inStrm);
+        FortranFileBasicSummary basicRes = basicScan(inStrm.getAsInputStreamUnsafe(), null, null);    
+        AsciiArrayIOStream.LinesInfo linesInfo = inStrm.getLinesInfo();
+        FortranFileCLAWLinesInfo clawLinesInfo = clawScanner.run(inStrm.getAsInputStreamUnsafe());
+        FortranFileSummary res = new FortranFileSummary(basicRes, linesInfo, clawLinesInfo);
+        return res;
     }
 	
 	public FortranDepScanner() throws Exception
@@ -64,5 +64,6 @@ public class FortranDepScanner
 		commentsFilter = new FortranCommentsFilter();
 		lineBreaksFilter = new FortranLineBreaksFilter();
 		parser = new FortranDepParser();
+		clawScanner = new FortranCLAWScanner();
 	}
 }

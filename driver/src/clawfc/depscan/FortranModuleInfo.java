@@ -8,27 +8,36 @@ import clawfc.depscan.parser.*;
 import java.util.*;
 
 public class FortranModuleInfo
+    extends FortranModuleBasicInfo
 {
-    public final String name;
-    //WARNING!!! This the number of the line AFTER "module <name>" statement
-    public final int startLineNum;
-    //WARNING!!! This the number of the line where "end module <name>" statement is located
-    public final int endLineNum;
-    //final boolean usesCLAW;
-    public final List<String> usedModuleNames;
+    public final int startCharPos;
+    public final int endCharPos;
+    public final boolean usesCLAW;
     
-	public FortranModuleInfo(String name,
-	                         int startLineNum,
-                             int endLineNum,
-                             //boolean usesCLAW,
-	                         Collection<String> usedModuleNames)
+	public FortranModuleInfo(FortranModuleBasicInfo info,
+	                         int startCharPos,
+                             int endCharPos,
+                             boolean usesCLAW)
 	{
-		this.name = name;
-		this.startLineNum = startLineNum;
-        this.endLineNum = endLineNum;
-        //this.usesCLAW = usesCLAW;
-		this.usedModuleNames = Collections.unmodifiableList(new ArrayList<String>(usedModuleNames));
-	}
+	    super(info);
+		this.startCharPos = startCharPos;
+		this.endCharPos = endCharPos;
+        this.usesCLAW = usesCLAW;
+	}	
+    
+    public FortranModuleInfo(String name,
+                             int startLineNum,
+                             int endLineNum,
+                             Collection<String> usedModuleNames,
+                             int startCharPos,
+                             int endCharPos,
+                             boolean usesCLAW)
+    {
+        super(name, startLineNum, endLineNum, usedModuleNames);
+        this.startCharPos = startCharPos;
+        this.endCharPos = endCharPos;
+        this.usesCLAW = usesCLAW;
+    }
 	
 	@Override
     public boolean equals(Object obj) 
@@ -40,15 +49,13 @@ public class FortranModuleInfo
         if (getClass() != obj.getClass())
         { return false; }
         FortranModuleInfo other = (FortranModuleInfo) obj;
-        if(!name.equals(other.name))
+        if(!super.equals(other))
         { return false; }
-        if(startLineNum != other.startLineNum)
+        if(startCharPos != other.startCharPos)
         { return false; }
-        if(endLineNum != other.endLineNum)
+        if(endCharPos != other.endCharPos)
         { return false; }
-        //if(usesCLAW != other.usesCLAW)
-        //{ return false; }
-        if(!usedModuleNames.equals(other.usedModuleNames))
+        if(usesCLAW != other.usesCLAW)
         { return false; }
         return true;
     }

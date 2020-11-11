@@ -5,8 +5,8 @@
 package clawfc;
 
 import clawfc.depscan.FortranDepScanner;
-import clawfc.depscan.FortranFileSummary;
-import clawfc.depscan.FortranModuleInfo;
+import clawfc.depscan.FortranFileBasicSummary;
+import clawfc.depscan.FortranModuleBasicInfo;
 import clawfc.depscan.FortranException;
 import clawfc.depscan.FortranSemanticException;
 import clawfc.depscan.FortranSyntaxException;
@@ -78,10 +78,10 @@ public class BuildInfo
         {
             _lastModifiedTimestamp = Files.getLastModifiedTime(filePath);
             FortranDepScanner depScanner = new FortranDepScanner();
-            FortranFileSummary depInfo;
+            FortranFileBasicSummary depInfo;
             try
             {
-                depInfo = depScanner.scan(Files.newInputStream(filePath));
+                depInfo = depScanner.basicScan(Files.newInputStream(filePath));
             }
             catch(FortranSemanticException e)
             {
@@ -99,7 +99,7 @@ public class BuildInfo
             }
             _definedModules = new ArrayList<String>();
             HashSet<String> usedModules = new HashSet<String>();
-            for(FortranModuleInfo moduleDeps: depInfo.modules)
+            for(FortranModuleBasicInfo moduleDeps: depInfo.modules)
             {
                 _definedModules.add(moduleDeps.name);
                 for(String name: moduleDeps.usedModuleNames)

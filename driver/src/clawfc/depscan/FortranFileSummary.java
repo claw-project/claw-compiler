@@ -6,40 +6,61 @@ package clawfc.depscan;
 
 import clawfc.depscan.parser.*;
 import java.util.*;
+import clawfc.utils.AsciiArrayIOStream;
 
 public class FortranFileSummary
 {
     public final List<FortranModuleInfo> modules;
     public final FortranModuleInfo program;
     
-	public FortranFileSummary(Map<String, LinkedHashSet<String>> moduleDependencies,
-	                          Map<String, Integer> moduleLineStart,
-                              Map<String, Integer> moduleLineEnd,
-			                  Map<String, LinkedHashSet<String>> programDependencies,
-			                  Map<String, Integer> programLineStart,
-                              Map<String, Integer> programLineEnd)
+    static class HasCLAW
+    {
+        BitSet _lineHasCLAW;
+        public HasCLAW(int numLines,
+                FortranFileCLAWLinesInfo clawLinesInfo)
+        {
+            _lineHasCLAW = new BitSet(numLines);
+            for(Integer i: clawLinesInfo.clawDirectives)
+            { _lineHasCLAW.set(i); }
+            for(Integer i: clawLinesInfo.clawGuards)
+            { _lineHasCLAW.set(i); }
+        }
+        public boolean run(int startLine, int endLine)
+        {
+            for(int i = startLine; i <= endLine; ++i)
+            {
+                if(_lineHasCLAW.get(i))
+                { return true; }                
+            }
+            return false;
+            
+        }        
+    }
+    
+    public FortranFileSummary(FortranFileBasicSummary in,
+                              AsciiArrayIOStream.LinesInfo linesInfo,
+                              FortranFileCLAWLinesInfo clawLinesInfo)
 	{
-	    ArrayList<FortranModuleInfo> modules = new ArrayList<FortranModuleInfo>(moduleDependencies.size());
-		for(Map.Entry<String, LinkedHashSet<String>> entry : moduleDependencies.entrySet()) 
-		{ 
-		    String moduleName = entry.getKey();
-		    modules.add(new FortranModuleInfo(moduleName, 
-		                                      moduleLineStart.get(moduleName),
-		                                      moduleLineEnd.get(moduleName),
-		                                      entry.getValue())); 
-		}
-		this.modules = Collections.unmodifiableList(modules);
-		if(!programDependencies.isEmpty())
-		{
-			Map.Entry<String, LinkedHashSet<String>> entry = programDependencies.entrySet().iterator().next();
-			String programName = entry.getKey();
-			program = new FortranModuleInfo(programName,
-			                                programLineStart.get(programName),
-			                                programLineEnd.get(programName),
-			                                entry.getValue());			
-		}
-		else
-		{ program = null; }
+        HasCLAW hasCLAW = new HasCLAW(linesInfo.numLines(), clawLinesInfo);
+	    ArrayList<FortranModuleInfo> modules = new ArrayList<FortranModuleInfo>(in.modules.size());
+	    for(FortranModuleBasicInfo info: in.modules)
+	    {
+	        int startPos = linesInfo.lineStartByteIdx(info.startLineNum);
+            int endPos = linesInfo.lineEndByteIdx(info.endLineNum);
+            boolean usesCLAW = hasCLAW.run(info.startLineNum, info.endLineNum);
+	        modules.add(new FortranModuleInfo(info, startPos, endPos, usesCLAW));
+	    }
+	    this.modules = Collections.unmodifiableList(modules);
+	    if(in.program == null)
+	    { program = null; }
+	    else
+	    {
+	        FortranModuleBasicInfo info = in.program;
+            int startPos = linesInfo.lineStartByteIdx(info.startLineNum);
+            int endPos = linesInfo.lineEndByteIdx(info.endLineNum);
+            boolean usesCLAW = hasCLAW.run(info.startLineNum, info.endLineNum);
+            program = new FortranModuleInfo(info, startPos, endPos, usesCLAW);	        
+	    }
 	}
 	
 	public FortranFileSummary(List<FortranModuleInfo> modules,

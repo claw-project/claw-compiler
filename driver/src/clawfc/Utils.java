@@ -46,23 +46,6 @@ public class Utils
         return getCmdOutput(args.stream().toArray(String[]::new));
     }
     
-    public static class ByteArrayIOStream
-        extends ByteArrayOutputStream
-    {
-        public ByteArrayIOStream() 
-        { super(); }
-
-        public ByteArrayIOStream(int size) 
-        { super(size); }
-        
-        public ByteArrayInputStream getAsInputStream() 
-        {
-            ByteArrayInputStream res = new ByteArrayInputStream(this.buf, 0, this.count);
-            this.buf = null;            
-            return res;
-        }
-    }  
-    
     public static void copy(InputStream in, OutputStream out) throws IOException
     {
         byte[] buffer = new byte[10 * 1024];        
