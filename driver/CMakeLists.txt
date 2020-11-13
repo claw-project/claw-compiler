@@ -45,3 +45,5 @@ add_custom_target(copy_driver_files_to_int_install ALL
     )
 
 add_dependencies(copy_driver_files_to_int_install create_int_install_dir)
+
+add_subdirectory(tests)

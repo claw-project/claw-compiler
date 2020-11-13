@@ -13,6 +13,8 @@ jar.exec = @Java_JAR_EXECUTABLE@
 
 # Common
 
+claw.java.target=@CLAW_JAVA_TARGET@
+
 common.dir=@CX2T_COMMON_DIR@
 3rdparty.dist.dir=@CX2T_3RDPARTY_DIST_DIR@
 src.dir=@CX2T_SRC_DIR@
@@ -102,6 +104,17 @@ claw.shenron.ut.dep=${ut.dist.dir}/${claw.shenron.ut.jar}
 claw.tatsu.ut.jar=claw-x2t-tatsu-ut.jar
 claw.tatsu.ut.dep=${ut.dist.dir}/${claw.tatsu.ut.jar}
 
+# CLAW driver tests
+driver.tests.jar=clawfc-tests.jar
+driver.tests.dist.dir=@CLAWFC_TESTS_BIN_DIR@
+driver.tests.dep=${driver.tests.dist.dir}/${driver.tests.jar}
+driver.tests.src.dir=@CLAWFC_TESTS_SRC_DIR@
+driver.tests.gen.src.dir=@CLAWFC_TESTS_GEN_SRC_DIR@
+driver.tests.res.dir=@CLAWFC_TESTS_RES_DIR@
+driver.tests.classes.dir=@CLAWFC_TESTS_CLASSES_DIR@
+driver.tests.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep}
+driver.tests.report.dir=@CLAWFC_TESTS_REPORT_DIR@
+
 # External transformation set
 external.jar=claw-external-set.jar
 
@@ -112,6 +125,7 @@ jacoco.file=jacoco.exec
 cx2t.proj=${root.dir}/cx2t/src/build.xml
 cx2t-unit-tests.proj=${root.dir}/cx2t/unittest/build.xml
 driver.proj=${root.dir}/driver/src/build.xml
+driver-tests.proj=${root.dir}/driver/tests/build.xml
 
 # Install
 claw.install.dir=@CMAKE_INSTALL_PREFIX@

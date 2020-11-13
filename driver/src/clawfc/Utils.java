@@ -4,13 +4,10 @@
  */
 package clawfc;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Scanner;
 import java.util.List;
+import java.util.logging.Logger;
 import java.lang.ProcessBuilder;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +18,7 @@ public class Utils
     public static final String[] FORTRAN_FILE_EXTENSIONS = new String[] {"f90", "F90", "f", "F", "f95", "f03"};
     public static final String DEFAULT_TOP_TEMP_DIR = "/dev/shm";
     public static final Path STARTUP_DIR = Paths.get(System.getProperty("user.dir"));
+    public static final Logger log = Logger.getLogger("CLAW");
     
     public static String getCmdOutput(String... args) throws Exception
     {
@@ -33,11 +31,19 @@ public class Utils
             throw new RuntimeException(
                     String.format("Cmd \"%s\" failed with return code ", String.join(" ", args), retCode));
         }
+        String result = collectIntoString(p.getInputStream());
+        return result;
+    }
+    
+    public static String collectIntoString(InputStream istrm) throws IOException
+    {
         String result = null;
-        try (InputStream istrm = p.getInputStream(); Scanner s = new Scanner(istrm).useDelimiter("\\A"))
+        try (Scanner s = new Scanner(istrm).useDelimiter("\\A"))
         {
             result = s.hasNext() ? s.next() : null;
         }
+        finally
+        { istrm.close(); }
         return result;
     }
     
@@ -67,5 +73,26 @@ public class Utils
     public static boolean fileExists(Path path)
     {
         return Files.exists(path) && !Files.isDirectory(path);
+    }
+    
+    public static Path dirPath(Path filePath)
+    {
+        return filePath.getParent();
+    }
+    
+    public static void removeDir(Path path) throws IOException
+    {
+        Files.walk(path)
+        .map(Path::toFile)
+        .sorted((o1, o2) -> -o1.compareTo(o2))
+        .forEach(File::delete);        
+    }
+    
+    public static void writeTextToFile(Path path, String text) throws IOException
+    {
+        try (PrintWriter out = new PrintWriter(path.toString())) 
+        {
+            out.println(text);
+        }       
     }
 }

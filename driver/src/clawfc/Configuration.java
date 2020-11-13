@@ -1,3 +1,7 @@
+/*
+ * @author Mikhail Zhigun
+ * @copyright Copyright 2020, MeteoSwiss
+ */
 package clawfc;
 
 import java.io.IOException;
@@ -31,7 +35,12 @@ public class Configuration
 
     public String defaultFortranCompilerType()
     {
-        return cfgProperties.getProperty("claw.fc.default");
+        return cfgProperties.getProperty("claw.fc.default.type");
+    }
+
+    public String defaultFortranCompilerCmd()
+    {
+        return cfgProperties.getProperty("claw.fc.default.cmd");
     }
 
     public Path installRoot()
@@ -100,6 +109,7 @@ public class Configuration
         s.append(String.format("claw.version : %s\n", version()));
         s.append(String.format("claw.commit : %s\n", commit()));
         s.append(String.format("claw.defaultFortranCompilerType : %s\n", defaultFortranCompilerType()));
+        s.append(String.format("claw.defaultFortranCompilerCmd : %s\n", defaultFortranCompilerCmd()));
         s.append(String.format("claw.installRoot : %s\n", installRoot()));
         s.append(String.format("claw.cfg.dir : %s [%s]\n", configDir(),
                 cfgProperties.getProperty("claw.cfg.dir")));

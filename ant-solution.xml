@@ -53,6 +53,14 @@
         <ant antfile="${driver.proj}" target="run-unit-tests" />
     </target>
 
+    <target name="run-driver-tests">
+        <ant antfile="${driver-tests.proj}" target="run" />
+    </target>
+
     <!-- Default target -->
     <target name="main" depends="prepare-int-dir, fetch-deps, build-cx2t, build-cx2t-unit-tests, build-driver"/>
+
+    <target name="build-driver-tests" depends="main">
+        <ant antfile="${driver-tests.proj}" target="main" />
+    </target>
 </project>

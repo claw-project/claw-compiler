@@ -33,7 +33,7 @@
 
     <!-- Dependencies scan parser classes -->
     <property name="dep.scan.parser.dir"
-              value="${driver.gen.src.dir}/depscan/parser"/>
+              value="${driver.gen.src.dir}/clawfc/depscan/parser"/>
 
     <!-- Initialization step -->
     <target name="init" description="Initialize build directories">

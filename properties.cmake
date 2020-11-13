@@ -4,6 +4,8 @@
 # This CMake file centralize variables used in the different build files of
 # the project.
 
+set(CLAW_JAVA_TARGET "1.8")
+
 #
 # CLAW X2T variables
 #
@@ -48,6 +50,14 @@ set(CLAWFC_CONF_FILE "clawfc.properties")
 # Config at runtime (after install)
 set(CLAWFC_RUNTIME_CONF_FILE "clawfc.runtime.properties")
 set(CLAWFC_DIST_DIR "${INT_CLAW_HOME}/bin")
+
+# Driver tests
+set(CLAWFC_TESTS_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/tests/src")
+set(CLAWFC_TESTS_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/driver/tests/build/generated-src")
+set(CLAWFC_TESTS_RES_DIR "${CMAKE_SOURCE_DIR}/driver/tests/res")
+set(CLAWFC_TESTS_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/tests/classes")
+set(CLAWFC_TESTS_BIN_DIR "${CMAKE_BINARY_DIR}/driver/tests/bin")
+set(CLAWFC_TESTS_REPORT_DIR "${CMAKE_BINARY_DIR}/driver/test-reports")
 
 #
 # OMNI Compiler variables

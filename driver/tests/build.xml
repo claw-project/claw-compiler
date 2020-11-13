@@ -1,0 +1,83 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+-->
+
+<!-- CLAWFC build process -->
+<project name="clawfc_tests" default="main" basedir=".">
+    <description>Run tests on CLAWFC driver</description>
+
+    <!-- Value set externally-->
+    <property name="claw.properties.dir" value=""/>
+    <property file="${claw.properties.dir}/claw.properties"/>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${ant-contrib.dep}"/>
+
+    <!-- Classpath for the CX2T Translator library -->
+    <path id="build.path">
+        <pathelement path="${junit.dep}" />
+        <pathelement path="${st4.dep}"/>
+        <pathelement path="${antlr.dep}"/>
+        <pathelement path="${antlr4.dep}"/>
+        <pathelement path="${antlr4.runtime.dep}"/>
+        <pathelement path="${argparse4j.dep}"/>
+        <pathelement path="${argparse4j.dep}"/>
+        <pathelement path="${driver.dep}"/>
+    </path>
+
+    <!-- Initialization step -->
+    <target name="init" description="Initialize build directories">
+        <tstamp/>
+        <mkdir dir="${driver.tests.classes.dir}"/>
+    </target>
+
+    <target name="compile" depends="init" description="compile the source">
+        <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir=""
+               destdir="${driver.tests.classes.dir}" classpathref="build.path" debug="on">
+            <src>
+                <pathelement path="${driver.tests.src.dir}"/>
+                <pathelement path="${driver.tests.gen.src.dir}"/>
+            </src>
+        </javac>
+    </target>
+
+    <!-- Package compiled files into their own library -->
+    <target name="jar" depends="compile" description="package, output to JAR">
+        <mkdir dir="${driver.tests.dist.dir}"/>
+        <!-- Driver -->
+        <jar jarfile="${driver.tests.dep}" basedir="${driver.tests.classes.dir}"
+             includes="clawfc/**">
+            <manifest>
+                <attribute name="Main-Class" value="clawfc.tests.Main"/>
+                <attribute name="Class-Path" value="${driver.tests.runtime.classpath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="clean" description="clean up">
+        <delete dir="${driver.tests.classes.dir}"/>
+        <delete dir="${driver.tests.dist.dir}"/>
+    </target>
+
+    <target name="run" depends="jar" description="Run tests">
+        <mkdir dir="${driver.tests.report.dir}"/>
+        <junit jvm="${java.exec}" printsummary="yes" haltonfailure="yes">
+            <classpath path="${junit.dep}" />
+            <classpath path="${hamcrest.dep}" />
+            <classpath path="${driver.dep}" />
+            <classpath path="${driver.tests.classes.dir}" />
+            <classpath path="${antlr4.runtime.dep}"/>
+            <classpath path="${argparse4j.dep}"/>
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="${driver.tests.report.dir}">
+                <fileset dir="${driver.tests.classes.dir}">
+                    <include name="clawfc/tests/*Test*.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <!-- Default target -->
+    <target name="main" depends="init, compile, jar"/>
+</project>

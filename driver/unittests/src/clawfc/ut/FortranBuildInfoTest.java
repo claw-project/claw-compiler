@@ -27,15 +27,7 @@ import java.util.*;
 
 public class FortranBuildInfoTest 
     extends TestCase 
-{
-    static void removeDir(Path path) throws IOException
-    {
-        Files.walk(path)
-        .map(Path::toFile)
-        .sorted((o1, o2) -> -o1.compareTo(o2))
-        .forEach(File::delete);        
-    }
-    
+{    
     public void testCreateDirList() throws Exception
     {
         Path tmpDir = Files.createTempDirectory(null);
@@ -76,7 +68,7 @@ public class FortranBuildInfoTest
         finally
         {
             if(tmpDir != null)
-            { removeDir(tmpDir); }
+            { Utils.removeDir(tmpDir); }
         }
     }
     
@@ -104,7 +96,7 @@ public class FortranBuildInfoTest
         finally
         {
             if(tmpDir != null)
-            { removeDir(tmpDir); }
+            { Utils.removeDir(tmpDir); }
         }
     }
     
@@ -140,7 +132,7 @@ public class FortranBuildInfoTest
         finally
         {
             if(tmpDir != null)
-            { removeDir(tmpDir); }
+            { Utils.removeDir(tmpDir); }
         }
     }
     
@@ -168,7 +160,7 @@ public class FortranBuildInfoTest
         finally
         {
             if(tmpDir != null)
-            { removeDir(tmpDir); }
+            { Utils.removeDir(tmpDir); }
         }
     }
     
@@ -230,7 +222,7 @@ public class FortranBuildInfoTest
         finally
         {
             if(tmpDir != null)
-            { removeDir(tmpDir); }
+            { Utils.removeDir(tmpDir); }
         }
     }
     
@@ -292,7 +284,7 @@ public class FortranBuildInfoTest
         finally
         {
             if(tmpDir != null)
-            { removeDir(tmpDir); }
+            { Utils.removeDir(tmpDir); }
         }
     }
     
@@ -364,7 +356,7 @@ public class FortranBuildInfoTest
         finally
         {
             if(tmpDir != null)
-            { removeDir(tmpDir); }
+            { Utils.removeDir(tmpDir); }
         }        
     }
     
@@ -451,7 +443,7 @@ public class FortranBuildInfoTest
         finally
         {
             if(tmpDir != null)
-            { removeDir(tmpDir); }
+            { Utils.removeDir(tmpDir); }
         }
     }
         
@@ -502,7 +494,7 @@ public class FortranBuildInfoTest
         finally
         {
             if(tmpDir != null)
-            { removeDir(tmpDir); }
+            { Utils.removeDir(tmpDir); }
         }
     }
 
