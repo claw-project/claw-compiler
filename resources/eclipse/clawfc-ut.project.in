@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>cx2t-driver</name>
+	<name>clawfc-unit-tests</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -33,7 +33,7 @@
 		<link>
 			<name>driver-src</name>
 			<type>2</type>
-			<location>@CMAKE_SOURCE_DIR@/driver/src</location>
+			<location>@CLAWFC_SRC_DIR@</location>
 		</link>
 		<link>
 			<name>cx2t-gen-src</name>
@@ -46,9 +46,14 @@
 			<location>@CLAWFC_GEN_SRC_DIR@</location>
 		</link>
 		<link>
+			<name>driver-tests-utils-src</name>
+			<type>2</type>
+			<location>@CLAWFC_TEST_UTIL_SRC_DIR@</location>
+		</link>
+		<link>
 			<name>driver-ut-src</name>
 			<type>2</type>
-			<location>@CMAKE_SOURCE_DIR@/driver/unittests/src</location>
+			<location>@CLAWFC_UT_SRC_DIR@</location>
 		</link>
 	</linkedResources>
 </projectDescription>

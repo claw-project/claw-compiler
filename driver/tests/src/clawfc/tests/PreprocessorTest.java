@@ -22,7 +22,8 @@ import java.util.Scanner;
 import clawfc.Driver;
 import clawfc.Utils;
 
-public class PreprocessorTest extends DriverTestCase
+public class PreprocessorTest
+    extends clawfc.tests.utils.DriverTestCase
 {
     String readTxt(Path path) throws Exception
     {

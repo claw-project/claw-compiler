@@ -35,15 +35,12 @@ ut.reports.dir=@CX2T_UT_REPORTS_DIR@
 
 # Driver
 driver.src.dir=@CLAWFC_SRC_DIR@
-driver.ut.src.dir=@CLAWFC_UT_SRC_DIR@
 driver.classes.dir=@CLAWFC_CLASSES_DIR@
-driver.ut.classes.dir=@CLAWFC_UT_CLASSES_DIR@
 driver.dist.dir=@CLAWFC_DIST_DIR@
 driver.conf.dir=@CLAW_X2T_CONFIG_DIR@
 driver.conf.file=@CLAWFC_CONF_FILE@
 driver.runtime.conf.file=@CLAWFC_RUNTIME_CONF_FILE@
 driver.gen.src.dir=@CLAWFC_GEN_SRC_DIR@
-driver.ut.report.dir=@CLAWFC_UT_REPORT_DIR@
 
 # Third-party libraries
 ivy.dir=${3rdparty.dist.dir}
@@ -104,8 +101,20 @@ claw.shenron.ut.dep=${ut.dist.dir}/${claw.shenron.ut.jar}
 claw.tatsu.ut.jar=claw-x2t-tatsu-ut.jar
 claw.tatsu.ut.dep=${ut.dist.dir}/${claw.tatsu.ut.jar}
 
+# CLAW driver test utils
+driver.test.utils.src.dir=@CLAWFC_TEST_UTIL_SRC_DIR@
+
+# CLAW driver unit-tests
+driver.ut.jar=@CLAWFC_UT_JAR@
+driver.ut.dep=${driver.ut.dist.dir}/${driver.ut.jar}
+driver.ut.dist.dir=@CLAWFC_UT_BIN_DIR@
+driver.ut.src.dir=@CLAWFC_UT_SRC_DIR@
+driver.ut.classes.dir=@CLAWFC_UT_CLASSES_DIR@
+driver.ut.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep}
+driver.ut.report.dir=@CLAWFC_UT_REPORT_DIR@
+
 # CLAW driver tests
-driver.tests.jar=clawfc-tests.jar
+driver.tests.jar=@CLAWFC_TESTS_JAR@
 driver.tests.dist.dir=@CLAWFC_TESTS_BIN_DIR@
 driver.tests.dep=${driver.tests.dist.dir}/${driver.tests.jar}
 driver.tests.src.dir=@CLAWFC_TESTS_SRC_DIR@
@@ -125,6 +134,7 @@ jacoco.file=jacoco.exec
 cx2t.proj=${root.dir}/cx2t/src/build.xml
 cx2t-unit-tests.proj=${root.dir}/cx2t/unittest/build.xml
 driver.proj=${root.dir}/driver/src/build.xml
+driver-ut.proj=${root.dir}/driver/unittests/build.xml
 driver-tests.proj=${root.dir}/driver/tests/build.xml
 
 # Install

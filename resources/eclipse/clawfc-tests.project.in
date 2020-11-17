@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>clawfc-driver-tests</name>
+	<name>clawfc-tests</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -44,6 +44,11 @@
 			<name>driver-gen-src</name>
 			<type>2</type>
 			<location>@CLAWFC_GEN_SRC_DIR@</location>
+		</link>
+		<link>
+			<name>driver-tests-utils-src</name>
+			<type>2</type>
+			<location>@CLAWFC_TEST_UTIL_SRC_DIR@</location>
 		</link>
 		<link>
 			<name>driver-tests-src</name>

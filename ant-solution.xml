@@ -50,7 +50,7 @@
     </target>
 
     <target name="run-driver-unit-tests">
-        <ant antfile="${driver.proj}" target="run-unit-tests" />
+        <ant antfile="${driver-ut.proj}" target="run" />
     </target>
 
     <target name="run-driver-tests">
@@ -62,5 +62,9 @@
 
     <target name="build-driver-tests" depends="main">
         <ant antfile="${driver-tests.proj}" target="main" />
+    </target>
+
+    <target name="build-driver-unit-tests" depends="main">
+        <ant antfile="${driver-ut.proj}" target="main" />
     </target>
 </project>

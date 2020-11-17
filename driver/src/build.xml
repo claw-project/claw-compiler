@@ -39,7 +39,6 @@
     <target name="init" description="Initialize build directories">
         <tstamp/>
         <mkdir dir="${driver.classes.dir}"/>
-        <mkdir dir="${driver.ut.classes.dir}"/>
         <mkdir dir="${dep.scan.parser.dir}"/>
     </target>
 
@@ -108,7 +107,6 @@
 
     <target name="clean" description="clean up">
         <delete dir="${driver.classes.dir}"/>
-        <delete dir="${driver.ut.classes.dir}"/>
         <delete file="${driver.dep}"/>
     </target>
 
@@ -120,40 +118,6 @@
         <pathelement path="${antlr4.runtime.dep}"/>
         <pathelement path="${driver.dep}"/>
     </path>
-
-    <target name="compile-unit-tests" depends="compile" description="compile unit tests source">
-        <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir=""
-               destdir="${driver.ut.classes.dir}" classpathref="ut.build.path" debug="on">
-            <src>
-                <pathelement path="${driver.ut.src.dir}"/>
-            </src>
-        </javac>
-    </target>
-
-    <target name="run-unit-tests" depends="compile-unit-tests" description="Run unit tests">
-        <path id="ut.runtime.path">
-            <pathelement path="${junit.dep}" />
-            <pathelement path="${hamcrest.dep}" />
-            <pathelement path="${antlr4.runtime.dep}"/>
-            <pathelement path="${driver.dep}"/>
-            <pathelement path="${driver.ut.classes.dir}"/>
-        </path>
-        <mkdir dir="${driver.ut.report.dir}"/>
-        <junit jvm="${java.exec}" printsummary="yes" haltonfailure="yes">
-            <classpath path="${junit.dep}" />
-            <classpath path="${hamcrest.dep}" />
-            <classpath path="${antlr4.runtime.dep}" />
-            <classpath path="${driver.dep}" />
-            <classpath path="${driver.ut.classes.dir}" />
-            <formatter type="plain"/>
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${driver.ut.report.dir}">
-                <fileset dir="${driver.ut.classes.dir}">
-                    <include name="clawfc/ut/*Test*.class"/>
-                </fileset>
-            </batchtest>
-        </junit>
-    </target>
 
     <!-- Default target -->
     <target name="main" depends="init, antlr, compile, jar"/>

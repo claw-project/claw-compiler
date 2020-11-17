@@ -40,11 +40,8 @@ set(CLAW_COMPILER_FILE "clawfc")
 set(CLAW_LIB_SH "claw_f_lib.sh")
 set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 set(CLAWFC_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/src")
-set(CLAWFC_UT_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/unittests/src")
 set(CLAWFC_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/driver/build/generated-src")
 set(CLAWFC_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/classes")
-set(CLAWFC_UT_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/ut-classes")
-set(CLAWFC_UT_REPORT_DIR "${CMAKE_BINARY_DIR}/driver/ut-reports")
 set(CLAW_X2T_CONFIG_DIR "${CMAKE_BINARY_DIR}/driver/etc")
 # Config at build-time
 set(CLAWFC_CONF_FILE "clawfc.properties")
@@ -52,7 +49,18 @@ set(CLAWFC_CONF_FILE "clawfc.properties")
 set(CLAWFC_RUNTIME_CONF_FILE "clawfc.runtime.properties")
 set(CLAWFC_DIST_DIR "${INT_CLAW_HOME}/bin")
 
+# CLAW driver test utils
+set(CLAWFC_TEST_UTIL_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/test_utils/src")
+
+# Driver unit-tests
+set(CLAWFC_UT_JAR "clawfc-ut.jar")
+set(CLAWFC_UT_BIN_DIR "${CMAKE_SOURCE_DIR}/driver/unittests/bin")
+set(CLAWFC_UT_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/unittests/src")
+set(CLAWFC_UT_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/ut-classes")
+set(CLAWFC_UT_REPORT_DIR "${CMAKE_BINARY_DIR}/driver/ut-reports")
+
 # Driver tests
+set(CLAWFC_TESTS_JAR "clawfc-tests.jar")
 set(CLAWFC_TESTS_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/tests/src")
 set(CLAWFC_TESTS_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/driver/tests/build/generated-src")
 set(CLAWFC_TESTS_RES_DIR "${CMAKE_SOURCE_DIR}/driver/tests/res")

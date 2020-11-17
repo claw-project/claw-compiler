@@ -2,7 +2,7 @@
  * @author Mikhail Zhigun
  * @copyright Copyright 2020, MeteoSwiss
  */
-package clawfc.tests;
+package clawfc.tests.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
