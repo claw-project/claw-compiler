@@ -33,6 +33,7 @@ set(CLAW_CFG_DIR_NAME "etc")
 set(CLAW_X2T_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/${CLAW_CFG_DIR_NAME}")
 
 # Driver files
+set(CLAWFC_JAR "clawfc.jar")
 set(CLAW_CONF_FILE "claw_f.conf")
 set(CLAW_PY_CONF_FILE "claw_conf.py")
 set(CLAW_COMPILER_FILE "clawfc")

@@ -88,7 +88,7 @@ claw.tatsu.jar=claw-x2t-tatsu.jar
 claw.tatsu.dep=${dist.dir}/${claw.tatsu.jar}
 
 # CLAW driver libraries
-driver.jar=clawfc.jar
+driver.jar=@CLAWFC_JAR@
 driver.dep=${driver.dist.dir}/${driver.jar}
 driver.libs.dir=../share/claw
 d.l.dir=${driver.libs.dir}

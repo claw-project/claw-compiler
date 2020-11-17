@@ -4,23 +4,22 @@
  */
 package clawfc;
 
-import java.lang.RuntimeException;
-
-import java.util.logging.Logger;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.*;
-import java.nio.file.*;
-
-import java.io.InputStream;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.helper.HelpScreenException;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
-import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
+import net.sourceforge.argparse4j.inf.Namespace;
 
 public class Options
 {
@@ -38,6 +37,7 @@ public class Options
     final Path _outputModDir;
     final String _userTarget;
     final List<Path> _incDirs;
+    final List<String> _addMacros;
     final String _accDirLanguage;
     final String _configFile;
     final String _modelConfigFile;
@@ -53,6 +53,7 @@ public class Options
     final Path _intDir;
     final boolean _debugOmniFFront;
     final boolean _disableFFrontModuleCache;
+    final boolean _skipPP;
     final boolean _stopAfterPP;
     final boolean _stopAfterFFront;
     final boolean _stopAfterDepRes;
@@ -134,6 +135,11 @@ public class Options
         return _incDirs;
     }
 
+    public List<String> predefinedMacros()
+    {
+        return _addMacros;
+    }
+
     public String acceleratorDirectiveLanguage()
     {
         return _accDirLanguage;
@@ -173,9 +179,9 @@ public class Options
     {
         return _keepIntFiles;
     }
-    
+
     public Path intermediateFilesDir()
-    { 
+    {
         return _intDir;
     }
 
@@ -187,6 +193,11 @@ public class Options
     public boolean disableOmniFFrontModuleCache()
     {
         return _disableFFrontModuleCache;
+    }
+
+    public boolean skipPreprocessing()
+    {
+        return _skipPP;
     }
 
     public boolean stopAfterPreprocessing()
@@ -306,6 +317,7 @@ public class Options
             ArgumentGroup cOpts = parser.addArgumentGroup("Compiler options");
             cOpts.addArgument("-I", "--include-dir").nargs("*").action(Arguments.append())
                     .help("Add the directory dir to the search path for .mod and .xmod files.");
+            cOpts.addArgument("-D", "--add-macro").nargs("*").action(Arguments.append()).help("Predefine macro");
             cOpts.addArgument("-J", "--output-mod-dir").help("Output directory for compiled .mod and .xmod files.");
             cOpts.addArgument("-t", "--target").help("Type of target accelerator hardware");
             cOpts.addArgument("-d", "--directive")
@@ -329,13 +341,14 @@ public class Options
                     .help("Generate the transformation report");
             cOpts.addArgument("--debug").action(Arguments.storeTrue()).help("Display transformation debug information");
             cOpts.addArgument("--int-dir")
-                .help("Path to intermediate files directory (all existing contents will be removed)");
-            cOpts.addArgument("--keep-int-files").action(Arguments.storeTrue())
-                    .help("Keep intermediate files");
+                    .help("Path to intermediate files directory (all existing contents will be removed)");
+            cOpts.addArgument("--keep-int-files").action(Arguments.storeTrue()).help("Keep intermediate files");
             cOpts.addArgument("--debug-ffront").action(Arguments.storeTrue())
                     .help("Drive OMNI Fortran front-end in debug mode");
             cOpts.addArgument("--stop-pp").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after preprocess");
+            cOpts.addArgument("--skip-pp").action(Arguments.storeTrue())
+                    .help("Do not apply preprocessing to input and include files");
             cOpts.addArgument("--stop-dependencies").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after dependencies resolution");
             cOpts.addArgument("--stop-frontend").action(Arguments.storeTrue())
@@ -391,6 +404,7 @@ public class Options
         _outputModDir = getOptionalPath(parsedArgs, "output_mod_dir");
         _userTarget = parsedArgs.getString("target");
         _incDirs = getPathList(parsedArgs, "include_dir");
+        _addMacros = getStringList(parsedArgs, "add_macro");
         _accDirLanguage = parsedArgs.getString("directive");
         _configFile = parsedArgs.getString("config");
         _modelConfigFile = parsedArgs.getString("model_config");
@@ -404,6 +418,7 @@ public class Options
         _intDir = getOptionalPath(parsedArgs, "int_dir");
         _debugOmniFFront = parsedArgs.getBoolean("debug_ffront");
         _disableFFrontModuleCache = parsedArgs.getBoolean("no_module_cache");
+        _skipPP = parsedArgs.getBoolean("skip_pp");
         _stopAfterPP = parsedArgs.getBoolean("stop_pp");
         _stopAfterFFront = parsedArgs.getBoolean("stop_frontend");
         _stopAfterDepRes = parsedArgs.getBoolean("stop_dependencies");
@@ -432,6 +447,7 @@ public class Options
                 + "\n";
         res += "Include directories: \n\t" + String.join("\n\t",
                 includeDirs().stream().map((path) -> path.toString()).collect(Collectors.toList())) + "\n";
+        res += "Predefined macros: \n\t" + String.join("\n\t", predefinedMacros()) + "\n";
         res += String.format("Output file: \"%s\"\n", outputFile());
         res += String.format("Output directory: \"%s\"\n", outputDir());
         res += String.format("Output xmod directory: \"%s\"\n", outputModulesDir());
@@ -450,6 +466,7 @@ public class Options
         res += String.format("Intermediate files directory: %s\n", intermediateFilesDir().toString());
         res += String.format("OMNI Fortran Front-End debugging enabled: %s\n", debugOmniFFront());
         res += String.format("Disable OMNI Fortran Front-End module cache: %s\n", disableOmniFFrontModuleCache());
+        res += String.format("Skip preprocessing: %s\n", skipPreprocessing());
         res += String.format("Stop after preprocessing: %s\n", stopAfterPreprocessing());
         res += String.format("Stop after OMNI Fortran Front-End: %s\n", stopAfterOmniFFront());
         res += String.format("Stop after dependencies resolution: %s\n", stopAfterDepResolution());
@@ -520,7 +537,6 @@ public class Options
         }
         return Collections.unmodifiableList(res);
     }
-
 
     static Path toAbsPath(String pathStr)
     {

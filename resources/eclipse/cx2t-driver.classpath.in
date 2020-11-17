@@ -2,6 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="cx2t-src"/>
 	<classpathentry kind="src" path="cx2t-gen-src"/>
+	<classpathentry kind="src" path="driver-src"/>
+	<classpathentry kind="src" path="driver-gen-src"/>
+	<classpathentry kind="src" path="driver-ut-src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -36,7 +39,6 @@
 	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_TATSU@.jar"/>
 	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_SHENRON@.jar"/>
 	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_WANI@.jar"/>
-	<classpathentry kind="lib" path="@INT_CLAW_HOME@/bin/clawfc.jar"/>
 
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -7,12 +7,10 @@ package clawfc.tests;
 import clawfc.Driver;
 import junit.framework.TestCase;
 
-public class DriverTest
-    extends TestCase 
-{    
+public class DriverTest extends TestCase
+{
     public void testRun() throws Exception
     {
-        System.out.println(clawfc.tests.Resources.DIR());
         Driver.run(new String[0]);
     }
 }

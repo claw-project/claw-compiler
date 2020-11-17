@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 
 public class Resources
 {
-    public static final Path _DIR = Paths.get("@CLAWFC_TESTS_RES_DIR@");
-    public static Path DIR() { return _DIR; }
+    public static final Path DIR = Paths.get("@CLAWFC_TESTS_RES_DIR@");
+    public static final Path INT_INSTALL_DIR = Paths.get("@INT_CLAW_HOME@");
+    public static final Path DRIVER_PATH() { return INT_INSTALL_DIR.resolve("bin/@CLAWFC_JAR@"); }
+
 };

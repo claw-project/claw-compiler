@@ -46,7 +46,7 @@
     <!-- Check if dependencies scan parsers are up-to-date or need to be re-generated -->
     <target name="antlr" description="Generate parsers from ANTLR grammar file">
         <outofdate outputsources="outdated.sources">
-            <sourcefiles>
+          <sourcefiles>
             <fileset dir="${driver.src.dir}/clawfc/depscan" casesensitive="yes">
               <include name="*.g4"/>
             </fileset>
@@ -89,6 +89,7 @@
                 includes="${driver.conf.file}"
                 fullpath="config/${driver.conf.file}"/>
         </jar>
+        <chmod file="${driver.dep}" perm="a+x"/>
     </target>
 
     <!-- Update jar config after install-->
