@@ -22,8 +22,7 @@ import java.util.Scanner;
 import clawfc.Driver;
 import clawfc.Utils;
 
-public class PreprocessorTest
-    extends clawfc.tests.utils.DriverTestCase
+public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
 {
     String readTxt(Path path) throws Exception
     {
@@ -143,6 +142,27 @@ public class PreprocessorTest
         assertTrue(equals(resFilepath, REF_FILEPATH));
     }
 
+    public void testSrcIncludeDirs() throws Exception
+    {
+        final Path INPUT_DIR = RES_DIR.resolve("preprocessing/src_include_dirs/input");
+        final Path REF_FILEPATH = RES_DIR.resolve("preprocessing/include_dir/reference/1.pp.f90");
+        final Path OUT_DIR = TMP_DIR, INT_DIR = TMP_DIR;
+        final Path dir1 = INPUT_DIR, dir2 = INPUT_DIR.resolve("dir2"), dir3 = INPUT_DIR.resolve("dir2/dir3");
+        String[] args = new String[] { "--keep-int-files", "--stop-pp", "--disable-mp", "--int-dir", INT_DIR.toString(),
+                "-O", OUT_DIR.toString(), "-S", dir1.toString(), dir2.toString(), dir3.toString() };
+        Driver.run(args);
+        Path tmpDir1 = Paths.get(INT_DIR.resolve("include").toString() + dir1.toString());
+        Path tmpDir2 = Paths.get(INT_DIR.resolve("include").toString() + dir2.toString());
+        Path tmpDir3 = Paths.get(INT_DIR.resolve("include").toString() + dir3.toString());
+        assertTrue(Utils.dirExists(tmpDir1));
+        assertTrue(Utils.dirExists(tmpDir2));
+        assertTrue(Utils.dirExists(tmpDir3));
+        assertTrue(equals(tmpDir1.resolve("1.pp.f90"), dir1.resolve("1.f90")));
+        assertTrue(equals(tmpDir2.resolve("2.pp.f90"), dir2.resolve("2.f90")));
+        assertTrue(equals(tmpDir3.resolve("1.pp.f90"), dir3.resolve("1.f90")));
+        assertTrue(equals(tmpDir3.resolve("3.pp.F95"), dir3.resolve("3.F95")));
+    }
+
     public void testSkip() throws Exception
     {
         final Path INPUT_FILEPATH = RES_DIR.resolve("preprocessing/skip/input/1.f90");
@@ -163,7 +183,6 @@ public class PreprocessorTest
         final Path REF_TEMPLATE_FILEPATH = RES_DIR.resolve("preprocessing/multiprocessing/reference/i.f90.template");
         final Path INT_DIR = TMP_DIR.resolve("int");
         String INPUT_FILE_PATH_TEMPLATE = TMP_DIR.toString() + "/%s.f90";
-        List<String> inputFiles = new ArrayList<String>(N);
         String inTemplate;
         try (InputStream inStrm = new FileInputStream(INPUT_TEMPLATE_FILEPATH.toString()))
         {

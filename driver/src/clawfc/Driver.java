@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -101,7 +103,7 @@ public class Driver
         }
     }
 
-    class InputFileData
+    class SourceFileData
     {
         public Path inDir;
         public Path inFilename;
@@ -125,7 +127,7 @@ public class Driver
             return tempDir.resolve(ppFilename + ".log");
         }
 
-        public InputFileData(Path inPath)
+        public SourceFileData(Path inPath)
         {
             inDir = Utils.dirPath(inPath);
             inFilename = inPath.getFileName();
@@ -171,11 +173,16 @@ public class Driver
                 tmpDir = createTempDir(opts);
                 info(tmpDir.toString(), 1);
                 info("Creating temp dirs for input files...");
-                InputFileData[] inputFilesData = createInputData(opts.inputFiles());
+                SourceFileData[] inputFilesData = createInputData(opts.inputFiles());
                 Path inputTmpDir = createInputFilesTempDir(inputFilesData, tmpDir);
                 info("Preprocessing input files...");
                 FortranPreprocessor pp = new FortranPreprocessor(cfg(), opts);
-                preprocessInputFiles(inputFilesData, pp, opts.keepIntermediateFiles(), !opts.disableMultiprocessing(),
+                preprocessFiles(inputFilesData, pp, opts.keepIntermediateFiles(), !opts.disableMultiprocessing(),
+                        opts.skipPreprocessing());
+                info("Creating temp dirs for include files...");
+                SourceFileData[] includeFilesData = createIncludeFilesData(opts.sourceIncludeDirs(), tmpDir);
+                info("Preprocessing include files...");
+                preprocessFiles(includeFilesData, pp, opts.keepIntermediateFiles(), !opts.disableMultiprocessing(),
                         opts.skipPreprocessing());
                 if (opts.stopAfterPreprocessing())
                 {
@@ -193,7 +200,7 @@ public class Driver
 
     void executeUntilFirstError(List<Callable<Void>> tasks, boolean useMultiProcessing) throws Exception
     {
-        List<Future> taskFutures = new ArrayList<Future>(tasks.size());
+        List<Future<Void>> taskFutures = new ArrayList<Future<Void>>(tasks.size());
         ExecutorService es = createThreadPool(useMultiProcessing);
         try
         {
@@ -201,7 +208,7 @@ public class Driver
             {
                 taskFutures.add(es.submit(task));
             }
-            for (Future taskFuture : taskFutures)
+            for (Future<Void> taskFuture : taskFutures)
             {
                 try
                 {
@@ -238,23 +245,69 @@ public class Driver
         }
     }
 
-    InputFileData[] createInputData(List<Path> inputFiles)
+    SourceFileData[] createInputData(List<Path> inputFiles)
     {
-        InputFileData[] inputFilesData = new InputFileData[inputFiles.size()];
+        SourceFileData[] inputFilesData = new SourceFileData[inputFiles.size()];
         for (int i = 0; i < inputFilesData.length; ++i)
         {
-            inputFilesData[i] = new InputFileData(inputFiles.get(i));
+            inputFilesData[i] = new SourceFileData(inputFiles.get(i));
         }
         return inputFilesData;
     }
 
-    void preprocessInputFiles(final InputFileData[] inputFilesData, final FortranPreprocessor pp,
-            final boolean createFiles, boolean enableMultiprocessing, boolean skipPreprocessing) throws Exception
+    SourceFileData[] createIncludeFilesData(List<Path> includeDirs, Path tmpDir) throws Exception
+    {
+        SourceFileData[] incFilesData = null;
+        Map<Path, Path> incToTmpDir = createIncludeFilesTempDirs(includeDirs, tmpDir);
+        Set<Path> uniqueDirs = incToTmpDir.keySet();
+        Map<Path, List<Path>> incDirFiles = BuildInfo.createDirFileLists(uniqueDirs);
+        int numFiles = 0;
+        for (Map.Entry<Path, List<Path>> dirFiles : incDirFiles.entrySet())
+        {
+            numFiles += dirFiles.getValue().size();
+        }
+        incFilesData = new SourceFileData[numFiles];
+        {
+            int i = 0;
+            for (Map.Entry<Path, List<Path>> dirFiles : incDirFiles.entrySet())
+            {
+                for (Path incFilePath : dirFiles.getValue())
+                {
+                    SourceFileData data = new SourceFileData(incFilePath);
+                    data.tempDir = incToTmpDir.get(data.inDir);
+                    incFilesData[i] = data;
+                    ++i;
+                }
+            }
+        }
+        return incFilesData;
+    }
+
+    Map<Path, Path> createIncludeFilesTempDirs(List<Path> includeDirs, Path tmpDir) throws Exception
+    {
+        List<Path> uniqueDirs = BuildInfo.createDirListFromPaths(includeDirs);
+        Path tmpIncFilesDir = tmpDir.resolve("include");
+        Map<Path, Path> inputToTemp = new LinkedHashMap<Path, Path>();
+        for (Path dataIncDir : uniqueDirs)
+        {
+            Path tmpIncFileDir = Paths.get(tmpIncFilesDir.toString() + "/" + dataIncDir.toString()).normalize();
+            inputToTemp.put(dataIncDir, tmpIncFileDir);
+        }
+        for (Map.Entry<Path, Path> entry : inputToTemp.entrySet())
+        {
+            Path tmpInputFileDir = entry.getValue();
+            Files.createDirectories(tmpInputFileDir);
+        }
+        return Collections.unmodifiableMap(inputToTemp);
+    }
+
+    void preprocessFiles(final SourceFileData[] inputFilesData, final FortranPreprocessor pp, final boolean createFiles,
+            boolean enableMultiprocessing, boolean skipPreprocessing) throws Exception
     {
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(inputFilesData.length);
         for (int i = 0; i < inputFilesData.length; ++i)
         {
-            final InputFileData data = inputFilesData[i];
+            final SourceFileData data = inputFilesData[i];
             tasks.add(new Callable<Void>()
             {
                 public Void call() throws Exception
@@ -302,29 +355,16 @@ public class Driver
         executeUntilFirstError(tasks, enableMultiprocessing);
     }
 
-    Path createInputFilesTempDir(InputFileData[] inputFilesData, Path tmpDir) throws IOException
+    Path createInputFilesTempDir(SourceFileData[] inputFilesData, Path tmpDir) throws IOException
     {
         Path tmpInputFilesDir = tmpDir.resolve("input");
-        for (InputFileData data : inputFilesData)
+        for (SourceFileData data : inputFilesData)
         {
             data.tempDir = tmpInputFilesDir;
         }
         Files.createDirectories(tmpInputFilesDir);
         return tmpInputFilesDir;
     }
-
-    /*
-     * Map<Path, Path> createInputFilesTempDirs(InputFileData[] inputFilesData, Path
-     * tmpDir) throws IOException { Map<Path, Path> inputToTemp = new
-     * LinkedHashMap<Path, Path>(); for (InputFileData data : inputFilesData) { Path
-     * inputFileDir = data.inDir; Path tmpInputFileDir =
-     * Paths.get(tmpDir.resolve("input").toString() + inputFileDir.toString());
-     * inputToTemp.put(inputFileDir, tmpInputFileDir); data.tempDir =
-     * tmpInputFileDir; } for (Map.Entry<Path, Path> entry : inputToTemp.entrySet())
-     * { Path tmpInputFileDir = entry.getValue();
-     * Files.createDirectories(tmpInputFileDir); } return
-     * Collections.unmodifiableMap(inputToTemp); }
-     */
 
     void print(String s)
     {
@@ -410,7 +450,7 @@ public class Driver
         {
             throw new RuntimeException(String.format("Options --fc-type and --fc-cmd must be specified together"));
         }
-        for (Path incPath : opts.includeDirs())
+        for (Path incPath : opts.preprocessingIncludeDirs())
         {
             if (!Utils.dirExists(incPath))
             {

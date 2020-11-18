@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -200,9 +201,9 @@ public class BuildInfo
         return Collections.unmodifiableList(files);
     }
 
-    public static Map<Path, List<Path>> createDirFileLists(List<Path> dirs) throws IOException
+    public static Map<Path, List<Path>> createDirFileLists(Collection<Path> dirs) throws IOException
     {
-        HashMap<Path, List<Path>> res = new HashMap<Path, List<Path>>();
+        Map<Path, List<Path>> res = new LinkedHashMap<Path, List<Path>>();
         for (Path dir : dirs)
         {
             res.put(dir, createDirFileList(dir));

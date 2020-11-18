@@ -172,7 +172,7 @@ public class FortranPreprocessor
         {
             args.add("-D" + macro);
         }
-        for (Path dir : opts.includeDirs())
+        for (Path dir : opts.preprocessingIncludeDirs())
         {
             args.add("-I" + dir.toString());
         }

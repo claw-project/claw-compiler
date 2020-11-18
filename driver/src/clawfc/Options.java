@@ -36,7 +36,8 @@ public class Options
     final Path _outputDir;
     final Path _outputModDir;
     final String _userTarget;
-    final List<Path> _incDirs;
+    final List<Path> _ppIncDirs;
+    final List<Path> _srcIncDirs;
     final List<String> _addMacros;
     final String _accDirLanguage;
     final String _configFile;
@@ -130,9 +131,14 @@ public class Options
         return _userTarget;
     }
 
-    public List<Path> includeDirs()
+    public List<Path> preprocessingIncludeDirs()
     {
-        return _incDirs;
+        return _ppIncDirs;
+    }
+
+    public List<Path> sourceIncludeDirs()
+    {
+        return _srcIncDirs;
     }
 
     public List<String> predefinedMacros()
@@ -315,9 +321,11 @@ public class Options
                     .help("Output file for the transformed FORTRAN code. If not given, code is printed to stdout.");
             outOpts.addArgument("-O", "--output-dir").help("Output directory for transformed FORTRAN files");
             ArgumentGroup cOpts = parser.addArgumentGroup("Compiler options");
-            cOpts.addArgument("-I", "--include-dir").nargs("*").action(Arguments.append())
-                    .help("Add the directory dir to the search path for .mod and .xmod files.");
+            cOpts.addArgument("-I", "--pp-include-dir").nargs("*").action(Arguments.append())
+                    .help("Add the directory to the search path for preprocessor include files");
             cOpts.addArgument("-D", "--add-macro").nargs("*").action(Arguments.append()).help("Predefine macro");
+            cOpts.addArgument("-S", "--src-include-dir").nargs("*").action(Arguments.append())
+                    .help("Add the directory to the search path for the source of referenced Fortran modules");
             cOpts.addArgument("-J", "--output-mod-dir").help("Output directory for compiled .mod and .xmod files.");
             cOpts.addArgument("-t", "--target").help("Type of target accelerator hardware");
             cOpts.addArgument("-d", "--directive")
@@ -403,7 +411,8 @@ public class Options
         _outputDir = getOptionalPath(parsedArgs, "output_dir");
         _outputModDir = getOptionalPath(parsedArgs, "output_mod_dir");
         _userTarget = parsedArgs.getString("target");
-        _incDirs = getPathList(parsedArgs, "include_dir");
+        _ppIncDirs = getPathList(parsedArgs, "pp_include_dir");
+        _srcIncDirs = getPathList(parsedArgs, "src_include_dir");
         _addMacros = getStringList(parsedArgs, "add_macro");
         _accDirLanguage = parsedArgs.getString("directive");
         _configFile = parsedArgs.getString("config");
@@ -445,8 +454,14 @@ public class Options
         res += "Input files: \n\t"
                 + String.join("\n\t", inputFiles().stream().map((path) -> path.toString()).collect(Collectors.toList()))
                 + "\n";
-        res += "Include directories: \n\t" + String.join("\n\t",
-                includeDirs().stream().map((path) -> path.toString()).collect(Collectors.toList())) + "\n";
+        res += "Preprocessor include directories: \n\t"
+                + String.join("\n\t",
+                        preprocessingIncludeDirs().stream().map((path) -> path.toString()).collect(Collectors.toList()))
+                + "\n";
+        res += "Source include directories: \n\t"
+                + String.join("\n\t",
+                        sourceIncludeDirs().stream().map((path) -> path.toString()).collect(Collectors.toList()))
+                + "\n";
         res += "Predefined macros: \n\t" + String.join("\n\t", predefinedMacros()) + "\n";
         res += String.format("Output file: \"%s\"\n", outputFile());
         res += String.format("Output directory: \"%s\"\n", outputDir());
