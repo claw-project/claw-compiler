@@ -34,6 +34,11 @@ public class TestsExecutionListener extends RunListener
     int _numFailed = 0;
     int _numIgnored = 0;
 
+    static void print(String txt)
+    {
+        System.out.print(ConsoleColors.RESET + txt);
+    }
+
     static void println(String txt, String color)
     {
         System.out.println(color + txt + ConsoleColors.RESET);
@@ -44,28 +49,40 @@ public class TestsExecutionListener extends RunListener
         println(txt, ConsoleColors.RESET);
     }
 
+    static void printGreen(String txt)
+    {
+        System.out.print(ConsoleColors.GREEN + txt + ConsoleColors.RESET);
+    }
+
     static void printlnGreen(String txt)
     {
-        System.out.println(ConsoleColors.GREEN + txt + ConsoleColors.RESET);
+        printGreen(txt);
+        System.out.println("");
+    }
+
+    static void printRed(String txt)
+    {
+        System.out.print(ConsoleColors.RED + txt + ConsoleColors.RESET);
     }
 
     static void printlnRed(String txt)
     {
-        System.out.println(ConsoleColors.RED + txt + ConsoleColors.RESET);
+        printRed(txt);
+        System.out.println("");
     }
 
     public void testRunStarted(Description description) throws Exception
     {
 
         println("\n----------------------------");
-        printlnGreen("Number of tests to execute: " + description.testCount());
+        println("Number of tests to execute: " + description.testCount());
         println("----------------------------\n");
     }
 
     public void testRunFinished(Result result) throws Exception
     {
         println("\n----------------------------");
-        printlnGreen("Number of tests executed: " + result.getRunCount());
+        println("Number of tests executed: " + result.getRunCount());
         printlnGreen(String.format("Finished: %s", _numFinished));
         if (_numFailed > 0)
         {
@@ -81,13 +98,14 @@ public class TestsExecutionListener extends RunListener
     public void testStarted(Description description) throws Exception
     {
         println("\n----------------------------");
-        printlnGreen(description.getClassName() + "." + description.getMethodName() + ": STARTED");
+        println(description.getClassName() + "." + description.getMethodName() + ": STARTED");
     }
 
     public void testFinished(Description description) throws Exception
     {
         ++_numFinished;
-        printlnGreen(description.getClassName() + "." + description.getMethodName() + ": FINISHED");
+        print(description.getClassName() + "." + description.getMethodName() + ": ");
+        printlnGreen("FINISHED");
         println("----------------------------\n");
     }
 
@@ -101,7 +119,8 @@ public class TestsExecutionListener extends RunListener
         e.printStackTrace(pw);
         String stackTrace = sw.toString();
         printlnRed(stackTrace);
-        printlnRed(description.getClassName() + "." + description.getMethodName() + ": FAILED");
+        print(description.getClassName() + "." + description.getMethodName() + ": ");
+        printlnRed("FAILED");
         println("----------------------------\n");
     }
 
@@ -110,7 +129,8 @@ public class TestsExecutionListener extends RunListener
         ++_numFailed;
         Description description = failure.getDescription();
         printlnRed(failure.getException().toString());
-        printlnRed(description.getClassName() + "." + description.getMethodName() + ": FAILED");
+        print(description.getClassName() + "." + description.getMethodName() + ": ");
+        printlnRed("FAILED");
         println("----------------------------\n");
     }
 
