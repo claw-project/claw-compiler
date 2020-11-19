@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -591,5 +592,10 @@ public class FortranDepScannerTest extends TestCase
                 Arrays.asList(new FortranModuleInfo("x", 1, 4, Arrays.asList("y", "z"), 9, 38, false),
                         new FortranModuleInfo("x1", 6, 9, Arrays.asList("y1", "z1"), 48, 80, false)),
                 new FortranModuleInfo("p1", 11, 14, Arrays.asList("y1", "z1"), 91, 124, true)));
+        verifySerialization(new FortranFileSummary(
+                Arrays.asList(new FortranModuleInfo("x", 1, 4, Arrays.asList("y", "z"), 9, 38, false),
+                        new FortranModuleInfo("x1", 6, 9, Arrays.asList("y1", "z1"), 48, 80, false)),
+                new FortranModuleInfo("p1", 11, 14, Arrays.asList("y1", "z1"), 91, 124, true),
+                Paths.get("/tmp/bla-dir/bla.file")));
     }
 }

@@ -51,7 +51,6 @@
     <target name="jar" depends="compile" description="package, output to JAR">
         <mkdir dir="${driver.ut.dist.dir}"/>
         <!-- Driver -->
-        <echo message="${driver.ut.dist.dir}"/>
         <jar jarfile="${driver.ut.dep}" basedir="${driver.ut.classes.dir}"
              includes="clawfc/**">
             <manifest>

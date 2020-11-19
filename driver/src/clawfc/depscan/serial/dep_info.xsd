@@ -11,6 +11,7 @@ Copyright: 2020, MeteoSwiss
        <xs:element name = 'modules' type = 'FortranModuleInfo' minOccurs = '0' maxOccurs = 'unbounded' />
        <xs:element name = 'program' type = 'FortranModuleInfo' minOccurs = '0' maxOccurs = '1' />
     </xs:sequence>
+    <xs:attribute name="file_path" type="xs:string"/>
   </xs:complexType>
 </xs:element>
 
