@@ -37,7 +37,7 @@ public class FortranModuleInfo
 
     public List<String> getUsedModules()
     {
-        return _data.getUsedModules();
+        return _data.getUsedModules().getName();
     }
 
     public long getStartCharPos()

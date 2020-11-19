@@ -73,6 +73,14 @@ public class Utils
         }
     }
 
+    public static void dumpIntoFile(Path filename, InputStream in) throws IOException
+    {
+        try (OutputStream out = Files.newOutputStream(filename))
+        {
+            copy(in, out);
+        }
+    }
+
     public static boolean dirExists(Path path)
     {
         return Files.exists(path) && Files.isDirectory(path);

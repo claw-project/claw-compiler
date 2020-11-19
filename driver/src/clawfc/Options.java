@@ -31,6 +31,7 @@ public class Options
     final boolean _printDirectives;
     final boolean _printCfg;
     final boolean _printOpts;
+    final boolean _genDepInfoFiles;
     final List<Path> _inputFiles;
     final Path _outputFile;
     final Path _outputDir;
@@ -56,6 +57,7 @@ public class Options
     final boolean _disableFFrontModuleCache;
     final boolean _skipPP;
     final boolean _stopAfterPP;
+    final boolean _stopAfterDepScan;
     final boolean _stopAfterFFront;
     final boolean _stopAfterDepRes;
     final boolean _stopAfterTrans;
@@ -99,6 +101,11 @@ public class Options
     public boolean printOptions()
     {
         return _printOpts;
+    }
+
+    public boolean generateDepInfoFiles()
+    {
+        return _genDepInfoFiles;
     }
 
     public boolean disableMultiprocessing()
@@ -209,6 +216,11 @@ public class Options
     public boolean stopAfterPreprocessing()
     {
         return _stopAfterPP;
+    }
+
+    public boolean stopAfterDepScan()
+    {
+        return _stopAfterDepScan;
     }
 
     public boolean stopAfterOmniFFront()
@@ -357,12 +369,16 @@ public class Options
                     .help("Save intermediate files and stop after preprocess");
             cOpts.addArgument("--skip-pp").action(Arguments.storeTrue())
                     .help("Do not apply preprocessing to input and include files");
+            cOpts.addArgument("--stop-depscan").action(Arguments.storeTrue())
+                    .help("Save intermediate files and stop after dependencies scan");
             cOpts.addArgument("--stop-dependencies").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after dependencies resolution");
             cOpts.addArgument("--stop-frontend").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after frontend");
             cOpts.addArgument("--stop-translator").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after translator");
+            cOpts.addArgument("--gen-buildinfo-files").action(Arguments.storeTrue())
+                    .help("Generate dependencies information files for input and then stop");
             cOpts.addArgument("-x", "--override-cfg-key").nargs("*").action(Arguments.append())
                     .help("Override a configuration key:value pair from the command line. Higher "
                             + "priority over base configuration and user configuration");
@@ -429,6 +445,7 @@ public class Options
         _disableFFrontModuleCache = parsedArgs.getBoolean("no_module_cache");
         _skipPP = parsedArgs.getBoolean("skip_pp");
         _stopAfterPP = parsedArgs.getBoolean("stop_pp");
+        _stopAfterDepScan = parsedArgs.getBoolean("stop_depscan");
         _stopAfterFFront = parsedArgs.getBoolean("stop_frontend");
         _stopAfterDepRes = parsedArgs.getBoolean("stop_dependencies");
         _stopAfterTrans = parsedArgs.getBoolean("stop_translator");
@@ -445,6 +462,7 @@ public class Options
         _fCompilerType = parsedArgs.getString("fc_compiler_type");
         _fCompilerCmd = parsedArgs.getString("fc_compiler_cmd");
         _disableMP = parsedArgs.getBoolean("disable_mp");
+        _genDepInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");
     }
 
     @Override
@@ -483,6 +501,7 @@ public class Options
         res += String.format("Disable OMNI Fortran Front-End module cache: %s\n", disableOmniFFrontModuleCache());
         res += String.format("Skip preprocessing: %s\n", skipPreprocessing());
         res += String.format("Stop after preprocessing: %s\n", stopAfterPreprocessing());
+        res += String.format("Stop after dependencies scan: %s\n", stopAfterDepScan());
         res += String.format("Stop after OMNI Fortran Front-End: %s\n", stopAfterOmniFFront());
         res += String.format("Stop after dependencies resolution: %s\n", stopAfterDepResolution());
         res += String.format("Stop after translator: %s\n", stopAfterTranslation());
@@ -505,6 +524,7 @@ public class Options
         res += String.format("Fortran compiler type: %s\n", fortranCompilerType());
         res += String.format("Fortran compiler cmd: %s\n", fortranCompilerCmd());
         res += String.format("Disable multiprocessing: %s\n", disableMultiprocessing());
+        res += String.format("Generate dependencies info files: %s\n", generateDepInfoFiles());
         return res;
     }
 

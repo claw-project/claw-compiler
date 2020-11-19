@@ -27,6 +27,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import claw.ClawX2T;
+import clawfc.depscan.FortranDepScanner;
+import clawfc.depscan.FortranFileSummary;
+import clawfc.depscan.FortranFileSummarySerializer;
 import clawfc.utils.AsciiArrayIOStream;
 
 public class Driver
@@ -116,6 +119,8 @@ public class Driver
         public AsciiArrayIOStream pp;
         public Path tempDir;
         public Path ppFilename;
+        public FortranFileSummary info;
+        public Path infoFilename;
 
         public Path ppPath()
         {
@@ -127,6 +132,16 @@ public class Driver
             return tempDir.resolve(ppFilename + ".log");
         }
 
+        public Path infoFilePath()
+        {
+            return infoFilePath(tempDir);
+        }
+
+        public Path infoFilePath(Path dir)
+        {
+            return dir.resolve(inFilename + ".fif");
+        }
+
         public SourceFileData(Path inPath)
         {
             inDir = Utils.dirPath(inPath);
@@ -134,7 +149,18 @@ public class Driver
             pp = null;
             tempDir = null;
             ppFilename = null;
+            info = null;
+            infoFilename = null;
         }
+    }
+
+    static Path getOrCreateDir(Path dirPath) throws IOException
+    {
+        if (!Utils.dirExists(dirPath))
+        {
+            Files.createDirectories(dirPath);
+        }
+        return dirPath;
     }
 
     void execute(Options opts) throws Exception
@@ -179,12 +205,28 @@ public class Driver
                 FortranPreprocessor pp = new FortranPreprocessor(cfg(), opts);
                 preprocessFiles(inputFilesData, pp, opts.keepIntermediateFiles(), !opts.disableMultiprocessing(),
                         opts.skipPreprocessing());
+                if (!opts.stopAfterPreprocessing())
+                {
+                    info("Scanning input files for dependencies...");
+                    scanFiles(inputFilesData, opts.keepIntermediateFiles(), opts.generateDepInfoFiles(),
+                            getOrCreateDir(opts.outputDir()), !opts.disableMultiprocessing());
+                    if (opts.generateDepInfoFiles())
+                    {
+                        return;
+                    }
+                }
                 info("Creating temp dirs for include files...");
                 SourceFileData[] includeFilesData = createIncludeFilesData(opts.sourceIncludeDirs(), tmpDir);
                 info("Preprocessing include files...");
                 preprocessFiles(includeFilesData, pp, opts.keepIntermediateFiles(), !opts.disableMultiprocessing(),
                         opts.skipPreprocessing());
                 if (opts.stopAfterPreprocessing())
+                {
+                    return;
+                }
+                info("Scanning include files for dependencies...");
+                scanFiles(includeFilesData, opts.keepIntermediateFiles(), false, null, !opts.disableMultiprocessing());
+                if (opts.stopAfterDepScan())
                 {
                     return;
                 }
@@ -346,7 +388,13 @@ public class Driver
                         {
                             Utils.writeTextToFile(data.ppErrLogPath(), e.stderr);
                         }
-                        throw e;
+                        String errMsg = String.format("Exception thrown while preprocessing input file \"%s\"",
+                                data.inPath().toString());
+                        if (e.stderr != null)
+                        {
+                            errMsg += "\n" + e.stderr;
+                        }
+                        throw new Exception(errMsg, e);
                     }
                     return null;
                 }
@@ -364,6 +412,67 @@ public class Driver
         }
         Files.createDirectories(tmpInputFilesDir);
         return tmpInputFilesDir;
+    }
+
+    void scanFiles(SourceFileData[] inputFilesData, final boolean createTmpFiles, final boolean createOutputFiles,
+            final Path outDir, boolean enableMultiprocessing) throws Exception
+    {
+        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(inputFilesData.length);
+        final ThreadLocal<FortranDepScanner> scanner = new ThreadLocal<FortranDepScanner>();
+        final ThreadLocal<FortranFileSummarySerializer> serializer = new ThreadLocal<FortranFileSummarySerializer>();
+        for (int i = 0; i < inputFilesData.length; ++i)
+        {
+            final SourceFileData data = inputFilesData[i];
+            tasks.add(new Callable<Void>()
+            {
+                public Void call() throws Exception
+                {
+                    try (InputStream ppInStrm = data.pp.getAsInputStreamUnsafe())
+                    {
+                        FortranDepScanner localScanner = scanner.get();
+                        if (localScanner == null)
+                        {
+                            localScanner = new FortranDepScanner();
+                            scanner.set(localScanner);
+                        }
+                        data.info = localScanner.scan(ppInStrm);
+                        data.info.setFilePath(data.info.getFilePath());
+                    } catch (Exception e)
+                    {
+                        String errMsg = String.format("Exception thrown while scanning (preprocessed) file \"%s\"",
+                                data.inPath().toString());
+                        throw new Exception(errMsg, e);
+                    }
+                    if (createTmpFiles || createOutputFiles)
+                    {
+                        FortranFileSummarySerializer localSerializer = serializer.get();
+                        if (localSerializer == null)
+                        {
+                            localSerializer = new FortranFileSummarySerializer();
+                            serializer.set(localSerializer);
+                        }
+                        if (createTmpFiles)
+                        {
+                            try (OutputStream outStrm = Files.newOutputStream(data.infoFilePath()))
+                            {
+                                localSerializer.serialize(data.info, outStrm);
+                            }
+                        }
+                        if (createOutputFiles)
+                        {
+                            data.info.setFilePath(data.inPath());
+                            Path outFilePath = data.infoFilePath(outDir);
+                            try (OutputStream outStrm = Files.newOutputStream(outFilePath))
+                            {
+                                localSerializer.serialize(data.info, outStrm);
+                            }
+                        }
+                    }
+                    return null;
+                }
+            });
+        }
+        executeUntilFirstError(tasks, enableMultiprocessing);
     }
 
     void print(String s)
@@ -456,6 +565,13 @@ public class Driver
             {
                 throw new RuntimeException(
                         String.format("Include dir \"%s\" does not exist or is not a directory", incPath.toString()));
+            }
+        }
+        if (opts.generateDepInfoFiles())
+        {
+            if (opts.outputDir() == null)
+            {
+                throw new RuntimeException("Output dir must be specified with --gen-buildinfo-files");
             }
         }
     }

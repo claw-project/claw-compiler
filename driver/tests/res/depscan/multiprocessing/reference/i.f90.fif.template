@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<fortran_file_summary>
+    <module start_char_pos="13" end_char_pos="37" uses_claw="true" name="mod{i}1" start_line_num="1" end_line_num="2">
+        <used_modules/>
+    </module>
+    <module start_char_pos="51" end_char_pos="68" uses_claw="false" name="mod{i}2" start_line_num="5" end_line_num="5">
+        <used_modules/>
+    </module>
+    <module start_char_pos="82" end_char_pos="113" uses_claw="false" name="mod{i}3" start_line_num="8" end_line_num="9">
+        <used_modules>
+            <name>mod{i}2</name>
+        </used_modules>
+    </module>
+    <program start_char_pos="125" end_char_pos="168" uses_claw="false" name="p{i}" start_line_num="12" end_line_num="14">
+        <used_modules>
+            <name>mod{i}2</name>
+            <name>mod{i}3</name>
+        </used_modules>
+    </program>
+</fortran_file_summary>

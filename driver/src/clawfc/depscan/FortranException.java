@@ -4,15 +4,21 @@
  */
 package clawfc.depscan;
 
-public class FortranException
-    extends Exception
+public class FortranException extends Exception
 {
     Integer _line;
     Integer _charPositionInLine;
 
-    public Integer line() { return _line; }
-    public Integer charPositionInLine() { return _charPositionInLine; }
-    
+    public Integer line()
+    {
+        return _line;
+    }
+
+    public Integer charPositionInLine()
+    {
+        return _charPositionInLine;
+    }
+
     public FortranException(String msg)
     {
         super(msg);

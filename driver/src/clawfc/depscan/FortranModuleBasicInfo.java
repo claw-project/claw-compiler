@@ -37,7 +37,7 @@ public class FortranModuleBasicInfo
 
     public List<String> getUsedModules()
     {
-        return _data.getUsedModules();
+        return _data.getUsedModules().getName();
     }
 
     public FortranModuleBasicInfo(clawfc.depscan.serial.FortranModuleBasicInfo data)
@@ -57,13 +57,14 @@ public class FortranModuleBasicInfo
         info.setName(name);
         info.setStartLineNum(startLineNum);
         info.setEndLineNum(endLineNum);
-        info.getUsedModules().addAll(usedModuleNames);
+        info.setUsedModules(new clawfc.depscan.serial.FortranModuleBasicInfo.UsedModules());
+        info.getUsedModules().getName().addAll(usedModuleNames);
     }
 
     public static void assign(clawfc.depscan.serial.FortranModuleBasicInfo info,
             clawfc.depscan.serial.FortranModuleBasicInfo other)
     {
-        assign(info, other.getName(), other.getStartLineNum(), other.getEndLineNum(), other.getUsedModules());
+        assign(info, other.getName(), other.getStartLineNum(), other.getEndLineNum(), other.getUsedModules().getName());
     }
 
     public static boolean equals(clawfc.depscan.serial.FortranModuleBasicInfo info,
@@ -82,7 +83,7 @@ public class FortranModuleBasicInfo
         {
             return false;
         }
-        if (!info.getUsedModules().equals(other.getUsedModules()))
+        if (!info.getUsedModules().getName().equals(other.getUsedModules().getName()))
         {
             return false;
         }

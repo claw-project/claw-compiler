@@ -85,7 +85,7 @@ public class FortranFileSummary
     public FortranFileSummary(clawfc.depscan.serial.FortranFileSummary data)
     {
         _data = data;
-        _modules = data.getModules().stream().map(FortranModuleInfo::new).collect(Collectors.toList());
+        _modules = data.getModule().stream().map(FortranModuleInfo::new).collect(Collectors.toList());
         if (data.getProgram() != null)
         {
             _program = new FortranModuleInfo(data.getProgram());
@@ -115,7 +115,7 @@ public class FortranFileSummary
             boolean usesCLAW = hasCLAW.run((int) bInfo.getStartLineNum(), (int) bInfo.getEndLineNum());
             FortranModuleInfo info = new FortranModuleInfo(bInfo, startPos, endPos, usesCLAW);
             _modules.add(info);
-            _data.getModules().add(info.data());
+            _data.getModule().add(info.data());
         }
         if (in.program == null)
         {
@@ -152,7 +152,7 @@ public class FortranFileSummary
             _data.setProgram(_program._data);
         }
         modules.forEach(info -> {
-            _data.getModules().add(info.data());
+            _data.getModule().add(info.data());
         });
         setFilePath(path);
     }

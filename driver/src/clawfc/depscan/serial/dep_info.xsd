@@ -8,7 +8,7 @@ Copyright: 2020, MeteoSwiss
 <xs:element name="fortran_file_summary">
   <xs:complexType>
     <xs:sequence>
-       <xs:element name = 'modules' type = 'FortranModuleInfo' minOccurs = '0' maxOccurs = 'unbounded' />
+       <xs:element name = 'module' type = 'FortranModuleInfo' minOccurs = '0' maxOccurs = 'unbounded' />
        <xs:element name = 'program' type = 'FortranModuleInfo' minOccurs = '0' maxOccurs = '1' />
     </xs:sequence>
     <xs:attribute name="file_path" type="xs:string"/>
@@ -27,12 +27,17 @@ Copyright: 2020, MeteoSwiss
 
 <xs:complexType name = "FortranModuleBasicInfo">
   <xs:sequence>
-     <xs:element name = 'used_modules' type = 'xs:string' minOccurs = '0' maxOccurs = 'unbounded' />
+    <xs:element name="used_modules" minOccurs = '1' maxOccurs = '1'>
+      <xs:complexType>
+         <xs:sequence>
+           <xs:element name = 'name' type = 'xs:string' minOccurs = '0' maxOccurs = 'unbounded' />
+         </xs:sequence>
+      </xs:complexType>
+    </xs:element>
   </xs:sequence>
   <xs:attribute name="name" type="xs:string" use="required"/>
   <xs:attribute name="start_line_num" type="xs:unsignedInt" use="required"/>
   <xs:attribute name="end_line_num" type="xs:unsignedInt" use="required"/>
 </xs:complexType>
-
 
 </xs:schema>
