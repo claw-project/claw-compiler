@@ -34,6 +34,11 @@
 			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@ARGPARSE_NAME@-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/jakarta.xml.bind-api.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/jakarta.xml.bind-api.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="@OMNI_JAR_TOOLS@"/>
 	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_TATSU@.jar"/>
 	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_SHENRON@.jar"/>

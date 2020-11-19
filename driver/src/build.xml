@@ -15,12 +15,9 @@
 
     <!-- Classpath for the CX2T Translator library -->
     <path id="build.path">
-        <pathelement path="${junit.dep}" />
-        <pathelement path="${st4.dep}"/>
-        <pathelement path="${antlr.dep}"/>
-        <pathelement path="${antlr4.dep}"/>
-        <pathelement path="${antlr4.runtime.dep}"/>
-        <pathelement path="${argparse4j.dep}"/>
+          <fileset dir="${3rdparty.dist.dir}">
+            <include name="**/*.jar" />
+          </fileset>
         <pathelement path="${claw.wani.dep}"/>
     </path>
 
@@ -31,19 +28,28 @@
         <pathelement path="${antlr4.runtime.dep}"/>
     </path>
 
+	<path id="jaxb.path">
+	  <fileset dir="${3rdparty.dist.dir}">
+	    <include name="**/*.jar" />
+	  </fileset>
+	</path>
+
+    <property name="dep.scan.dir"
+              value="${driver.gen.src.dir}/clawfc/depscan"/>
     <!-- Dependencies scan parser classes -->
     <property name="dep.scan.parser.dir"
-              value="${driver.gen.src.dir}/clawfc/depscan/parser"/>
+              value="${dep.scan.dir}/parser"/>
 
     <!-- Initialization step -->
     <target name="init" description="Initialize build directories">
         <tstamp/>
         <mkdir dir="${driver.classes.dir}"/>
+        <mkdir dir="${dep.scan.dir}"/>
         <mkdir dir="${dep.scan.parser.dir}"/>
     </target>
 
     <!-- Check if dependencies scan parsers are up-to-date or need to be re-generated -->
-    <target name="antlr" description="Generate parsers from ANTLR grammar file">
+    <target name="antlr" depends="init" description="Generate parsers from ANTLR grammar file">
         <outofdate outputsources="outdated.sources">
           <sourcefiles>
             <fileset dir="${driver.src.dir}/clawfc/depscan" casesensitive="yes">
@@ -64,7 +70,28 @@
         </outofdate>
     </target>
 
-    <target name="compile" depends="antlr" description="compile the source">
+    <target name="xjc"  depends="init" description="Generate serialization classes from xsd schemas">
+        <outofdate outputsources="outdated.xsds">
+          <sourcefiles>
+            <fileset dir="${driver.src.dir}/clawfc/depscan/serial" casesensitive="yes">
+              <include name="*.xsd"/>
+            </fileset>
+          </sourcefiles>
+          <targetfiles path="${driver.dep}"/>
+            <sequential>
+                <echo message="  ${outdated.xsds}"/>
+                <java jvm="${java.exec}" classname="com.sun.tools.xjc.XJCFacade" fork="true" failonerror="true" classpathref="jaxb.path">
+                    <arg value="-d"/>
+                    <arg value="${driver.gen.src.dir}"/>
+                    <arg value="-p"/>
+                    <arg value="clawfc.depscan.serial"/>
+                    <arg line="${outdated.xsds}"/>
+                </java>
+            </sequential>
+        </outofdate>
+    </target>
+
+    <target name="compile" depends="antlr, xjc" description="compile the source">
         <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir=""
                destdir="${driver.classes.dir}" classpathref="build.path" debug="on">
             <src>
@@ -87,6 +114,9 @@
             <zipfileset dir="${driver.conf.dir}"
                 includes="${driver.conf.file}"
                 fullpath="config/${driver.conf.file}"/>
+            <zipfileset dir="${driver.src.dir}/clawfc/depscan/serial"
+                includes="**/*.xsd"
+                prefix="clawfc/depscan/serial"/>
         </jar>
         <chmod file="${driver.dep}" perm="a+x"/>
     </target>
@@ -107,6 +137,7 @@
 
     <target name="clean" description="clean up">
         <delete dir="${driver.classes.dir}"/>
+        <delete dir="${dep.scan.dir}"/>
         <delete file="${driver.dep}"/>
     </target>
 
@@ -120,5 +151,5 @@
     </path>
 
     <!-- Default target -->
-    <target name="main" depends="init, antlr, compile, jar"/>
+    <target name="main" depends="init, antlr, xjc, compile, jar"/>
 </project>

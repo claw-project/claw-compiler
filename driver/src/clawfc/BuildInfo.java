@@ -138,15 +138,15 @@ public class BuildInfo
             HashSet<String> usedModules = new HashSet<String>();
             for (FortranModuleBasicInfo moduleDeps : depInfo.modules)
             {
-                _definedModules.add(moduleDeps.name);
-                for (String name : moduleDeps.usedModuleNames)
+                _definedModules.add(moduleDeps.getName());
+                for (String name : moduleDeps.getUsedModules())
                 {
                     usedModules.add(name);
                 }
             }
             if (depInfo.program != null)
             {
-                for (String name : depInfo.program.usedModuleNames)
+                for (String name : depInfo.program.getUsedModules())
                 {
                     usedModules.add(name);
                 }

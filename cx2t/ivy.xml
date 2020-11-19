@@ -19,5 +19,7 @@
     <dependency org="org.ow2.asm" name="asm" rev="6.2.1"/>
     <dependency org="net.sourceforge.argparse4j" name="argparse4j" rev="0.8.1"/>
     <dependency org="ant-contrib" name="ant-contrib" rev="1.0b3"/>
+    <dependency org="org.glassfish.jaxb" name="jaxb-runtime" rev="3.0.0-M5" conf="default"/>
+    <dependency org="org.glassfish.jaxb" name="jaxb-xjc" rev="3.0.0-M5" conf="default"/>
   </dependencies>
 </ivy-module>

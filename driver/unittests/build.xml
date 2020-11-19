@@ -14,12 +14,9 @@
 
     <!-- Classpath for the CX2T Translator library -->
     <path id="build.path">
-        <pathelement path="${junit.dep}" />
-        <pathelement path="${st4.dep}"/>
-        <pathelement path="${antlr.dep}"/>
-        <pathelement path="${antlr4.dep}"/>
-        <pathelement path="${antlr4.runtime.dep}"/>
-        <pathelement path="${argparse4j.dep}"/>
+          <fileset dir="${3rdparty.dist.dir}">
+            <include name="**/*.jar" />
+          </fileset>
         <pathelement path="${driver.dep}"/>
     </path>
 
@@ -54,6 +51,7 @@
     <target name="jar" depends="compile" description="package, output to JAR">
         <mkdir dir="${driver.ut.dist.dir}"/>
         <!-- Driver -->
+        <echo message="${driver.ut.dist.dir}"/>
         <jar jarfile="${driver.ut.dep}" basedir="${driver.ut.classes.dir}"
              includes="clawfc/**">
             <manifest>
@@ -61,6 +59,7 @@
                 <attribute name="Class-Path" value="${driver.ut.runtime.classpath}"/>
             </manifest>
         </jar>
+        <chmod file="${driver.ut.dep}" perm="a+x"/>
     </target>
 
     <target name="clean" description="clean up">
@@ -68,14 +67,19 @@
         <delete file="${driver.ut.dep}"/>
     </target>
 
-    <target name="run" depends="compile" description="Run unit tests">
+    <target name="run" depends="jar" description="Run unit tests">
         <mkdir dir="${driver.ut.report.dir}"/>
         <junit jvm="${java.exec}" printsummary="yes" haltonfailure="yes">
+            <classpath path="${driver.ut.classes.dir}" />
             <classpath path="${junit.dep}" />
             <classpath path="${hamcrest.dep}" />
             <classpath path="${antlr4.runtime.dep}" />
             <classpath path="${driver.dep}" />
-            <classpath path="${driver.ut.classes.dir}" />
+            <classpath path="${jaxb-runtime.dep}" />
+            <classpath path="${jaxb-core.dep}" />
+            <classpath path="${jakarta.xml.bind-api.dep}" />
+            <classpath path="${jakarta.activation.dep}" />
+            <classpath path="${istack-commons-runtime.dep}" />
             <formatter type="plain"/>
             <formatter type="xml"/>
             <batchtest fork="yes" todir="${driver.ut.report.dir}">

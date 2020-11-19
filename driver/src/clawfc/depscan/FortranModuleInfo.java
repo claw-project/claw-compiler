@@ -4,59 +4,113 @@
  */
 package clawfc.depscan;
 
-import clawfc.depscan.parser.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 public class FortranModuleInfo
-    extends FortranModuleBasicInfo
 {
-    public final int startCharPos;
-    public final int endCharPos;
-    public final boolean usesCLAW;
-    
-	public FortranModuleInfo(FortranModuleBasicInfo info,
-	                         int startCharPos,
-                             int endCharPos,
-                             boolean usesCLAW)
-	{
-	    super(info);
-		this.startCharPos = startCharPos;
-		this.endCharPos = endCharPos;
-        this.usesCLAW = usesCLAW;
-	}	
-    
-    public FortranModuleInfo(String name,
-                             int startLineNum,
-                             int endLineNum,
-                             Collection<String> usedModuleNames,
-                             int startCharPos,
-                             int endCharPos,
-                             boolean usesCLAW)
+    clawfc.depscan.serial.FortranModuleInfo _data;
+
+    public clawfc.depscan.serial.FortranModuleInfo data()
     {
-        super(name, startLineNum, endLineNum, usedModuleNames);
-        this.startCharPos = startCharPos;
-        this.endCharPos = endCharPos;
-        this.usesCLAW = usesCLAW;
+        return _data;
     }
-	
-	@Override
-    public boolean equals(Object obj) 
+
+    public String getName()
     {
-        if(this == obj)
-        { return true; }
-        if(obj == null)
-        { return false; }
+        return _data.getName();
+    }
+
+    // WARNING!!! startLineNum is the number of the line AFTER "module <name>"
+    // statement
+    public long getStartLineNum()
+    {
+        return _data.getStartLineNum();
+    }
+
+    // WARNING!!! endLineNum is the number of the line where "end module <name>"
+    // statement is located
+    public long getEndLineNum()
+    {
+        return _data.getEndLineNum();
+    }
+
+    public List<String> getUsedModules()
+    {
+        return _data.getUsedModules();
+    }
+
+    public long getStartCharPos()
+    {
+        return data().getStartCharPos();
+    }
+
+    public long getEndCharPos()
+    {
+        return data().getEndCharPos();
+    }
+
+    public boolean getUsesClaw()
+    {
+        return data().isUsesClaw();
+    }
+
+    public FortranModuleInfo(clawfc.depscan.serial.FortranModuleInfo data)
+    {
+        _data = data;
+    }
+
+    public FortranModuleInfo(FortranModuleBasicInfo info, long startCharPos, long endCharPos, boolean usesCLAW)
+    {
+        _data = new clawfc.depscan.serial.FortranModuleInfo();
+        clawfc.depscan.FortranModuleBasicInfo.assign(data(), info.data());
+        data().setStartCharPos(startCharPos);
+        data().setEndCharPos(endCharPos);
+        data().setUsesClaw(usesCLAW);
+    }
+
+    public FortranModuleInfo(String name, long startLineNum, long endLineNum, Collection<String> usedModuleNames,
+            long startCharPos, long endCharPos, boolean usesCLAW)
+    {
+        _data = new clawfc.depscan.serial.FortranModuleInfo();
+        clawfc.depscan.FortranModuleBasicInfo.assign(data(), name, startLineNum, endLineNum, usedModuleNames);
+        data().setStartCharPos(startCharPos);
+        data().setEndCharPos(endCharPos);
+        data().setUsesClaw(usesCLAW);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
         if (getClass() != obj.getClass())
-        { return false; }
+        {
+            return false;
+        }
         FortranModuleInfo other = (FortranModuleInfo) obj;
-        if(!super.equals(other))
-        { return false; }
-        if(startCharPos != other.startCharPos)
-        { return false; }
-        if(endCharPos != other.endCharPos)
-        { return false; }
-        if(usesCLAW != other.usesCLAW)
-        { return false; }
+        if (!clawfc.depscan.FortranModuleBasicInfo.equals(data(), other.data()))
+        {
+            return false;
+        }
+        if (getStartCharPos() != other.getStartCharPos())
+        {
+            return false;
+        }
+        if (getEndCharPos() != other.getEndCharPos())
+        {
+            return false;
+        }
+        if (getUsesClaw() != other.getUsesClaw())
+        {
+            return false;
+        }
         return true;
     }
 }

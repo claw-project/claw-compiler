@@ -10,13 +10,8 @@ public class Main
 {
     public static void main(String[] args)
     {
-        TestsRunner.main(args,
-            FortranBuildInfoTest.class,
-            FortranCLAWScannerTest.class,
-            FortranCommentsFilterTest.class,
-            FortranDepScannerTest.class,
-            FortranDepStatementsRecognizerTest.class,
-            FortranLineBreaksFilterTest.class,
-            UtilsTest.class);
+        TestsRunner.main(args, FortranBuildInfoTest.class, FortranCLAWScannerTest.class,
+                FortranCommentsFilterTest.class, FortranDepScannerTest.class, FortranDepStatementsRecognizerTest.class,
+                FortranLineBreaksFilterTest.class, UtilsTest.class);
     }
 }

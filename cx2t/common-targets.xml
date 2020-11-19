@@ -39,6 +39,11 @@
         <include name="${commoncli.jar}"/>
         <include name="${toml.jar}"/>
         <include name="${argparse4j.jar}"/>
+        <include name="${jaxb-runtime.jar}"/>
+        <include name="${jaxb-core.jar}"/>
+        <include name="${jakarta.xml.bind-api.jar}"/>
+        <include name="${jakarta.activation.jar}"/>
+        <include name="${istack-commons-runtime.jar}"/>
       </fileset>
     </copy>
   </target>

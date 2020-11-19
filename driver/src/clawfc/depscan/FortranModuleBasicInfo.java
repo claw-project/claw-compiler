@@ -4,56 +4,107 @@
  */
 package clawfc.depscan;
 
-import clawfc.depscan.parser.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
 public class FortranModuleBasicInfo
 {
-    public final String name;
-    //WARNING!!! This the number of the line AFTER "module <name>" statement
-    public final int startLineNum;
-    //WARNING!!! This the number of the line where "end module <name>" statement is located
-    public final int endLineNum;
-    
-    public final List<String> usedModuleNames;
-    
-	public FortranModuleBasicInfo(String name,
-	                         int startLineNum,
-                             int endLineNum,
-	                         Collection<String> usedModuleNames)
-	{
-		this.name = name;
-		this.startLineNum = startLineNum;
-        this.endLineNum = endLineNum;
-		this.usedModuleNames = Collections.unmodifiableList(new ArrayList<String>(usedModuleNames));
-	}
-    
-    public FortranModuleBasicInfo(FortranModuleBasicInfo info)
+    private final clawfc.depscan.serial.FortranModuleBasicInfo _data;
+
+    public clawfc.depscan.serial.FortranModuleBasicInfo data()
     {
-        this.name = info.name;
-        this.startLineNum = info.startLineNum;
-        this.endLineNum = info.endLineNum;
-        this.usedModuleNames = info.usedModuleNames;
+        return _data;
     }
-	
-	@Override
-    public boolean equals(Object obj) 
+
+    public String getName()
     {
-        if(this == obj)
-        { return true; }
-        if(obj == null)
-        { return false; }
-        if (getClass() != obj.getClass())
-        { return false; }
-        FortranModuleBasicInfo other = (FortranModuleBasicInfo) obj;
-        if(!name.equals(other.name))
-        { return false; }
-        if(startLineNum != other.startLineNum)
-        { return false; }
-        if(endLineNum != other.endLineNum)
-        { return false; }
-        if(!usedModuleNames.equals(other.usedModuleNames))
-        { return false; }
+        return _data.getName();
+    }
+
+    // WARNING!!! startLineNum is the number of the line AFTER "module <name>"
+    // statement
+    public long getStartLineNum()
+    {
+        return _data.getStartLineNum();
+    }
+
+    // WARNING!!! endLineNum is the number of the line where "end module <name>"
+    // statement is located
+    public long getEndLineNum()
+    {
+        return _data.getEndLineNum();
+    }
+
+    public List<String> getUsedModules()
+    {
+        return _data.getUsedModules();
+    }
+
+    public FortranModuleBasicInfo(clawfc.depscan.serial.FortranModuleBasicInfo data)
+    {
+        _data = data;
+    }
+
+    public FortranModuleBasicInfo(String name, long startLineNum, long endLineNum, Collection<String> usedModuleNames)
+    {
+        _data = new clawfc.depscan.serial.FortranModuleBasicInfo();
+        assign(_data, name, startLineNum, endLineNum, usedModuleNames);
+    }
+
+    public static void assign(clawfc.depscan.serial.FortranModuleBasicInfo info, String name, long startLineNum,
+            long endLineNum, Collection<String> usedModuleNames)
+    {
+        info.setName(name);
+        info.setStartLineNum(startLineNum);
+        info.setEndLineNum(endLineNum);
+        info.getUsedModules().addAll(usedModuleNames);
+    }
+
+    public static void assign(clawfc.depscan.serial.FortranModuleBasicInfo info,
+            clawfc.depscan.serial.FortranModuleBasicInfo other)
+    {
+        assign(info, other.getName(), other.getStartLineNum(), other.getEndLineNum(), other.getUsedModules());
+    }
+
+    public static boolean equals(clawfc.depscan.serial.FortranModuleBasicInfo info,
+            clawfc.depscan.serial.FortranModuleBasicInfo other)
+    {
+
+        if (!info.getName().equals(other.getName()))
+        {
+            return false;
+        }
+        if (info.getStartLineNum() != other.getStartLineNum())
+        {
+            return false;
+        }
+        if (info.getEndLineNum() != other.getEndLineNum())
+        {
+            return false;
+        }
+        if (!info.getUsedModules().equals(other.getUsedModules()))
+        {
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        FortranModuleBasicInfo other = (FortranModuleBasicInfo) obj;
+        return equals(this._data, other._data);
     }
 }

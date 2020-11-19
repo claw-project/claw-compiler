@@ -47,6 +47,11 @@
 			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/hamcrest-core-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/jaxb-runtime.jar"/>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/jaxb-core.jar"/>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/jakarta.xml.bind-api.jar"/>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/jakarta.activation.jar"/>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/istack-commons-runtime.jar"/>
 	<classpathentry kind="lib" path="@OMNI_JAR_TOOLS@"/>
 	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_TATSU@.jar"/>
 	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_SHENRON@.jar"/>

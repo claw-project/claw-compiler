@@ -21,7 +21,7 @@
         <pathelement path="${antlr4.dep}"/>
         <pathelement path="${antlr4.runtime.dep}"/>
         <pathelement path="${argparse4j.dep}"/>
-        <pathelement path="${argparse4j.dep}"/>
+        <pathelement path="${jaxb-runtime.dep}"/>
         <pathelement path="${driver.dep}"/>
     </path>
 
@@ -53,6 +53,7 @@
                 <attribute name="Class-Path" value="${driver.tests.runtime.classpath}"/>
             </manifest>
         </jar>
+        <chmod file="${driver.tests.dep}" perm="a+x"/>
     </target>
 
     <target name="clean" description="clean up">
