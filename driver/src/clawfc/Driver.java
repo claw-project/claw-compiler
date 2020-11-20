@@ -30,6 +30,7 @@ import claw.ClawX2T;
 import clawfc.depscan.FortranDepScanner;
 import clawfc.depscan.FortranFileSummary;
 import clawfc.depscan.FortranFileSummarySerializer;
+import clawfc.depscan.FortranModuleInfo;
 import clawfc.utils.AsciiArrayIOStream;
 
 public class Driver
@@ -208,8 +209,11 @@ public class Driver
                 if (!opts.stopAfterPreprocessing())
                 {
                     info("Scanning input files for dependencies...");
-                    scanFiles(inputFilesData, opts.keepIntermediateFiles(), opts.generateDepInfoFiles(),
-                            getOrCreateDir(opts.outputDir()), !opts.disableMultiprocessing());
+                    if (inputFilesData.length > 0)
+                    {
+                        scanFiles(inputFilesData, opts.keepIntermediateFiles(), opts.generateDepInfoFiles(),
+                                getOrCreateDir(opts.outputDir()), !opts.disableMultiprocessing());
+                    }
                     if (opts.generateDepInfoFiles())
                     {
                         return;
@@ -230,12 +234,42 @@ public class Driver
                 {
                     return;
                 }
+                if (opts.printCLAWFiles())
+                {
+                    info("Filtering CLAW files...");
+                    printCLAWFiles(inputFilesData);
+                    return;
+                }
             } finally
             {
                 if (tmpDir != null && !opts.keepIntermediateFiles())
                 {
                     Utils.removeDir(tmpDir);
                 }
+            }
+        }
+    }
+
+    void printCLAWFiles(SourceFileData[] inputFilesData)
+    {
+        for (SourceFileData data : inputFilesData)
+        {
+            boolean usesCLAW = false;
+            for (FortranModuleInfo mInfo : data.info.getModules())
+            {
+                if (mInfo.getUsesClaw())
+                {
+                    usesCLAW = true;
+                    break;
+                }
+            }
+            if (data.info.getProgram() != null)
+            {
+                usesCLAW |= data.info.getProgram().getUsesClaw();
+            }
+            if (usesCLAW)
+            {
+                System.out.println(data.inPath());
             }
         }
     }

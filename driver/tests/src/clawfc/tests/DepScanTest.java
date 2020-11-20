@@ -4,10 +4,12 @@
  */
 package clawfc.tests;
 
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -21,6 +23,7 @@ import clawfc.Driver;
 import clawfc.Utils;
 import clawfc.depscan.FortranFileSummary;
 import clawfc.depscan.FortranFileSummaryDeserializer;
+import clawfc.utils.ByteArrayIOStream;
 
 public class DepScanTest extends clawfc.tests.utils.DriverTestCase
 {
@@ -151,5 +154,28 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
             final Path resFilepath = INT_DIR.resolve(String.format("input/%s.f90.fif", i));
             assertTrue(txtFileEqualsTxt(resFilepath, refTxt));
         }
+    }
+
+    public void testCLAWDetection() throws Exception
+    {
+        final Path INPUT_FILEPATH1 = RES_DIR.resolve("depscan/claw_detection/input/no_claw.f90").normalize();
+        final Path INPUT_FILEPATH2 = RES_DIR.resolve("depscan/claw_detection/input/in_module.f90").normalize();
+        final Path INPUT_FILEPATH3 = RES_DIR.resolve("depscan/claw_detection/input/in_program.f90").normalize();
+        final Path OUT_DIR = TMP_DIR.resolve("out"), INT_DIR = TMP_DIR.resolve("int");
+        String[] args = new String[] { DRIVER_PATH.toString(), "--print-claw-files", "-O", OUT_DIR.toString(),
+                INPUT_FILEPATH1.toString(), INPUT_FILEPATH2.toString(), INPUT_FILEPATH3.toString() };
+        String res;
+        try
+        {
+            ByteArrayIOStream stdOut = new ByteArrayIOStream();
+            System.setOut(new PrintStream(stdOut));
+            Driver.run(args);
+            res = Utils.collectIntoString(stdOut.getAsInputStreamUnsafe());
+        } finally
+        {
+            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
+        }
+        String ref = INPUT_FILEPATH2.toString() + "\n" + INPUT_FILEPATH3.toString() + "\n";
+        assertEquals(ref, res);
     }
 }

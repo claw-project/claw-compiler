@@ -31,6 +31,7 @@ public class Options
     final boolean _printDirectives;
     final boolean _printCfg;
     final boolean _printOpts;
+    final boolean _printCLAWFiles;
     final boolean _genDepInfoFiles;
     final List<Path> _inputFiles;
     final Path _outputFile;
@@ -101,6 +102,11 @@ public class Options
     public boolean printOptions()
     {
         return _printOpts;
+    }
+
+    public boolean printCLAWFiles()
+    {
+        return _printCLAWFiles;
     }
 
     public boolean generateDepInfoFiles()
@@ -328,6 +334,8 @@ public class Options
             qOpts.addArgument("--print-install-cfg", "--show-env").action(Arguments.storeTrue())
                     .help("Print install configuration");
             qOpts.addArgument("--print-opts").action(Arguments.storeTrue()).help("Print processed cmdline options");
+            qOpts.addArgument("--print-claw-files").action(Arguments.storeTrue())
+                    .help("Print input files which use CLAW directives");
             MutuallyExclusiveGroup outOpts = parser.addMutuallyExclusiveGroup("Compiler output options");
             outOpts.addArgument("-o", "--output-file")
                     .help("Output file for the transformed FORTRAN code. If not given, code is printed to stdout.");
@@ -422,6 +430,7 @@ public class Options
         _printDirectives = parsedArgs.getBoolean("list_directives");
         _printCfg = parsedArgs.getBoolean("show_config");
         _printOpts = parsedArgs.getBoolean("print_opts");
+        _printCLAWFiles = parsedArgs.getBoolean("print_claw_files");
         _inputFiles = getPathList(parsedArgs, "fortran_file");
         _outputFile = getOptionalPath(parsedArgs, "output_file");
         _outputDir = getOptionalPath(parsedArgs, "output_dir");
@@ -521,6 +530,7 @@ public class Options
         res += String.format("Print supported targets: %s\n", printTargets());
         res += String.format("Print supported accelerator directive languages: %s\n", printDirectives());
         res += String.format("Print options: %s\n", printOptions());
+        res += String.format("Print input CLAW files: %s\n", printCLAWFiles());
         res += String.format("Fortran compiler type: %s\n", fortranCompilerType());
         res += String.format("Fortran compiler cmd: %s\n", fortranCompilerCmd());
         res += String.format("Disable multiprocessing: %s\n", disableMultiprocessing());
