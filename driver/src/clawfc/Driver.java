@@ -72,7 +72,7 @@ public class Driver
         _cfg = new Configuration();
     }
 
-    void verifyInstall()
+    static void verifyInstall()
     {
         if (!Files.isDirectory(cfg().installRoot()))
         {
@@ -109,7 +109,7 @@ public class Driver
         }
     }
 
-    class SourceFileData
+    static class SourceFileData
     {
         public Path inDir;
         public Path inFilename;
@@ -274,7 +274,7 @@ public class Driver
         }
     }
 
-    void printCLAWFiles(SourceFileData[] inputFilesData)
+    static void printCLAWFiles(SourceFileData[] inputFilesData)
     {
         for (SourceFileData data : inputFilesData)
         {
@@ -298,7 +298,7 @@ public class Driver
         }
     }
 
-    void executeUntilFirstError(List<Callable<Void>> tasks, boolean useMultiProcessing) throws Exception
+    static void executeUntilFirstError(List<Callable<Void>> tasks, boolean useMultiProcessing) throws Exception
     {
         List<Future<Void>> taskFutures = new ArrayList<Future<Void>>(tasks.size());
         ExecutorService es = createThreadPool(useMultiProcessing);
@@ -333,7 +333,7 @@ public class Driver
         }
     }
 
-    ExecutorService createThreadPool(boolean useMultiProcessing)
+    static ExecutorService createThreadPool(boolean useMultiProcessing)
     {
         if (useMultiProcessing)
         {
@@ -345,7 +345,7 @@ public class Driver
         }
     }
 
-    SourceFileData[] createInputData(List<Path> inputFiles) throws IOException
+    static SourceFileData[] createInputData(List<Path> inputFiles) throws IOException
     {
         SourceFileData[] inputFilesData = new SourceFileData[inputFiles.size()];
         for (int i = 0; i < inputFilesData.length; ++i)
@@ -355,7 +355,7 @@ public class Driver
         return inputFilesData;
     }
 
-    class ModuleData
+    static class ModuleData
     {
         public final Path filePath;
         public final FileTime timestamp;
@@ -367,7 +367,7 @@ public class Driver
         }
     }
 
-    Map<String, ModuleData> searchForModules(List<Path> includeDirs) throws IOException
+    static Map<String, ModuleData> searchForModules(List<Path> includeDirs) throws IOException
     {
         Map<String, ModuleData> modByName = new HashMap<String, ModuleData>();
         List<Path> uniqueDirs = BuildInfo.createDirListFromPaths(includeDirs);
@@ -390,7 +390,7 @@ public class Driver
         return Collections.unmodifiableMap(modByName);
     }
 
-    SourceFileData[] createIncludeFilesData(List<Path> includeDirs, Path tmpDir) throws Exception
+    static SourceFileData[] createIncludeFilesData(List<Path> includeDirs, Path tmpDir) throws Exception
     {
         SourceFileData[] incFilesData = null;
         Map<Path, Path> incToTmpDir = createIncludeFilesTempDirs(includeDirs, tmpDir);
@@ -418,7 +418,7 @@ public class Driver
         return incFilesData;
     }
 
-    Map<Path, Path> createIncludeFilesTempDirs(List<Path> includeDirs, Path tmpDir) throws Exception
+    static Map<Path, Path> createIncludeFilesTempDirs(List<Path> includeDirs, Path tmpDir) throws Exception
     {
         List<Path> uniqueDirs = BuildInfo.createDirListFromPaths(includeDirs);
         Path tmpIncFilesDir = tmpDir.resolve("include");
@@ -464,8 +464,8 @@ public class Driver
         return true;
     }
 
-    void preprocessFiles(final SourceFileData[] inputFilesData, final FortranPreprocessor pp, final boolean createFiles,
-            boolean enableMultiprocessing, boolean skipPreprocessing,
+    static void preprocessFiles(final SourceFileData[] inputFilesData, final FortranPreprocessor pp,
+            final boolean createFiles, boolean enableMultiprocessing, boolean skipPreprocessing,
             final Map<Path, FortranFileSummary> buildInfoBySrcPath, final Map<String, ModuleData> inputModules)
             throws Exception
     {
@@ -481,7 +481,8 @@ public class Driver
                     {
                         if (!fileRequiresProcessing(data.inPath(), data.inTimestamp, buildInfoBySrcPath, inputModules))
                         {
-                            Utils.log.info(String.format("Preprocessing file \"%s\" is not required...", data.inPath()));
+                            Utils.log
+                                    .info(String.format("Preprocessing file \"%s\" is not required...", data.inPath()));
                             return null;
                         }
                         if (createFiles)
@@ -531,7 +532,7 @@ public class Driver
         executeUntilFirstError(tasks, enableMultiprocessing);
     }
 
-    Path createInputFilesTempDir(SourceFileData[] inputFilesData, Path tmpDir) throws IOException
+    static Path createInputFilesTempDir(SourceFileData[] inputFilesData, Path tmpDir) throws IOException
     {
         Path tmpInputFilesDir = tmpDir.resolve("input");
         for (SourceFileData data : inputFilesData)
@@ -542,7 +543,7 @@ public class Driver
         return tmpInputFilesDir;
     }
 
-    Map<Path, FortranFileSummary> loadBuildInfoFromFiles(List<Path> includeDirs, boolean enableMultiprocessing)
+    static Map<Path, FortranFileSummary> loadBuildInfoFromFiles(List<Path> includeDirs, boolean enableMultiprocessing)
             throws Exception
     {
         List<Path> uniqueDirs = BuildInfo.createDirListFromPaths(includeDirs);
@@ -568,7 +569,6 @@ public class Driver
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
         final ThreadLocal<FortranFileSummaryDeserializer> deserializer = new ThreadLocal<FortranFileSummaryDeserializer>();
         // -----------------------------------------------
-        final Driver driver = this;
         for (Map.Entry<Path, List<Path>> incDir : incDirFiles.entrySet())
         {
             for (final Path inPath : incDir.getValue())
@@ -598,14 +598,14 @@ public class Driver
                         Path srcFilePath = info.getFilePath();
                         if (srcFilePath == null)
                         {
-                            driver.warning(String.format(
+                            Driver.warning(String.format(
                                     "Ignoring build information file \"%s\". It refers to unknown source file ",
                                     inPath));
                             return null;
                         }
                         if (!Utils.fileExists(srcFilePath))
                         {
-                            driver.warning(String.format(
+                            Driver.warning(String.format(
                                     "Ignoring build information file \"%s\". It refers to non-existing source file \"%s\"",
                                     inPath, srcFilePath));
                             return null;
@@ -614,7 +614,7 @@ public class Driver
                         FileTime srcTS = Files.getLastModifiedTime(srcFilePath);
                         if (infoTS.compareTo(srcTS) < 0)
                         {
-                            driver.warning(String.format(
+                            Driver.warning(String.format(
                                     "Ignoring build information file \"%s\". It is older than referenced source file \"%s\"",
                                     inPath.toString(), srcFilePath.toString()));
                             return null;
@@ -642,17 +642,16 @@ public class Driver
                     Path firstInfoFilePath = infoBySrc.get(srcFilePath);
                     String errFormat = "Ignoring build information file \"%s\" referring to the same source file \"%s\" "
                             + "as earlier processed build information file \"%s\"";
-                    driver.warning(String.format(errFormat, taskData.inFilePath, srcFilePath, firstInfoFilePath));
-
+                    Driver.warning(String.format(errFormat, taskData.inFilePath, srcFilePath, firstInfoFilePath));
                 }
             }
         }
         return Collections.unmodifiableMap(res);
     }
 
-    void scanFiles(SourceFileData[] inputFilesData, final boolean createTmpFiles, final boolean createOutputFiles,
-            final Path outDir, boolean enableMultiprocessing, final Map<Path, FortranFileSummary> buildInfoBySrcPath)
-            throws Exception
+    static void scanFiles(SourceFileData[] inputFilesData, final boolean createTmpFiles,
+            final boolean createOutputFiles, final Path outDir, boolean enableMultiprocessing,
+            final Map<Path, FortranFileSummary> buildInfoBySrcPath) throws Exception
     {
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(inputFilesData.length);
         final ThreadLocal<FortranDepScanner> scanner = new ThreadLocal<FortranDepScanner>();
@@ -716,44 +715,44 @@ public class Driver
         executeUntilFirstError(tasks, enableMultiprocessing);
     }
 
-    void print(String s)
+    static void print(String s)
     {
         System.out.print(s);
     }
 
-    void println(String s)
+    static void println(String s)
     {
         System.out.println(s);
     }
 
-    void info(String txt, int subLevel)
+    static void info(String txt, int subLevel)
     {
         String prefix = String.join("", Collections.nCopies(subLevel, "\n"));
         Utils.log.info(prefix + txt);
     }
 
-    void info(String txt)
+    static void info(String txt)
     {
         info(txt, 0);
     }
 
-    void warning(String txt)
+    static void warning(String txt)
     {
         Utils.log.warning(txt);
     }
 
-    void error(String txt, int subLevel)
+    static void error(String txt, int subLevel)
     {
         String prefix = String.join("", Collections.nCopies(subLevel, "\n"));
         Utils.log.severe(prefix + txt);
     }
 
-    void error(String txt)
+    static void error(String txt)
     {
         error(txt, 0);
     }
 
-    Path createTempDir(Options opts) throws IOException
+    static Path createTempDir(Options opts) throws IOException
     {
         if (opts.intermediateFilesDir() != null)
         {
@@ -843,7 +842,7 @@ public class Driver
         }
     }
 
-    void printVersion()
+    static void printVersion()
     {
         String vStr = String.format("%s %s \"%s\" %s ", cfg().name(), cfg().version(), cfg().commit(),
                 cfg().omniVersion());
