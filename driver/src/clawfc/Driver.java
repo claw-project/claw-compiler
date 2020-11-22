@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,6 +30,7 @@ import java.util.concurrent.Future;
 import claw.ClawX2T;
 import clawfc.depscan.FortranDepScanner;
 import clawfc.depscan.FortranFileSummary;
+import clawfc.depscan.FortranFileSummaryDeserializer;
 import clawfc.depscan.FortranFileSummarySerializer;
 import clawfc.depscan.FortranModuleInfo;
 import clawfc.utils.AsciiArrayIOStream;
@@ -111,6 +113,7 @@ public class Driver
     {
         public Path inDir;
         public Path inFilename;
+        public final FileTime inTimestamp;
 
         public Path inPath()
         {
@@ -143,10 +146,11 @@ public class Driver
             return dir.resolve(inFilename + ".fif");
         }
 
-        public SourceFileData(Path inPath)
+        public SourceFileData(Path inPath) throws IOException
         {
             inDir = Utils.dirPath(inPath);
             inFilename = inPath.getFileName();
+            inTimestamp = Files.getLastModifiedTime(inPath);
             pp = null;
             tempDir = null;
             ppFilename = null;
@@ -196,6 +200,25 @@ public class Driver
             Path tmpDir = null;
             try
             {
+                Map<String, ModuleData> inputModules;
+                if (!opts.moduleIncludeDirs().isEmpty())
+                {
+                    info("Searching for module files...");
+                    inputModules = searchForModules(opts.moduleIncludeDirs());
+                } else
+                {
+                    inputModules = Collections.unmodifiableMap(new HashMap<String, ModuleData>());
+                }
+                Map<Path, FortranFileSummary> buildInfoBySrcPath;
+                if (!opts.buildInfoIncludeDirs().isEmpty())
+                {
+                    info("Loading input build information files...");
+                    buildInfoBySrcPath = loadBuildInfoFromFiles(opts.buildInfoIncludeDirs(),
+                            !opts.disableMultiprocessing());
+                } else
+                {
+                    buildInfoBySrcPath = Collections.unmodifiableMap(new HashMap<Path, FortranFileSummary>());
+                }
                 info("Creating temp files directory...");
                 tmpDir = createTempDir(opts);
                 info(tmpDir.toString(), 1);
@@ -205,14 +228,14 @@ public class Driver
                 info("Preprocessing input files...");
                 FortranPreprocessor pp = new FortranPreprocessor(cfg(), opts);
                 preprocessFiles(inputFilesData, pp, opts.keepIntermediateFiles(), !opts.disableMultiprocessing(),
-                        opts.skipPreprocessing());
+                        opts.skipPreprocessing(), null, null);
                 if (!opts.stopAfterPreprocessing())
                 {
-                    info("Scanning input files for dependencies...");
+                    info("Scanning input files for build information...");
                     if (inputFilesData.length > 0)
                     {
                         scanFiles(inputFilesData, opts.keepIntermediateFiles(), opts.generateDepInfoFiles(),
-                                getOrCreateDir(opts.outputDir()), !opts.disableMultiprocessing());
+                                getOrCreateDir(opts.outputDir()), !opts.disableMultiprocessing(), buildInfoBySrcPath);
                     }
                     if (opts.generateDepInfoFiles())
                     {
@@ -223,13 +246,14 @@ public class Driver
                 SourceFileData[] includeFilesData = createIncludeFilesData(opts.sourceIncludeDirs(), tmpDir);
                 info("Preprocessing include files...");
                 preprocessFiles(includeFilesData, pp, opts.keepIntermediateFiles(), !opts.disableMultiprocessing(),
-                        opts.skipPreprocessing());
+                        opts.skipPreprocessing(), buildInfoBySrcPath, inputModules);
                 if (opts.stopAfterPreprocessing())
                 {
                     return;
                 }
-                info("Scanning include files for dependencies...");
-                scanFiles(includeFilesData, opts.keepIntermediateFiles(), false, null, !opts.disableMultiprocessing());
+                info("Scanning include files for build information...");
+                scanFiles(includeFilesData, opts.keepIntermediateFiles(), false, null, !opts.disableMultiprocessing(),
+                        buildInfoBySrcPath);
                 if (opts.stopAfterDepScan())
                 {
                     return;
@@ -269,7 +293,7 @@ public class Driver
             }
             if (usesCLAW)
             {
-                System.out.println(data.inPath());
+                println(data.inPath().toString());
             }
         }
     }
@@ -321,7 +345,7 @@ public class Driver
         }
     }
 
-    SourceFileData[] createInputData(List<Path> inputFiles)
+    SourceFileData[] createInputData(List<Path> inputFiles) throws IOException
     {
         SourceFileData[] inputFilesData = new SourceFileData[inputFiles.size()];
         for (int i = 0; i < inputFilesData.length; ++i)
@@ -329,6 +353,41 @@ public class Driver
             inputFilesData[i] = new SourceFileData(inputFiles.get(i));
         }
         return inputFilesData;
+    }
+
+    class ModuleData
+    {
+        public final Path filePath;
+        public final FileTime timestamp;
+
+        public ModuleData(Path filePath) throws IOException
+        {
+            this.filePath = filePath;
+            timestamp = Files.getLastModifiedTime(filePath);
+        }
+    }
+
+    Map<String, ModuleData> searchForModules(List<Path> includeDirs) throws IOException
+    {
+        Map<String, ModuleData> modByName = new HashMap<String, ModuleData>();
+        List<Path> uniqueDirs = BuildInfo.createDirListFromPaths(includeDirs);
+        Map<Path, List<Path>> incDirFiles = BuildInfo.createDirFileLists(uniqueDirs);
+        for (Map.Entry<Path, List<Path>> dirFiles : incDirFiles.entrySet())
+        {
+            for (Path modFile : dirFiles.getValue())
+            {
+                String modName = modFile.getFileName().toString();
+                modName = modName.substring(0, modName.length() - BuildInfo.XMOD_EXTENSION.length());
+                ModuleData modData = new ModuleData(modFile);
+                ModuleData oldData = modByName.put(modName, modData);
+                if (oldData != null)
+                {
+                    throw new RuntimeException(String.format("Duplicate module files \"%s\" and \"%s\"",
+                            oldData.filePath, modData.filePath));
+                }
+            }
+        }
+        return Collections.unmodifiableMap(modByName);
     }
 
     SourceFileData[] createIncludeFilesData(List<Path> includeDirs, Path tmpDir) throws Exception
@@ -377,8 +436,38 @@ public class Driver
         return Collections.unmodifiableMap(inputToTemp);
     }
 
+    static boolean fileRequiresProcessing(Path path, FileTime timestamp,
+            Map<Path, FortranFileSummary> buildInfoBySrcPath, Map<String, ModuleData> inputModules) throws IOException
+    {
+        if (buildInfoBySrcPath != null)
+        {
+            FortranFileSummary info = buildInfoBySrcPath.get(path);
+            if (info != null)
+            {
+                for (FortranModuleInfo modInfo : info.getModules())
+                {
+                    ModuleData modData = inputModules.get(modInfo.getName());
+                    if (modData != null)
+                    {
+                        if (modData.timestamp.compareTo(timestamp) < 0)
+                        {
+                            return true;
+                        }
+                    } else
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
     void preprocessFiles(final SourceFileData[] inputFilesData, final FortranPreprocessor pp, final boolean createFiles,
-            boolean enableMultiprocessing, boolean skipPreprocessing) throws Exception
+            boolean enableMultiprocessing, boolean skipPreprocessing,
+            final Map<Path, FortranFileSummary> buildInfoBySrcPath, final Map<String, ModuleData> inputModules)
+            throws Exception
     {
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(inputFilesData.length);
         for (int i = 0; i < inputFilesData.length; ++i)
@@ -390,6 +479,11 @@ public class Driver
                 {
                     try
                     {
+                        if (!fileRequiresProcessing(data.inPath(), data.inTimestamp, buildInfoBySrcPath, inputModules))
+                        {
+                            Utils.log.info(String.format("Preprocessing file \"%s\" is not required...", data.inPath()));
+                            return null;
+                        }
                         if (createFiles)
                         {
                             data.ppFilename = Paths.get(FortranPreprocessor.outputFilename(data.inPath()));
@@ -448,8 +542,117 @@ public class Driver
         return tmpInputFilesDir;
     }
 
+    Map<Path, FortranFileSummary> loadBuildInfoFromFiles(List<Path> includeDirs, boolean enableMultiprocessing)
+            throws Exception
+    {
+        List<Path> uniqueDirs = BuildInfo.createDirListFromPaths(includeDirs);
+        Map<Path, List<Path>> incDirFiles = BuildInfo.createBuildinfoDirFileLists(uniqueDirs);
+        int n = 0;
+        for (Map.Entry<Path, List<Path>> incDir : incDirFiles.entrySet())
+        {
+            n += incDir.getValue().size();
+        }
+        class Data
+        {
+            public final Path inFilePath;
+            public FortranFileSummary info = null;
+
+            public Data(Path inFilePath)
+            {
+                this.inFilePath = inFilePath;
+            }
+        }
+        ;
+        List<Data> data = new ArrayList<Data>(n);
+        // -----------------------------------------------
+        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
+        final ThreadLocal<FortranFileSummaryDeserializer> deserializer = new ThreadLocal<FortranFileSummaryDeserializer>();
+        // -----------------------------------------------
+        final Driver driver = this;
+        for (Map.Entry<Path, List<Path>> incDir : incDirFiles.entrySet())
+        {
+            for (final Path inPath : incDir.getValue())
+            {
+                final Data taskData = new Data(inPath);
+                data.add(taskData);
+                tasks.add(new Callable<Void>()
+                {
+                    public Void call() throws Exception
+                    {
+                        FortranFileSummaryDeserializer localDeserializer = deserializer.get();
+                        if (localDeserializer == null)
+                        {
+                            localDeserializer = new FortranFileSummaryDeserializer(true);
+                            deserializer.set(localDeserializer);
+                        }
+                        FortranFileSummary info = null;
+                        try (InputStream inStrm = Files.newInputStream(inPath))
+                        {
+                            info = localDeserializer.deserialize(inStrm);
+                        } catch (Exception e)
+                        {
+                            String errMsg = String.format(
+                                    "Exception thrown while loading build information file \"%s\"", inPath.toString());
+                            throw new Exception(errMsg, e);
+                        }
+                        Path srcFilePath = info.getFilePath();
+                        if (srcFilePath == null)
+                        {
+                            driver.warning(String.format(
+                                    "Ignoring build information file \"%s\". It refers to unknown source file ",
+                                    inPath));
+                            return null;
+                        }
+                        if (!Utils.fileExists(srcFilePath))
+                        {
+                            driver.warning(String.format(
+                                    "Ignoring build information file \"%s\". It refers to non-existing source file \"%s\"",
+                                    inPath, srcFilePath));
+                            return null;
+                        }
+                        FileTime infoTS = Files.getLastModifiedTime(inPath);
+                        FileTime srcTS = Files.getLastModifiedTime(srcFilePath);
+                        if (infoTS.compareTo(srcTS) < 0)
+                        {
+                            driver.warning(String.format(
+                                    "Ignoring build information file \"%s\". It is older than referenced source file \"%s\"",
+                                    inPath.toString(), srcFilePath.toString()));
+                            return null;
+                        }
+                        taskData.info = info;
+                        return null;
+                    }
+                });
+            }
+        }
+        executeUntilFirstError(tasks, enableMultiprocessing);
+        Map<Path, FortranFileSummary> res = new HashMap<Path, FortranFileSummary>();
+        Map<Path, Path> infoBySrc = new HashMap<Path, Path>();
+        for (Data taskData : data)
+        {
+            if (taskData.info != null)
+            {
+                final Path srcFilePath = taskData.info.getFilePath();
+                if (!res.containsKey(srcFilePath))
+                {
+                    infoBySrc.put(srcFilePath, taskData.inFilePath);
+                    res.put(srcFilePath, taskData.info);
+                } else
+                {
+                    Path firstInfoFilePath = infoBySrc.get(srcFilePath);
+                    String errFormat = "Ignoring build information file \"%s\" referring to the same source file \"%s\" "
+                            + "as earlier processed build information file \"%s\"";
+                    driver.warning(String.format(errFormat, taskData.inFilePath, srcFilePath, firstInfoFilePath));
+
+                }
+            }
+        }
+        return Collections.unmodifiableMap(res);
+    }
+
     void scanFiles(SourceFileData[] inputFilesData, final boolean createTmpFiles, final boolean createOutputFiles,
-            final Path outDir, boolean enableMultiprocessing) throws Exception
+            final Path outDir, boolean enableMultiprocessing, final Map<Path, FortranFileSummary> buildInfoBySrcPath)
+            throws Exception
     {
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(inputFilesData.length);
         final ThreadLocal<FortranDepScanner> scanner = new ThreadLocal<FortranDepScanner>();
@@ -461,21 +664,25 @@ public class Driver
             {
                 public Void call() throws Exception
                 {
-                    try (InputStream ppInStrm = data.pp.getAsInputStreamUnsafe())
+                    data.info = buildInfoBySrcPath.get(data.inPath());
+                    if (data.info == null)
                     {
-                        FortranDepScanner localScanner = scanner.get();
-                        if (localScanner == null)
+                        try (InputStream ppInStrm = data.pp.getAsInputStreamUnsafe())
                         {
-                            localScanner = new FortranDepScanner();
-                            scanner.set(localScanner);
+                            FortranDepScanner localScanner = scanner.get();
+                            if (localScanner == null)
+                            {
+                                localScanner = new FortranDepScanner();
+                                scanner.set(localScanner);
+                            }
+                            data.info = localScanner.scan(ppInStrm);
+                            data.info.setFilePath(data.info.getFilePath());
+                        } catch (Exception e)
+                        {
+                            String errMsg = String.format("Exception thrown while scanning (preprocessed) file \"%s\"",
+                                    data.inPath().toString());
+                            throw new Exception(errMsg, e);
                         }
-                        data.info = localScanner.scan(ppInStrm);
-                        data.info.setFilePath(data.info.getFilePath());
-                    } catch (Exception e)
-                    {
-                        String errMsg = String.format("Exception thrown while scanning (preprocessed) file \"%s\"",
-                                data.inPath().toString());
-                        throw new Exception(errMsg, e);
                     }
                     if (createTmpFiles || createOutputFiles)
                     {
@@ -511,6 +718,11 @@ public class Driver
 
     void print(String s)
     {
+        System.out.print(s);
+    }
+
+    void println(String s)
+    {
         System.out.println(s);
     }
 
@@ -523,6 +735,11 @@ public class Driver
     void info(String txt)
     {
         info(txt, 0);
+    }
+
+    void warning(String txt)
+    {
+        Utils.log.warning(txt);
     }
 
     void error(String txt, int subLevel)
@@ -599,6 +816,22 @@ public class Driver
             {
                 throw new RuntimeException(
                         String.format("Include dir \"%s\" does not exist or is not a directory", incPath.toString()));
+            }
+        }
+        for (Path incPath : opts.buildInfoIncludeDirs())
+        {
+            if (!Utils.dirExists(incPath))
+            {
+                throw new RuntimeException(String.format(
+                        "Buildinfo include dir \"%s\" does not exist or is not a directory", incPath.toString()));
+            }
+        }
+        for (Path incPath : opts.moduleIncludeDirs())
+        {
+            if (!Utils.dirExists(incPath))
+            {
+                throw new RuntimeException(String
+                        .format("Module include dir \"%s\" does not exist or is not a directory", incPath.toString()));
             }
         }
         if (opts.generateDepInfoFiles())

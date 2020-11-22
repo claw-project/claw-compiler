@@ -4,13 +4,10 @@
  */
 package clawfc.tests;
 
-import clawfc.Driver;
-import junit.framework.TestCase;
-
-public class DriverTest extends TestCase
+public class DriverTest extends clawfc.tests.utils.DriverTestCase
 {
     public void testRun() throws Exception
     {
-        Driver.run(new String[0]);
+        run(new String[0]);
     }
 }

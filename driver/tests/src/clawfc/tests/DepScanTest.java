@@ -4,26 +4,26 @@
  */
 package clawfc.tests;
 
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import clawfc.Driver;
 import clawfc.Utils;
 import clawfc.depscan.FortranFileSummary;
 import clawfc.depscan.FortranFileSummaryDeserializer;
-import clawfc.utils.ByteArrayIOStream;
+import clawfc.depscan.FortranFileSummarySerializer;
 
 public class DepScanTest extends clawfc.tests.utils.DriverTestCase
 {
@@ -57,6 +57,22 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         }
     }
 
+    static void addPath(Path infoPath, Path src) throws Exception
+    {
+        FortranFileSummary info = loadInfo(infoPath);
+        info.setFilePath(src);
+        FortranFileSummarySerializer serializer = new FortranFileSummarySerializer();
+        try (OutputStream outStrm = Files.newOutputStream(infoPath))
+        {
+            serializer.serialize(info, outStrm);
+        }
+    }
+
+    void touch(Path path) throws IOException
+    {
+        Files.setLastModifiedTime(path, FileTime.from(Instant.now()));
+    }
+
     public void testInputScan() throws Exception
     {
         final Path INPUT_FILEPATH = RES_DIR.resolve("depscan/input_files/input/1.f90");
@@ -64,7 +80,7 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         final Path OUT_DIR = TMP_DIR, INT_DIR = TMP_DIR;
         String[] args = new String[] { "--keep-int-files", "--skip-pp", "--disable-mp", "--int-dir", INT_DIR.toString(),
                 "-O", OUT_DIR.toString(), INPUT_FILEPATH.toString() };
-        Driver.run(args);
+        run(args);
         Path resFilepath = TMP_DIR.resolve("input/1.f90.fif");
         assertTrue(equalsTxtFiles(resFilepath, REF_FILEPATH));
     }
@@ -80,7 +96,7 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         final Path OUT_DIR = TMP_DIR, INT_DIR = TMP_DIR;
         String[] args = new String[] { "--keep-int-files", "--skip-pp", "--disable-mp", "--int-dir", INT_DIR.toString(),
                 "-O", OUT_DIR.toString(), "-S", INC_DIR.toString() };
-        Driver.run(args);
+        run(args);
         Path RES_DIR = Paths.get(INT_DIR.resolve("include").toString() + INC_DIR.toString());
         Path resFilepath1 = RES_DIR.resolve("1.f90.fif");
         Path resFilepath2 = RES_DIR.resolve("2.f90.fif");
@@ -98,7 +114,7 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         String[] args = new String[] { "--gen-buildinfo-files", "--keep-int-files", "--skip-pp", "--disable-mp",
                 "--int-dir", INT_DIR.toString(), "-O", OUT_DIR.toString(), INPUT_FILEPATH1.toString(),
                 INPUT_FILEPATH2.toString() };
-        Driver.run(args);
+        run(args);
         Path resTmpFilepath1 = INT_DIR.resolve("input/1.f90.fif");
         Path resTmpFilepath2 = INT_DIR.resolve("input/2.f90.fif");
         assertTrue(equalsTxtFiles(resTmpFilepath1, REF_FILEPATH1));
@@ -141,7 +157,7 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         }
         String[] args = argsLst.stream().toArray(String[]::new);
         // ----------------------------
-        Driver.run(args);
+        run(args);
         // ----------------------------
         String refTemplate;
         try (InputStream inStrm = new FileInputStream(REF_TEMPLATE_FILEPATH.toString()))
@@ -164,18 +180,45 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         final Path OUT_DIR = TMP_DIR.resolve("out"), INT_DIR = TMP_DIR.resolve("int");
         String[] args = new String[] { DRIVER_PATH.toString(), "--print-claw-files", "-O", OUT_DIR.toString(),
                 INPUT_FILEPATH1.toString(), INPUT_FILEPATH2.toString(), INPUT_FILEPATH3.toString() };
-        String res;
-        try
-        {
-            ByteArrayIOStream stdOut = new ByteArrayIOStream();
-            System.setOut(new PrintStream(stdOut));
-            Driver.run(args);
-            res = Utils.collectIntoString(stdOut.getAsInputStreamUnsafe());
-        } finally
-        {
-            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
-        }
+        Result res = run(args);
         String ref = INPUT_FILEPATH2.toString() + "\n" + INPUT_FILEPATH3.toString() + "\n";
-        assertEquals(ref, res);
+        assertEquals(ref, res.stdout);
+    }
+
+    public void testIncludeBuildInfo() throws Exception
+    {
+        final Path INPUT_NORMAL_SRC_FILE_PATH = RES_DIR.resolve("depscan/include_build_info/input/normal.f90")
+                .normalize();
+        final Path INPUT_EMPTY_SRC_FILE_PATH = RES_DIR.resolve("depscan/include_build_info/input/empty.f90")
+                .normalize();
+        final Path INPUT_NORMAL_INFO_FILE_PATH = RES_DIR.resolve("depscan/include_build_info/input/normal.f90.fif")
+                .normalize();
+        final Path INPUT_EMPTY_INFO_FILE_PATH = RES_DIR.resolve("depscan/include_build_info/input/empty.f90.fif")
+                .normalize();
+        final FortranFileSummary NORMAL_INFO = loadInfo(INPUT_NORMAL_INFO_FILE_PATH);
+        {// Output info will be normal despite empty src file, because of the provided
+         // info include file
+            final Path IN_DIR = TMP_DIR.resolve("in1"), INT_DIR = TMP_DIR.resolve("int1"),
+                    INF_DIR = TMP_DIR.resolve("if1"), OUT_DIR = TMP_DIR.resolve("out1");
+            Files.createDirectories(IN_DIR);
+            Files.createDirectories(INT_DIR);
+            Files.createDirectories(INF_DIR);
+            final Path inFilePath = IN_DIR.resolve("in.f90");
+            final Path infoFilePath = INF_DIR.resolve("in.fif");
+            Files.copy(INPUT_EMPTY_SRC_FILE_PATH, inFilePath);
+            Files.copy(INPUT_NORMAL_INFO_FILE_PATH, infoFilePath);
+            addPath(infoFilePath, inFilePath);
+            String[] args = new String[] { "--gen-buildinfo-files", "--skip-pp", "--keep-int-files", "--disable-mp",
+                    "--int-dir", INT_DIR.toString(), "-O", OUT_DIR.toString(), "-B=" + INF_DIR.toString(),
+                    inFilePath.toString() };
+            run(args);
+            Path outFilePath = OUT_DIR.resolve("in.f90.fif");
+            equalsTxtFiles(infoFilePath, outFilePath);
+            // ----------------------------------------------------------------------------
+            touch(inFilePath);
+            run(args);
+            // Now output will be empty, because info file is outdated
+            equalsTxtFiles(infoFilePath, INPUT_EMPTY_INFO_FILE_PATH);
+        }
     }
 }

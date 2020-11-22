@@ -38,8 +38,16 @@ import clawfc.depscan.FortranSyntaxException;
 
 public class BuildInfo
 {
-    static final Pattern FORTRAN_FILE_SEARCH_PATTERN = Pattern
-            .compile(String.format(".+\\.(%s)", String.join("|", Utils.FORTRAN_FILE_EXTENSIONS)));
+    public static final String[] BUILDINFO_FILE_EXTENSIONS = new String[] { "fif", "bif" };
+    public static final String XMOD_EXTENSION = "xmod";
+    static final Pattern FORTRAN_FILE_SEARCH_PATTERN = generateExtensionPattern(Utils.FORTRAN_FILE_EXTENSIONS);
+    static final Pattern BUILDINFO_FILE_SEARCH_PATTERN = generateExtensionPattern(BUILDINFO_FILE_EXTENSIONS);
+    static final Pattern XMOD_FILE_SEARCH_PATTERN = generateExtensionPattern(new String[] { XMOD_EXTENSION });
+
+    static Pattern generateExtensionPattern(String[] extensions)
+    {
+        return Pattern.compile(String.format(".+\\.(%s)", String.join("|", extensions)));
+    }
 
     Map<Path, FortranFileInfo> _fileInformation;
     Map<Path, Set<Path>> _fileDependencies;
@@ -195,18 +203,38 @@ public class BuildInfo
 
     public static List<Path> createDirFileList(Path dir) throws IOException
     {
+        return createDirFileList(dir, FORTRAN_FILE_SEARCH_PATTERN);
+    }
+
+    static List<Path> createDirFileList(Path dir, Pattern pattern) throws IOException
+    {
         ArrayList<Path> files = new ArrayList<Path>();
-        Files.list(dir).filter(s -> FORTRAN_FILE_SEARCH_PATTERN.matcher(s.toString()).matches()).forEach(files::add);
+        Files.list(dir).filter(s -> pattern.matcher(s.toString()).matches()).forEach(files::add);
         Collections.sort(files);
         return Collections.unmodifiableList(files);
     }
 
     public static Map<Path, List<Path>> createDirFileLists(Collection<Path> dirs) throws IOException
     {
+        return createDirFileLists(dirs, FORTRAN_FILE_SEARCH_PATTERN);
+    }
+
+    public static Map<Path, List<Path>> createBuildinfoDirFileLists(Collection<Path> dirs) throws IOException
+    {
+        return createDirFileLists(dirs, BUILDINFO_FILE_SEARCH_PATTERN);
+    }
+
+    public static Map<Path, List<Path>> createModuleDirFileLists(Collection<Path> dirs) throws IOException
+    {
+        return createDirFileLists(dirs, XMOD_FILE_SEARCH_PATTERN);
+    }
+
+    public static Map<Path, List<Path>> createDirFileLists(Collection<Path> dirs, Pattern pattern) throws IOException
+    {
         Map<Path, List<Path>> res = new LinkedHashMap<Path, List<Path>>();
         for (Path dir : dirs)
         {
-            res.put(dir, createDirFileList(dir));
+            res.put(dir, createDirFileList(dir, pattern));
         }
         return Collections.unmodifiableMap(res);
     }

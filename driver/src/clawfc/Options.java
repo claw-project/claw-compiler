@@ -40,6 +40,8 @@ public class Options
     final String _userTarget;
     final List<Path> _ppIncDirs;
     final List<Path> _srcIncDirs;
+    final List<Path> _binfoIncDirs;
+    final List<Path> _modIncDirs;
     final List<String> _addMacros;
     final String _accDirLanguage;
     final String _configFile;
@@ -152,6 +154,16 @@ public class Options
     public List<Path> sourceIncludeDirs()
     {
         return _srcIncDirs;
+    }
+
+    public List<Path> moduleIncludeDirs()
+    {
+        return _modIncDirs;
+    }
+
+    public List<Path> buildInfoIncludeDirs()
+    {
+        return _binfoIncDirs;
     }
 
     public List<String> predefinedMacros()
@@ -346,7 +358,11 @@ public class Options
             cOpts.addArgument("-D", "--add-macro").nargs("*").action(Arguments.append()).help("Predefine macro");
             cOpts.addArgument("-S", "--src-include-dir").nargs("*").action(Arguments.append())
                     .help("Add the directory to the search path for the source of referenced Fortran modules");
-            cOpts.addArgument("-J", "--output-mod-dir").help("Output directory for compiled .mod and .xmod files.");
+            cOpts.addArgument("-J", "--output-mod-dir").help("Output directory for .xmod files.");
+            cOpts.addArgument("-M", "--mod-include-dir").nargs("*").action(Arguments.append())
+                    .help("Input directory for .xmod files.");
+            cOpts.addArgument("-B", "--buildinfo-include-dir").nargs("*").action(Arguments.append())
+                    .help("Include directory for BuildInfo files");
             cOpts.addArgument("-t", "--target").help("Type of target accelerator hardware");
             cOpts.addArgument("-d", "--directive")
                     .help("Specify accelerator directive language to be used for code generation");
@@ -386,7 +402,7 @@ public class Options
             cOpts.addArgument("--stop-translator").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after translator");
             cOpts.addArgument("--gen-buildinfo-files").action(Arguments.storeTrue())
-                    .help("Generate dependencies information files for input and then stop");
+                    .help("Generate build information files for input and then stop");
             cOpts.addArgument("-x", "--override-cfg-key").nargs("*").action(Arguments.append())
                     .help("Override a configuration key:value pair from the command line. Higher "
                             + "priority over base configuration and user configuration");
@@ -438,6 +454,8 @@ public class Options
         _userTarget = parsedArgs.getString("target");
         _ppIncDirs = getPathList(parsedArgs, "pp_include_dir");
         _srcIncDirs = getPathList(parsedArgs, "src_include_dir");
+        _modIncDirs = getPathList(parsedArgs, "mod_include_dir");
+        _binfoIncDirs = getPathList(parsedArgs, "buildinfo_include_dir");
         _addMacros = getStringList(parsedArgs, "add_macro");
         _accDirLanguage = parsedArgs.getString("directive");
         _configFile = parsedArgs.getString("config");
@@ -474,21 +492,21 @@ public class Options
         _genDepInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");
     }
 
+    String toString(List<Path> paths)
+    {
+        return String.join("\n\t", inputFiles().stream().map((path) -> path.toString()).collect(Collectors.toList()))
+                + "\n";
+    }
+
     @Override
     public String toString()
     {
         String res = "";
-        res += "Input files: \n\t"
-                + String.join("\n\t", inputFiles().stream().map((path) -> path.toString()).collect(Collectors.toList()))
-                + "\n";
-        res += "Preprocessor include directories: \n\t"
-                + String.join("\n\t",
-                        preprocessingIncludeDirs().stream().map((path) -> path.toString()).collect(Collectors.toList()))
-                + "\n";
-        res += "Source include directories: \n\t"
-                + String.join("\n\t",
-                        sourceIncludeDirs().stream().map((path) -> path.toString()).collect(Collectors.toList()))
-                + "\n";
+        res += "Input files: \n\t" + toString(inputFiles());
+        res += "Preprocessor include directories: \n\t" + toString(preprocessingIncludeDirs());
+        res += "Source include directories: \n\t" + toString(sourceIncludeDirs());
+        res += "Buildinfo include directories: \n\t" + toString(buildInfoIncludeDirs());
+        res += "Module include directories: \n\t" + toString(moduleIncludeDirs());
         res += "Predefined macros: \n\t" + String.join("\n\t", predefinedMacros()) + "\n";
         res += String.format("Output file: \"%s\"\n", outputFile());
         res += String.format("Output directory: \"%s\"\n", outputDir());

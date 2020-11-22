@@ -76,7 +76,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         final Path REF_FILEPATH = RES_DIR.resolve("preprocessing/basic/input/1.f90");
         String[] args = new String[] { "--keep-int-files", "--stop-pp", "--disable-mp", "--int-dir", TMP_DIR.toString(),
                 "-O", OUT_DIR.toString(), INPUT_DIR.resolve("1.f90").toString() };
-        Driver.run(args);
+        run(args);
         final Path resFilepath = TMP_DIR.resolve("input/1.pp.f90");
         assertTrue(equals(resFilepath, REF_FILEPATH));
     }
@@ -88,7 +88,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         final Path OUT_DIR = TMP_DIR;
         String[] args = new String[] { "--keep-int-files", "--stop-pp", "--disable-mp", "--int-dir", TMP_DIR.toString(),
                 "-O", OUT_DIR.toString(), INPUT_FILEPATH.toString() };
-        Driver.run(args);
+        run(args);
         final Path resFilepath = TMP_DIR.resolve("input/1.pp.f90");
         assertTrue(equals(resFilepath, REF_FILEPATH));
     }
@@ -100,7 +100,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         final Path OUT_DIR = TMP_DIR;
         String[] args = new String[] { "--keep-int-files", "--stop-pp", "--disable-mp", "--int-dir", TMP_DIR.toString(),
                 "--directive=openmp", "-O", OUT_DIR.toString(), INPUT_FILEPATH.toString() };
-        Driver.run(args);
+        run(args);
         final Path resFilepath = TMP_DIR.resolve("input/1.pp.f90");
         assertTrue(equals(resFilepath, REF_FILEPATH));
     }
@@ -112,7 +112,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         final Path OUT_DIR = TMP_DIR;
         String[] args = new String[] { "--keep-int-files", "--stop-pp", "--disable-mp", "--int-dir", TMP_DIR.toString(),
                 "--directive=openacc", "-O", OUT_DIR.toString(), INPUT_FILEPATH.toString() };
-        Driver.run(args);
+        run(args);
         final Path resFilepath = TMP_DIR.resolve("input/1.pp.f90");
         assertTrue(equals(resFilepath, REF_FILEPATH));
     }
@@ -124,7 +124,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         final Path OUT_DIR = TMP_DIR;
         String[] args = new String[] { "--keep-int-files", "--stop-pp", "--disable-mp", "--int-dir", TMP_DIR.toString(),
                 "-D", "BLA", "-O", OUT_DIR.toString(), INPUT_FILEPATH.toString() };
-        Driver.run(args);
+        run(args);
         final Path resFilepath = TMP_DIR.resolve("input/1.pp.f90");
         assertTrue(equals(resFilepath, REF_FILEPATH));
     }
@@ -137,7 +137,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         final Path incDir = RES_DIR.resolve("preprocessing/include_dir/input/inc");
         String[] args = new String[] { "--keep-int-files", "--stop-pp", "--disable-mp", "--int-dir", TMP_DIR.toString(),
                 "-O", OUT_DIR.toString(), "-I=" + incDir.toString(), INPUT_FILEPATH.toString() };
-        Driver.run(args);
+        run(args);
         final Path resFilepath = TMP_DIR.resolve("input/1.pp.f90");
         assertTrue(equals(resFilepath, REF_FILEPATH));
     }
@@ -150,7 +150,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         final Path dir1 = INPUT_DIR, dir2 = INPUT_DIR.resolve("dir2"), dir3 = INPUT_DIR.resolve("dir2/dir3");
         String[] args = new String[] { "--keep-int-files", "--stop-pp", "--disable-mp", "--int-dir", INT_DIR.toString(),
                 "-O", OUT_DIR.toString(), "-S", dir1.toString(), dir2.toString(), dir3.toString() };
-        Driver.run(args);
+        run(args);
         Path tmpDir1 = Paths.get(INT_DIR.resolve("include").toString() + dir1.toString());
         Path tmpDir2 = Paths.get(INT_DIR.resolve("include").toString() + dir2.toString());
         Path tmpDir3 = Paths.get(INT_DIR.resolve("include").toString() + dir3.toString());
@@ -170,7 +170,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         final Path OUT_DIR = TMP_DIR;
         String[] args = new String[] { "--keep-int-files", "--stop-pp", "--skip-pp", "--disable-mp", "--int-dir",
                 TMP_DIR.toString(), "-O", OUT_DIR.toString(), INPUT_FILEPATH.toString() };
-        Driver.run(args);
+        run(args);
         final Path resFilepath = TMP_DIR.resolve("input/1.pp.f90");
         assertTrue(equals(resFilepath, REF_FILEPATH));
     }
@@ -201,7 +201,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         }
         String[] args = argsLst.stream().toArray(String[]::new);
         // ----------------------------
-        Driver.run(args);
+        run(args);
         // ----------------------------
         String refTemplate;
         try (InputStream inStrm = new FileInputStream(REF_TEMPLATE_FILEPATH.toString()))
