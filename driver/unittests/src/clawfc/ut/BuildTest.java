@@ -6,7 +6,6 @@ package clawfc.ut;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,7 +41,7 @@ class TestModuleInfo implements clawfc.ModuleInfo
         this.fileSrcInfo = fileInfo;
         this.moduleInfo = moduleInfo;
         this.filePath = filePath;
-        this.fileInfo = new FileInfoImpl(filePath);
+        this.fileInfo = new clawfc.utils.FileInfoImpl(filePath);
     }
 
     @Override
@@ -106,29 +105,6 @@ class TestModuleInfo implements clawfc.ModuleInfo
     }
 }
 
-class FileInfoImpl implements FileInfo
-{
-    final Path path;
-    final FileTime ts;
-
-    public FileInfoImpl(Path path) throws Exception
-    {
-        this.path = path;
-        ts = Files.getLastModifiedTime(path);
-
-    }
-
-    public Path getPath()
-    {
-        return path;
-    }
-
-    public FileTime getLastModifiedTS()
-    {
-        return ts;
-    }
-}
-
 public class BuildTest extends TestCase
 {
     protected final Path RES_DIR = clawfc.ut.Resources.DIR;
@@ -161,18 +137,18 @@ public class BuildTest extends TestCase
         final Path CIRCLE_DEP_FILEPATH = IN_DIR.resolve("circle_dep.f90");
         {
             Map<String, ModuleInfo> modules = getModulesInfo(NORMAL_FILEPATH);
-            Build.sanityCheck(modules, Stream.of("p1").collect(Collectors.toSet()), true);
+            Build.sanityCheck(modules, Stream.of("p1").collect(Collectors.toSet()));
         }
         {
             Map<String, ModuleInfo> modules = getModulesInfo(MUL_TARGETS_FILEPATH);
-            Build.sanityCheck(modules, Stream.of("t1", "t2", "t3").collect(Collectors.toSet()), true);
+            Build.sanityCheck(modules, Stream.of("t1", "t2", "t3").collect(Collectors.toSet()));
         }
         {
             Map<String, ModuleInfo> modules = getModulesInfo(UNDEFINED_MOD_FILEPATH);
             boolean exCaught = false;
             try
             {
-                Build.sanityCheck(modules, Stream.of("p1").collect(Collectors.toSet()), true);
+                Build.sanityCheck(modules, Stream.of("p1").collect(Collectors.toSet()));
             } catch (FortranSemanticException e)
             {
                 String errMsg = e.getMessage();
@@ -188,7 +164,7 @@ public class BuildTest extends TestCase
             boolean exCaught = false;
             try
             {
-                Build.sanityCheck(modules, Stream.of("t").collect(Collectors.toSet()), true);
+                Build.sanityCheck(modules, Stream.of("t").collect(Collectors.toSet()));
             } catch (FortranSemanticException e)
             {
                 String errMsg = e.getMessage();
@@ -207,14 +183,14 @@ public class BuildTest extends TestCase
         final Path FILEPATH = IN_DIR.resolve("unref_modules.f90");
         Map<String, ModuleInfo> modules = getModulesInfo(FILEPATH);
         Map<String, ModuleInfo> res = Build.removeUnreferencedModules(modules,
-                Stream.of("t").collect(Collectors.toSet()), true);
+                Stream.of("t").collect(Collectors.toSet()));
         assertEquals(Stream.of("mod1", "t").collect(Collectors.toSet()), res.keySet());
     }
 
     List<String> getBuildSeq(Map<String, ModuleInfo> modules, Set<String> targets)
     {
         List<String> res = new ArrayList<String>();
-        BuildOrder order = Build.getParallelBuildOrder(modules, targets);
+        BuildOrder order = Build.getParallelOrder(modules, targets);
         assertEquals(modules, order.getUsedModules());
         assertEquals(targets, order.getTargetModules());
         while (!order.done())

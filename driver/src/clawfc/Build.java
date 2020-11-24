@@ -21,6 +21,20 @@ import clawfc.depscan.FortranSemanticException;
 
 public class Build
 {
+    public static String moduleWithLocation(String name, Map<String, ModuleInfo> availModules)
+    {
+        ModuleInfo info = availModules.get(name);
+        Path srcFilePath = info.getSrcFileInfo().getPath();
+        if (info.getSrcFileInfo() != null)
+        {
+            long lineNum = info.getModuleSrcInfo().getStartLineNum() + 1;
+            return String.format("%s (%s:%s)", name, srcFilePath, lineNum);
+        } else
+        {
+            return String.format("%s (%s)", name, srcFilePath);
+        }
+    }
+
     static class SanityChecker
     {
         final Map<String, ModuleInfo> availModules;
@@ -28,17 +42,14 @@ public class Build
         final Set<String> visited;
         final Set<String> stackSet;
         final List<String> stack;
-        final boolean ppSkipped;
 
-        public SanityChecker(Map<String, ModuleInfo> availModules, Set<String> targetModuleNames,
-                boolean inputsArePreprocessed)
+        public SanityChecker(Map<String, ModuleInfo> availModules, Set<String> targetModuleNames)
         {
             this.availModules = availModules;
             this.targetModuleNames = targetModuleNames;
             visited = new HashSet<String>();
             stackSet = new HashSet<String>();
             stack = new ArrayList<String>();
-            this.ppSkipped = inputsArePreprocessed;
         }
 
         /**
@@ -64,7 +75,7 @@ public class Build
         {
             ModuleInfo info = availModules.get(name);
             Path srcFilePath = info.getSrcFileInfo().getPath();
-            if (ppSkipped)
+            if (info.getSrcFileInfo() != null)
             {
                 long lineNum = info.getModuleSrcInfo().getStartLineNum() + 1;
                 return String.format("%s (%s:%s)", name, srcFilePath, lineNum);
@@ -139,17 +150,17 @@ public class Build
         }
     }
 
-    public static void sanityCheck(Map<String, ModuleInfo> availModules, Set<String> targetModuleNames,
-            boolean inputsArePreprocessed) throws FortranSemanticException
+    public static void sanityCheck(Map<String, ModuleInfo> availModules, Set<String> targetModuleNames)
+            throws FortranSemanticException
     {
-        SanityChecker checker = new SanityChecker(availModules, targetModuleNames, inputsArePreprocessed);
+        SanityChecker checker = new SanityChecker(availModules, targetModuleNames);
         checker.run();
     }
 
     public static Map<String, ModuleInfo> removeUnreferencedModules(Map<String, ModuleInfo> availModules,
-            Set<String> targetModuleNames, boolean inputsArePreprocessed) throws FortranSemanticException
+            Set<String> targetModuleNames) throws FortranSemanticException
     {
-        SanityChecker checker = new SanityChecker(availModules, targetModuleNames, inputsArePreprocessed);
+        SanityChecker checker = new SanityChecker(availModules, targetModuleNames);
         Set<String> visited = checker.run();
         Map<String, ModuleInfo> res = new LinkedHashMap<String, ModuleInfo>();
         for (String modName : visited)
@@ -310,7 +321,7 @@ public class Build
         }
     }
 
-    public static BuildOrder getParallelBuildOrder(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames)
+    public static BuildOrder getParallelOrder(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames)
     {
         return new ParallelOrder(usedModules, targetModuleNames);
     }
