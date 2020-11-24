@@ -1,27 +1,30 @@
 /**
- * ANTLR 4 Grammar file for detecting CLAW directives.
+ * ANTLR 4 Grammar file for detecting Fortran include statements.
  *
  * @author Mikhail Zhigun
  * @copyright 2020, MeteoSwiss
  */
-grammar FortranCLAWScanner;
+grammar FortranIncludeFilter;
 
-root : (claw_directive_line | claw_guard_line)* EOF;
+root : (include_line | other_line)* EOF;
 
-claw_directive_line : CLAW_DIRECTIVE_LINE;
-claw_guard_line : CLAW_GUARD_LINE;
+include_line : INCLUDE_STATEMENT_LINE;
+other_line : OTHER_LINE;
 
-CLAW_DIRECTIVE_LINE : SEP? '!' SEP? '$' CLAW (SEP (~'\n')*)?;
-CLAW_GUARD_LINE :     SEP? '!' SEP? '$' (ACC | OMP) SEP CLAW SEP?;
-OTHER_LINE : (~'\n')+ ->skip;
+INCLUDE_STATEMENT_LINE : SEP? INCLUDE SEP STRING SEP? EOL;
+OTHER_LINE : (~'\n')* EOL;
 
-EOL : '\n' ->skip;
+fragment STRING : (DQ (~'"' | QUOTED_DQ)* DQ)
+                | (SQ (~'\'' | QUOTED_SQ)* SQ);
 
-fragment ACC : A C C;
-fragment CLAW : C L A W;
-fragment OMP : O M P;
 fragment SEP : WS+;
 fragment WS : [ \t\r];
+fragment QUOTED_DQ : DQ DQ;
+fragment QUOTED_SQ : SQ SQ;
+fragment EOL : '\n';
+fragment DQ : '"';
+fragment SQ : '\'';
+fragment INCLUDE : I N C L U D E;
 
 fragment A : [aA];
 fragment B : [bB];
