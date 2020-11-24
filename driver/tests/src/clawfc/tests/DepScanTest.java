@@ -213,12 +213,16 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
                     inFilePath.toString() };
             run(args);
             Path outFilePath = OUT_DIR.resolve("in.f90.fif");
-            equalsTxtFiles(infoFilePath, outFilePath);
+            assertTrue(equalsTxtFiles(infoFilePath, outFilePath));
             // ----------------------------------------------------------------------------
             touch(inFilePath);
             run(args);
             // Now output will be empty, because info file is outdated
-            equalsTxtFiles(infoFilePath, INPUT_EMPTY_INFO_FILE_PATH);
+            final Path emptyInfoFilePath = INF_DIR.resolve("empty.fif");
+            Files.copy(INPUT_EMPTY_INFO_FILE_PATH, emptyInfoFilePath);
+            addPath(emptyInfoFilePath, inFilePath);
+            assertTrue(equalsTxtFiles(emptyInfoFilePath, outFilePath));
+
         }
     }
 }

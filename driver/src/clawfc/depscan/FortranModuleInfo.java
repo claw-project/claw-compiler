@@ -21,15 +21,11 @@ public class FortranModuleInfo
         return _data.getName();
     }
 
-    // WARNING!!! startLineNum is the number of the line AFTER "module <name>"
-    // statement
     public long getStartLineNum()
     {
         return _data.getStartLineNum();
     }
 
-    // WARNING!!! endLineNum is the number of the line where "end module <name>"
-    // statement is located
     public long getEndLineNum()
     {
         return _data.getEndLineNum();

@@ -4,14 +4,12 @@
  */
 package clawfc.depscan;
 
-import clawfc.depscan.parser.*;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 
 import org.antlr.v4.runtime.CharStream;
@@ -21,118 +19,153 @@ import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import clawfc.depscan.parser.FortranLineBreaksFilterBaseListener;
+import clawfc.depscan.parser.FortranLineBreaksFilterLexer;
+import clawfc.depscan.parser.FortranLineBreaksFilterParser;
+
 public class FortranLineBreaksFilter
 {
-    static class Listener
-        extends FortranLineBreaksFilterBaseListener
+    static class Listener extends FortranLineBreaksFilterBaseListener
     {
         OutputStream outStrm;
         public ArrayList<String> comments;
-        public IOException error() { return _error; }
+
+        public IOException error()
+        {
+            return _error;
+        }
+
         IOException _error;
         String lineBreakSep;
         boolean preserveNumLines;
         ArrayList<String> buf;
-        
+        List<Integer> lineBreakSubstLines;
+        int outLineNum;
+
         public Listener(OutputStream outStrm)
         {
-        	initialise(outStrm, " ", false);
+            initialise(outStrm, " ", false);
         }
-        
+
         public Listener(OutputStream outStrm, String lineBreakSep, boolean preserveNumLines)
         {
-        	initialise(outStrm, lineBreakSep, preserveNumLines);
+            initialise(outStrm, lineBreakSep, preserveNumLines);
         }
-        
+
         void initialise(OutputStream outStrm, String lineBreakSep, boolean preserveNumLines)
         {
-        	_error = null;
+            _error = null;
             this.outStrm = outStrm;
             comments = new ArrayList<String>();
             this.lineBreakSep = lineBreakSep;
             this.preserveNumLines = preserveNumLines;
-            if(this.preserveNumLines)
-            { buf = new ArrayList<String>(); }
+            if (this.preserveNumLines)
+            {
+                buf = new ArrayList<String>();
+            }
+            lineBreakSubstLines = new ArrayList<Integer>();
+            outLineNum = 0;
         }
+
         @Override
         public void exitOther(FortranLineBreaksFilterParser.OtherContext ctx)
         {
-        	String s = ctx.getText();
-        	if(!preserveNumLines)
-        	{ output(s); }
-        	else
-        	{ buf.add(s); }        	
+            String s = ctx.getText();
+            if (!preserveNumLines)
+            {
+                output(s);
+            } else
+            {
+                buf.add(s);
+            }
         }
-        
+
         void outputBuf()
         {
-        	for(String s: buf)
-        	{ output(s); }
-        	buf.clear();
+            for (String s : buf)
+            {
+                output(s);
+            }
+            buf.clear();
         }
-        
+
+        void outputEOL()
+        {
+            output("\n");
+            ++outLineNum;
+        }
+
         @Override
         public void exitEol(FortranLineBreaksFilterParser.EolContext ctx)
         {
-        	if(preserveNumLines)
-        	{ outputBuf(); }
-        	output("\n");
+            if (preserveNumLines)
+            {
+                outputBuf();
+            }
+            outputEOL();
         }
-        
+
         @Override
         public void exitFortran_text(FortranLineBreaksFilterParser.Fortran_textContext ctx)
         {
-        	if(preserveNumLines)
-        	{ outputBuf(); }
+            if (preserveNumLines)
+            {
+                outputBuf();
+            }
         }
-        
-        void outputEOLs(String s)
+
+        void outputLineBreakEOLs(String s)
         {
-        	for(char c: s.toCharArray())
-        	{ 
-        		if(c == '\n')
-        		{ output("\n"); }
-        	}
+            for (char c : s.toCharArray())
+            {
+                if (c == '\n')
+                {
+                    lineBreakSubstLines.add(outLineNum);
+                    outputEOL();
+                }
+            }
         }
-        
+
         @Override
         public void exitUnclosed_line_break(FortranLineBreaksFilterParser.Unclosed_line_breakContext ctx)
         {
-        	String text = ctx.getText();
-        	int EOLIdx = text.lastIndexOf('\n');
-        	String sep = text.substring(EOLIdx + 1);
-        	if(sep.isEmpty())
-        	{
-        		sep = this.lineBreakSep;
-        	}
-        	if(!preserveNumLines)
-        	{ output(sep); }
-        	else
-        	{ 
-        		buf.add(sep);
-        		outputEOLs(text);
-        	}
+            String text = ctx.getText();
+            int EOLIdx = text.lastIndexOf('\n');
+            String sep = text.substring(EOLIdx + 1);
+            if (sep.isEmpty())
+            {
+                sep = this.lineBreakSep;
+            }
+            if (!preserveNumLines)
+            {
+                output(sep);
+            } else
+            {
+                buf.add(sep);
+                outputLineBreakEOLs(text);
+            }
         }
 
         @Override
         public void exitClosed_line_break(FortranLineBreaksFilterParser.Closed_line_breakContext ctx)
         {
-        	String text = ctx.getText();
-        	if(preserveNumLines)
-        	{ outputEOLs(text); }        	
+            String text = ctx.getText();
+            if (preserveNumLines)
+            {
+                outputLineBreakEOLs(text);
+            }
         }
-        
+
         void output(String s)
         {
-        	byte[] bytes = s.getBytes(StandardCharsets.US_ASCII);
+            byte[] bytes = s.getBytes(StandardCharsets.US_ASCII);
             try
             {
                 outStrm.write(bytes);
-            }
-            catch(IOException e)
+            } catch (IOException e)
             {
-            	_error = e;
-            	throw new CancellationException("Write error");
+                _error = e;
+                throw new CancellationException("Write error");
             }
         }
     }
@@ -142,7 +175,7 @@ public class FortranLineBreaksFilter
 
     ParserErrorListener lexerErrorListener;
     ParserErrorListener parserErrorListener;
-    
+
     public FortranLineBreaksFilter() throws IOException
     {
         lexer = new FortranLineBreaksFilterLexer(Utils.toCharStream(""));
@@ -154,8 +187,9 @@ public class FortranLineBreaksFilter
         parserErrorListener = new ParserErrorListener();
         parser.addErrorListener(parserErrorListener);
     }
-    
-    public void run(InputStream input, OutputStream output, boolean preserveNumLines) throws FortranSyntaxException, IOException
+
+    public void run(InputStream input, OutputStream output, boolean preserveNumLines, List<Integer> lineBreakSubstLines)
+            throws FortranSyntaxException, IOException
     {
         lexer.reset();
         parser.reset();
@@ -168,25 +202,40 @@ public class FortranLineBreaksFilter
         parser.setBuildParseTree(true);
         ParseTree tree = null;
         try
-        { tree = parser.root(); }
-        catch(CancellationException e)
-        {}
-        if(lexerErrorListener.error() != null)
-        { throw lexerErrorListener.error(); }
-        if(parserErrorListener.error() != null)
-        { throw parserErrorListener.error(); }
+        {
+            tree = parser.root();
+        } catch (CancellationException e)
+        {
+        }
+        if (lexerErrorListener.error() != null)
+        {
+            throw lexerErrorListener.error();
+        }
+        if (parserErrorListener.error() != null)
+        {
+            throw parserErrorListener.error();
+        }
         ParseTreeWalker walker = new ParseTreeWalker();
         Listener listener = new Listener(output, " ", preserveNumLines);
         try
-        { walker.walk(listener, tree); }
-        catch(CancellationException e)
-        {}        
-        if(listener.error() != null)
-        { throw listener.error(); }
+        {
+            walker.walk(listener, tree);
+        } catch (CancellationException e)
+        {
+        }
+        if (listener.error() != null)
+        {
+            throw listener.error();
+        }
+        if (lineBreakSubstLines != null)
+        {
+            lineBreakSubstLines.clear();
+            lineBreakSubstLines.addAll(listener.lineBreakSubstLines);
+        }
     }
-    
+
     public void run(InputStream input, OutputStream output) throws FortranSyntaxException, IOException
     {
-    	run(input, output, false);
+        run(input, output, false, null);
     }
 }

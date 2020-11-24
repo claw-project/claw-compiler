@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <fortran_file_summary>
-    <module start_char_pos="13" end_char_pos="37" uses_claw="true" name="mod11" start_line_num="1" end_line_num="2">
+    <module start_char_pos="0" end_char_pos="37" uses_claw="true" name="mod11" start_line_num="0" end_line_num="2">
         <used_modules/>
     </module>
-    <module start_char_pos="51" end_char_pos="68" uses_claw="false" name="mod12" start_line_num="5" end_line_num="5">
+    <module start_char_pos="38" end_char_pos="68" uses_claw="false" name="mod12" start_line_num="4" end_line_num="5">
         <used_modules/>
     </module>
-    <module start_char_pos="82" end_char_pos="113" uses_claw="false" name="mod13" start_line_num="8" end_line_num="9">
+    <module start_char_pos="69" end_char_pos="113" uses_claw="false" name="mod13" start_line_num="7" end_line_num="9">
         <used_modules>
             <name>mod12</name>
         </used_modules>
     </module>
-    <program start_char_pos="125" end_char_pos="168" uses_claw="false" name="p1" start_line_num="12" end_line_num="14">
+    <program start_char_pos="114" end_char_pos="168" uses_claw="false" name="p1" start_line_num="11" end_line_num="14">
         <used_modules>
             <name>mod12</name>
             <name>mod13</name>
