@@ -43,6 +43,7 @@
             <src>
                 <pathelement path="${driver.test.utils.src.dir}"/>
                 <pathelement path="${driver.ut.src.dir}"/>
+                <pathelement path="${driver.ut.gen.src.dir}"/>
             </src>
         </javac>
     </target>

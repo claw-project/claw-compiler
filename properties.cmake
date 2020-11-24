@@ -54,10 +54,12 @@ set(CLAWFC_TEST_UTIL_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/test_utils/src")
 
 # Driver unit-tests
 set(CLAWFC_UT_JAR "clawfc-ut.jar")
-set(CLAWFC_UT_BIN_DIR "${CMAKE_SOURCE_DIR}/driver/unittests/bin")
 set(CLAWFC_UT_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/unittests/src")
-set(CLAWFC_UT_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/ut-classes")
-set(CLAWFC_UT_REPORT_DIR "${CMAKE_BINARY_DIR}/driver/ut-reports")
+set(CLAWFC_UT_RES_DIR "${CMAKE_SOURCE_DIR}/driver/unittests/res")
+set(CLAWFC_UT_BIN_DIR "${CMAKE_BINARY_DIR}/driver/ut/bin")
+set(CLAWFC_UT_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/driver/ut/build/generated-src")
+set(CLAWFC_UT_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/ut/build/classes")
+set(CLAWFC_UT_REPORT_DIR "${CMAKE_BINARY_DIR}/driver/ut/reports")
 
 # Driver tests
 set(CLAWFC_TESTS_JAR "clawfc-tests.jar")

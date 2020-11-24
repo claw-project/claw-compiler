@@ -26,6 +26,21 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>driver-tests-src</name>
+			<type>2</type>
+			<location>@CLAWFC_TESTS_SRC_DIR@</location>
+		</link>
+		<link>
+			<name>driver-tests-gen-src</name>
+			<type>2</type>
+			<location>@CLAWFC_TESTS_GEN_SRC_DIR@</location>
+		</link>
+		<link>
+			<name>driver-tests-utils-src</name>
+			<type>2</type>
+			<location>@CLAWFC_TEST_UTIL_SRC_DIR@</location>
+		</link>
+		<link>
 			<name>cx2t-src</name>
 			<type>2</type>
 			<location>@CMAKE_SOURCE_DIR@/cx2t/src</location>
@@ -44,21 +59,6 @@
 			<name>driver-gen-src</name>
 			<type>2</type>
 			<location>@CLAWFC_GEN_SRC_DIR@</location>
-		</link>
-		<link>
-			<name>driver-tests-utils-src</name>
-			<type>2</type>
-			<location>@CLAWFC_TEST_UTIL_SRC_DIR@</location>
-		</link>
-		<link>
-			<name>driver-tests-src</name>
-			<type>2</type>
-			<location>@CLAWFC_TESTS_SRC_DIR@</location>
-		</link>
-		<link>
-			<name>driver-tests-gen-src</name>
-			<type>2</type>
-			<location>@CLAWFC_TESTS_GEN_SRC_DIR@</location>
 		</link>
 	</linkedResources>
 </projectDescription>

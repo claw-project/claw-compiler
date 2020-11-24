@@ -124,6 +124,8 @@ driver.ut.jar=@CLAWFC_UT_JAR@
 driver.ut.dist.dir=@CLAWFC_UT_BIN_DIR@
 driver.ut.dep=${driver.ut.dist.dir}/${driver.ut.jar}
 driver.ut.src.dir=@CLAWFC_UT_SRC_DIR@
+driver.ut.gen.src.dir=@CLAWFC_UT_GEN_SRC_DIR@
+driver.ut.res.dir=@CLAWFC_UT_RES_DIR@
 driver.ut.classes.dir=@CLAWFC_UT_CLASSES_DIR@
 driver.ut.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep} ${jaxb-runtime.dep} ${jaxb-core.dep} \
     ${jakarta.xml.bind-api.dep} ${jakarta.activation.dep} ${istack-commons-runtime.dep}
