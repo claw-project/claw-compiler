@@ -12,16 +12,16 @@ fortran_doc : (string | comment | other)*;
 
 string : STRING;
 comment : COMMENT;
-other : OTHER;
+other : OTHER | EOL;
 
-OTHER : (~[!"'])+;
-COMMENT : EM (~'\n')* EOL;
+OTHER : (~[!"'\n])+;
+COMMENT : EM (~'\n')*;
 STRING : (DQ (~'"' | QUOTED_DQ)* DQ) |
                   (SQ (~'\'' | QUOTED_SQ)* SQ);
+EOL : '\n';
 
 fragment QUOTED_DQ : DQ DQ;
 fragment QUOTED_SQ : SQ SQ;
 fragment EM : '!';
 fragment DQ : '"';
 fragment SQ : '\'';
-fragment EOL : '\n';
