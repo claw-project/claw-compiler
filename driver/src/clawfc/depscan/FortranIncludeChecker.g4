@@ -4,7 +4,7 @@
  * @author Mikhail Zhigun
  * @copyright 2020, MeteoSwiss
  */
-grammar FortranIncludeFilter;
+grammar FortranIncludeChecker;
 
 root : (include_line | other_line)* EOF;
 

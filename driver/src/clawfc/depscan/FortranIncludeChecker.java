@@ -17,16 +17,16 @@ import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import clawfc.depscan.parser.FortranIncludeFilterBaseListener;
-import clawfc.depscan.parser.FortranIncludeFilterLexer;
-import clawfc.depscan.parser.FortranIncludeFilterParser;
+import clawfc.depscan.parser.FortranIncludeCheckerBaseListener;
+import clawfc.depscan.parser.FortranIncludeCheckerLexer;
+import clawfc.depscan.parser.FortranIncludeCheckerParser;
 
 /**
- * Replaces Fortran include with cpp preprocessor include
+ * Detects Fortran include statements
  */
-public class FortranIncludeFilter
+public class FortranIncludeChecker
 {
-    static class Listener extends FortranIncludeFilterBaseListener
+    static class Listener extends FortranIncludeCheckerBaseListener
     {
         OutputStream outStrm;
         IOException _error;
@@ -42,41 +42,20 @@ public class FortranIncludeFilter
             return _error;
         }
 
-        public Listener(OutputStream outStrm)
+        public Listener()
         {
             _error = null;
-            this.outStrm = outStrm;
         }
 
         @Override
-        public void exitInclude_line(FortranIncludeFilterParser.Include_lineContext ctx)
+        public void exitInclude_line(FortranIncludeCheckerParser.Include_lineContext ctx)
         {
             _includeFound = true;
-            output("#" + ctx.getText().stripLeading());
-        }
-
-        @Override
-        public void exitOther_line(FortranIncludeFilterParser.Other_lineContext ctx)
-        {
-            output(ctx.getText());
-        }
-
-        void output(String s)
-        {
-            byte[] bytes = s.getBytes(StandardCharsets.US_ASCII);
-            try
-            {
-                outStrm.write(bytes);
-            } catch (IOException e)
-            {
-                _error = e;
-                throw new CancellationException("Write error");
-            }
         }
     }
 
-    FortranIncludeFilterLexer lexer;
-    FortranIncludeFilterParser parser;
+    FortranIncludeCheckerLexer lexer;
+    FortranIncludeCheckerParser parser;
 
     ParserErrorListener lexerErrorListener;
     ParserErrorListener parserErrorListener;
@@ -84,13 +63,13 @@ public class FortranIncludeFilter
     /**
      * @throws IOException
      */
-    public FortranIncludeFilter() throws IOException
+    public FortranIncludeChecker() throws IOException
     {
-        lexer = new FortranIncludeFilterLexer(Utils.toCharStream(""));
+        lexer = new FortranIncludeCheckerLexer(Utils.toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);
-        parser = new FortranIncludeFilterParser(new CommonTokenStream(lexer));
+        parser = new FortranIncludeCheckerParser(new CommonTokenStream(lexer));
         parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
         parserErrorListener = new ParserErrorListener();
         parser.addErrorListener(parserErrorListener);
@@ -99,7 +78,7 @@ public class FortranIncludeFilter
     /**
      * @return true if at least one include statement found
      */
-    public boolean run(InputStream input, OutputStream output) throws IOException, FortranSyntaxException
+    public boolean run(InputStream input) throws IOException, FortranSyntaxException
     {
         lexer.reset();
         parser.reset();
@@ -126,7 +105,7 @@ public class FortranIncludeFilter
             throw parserErrorListener.error();
         }
         ParseTreeWalker walker = new ParseTreeWalker();
-        Listener listener = new Listener(output);
+        Listener listener = new Listener();
         try
         {
             walker.walk(listener, tree);
