@@ -58,11 +58,7 @@ public class FortranCommentsFilter
         public void exitComment(FortranCommentsFilterParser.CommentContext ctx)
         {
             String comment = ctx.getText();
-            int startChrIdx = ctx.getStart().getStartIndex();
-            if (startChrIdx < 0)
-            {
-                throw new RuntimeException("org.antlr.v4.runtime.Token.getStartIndex not implemented");
-            }
+            int startChrIdx = Utils.getStartChrIdx(ctx);
             content.addSequence(startChrIdx, comment);
         }
 
@@ -100,7 +96,7 @@ public class FortranCommentsFilter
 
     public FilteredContent run(InputStream input, OutputStream output) throws FortranSyntaxException, IOException
     {
-        FilteredContent content = new FilteredContent();
+        FilteredContent content = new RemovedFilteredContent();
         lexer.reset();
         parser.reset();
         lexerErrorListener.reset();
