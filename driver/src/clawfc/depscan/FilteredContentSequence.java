@@ -42,9 +42,14 @@ public class FilteredContentSequence
         return new FilteredContentSequence(Arrays.asList(data.get(idx)));
     }
 
-    private FilteredContentSequence(List<FilteredContent> data)
+    public FilteredContentSequence(List<FilteredContent> data)
     {
         this.data = data;
+    }
+
+    public void add(FilteredContent el)
+    {
+        data.add(el);
     }
 
     public static FilteredContentSequence decomposeIntoSeqs(List<Op> ops)

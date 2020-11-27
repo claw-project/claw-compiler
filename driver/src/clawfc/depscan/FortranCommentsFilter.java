@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 
 import org.antlr.v4.runtime.CharStream;
@@ -94,7 +95,8 @@ public class FortranCommentsFilter
         parser.addErrorListener(parserErrorListener);
     }
 
-    public FilteredContent run(InputStream input, OutputStream output) throws FortranSyntaxException, IOException
+    public FilteredContentSequence run(InputStream input, OutputStream output)
+            throws FortranSyntaxException, IOException
     {
         FilteredContent content = new RemovedFilteredContent();
         lexer.reset();
@@ -133,6 +135,7 @@ public class FortranCommentsFilter
         {
             throw listener.error();
         }
-        return content;
+        FilteredContentSequence res = new FilteredContentSequence(Arrays.asList(content));
+        return res;
     }
 }
