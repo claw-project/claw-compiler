@@ -20,6 +20,7 @@ import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import clawfc.depscan.FilteredContentSequence;
 import clawfc.depscan.FortranLineBreaksFilter;
 import clawfc.depscan.FortranSyntaxException;
 import clawfc.depscan.parser.FortranLineBreaksFilterBaseListener;
@@ -129,16 +130,17 @@ public class FortranLineBreaksFilterTest extends TestCase
         InputStream inStrm = new ByteArrayInputStream(in.getBytes(StandardCharsets.US_ASCII));
         ByteArrayOutputStream outStrm = new ByteArrayOutputStream();
         List<Integer> EOLSubstLines = null;
+        FilteredContentSequence cRes = null;
         try
         {
             filter = new FortranLineBreaksFilter();
             if (expectedEOLSubstLines == null)
             {
-                filter.run(inStrm, outStrm, preserveNumLines, null);
+                cRes = filter.run(inStrm, outStrm, preserveNumLines, null);
             } else
             {
                 EOLSubstLines = new ArrayList<Integer>();
-                filter.run(inStrm, outStrm, preserveNumLines, EOLSubstLines);
+                cRes = filter.run(inStrm, outStrm, preserveNumLines, EOLSubstLines);
             }
         } catch (FortranSyntaxException e)
         {
@@ -151,6 +153,24 @@ public class FortranLineBreaksFilterTest extends TestCase
         /* System.out.println("----------\n" + res + "\\n----------\n"); */
         assertEquals(expectedOut, res);
         assertEquals(expectedEOLSubstLines, EOLSubstLines);
+        String testRev = cRes.partialReverse(res, '_');
+        for (int i = 0, n = testRev.length(); i < n; ++i)
+        {
+            char fChr = testRev.charAt(i);
+            if (fChr != '_')
+            {
+                char iChr = in.charAt(i);
+                if (iChr != fChr)
+                {
+                    cRes.getOriginalChrIdx(20);
+                    String testRev1 = cRes.get(1).partialReverse(res, '_');
+                    System.out.println(in + "\n");
+                    System.out.println(testRev + "\n");
+                    System.out.println(testRev1);
+                    assertEquals(iChr, fChr);
+                }
+            }
+        }
     }
 
     private void verifyFilter(String in, String expectedOut, boolean preserveNumLines)
@@ -190,6 +210,7 @@ public class FortranLineBreaksFilterTest extends TestCase
 
     public void testFilterWithLinesNumPreservation() throws Exception
     {
+
         {
             String in = "module x\n" + "end module x\n";
             String expectedRes = "module x\n" + "end module x\n";
@@ -205,6 +226,7 @@ public class FortranLineBreaksFilterTest extends TestCase
             String expectedRes = "\n" + "\n" + "module x\n" + "end module x\n";
             verifyFilter(in, expectedRes, true, Arrays.asList(0, 1));
         }
+
         {
             String in = "mod&\n" + "&ule x\n" + "end mod&\n" + "&ule x\n";
             String expectedRes = "\n" + "module x\n" + "\n" + "end module x\n";

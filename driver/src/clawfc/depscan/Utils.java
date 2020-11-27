@@ -8,6 +8,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -46,5 +48,18 @@ public class Utils
             throw new RuntimeException("org.antlr.v4.runtime.Token.getStartIndex not implemented");
         }
         return startChrIdx;
+    }
+
+    public static <T> int firstGreater(List<? extends Comparable<? super T>> list, T key)
+    {
+        int res = Collections.binarySearch(list, key);
+        if (res >= 0)
+        {
+            res += 1;
+        } else
+        {
+            res = -res - 1;
+        }
+        return res;
     }
 }

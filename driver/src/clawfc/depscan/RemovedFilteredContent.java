@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import clawfc.Utils;
@@ -94,22 +93,16 @@ public class RemovedFilteredContent implements FilteredContent
         {
             return null;
         }
-        int offset = 0;
         if (!data.isEmpty())
         {
-            int idx = Collections.binarySearch(data, chrIdxFiltered);
-            if (idx < 0)
-            {
-                // Check Collections.binarySearch doc for explanation
-                int decodedIdx = -idx - 2;
-                idx = decodedIdx;
-            }
+            int idx = clawfc.depscan.Utils.firstGreater(data, chrIdxFiltered) - 1;
             if (idx >= 0)
             {
-                offset = data.get(idx).offset;
+                Data d = data.get(idx);
+                chrIdxFiltered += d.offset;
             }
         }
-        return chrIdxFiltered + offset;
+        return chrIdxFiltered;
     }
 
     @Override

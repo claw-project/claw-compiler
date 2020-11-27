@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import clawfc.Utils;
@@ -33,19 +32,15 @@ public class InsertedFilteredContent implements FilteredContent
             this.content = content;
         }
 
+        boolean contains(int chrIdxFiltered)
+        {
+            return chrIdxFiltered >= startChrIdxFiltered && chrIdxFiltered < endChrIdxFiltered;
+        }
+
         @Override
         public int compareTo(Integer chrIdxFiltered)
         {
-            if (chrIdxFiltered < startChrIdxFiltered)
-            {
-                return 1;
-            } else if (chrIdxFiltered >= endChrIdxFiltered)
-            {
-                return -1;
-            } else
-            {
-                return 0;
-            }
+            return Integer.compare(startChrIdxFiltered, chrIdxFiltered);
         }
     }
 
@@ -96,23 +91,23 @@ public class InsertedFilteredContent implements FilteredContent
         {
             return null;
         }
-        int offset = 0;
         if (!data.isEmpty())
         {
-            final int srchIdx = Collections.binarySearch(data, chrIdxFiltered);
-            if (srchIdx >= 0)
-            {// This means chrIdxFiltered is within one of the added sequences, which don't
-             // exist in original text
-                return null;
-            } else
+            final int idx = clawfc.depscan.Utils.firstGreater(data, chrIdxFiltered) - 1;
+            if (idx >= 0)
             {
-                // Check Collections.binarySearch doc for explanation
-                // int insPoint = -srchIdx - 1;
-                int seqIdx = -srchIdx - 2;
-                offset = data.get(seqIdx).offset;
+                Data d = data.get(idx);
+                if (d.contains(chrIdxFiltered))
+                {// This means chrIdxFiltered is within one of the added sequences, which don't
+                 // exist in original text
+                    return null;
+                } else
+                {
+                    chrIdxFiltered -= d.offset;
+                }
             }
         }
-        return chrIdxFiltered - offset;
+        return chrIdxFiltered;
     }
 
     @Override
@@ -122,26 +117,16 @@ public class InsertedFilteredContent implements FilteredContent
         {
             return null;
         }
-        if (data.isEmpty())
+        if (!data.isEmpty())
         {
-            return chrIdx;
-        }
-        int idx = Collections.binarySearch(this.startChrIndex, chrIdx);
-        if (idx >= 0)
-        {
-            offset = data.get(idx).offset;
-        } else
-        {
-            // Check Collections.binarySearch doc for explanation
-            int decodedIdx = -idx - 2;
-            if (decodedIdx < 0)
+            int idx = clawfc.depscan.Utils.firstGreater(this.startChrIndex, chrIdx) - 1;
+            if (idx >= 0 && idx < data.size())
             {
-                return chrIdx;
+                int offset = data.get(idx).offset;
+                chrIdx += offset;
             }
-            idx = Integer.min(decodedIdx, data.size() - 1);
-            offset = data.get(idx).offset;
         }
-        return offset + chrIdx;
+        return chrIdx;
     }
 
     public void reverse(InputStream filteredText, OutputStream unFilteredText) throws IOException

@@ -19,16 +19,36 @@ import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import clawfc.depscan.FilteredContentSequence.Op;
+import clawfc.depscan.FilteredContentSequence.OpType;
 import clawfc.depscan.parser.FortranLineBreaksFilterBaseListener;
 import clawfc.depscan.parser.FortranLineBreaksFilterLexer;
 import clawfc.depscan.parser.FortranLineBreaksFilterParser;
+import clawfc.utils.ByteArrayIOStream;
 
+//FortranLineBreaksFilter works as follows:
+//    1. Closed line breaks are removed 
+//       Input:  "mod&\n   \n&ule"
+//                   ---------
+//       Output: "module" 
+//    2. Unclosed line breaks are replaced with a single space
+//    Input:  "module&\nm1" 
+//                   ---
+//    Output: "module m1" 
+//    3. Optionally, newlines from line breaks are pushed in front of the broken line,
+//       to preserve number of lines in the output text       
+//       Input:  "mod&\n   \n&ul&  \n\n  &e"
+//                   ---------  ----------
+//                    x    x       x x
+//                   
+//       Output: "\n\n\n\nmodule"
 public class FortranLineBreaksFilter
 {
-    static class Listener extends FortranLineBreaksFilterBaseListener
+    static abstract class BasicListener extends FortranLineBreaksFilterBaseListener
     {
-        OutputStream outStrm;
-        public ArrayList<String> comments;
+        final OutputStream outStrm;
+        final ByteArrayIOStream outBuf;
+        Integer outBufStartPos;
 
         public IOException error()
         {
@@ -36,127 +56,52 @@ public class FortranLineBreaksFilter
         }
 
         IOException _error;
-        String lineBreakSep;
-        boolean preserveNumLines;
-        ArrayList<String> buf;
-        List<Integer> lineBreakSubstLines;
-        int outLineNum;
 
-        public Listener(OutputStream outStrm)
-        {
-            initialise(outStrm, " ", false);
-        }
-
-        public Listener(OutputStream outStrm, String lineBreakSep, boolean preserveNumLines)
-        {
-            initialise(outStrm, lineBreakSep, preserveNumLines);
-        }
-
-        void initialise(OutputStream outStrm, String lineBreakSep, boolean preserveNumLines)
+        public BasicListener(OutputStream outStrm)
         {
             _error = null;
             this.outStrm = outStrm;
-            comments = new ArrayList<String>();
-            this.lineBreakSep = lineBreakSep;
-            this.preserveNumLines = preserveNumLines;
-            if (this.preserveNumLines)
-            {
-                buf = new ArrayList<String>();
-            }
-            lineBreakSubstLines = new ArrayList<Integer>();
-            outLineNum = 0;
+            outBuf = new ByteArrayIOStream();
+            outBufStartPos = null;
         }
 
-        @Override
-        public void exitOther(FortranLineBreaksFilterParser.OtherContext ctx)
+        protected void flushOutputBuf()
         {
-            String s = ctx.getText();
-            if (!preserveNumLines)
+            try
             {
-                output(s);
-            } else
+                clawfc.Utils.copy(outBuf.getAsInputStreamUnsafe(), outStrm);
+            } catch (IOException e)
             {
-                buf.add(s);
+                _error = e;
+                throw new CancellationException("Write error");
             }
+            outBuf.reset();
+            outBufStartPos = null;
         }
 
-        void outputBuf()
+        protected void addToOutputBuf(int pos, String s)
         {
-            for (String s : buf)
+            byte[] bytes = s.getBytes(StandardCharsets.US_ASCII);
+            try
             {
-                output(s);
+                outBuf.write(bytes);
+            } catch (IOException e)
+            {
+                _error = e;
+                throw new CancellationException("Write error");
             }
-            buf.clear();
+            if (outBufStartPos == null)
+            {
+                outBufStartPos = Integer.valueOf(pos);
+            }
         }
 
-        void outputEOL()
+        protected Integer getOutBufStartPos()
         {
-            output("\n");
-            ++outLineNum;
+            return outBufStartPos;
         }
 
-        @Override
-        public void exitEol(FortranLineBreaksFilterParser.EolContext ctx)
-        {
-            if (preserveNumLines)
-            {
-                outputBuf();
-            }
-            outputEOL();
-        }
-
-        @Override
-        public void exitFortran_text(FortranLineBreaksFilterParser.Fortran_textContext ctx)
-        {
-            if (preserveNumLines)
-            {
-                outputBuf();
-            }
-        }
-
-        void outputLineBreakEOLs(String s)
-        {
-            for (char c : s.toCharArray())
-            {
-                if (c == '\n')
-                {
-                    lineBreakSubstLines.add(outLineNum);
-                    outputEOL();
-                }
-            }
-        }
-
-        @Override
-        public void exitUnclosed_line_break(FortranLineBreaksFilterParser.Unclosed_line_breakContext ctx)
-        {
-            String text = ctx.getText();
-            int EOLIdx = text.lastIndexOf('\n');
-            String sep = text.substring(EOLIdx + 1);
-            if (sep.isEmpty())
-            {
-                sep = this.lineBreakSep;
-            }
-            if (!preserveNumLines)
-            {
-                output(sep);
-            } else
-            {
-                buf.add(sep);
-                outputLineBreakEOLs(text);
-            }
-        }
-
-        @Override
-        public void exitClosed_line_break(FortranLineBreaksFilterParser.Closed_line_breakContext ctx)
-        {
-            String text = ctx.getText();
-            if (preserveNumLines)
-            {
-                outputLineBreakEOLs(text);
-            }
-        }
-
-        void output(String s)
+        protected void output(String s)
         {
             byte[] bytes = s.getBytes(StandardCharsets.US_ASCII);
             try
@@ -167,6 +112,122 @@ public class FortranLineBreaksFilter
                 _error = e;
                 throw new CancellationException("Write error");
             }
+        }
+    }
+
+    static class Listener extends BasicListener
+    {
+        final String lineBreakSep;
+
+        final List<Op> ops;
+        final List<Op> opsBuf;
+
+        int linebreakEOLStartChrIdx;
+        int numLinebreakEOLs;
+
+        final List<Integer> lineBreakSubstLines;
+        int outLineNum;
+
+        final boolean preserveNumLines;
+
+        public Listener(OutputStream outStrm, String lineBreakSep, boolean preserveNumLines)
+        {
+            super(outStrm);
+            _error = null;
+            this.lineBreakSep = lineBreakSep;
+            ops = new ArrayList<Op>();
+            opsBuf = new ArrayList<Op>();
+            linebreakEOLStartChrIdx = -1;
+            numLinebreakEOLs = 0;
+            lineBreakSubstLines = new ArrayList<Integer>();
+            outLineNum = 0;
+            this.preserveNumLines = preserveNumLines;
+        }
+
+        @Override
+        public void exitFortran_text(FortranLineBreaksFilterParser.Fortran_textContext ctx)
+        {
+            flushOutputBuf();
+        }
+
+        @Override
+        public void exitOther(FortranLineBreaksFilterParser.OtherContext ctx)
+        {
+            String s = ctx.getText();
+            int startChrIdx = Utils.getStartChrIdx(ctx);
+            addToOutputBuf(startChrIdx, s);
+        }
+
+        @Override
+        public void exitEol(FortranLineBreaksFilterParser.EolContext ctx)
+        {
+            flushOutputBuf();
+            output("\n");
+            ++outLineNum;
+        }
+
+        void bufferOutputLineBreakEOLs(String s, int startChrIdx)
+        {
+            for (char c : s.toCharArray())
+            {
+                if (c == '\n')
+                {
+                    if (numLinebreakEOLs == 0)
+                    {
+                        linebreakEOLStartChrIdx = startChrIdx;
+                    }
+                    ++numLinebreakEOLs;
+                }
+            }
+        }
+
+        @Override
+        protected void flushOutputBuf()
+        {
+            if (numLinebreakEOLs > 0)
+            {
+                StringBuilder sB = new StringBuilder(numLinebreakEOLs);
+                for (int i = 0; i < numLinebreakEOLs; ++i)
+                {
+                    sB.append('\n');
+                    lineBreakSubstLines.add(outLineNum++);
+                }
+                numLinebreakEOLs = 0;
+                String s = sB.toString();
+                output(s);
+                int idx = this.getOutBufStartPos() != null ? this.getOutBufStartPos() : linebreakEOLStartChrIdx;
+                ops.add(new Op(OpType.Add, idx, s));
+            }
+            ops.addAll(opsBuf);
+            opsBuf.clear();
+            super.flushOutputBuf();
+
+        }
+
+        @Override
+        public void exitUnclosed_line_break(FortranLineBreaksFilterParser.Unclosed_line_breakContext ctx)
+        {
+            String text = ctx.getText();
+            int startChrIdx = Utils.getStartChrIdx(ctx);
+            if (preserveNumLines)
+            {
+                bufferOutputLineBreakEOLs(text, startChrIdx);
+            }
+            opsBuf.add(new Op(OpType.Remove, startChrIdx, text));
+            addToOutputBuf(startChrIdx, lineBreakSep);
+            opsBuf.add(new Op(OpType.Add, startChrIdx, lineBreakSep));
+        }
+
+        @Override
+        public void exitClosed_line_break(FortranLineBreaksFilterParser.Closed_line_breakContext ctx)
+        {
+            String text = ctx.getText();
+            int startChrIdx = Utils.getStartChrIdx(ctx);
+            if (preserveNumLines)
+            {
+                bufferOutputLineBreakEOLs(text, startChrIdx);
+            }
+            opsBuf.add(new Op(OpType.Remove, startChrIdx, text));
         }
     }
 
@@ -188,8 +249,8 @@ public class FortranLineBreaksFilter
         parser.addErrorListener(parserErrorListener);
     }
 
-    public void run(InputStream input, OutputStream output, boolean preserveNumLines, List<Integer> lineBreakSubstLines)
-            throws FortranSyntaxException, IOException
+    public FilteredContentSequence run(InputStream input, OutputStream output, boolean preserveNumLines,
+            List<Integer> lineBreakSubstLines) throws FortranSyntaxException, IOException
     {
         lexer.reset();
         parser.reset();
@@ -232,6 +293,8 @@ public class FortranLineBreaksFilter
             lineBreakSubstLines.clear();
             lineBreakSubstLines.addAll(listener.lineBreakSubstLines);
         }
+        FilteredContentSequence res = FilteredContentSequence.decomposeIntoSeqs(listener.ops);
+        return res;
     }
 
     public void run(InputStream input, OutputStream output) throws FortranSyntaxException, IOException
