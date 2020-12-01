@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <fortran_file_summary>
-    <module start_char_pos="0" end_char_pos="37" uses_claw="true" name="mod{i}1" start_line_num="0" end_line_num="2">
+    <module uses_claw="true">
+        <info start_line_idx="0" end_line_idx="3" name="mod{i}1" start_char_idx="0" end_char_idx="36"/>
         <used_modules/>
     </module>
-    <module start_char_pos="38" end_char_pos="68" uses_claw="false" name="mod{i}2" start_line_num="4" end_line_num="5">
+    <module uses_claw="false">
+        <info start_line_idx="4" end_line_idx="6" name="mod{i}2" start_char_idx="38" end_char_idx="67"/>
         <used_modules/>
     </module>
-    <module start_char_pos="69" end_char_pos="113" uses_claw="false" name="mod{i}3" start_line_num="7" end_line_num="9">
+    <module uses_claw="false">
+        <info start_line_idx="7" end_line_idx="10" name="mod{i}3" start_char_idx="69" end_char_idx="112"/>
         <used_modules>
-            <name>mod{i}2</name>
+            <use start_line_idx="8" end_line_idx="9" name="mod{i}2" start_char_idx="86" end_char_idx="95"/>
         </used_modules>
     </module>
-    <program start_char_pos="114" end_char_pos="168" uses_claw="false" name="p{i}" start_line_num="11" end_line_num="14">
+    <program uses_claw="false">
+        <info start_line_idx="11" end_line_idx="15" name="p{i}" start_char_idx="114" end_char_idx="167"/>
         <used_modules>
-            <name>mod{i}2</name>
-            <name>mod{i}3</name>
+            <use start_line_idx="12" end_line_idx="13" name="mod{i}2" start_char_idx="129" end_char_idx="138"/>
+            <use start_line_idx="13" end_line_idx="14" name="mod{i}3" start_char_idx="143" end_char_idx="152"/>
         </used_modules>
     </program>
 </fortran_file_summary>

@@ -4,6 +4,7 @@
  */
 package clawfc.depscan;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -47,9 +48,19 @@ public class FilteredContentSequence
         this.data = data;
     }
 
+    public FilteredContentSequence()
+    {
+        this.data = new ArrayList<FilteredContent>();
+    }
+
     public void add(FilteredContent el)
     {
         data.add(el);
+    }
+
+    public void add(FilteredContentSequence seq)
+    {
+        data.addAll(seq.data);
     }
 
     public static FilteredContentSequence decomposeIntoSeqs(List<Op> ops)
@@ -107,7 +118,8 @@ public class FilteredContentSequence
         for (int i = data.size() - 1; i >= 0; --i)
         {
             FilteredContent content = data.get(i);
-            idx = content.getOriginalChrIdx(idx);
+            Integer newIdx = content.getOriginalChrIdx(idx);
+            idx = newIdx;
             if (idx == null)
             {
                 return idx;

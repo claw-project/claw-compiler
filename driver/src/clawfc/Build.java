@@ -21,17 +21,22 @@ import clawfc.depscan.FortranSemanticException;
 
 public class Build
 {
-    public static String moduleWithLocation(String name, Map<String, ModuleInfo> availModules)
+    public static String moduleNameWithLocation(String name, Map<String, ModuleInfo> availModules)
     {
         ModuleInfo info = availModules.get(name);
+        return moduleNameWithLocation(info);
+    }
+
+    public static String moduleNameWithLocation(ModuleInfo info)
+    {
         Path srcFilePath = info.getSrcFileInfo().getPath();
         if (info.getSrcFileInfo() != null)
         {
-            long lineNum = info.getModuleSrcInfo().getStartLineNum() + 1;
-            return String.format("%s (%s:%s)", name, srcFilePath, lineNum);
+            long lineNum = info.getModuleSrcInfo().getStartLineIdx() + 1;
+            return String.format("%s (%s:%s)", info.getName(), srcFilePath, lineNum);
         } else
         {
-            return String.format("%s (%s)", name, srcFilePath);
+            return String.format("%s (%s)", info.getName(), srcFilePath);
         }
     }
 
@@ -77,7 +82,7 @@ public class Build
             Path srcFilePath = info.getSrcFileInfo().getPath();
             if (info.getSrcFileInfo() != null)
             {
-                long lineNum = info.getModuleSrcInfo().getStartLineNum() + 1;
+                long lineNum = info.getModuleSrcInfo().getStartLineIdx() + 1;
                 return String.format("%s (%s:%s)", name, srcFilePath, lineNum);
             } else
             {
@@ -97,7 +102,7 @@ public class Build
                         stack.add(modName);
                         if (info.hasSource())
                         {
-                            for (String depModName : info.getModuleSrcInfo().getUsedModules())
+                            for (String depModName : info.getModuleSrcInfo().getUsedModuleNames())
                             {
                                 dfs(depModName);
                             }
@@ -269,7 +274,7 @@ public class Build
                 ModuleInfo info = entry.getValue();
                 if (info.hasSource())
                 {
-                    List<String> depModules = info.getModuleSrcInfo().getUsedModules();
+                    List<String> depModules = info.getModuleSrcInfo().getUsedModuleNames();
                     if (!depModules.isEmpty())
                     {
                         startSet.remove(modName);
@@ -289,7 +294,7 @@ public class Build
                 Set<String> modDeps = new LinkedHashSet<String>();
                 if (info.hasSource())
                 {
-                    List<String> depModules = info.getModuleSrcInfo().getUsedModules();
+                    List<String> depModules = info.getModuleSrcInfo().getUsedModuleNames();
                     modDeps.addAll(depModules);
                 }
                 deps.put(modName, modDeps);
@@ -310,7 +315,7 @@ public class Build
                 ModuleInfo info = entry.getValue();
                 if (info.hasSource())
                 {
-                    List<String> depModules = info.getModuleSrcInfo().getUsedModules();
+                    List<String> depModules = info.getModuleSrcInfo().getUsedModuleNames();
                     for (String depModName : depModules)
                     {
                         revDeps.get(depModName).add(modName);

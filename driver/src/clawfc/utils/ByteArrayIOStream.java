@@ -7,25 +7,33 @@ package clawfc.utils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-public class ByteArrayIOStream
-    extends ByteArrayOutputStream
+public class ByteArrayIOStream extends ByteArrayOutputStream
 {
-    public ByteArrayIOStream() 
-    { super(); }
-    
-    public ByteArrayIOStream(int size) 
-    { super(size); }
-    
-    public ByteArrayInputStream getAsInputStream() 
+    public ByteArrayIOStream()
+    {
+        super();
+    }
+
+    public ByteArrayIOStream(int size)
+    {
+        super(size);
+    }
+
+    public ByteArrayInputStream getAsInputStream()
     {
         ByteArrayInputStream res = getAsInputStreamUnsafe();
-        this.buf = null;            
-        return res; 
+        this.buf = null;
+        return res;
     }
-    
-    public ByteArrayInputStream getAsInputStreamUnsafe() 
+
+    public ByteArrayInputStream getAsInputStreamUnsafe()
     {
-        ByteArrayInputStream res = new ByteArrayInputStream(this.buf, 0, this.count);
-        return res; 
+        return getAsInputStreamUnsafe(0, this.count);
+    }
+
+    public ByteArrayInputStream getAsInputStreamUnsafe(int offset, int count)
+    {
+        ByteArrayInputStream res = new ByteArrayInputStream(this.buf, offset, this.count);
+        return res;
     }
 }

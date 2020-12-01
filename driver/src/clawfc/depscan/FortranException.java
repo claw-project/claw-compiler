@@ -6,28 +6,53 @@ package clawfc.depscan;
 
 public class FortranException extends Exception
 {
-    Integer _line;
-    Integer _charPositionInLine;
+    Integer _charIdxInFile;
+    Integer _lineIdx;
+    Integer _charIdxInLine;
 
-    public Integer line()
+    public Integer getCharIdxInFile()
     {
-        return _line;
+        return _charIdxInFile;
     }
 
-    public Integer charPositionInLine()
+    public void setCharIdxInFile(Integer val)
     {
-        return _charPositionInLine;
+        _charIdxInFile = val;
+    }
+
+    public Integer getLineIndex()
+    {
+        return _lineIdx;
+    }
+
+    public void setLineIndex(Integer val)
+    {
+        _lineIdx = val;
+    }
+
+    public Integer getCharIdxInLine()
+    {
+        return _charIdxInLine;
+    }
+
+    public void setCharIdxInLine(Integer val)
+    {
+        _charIdxInLine = val;
     }
 
     public FortranException(String msg)
     {
         super(msg);
+        _charIdxInFile = null;
+        _lineIdx = null;
+        _charIdxInLine = null;
     }
 
-    public FortranException(String msg, int line, int charPositionInLine)
+    public FortranException(String msg, Integer charIdxInFile, Integer lineIdx, Integer charIdxInLine)
     {
         super(msg);
-        _line = line;
-        _charPositionInLine = charPositionInLine;
+        _charIdxInFile = charIdxInFile;
+        _lineIdx = lineIdx;
+        _charIdxInLine = charIdxInLine;
     }
 }

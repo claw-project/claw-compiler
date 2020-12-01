@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,6 +54,19 @@ public class Utils
     public static <T> int firstGreater(List<? extends Comparable<? super T>> list, T key)
     {
         int res = Collections.binarySearch(list, key);
+        if (res >= 0)
+        {
+            res += 1;
+        } else
+        {
+            res = -res - 1;
+        }
+        return res;
+    }
+
+    public static int firstGreater(int[] arr, int key)
+    {
+        int res = Arrays.binarySearch(arr, key);
         if (res >= 0)
         {
             res += 1;

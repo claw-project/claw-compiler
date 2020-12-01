@@ -83,7 +83,7 @@ class TestModuleInfo implements clawfc.ModuleInfo
     @Override
     public Collection<String> getUsedModules()
     {
-        return moduleInfo.getUsedModules();
+        return moduleInfo.getUsedModuleNames();
     }
 
     @Override

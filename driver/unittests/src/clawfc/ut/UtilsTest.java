@@ -36,32 +36,32 @@ public class UtilsTest
             AsciiArrayIOStream.LinesInfo lInfo = getLinesInfo("bla");
             assertEquals(lInfo.size(), 3);
             assertEquals(lInfo.numLines(), 1); 
-            assertEquals(lInfo.lineStartByteIdx(0), 0); 
+            assertEquals(lInfo.getLineStartByteIdx(0), 0); 
             assertEquals(lInfo.lineByteLength(0), 3);             
         }
         {
             AsciiArrayIOStream.LinesInfo lInfo = getLinesInfo("bla\n");
             assertEquals(lInfo.size(), 4);
             assertEquals(lInfo.numLines(), 1); 
-            assertEquals(lInfo.lineStartByteIdx(0), 0); 
+            assertEquals(lInfo.getLineStartByteIdx(0), 0); 
             assertEquals(lInfo.lineByteLength(0), 4);             
         }
         {
             AsciiArrayIOStream.LinesInfo lInfo = getLinesInfo("bla\n\n");
             assertEquals(lInfo.size(), 5);
             assertEquals(lInfo.numLines(), 2); 
-            assertEquals(lInfo.lineStartByteIdx(0), 0); 
+            assertEquals(lInfo.getLineStartByteIdx(0), 0); 
             assertEquals(lInfo.lineByteLength(0), 4);   
-            assertEquals(lInfo.lineStartByteIdx(1), 4); 
+            assertEquals(lInfo.getLineStartByteIdx(1), 4); 
             assertEquals(lInfo.lineByteLength(1), 1);           
         }
         {
             AsciiArrayIOStream.LinesInfo lInfo = getLinesInfo("bla\nheh");
             assertEquals(lInfo.size(), 7);
             assertEquals(lInfo.numLines(), 2); 
-            assertEquals(lInfo.lineStartByteIdx(0), 0); 
+            assertEquals(lInfo.getLineStartByteIdx(0), 0); 
             assertEquals(lInfo.lineByteLength(0), 4);   
-            assertEquals(lInfo.lineStartByteIdx(1), 4); 
+            assertEquals(lInfo.getLineStartByteIdx(1), 4); 
             assertEquals(lInfo.lineByteLength(1), 3);           
         }
     }

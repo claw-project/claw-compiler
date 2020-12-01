@@ -4,13 +4,10 @@
  */
 package clawfc.depscan;
 
-import clawfc.depscan.parser.*;
-
-public class FortranSyntaxException
-	extends FortranException
-{    
-	public FortranSyntaxException(String msg, int line, int charPositionInLine)
-	{
-	    super(msg, line, charPositionInLine);
-	}
+public class FortranSyntaxException extends FortranException
+{
+    public FortranSyntaxException(String msg, Integer charIdxInFile, Integer lineIdx, Integer charIdxInLine)
+    {
+        super(msg, charIdxInFile, lineIdx, charIdxInLine);
+    }
 }

@@ -7,9 +7,10 @@ package clawfc.depscan;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
@@ -30,12 +31,25 @@ public class FortranDepParser
     static class Listener extends FortranDepScannerBaseListener
     {
         FortranDepStatementsRecognizer statementsParser;
-        public LinkedHashMap<String, LinkedHashSet<String>> moduleDependencies;
-        public LinkedHashMap<String, LinkedHashSet<String>> programDependencies;
-        public Map<String, Integer> moduleLineStart;
-        public Map<String, Integer> moduleLineEnd;
-        public Map<String, Integer> programLineStart;
-        public Map<String, Integer> programLineEnd;
+
+        class StmtPos
+        {
+            public final int chrStartIdx;
+            public final int chrEndIdx;
+
+            public StmtPos(int chrStartIdx, int chrEndIdx)
+            {
+                this.chrStartIdx = chrStartIdx;
+                this.chrEndIdx = chrEndIdx;
+            }
+        }
+
+        public LinkedHashMap<String, LinkedHashMap<String, StmtPos>> moduleDependencies;
+        public LinkedHashMap<String, LinkedHashMap<String, StmtPos>> programDependencies;
+        public Map<String, Integer> moduleStmtStartChrIdx;
+        public Map<String, Integer> moduleStmtEndChrIdx;
+        public Map<String, Integer> programStmtStartChrIdx;
+        public Map<String, Integer> programStmtEndChrIdx;
 
         public Exception error()
         {
@@ -51,12 +65,12 @@ public class FortranDepParser
         {
             _error = null;
             this.statementsParser = statementsParser;
-            moduleDependencies = new LinkedHashMap<String, LinkedHashSet<String>>();
-            programDependencies = new LinkedHashMap<String, LinkedHashSet<String>>();
-            moduleLineStart = new HashMap<String, Integer>();
-            moduleLineEnd = new HashMap<String, Integer>();
-            programLineStart = new HashMap<String, Integer>();
-            programLineEnd = new HashMap<String, Integer>();
+            moduleDependencies = new LinkedHashMap<String, LinkedHashMap<String, StmtPos>>();
+            programDependencies = new LinkedHashMap<String, LinkedHashMap<String, StmtPos>>();
+            moduleStmtStartChrIdx = new HashMap<String, Integer>();
+            moduleStmtEndChrIdx = new HashMap<String, Integer>();
+            programStmtStartChrIdx = new HashMap<String, Integer>();
+            programStmtEndChrIdx = new HashMap<String, Integer>();
         }
 
         void onError(Exception e)
@@ -70,51 +84,76 @@ public class FortranDepParser
             return token.getLine() - 1;
         }
 
+        int numPrefWhitespaces(String s)
+        {
+            for (int i = 0, n = s.length(); i < n; ++i)
+            {
+                if (!Character.isWhitespace(s.charAt(i)))
+                {
+                    return i;
+                }
+            }
+            return 0;
+        }
+
+        int numSufWhitespaces(String s)
+        {
+            int n = 0;
+            for (int i = s.length() - 1; i >= 0; --i, ++n)
+            {
+                if (!Character.isWhitespace(s.charAt(i)))
+                {
+                    return n;
+                }
+            }
+            return n;
+        }
+
         @Override
         public void exitModule_open_stmt(FortranDepScannerParser.Module_open_stmtContext ctx)
         {
             try
             {
-                currentModuleName = statementsParser.parseModuleOpen(ctx.getText()).moduleOpenName;
+                String txt = ctx.getText();
+                currentModuleName = statementsParser.parseModuleOpen(txt).moduleOpenName;
+                int currentModuleStartChrIdx = Utils.getStartChrIdx(ctx) + numPrefWhitespaces(txt);
+                if (!moduleDependencies.containsKey(currentModuleName))
+                {
+                    moduleDependencies.put(currentModuleName, new LinkedHashMap<String, StmtPos>());
+                    moduleStmtStartChrIdx.put(currentModuleName, currentModuleStartChrIdx);
+                } else
+                {
+                    String errMsg = String.format("Double definition of module \"%s\"", currentModuleName);
+                    throw new FortranSemanticException(errMsg, currentModuleStartChrIdx, null, null);
+                }
             } catch (Exception e)
             {
                 onError(e);
-            }
-            if (!moduleDependencies.containsKey(currentModuleName))
-            {
-                moduleDependencies.put(currentModuleName, new LinkedHashSet<String>());
-                int currentModuleStartLine = getLineNum(ctx.start);
-                moduleLineStart.put(currentModuleName, currentModuleStartLine);
-            } else
-            {
-                String errMsg = String.format("Double definition of module \"%s\"", currentModuleName);
-                int lineNum = ctx.start.getLine();
-                onError(new FortranSemanticException(errMsg, lineNum, 0));
             }
         }
 
         @Override
         public void exitModule_close_stmt(FortranDepScannerParser.Module_close_stmtContext ctx)
         {
-            String moduleName = null;
             try
             {
-                moduleName = statementsParser.parseModuleClose(ctx.getText()).moduleCloseName;
+                final String txt = ctx.getText();
+                final String moduleName = statementsParser.parseModuleClose(txt).moduleCloseName;
+                final int exitModuleStartChrIdx = Utils.getStartChrIdx(ctx);
+                final int exitModuleEndChrIdx = exitModuleStartChrIdx + txt.length() - numSufWhitespaces(txt);
+                if (moduleName.equals(currentModuleName))
+                {
+                    moduleStmtEndChrIdx.put(currentModuleName, exitModuleEndChrIdx);
+                    currentModuleName = null;
+                } else
+                {
+                    String errMsg = String.format("End module name \"%s\" does not match current module name \"%s\"",
+                            moduleName, currentModuleName);
+                    throw new FortranSemanticException(errMsg, exitModuleStartChrIdx, null, null);
+                }
             } catch (Exception e)
             {
                 onError(e);
-            }
-            if (moduleName.equals(currentModuleName))
-            {
-                int currentModuleEndLine = getLineNum(ctx.start);
-                moduleLineEnd.put(currentModuleName, currentModuleEndLine);
-                currentModuleName = null;
-            } else
-            {
-                String errMsg = String.format("End module name \"%s\" does not match current module name \"%s\"",
-                        moduleName, currentModuleName);
-                int lineNum = ctx.start.getLine();
-                onError(new FortranSemanticException(errMsg, lineNum, 0));
             }
         }
 
@@ -123,77 +162,121 @@ public class FortranDepParser
         {
             try
             {
-                currentProgramName = statementsParser.parseProgramOpen(ctx.getText()).programOpenName;
+                String txt = ctx.getText();
+                currentProgramName = statementsParser.parseProgramOpen(txt).programOpenName;
+                final int currentProgramStartIdx = Utils.getStartChrIdx(ctx) + numPrefWhitespaces(txt);
+                if (!programDependencies.containsKey(currentProgramName))
+                {
+                    if (programDependencies.isEmpty())
+                    {
+                        programDependencies.put(currentProgramName, new LinkedHashMap<String, StmtPos>());
+                        programStmtStartChrIdx.put(currentProgramName, currentProgramStartIdx);
+                    } else
+                    {
+                        String firstProgramName = programDependencies.entrySet().iterator().next().getKey();
+                        String errMsg = String.format("Another program \"%s\" already defined before \"%s\"",
+                                firstProgramName, currentProgramName);
+                        throw new FortranSemanticException(errMsg, currentProgramStartIdx, null, null);
+                    }
+                } else
+                {
+                    String errMsg = String.format("Double definition of Program \"%s\"", currentProgramName);
+                    throw new FortranSemanticException(errMsg, currentProgramStartIdx, null, null);
+                }
             } catch (Exception e)
             {
                 onError(e);
-            }
-            if (!programDependencies.containsKey(currentProgramName))
-            {
-                if (programDependencies.isEmpty())
-                {
-                    programDependencies.put(currentProgramName, new LinkedHashSet<String>());
-                    int currentProgramStartLine = getLineNum(ctx.start);
-                    programLineStart.put(currentProgramName, currentProgramStartLine);
-                } else
-                {
-                    String firstProgramName = programDependencies.entrySet().iterator().next().getKey();
-                    String errMsg = String.format("Another program \"%s\" already defined before \"%s\"",
-                            firstProgramName, currentProgramName);
-                    int lineNum = ctx.start.getLine();
-                    onError(new FortranSemanticException(errMsg, lineNum, 0));
-                }
-            } else
-            {
-                String errMsg = String.format("Double definition of Program \"%s\"", currentProgramName);
-                int lineNum = ctx.start.getLine();
-                onError(new FortranSemanticException(errMsg, lineNum, 0));
             }
         }
 
         @Override
         public void exitProgram_close_stmt(FortranDepScannerParser.Program_close_stmtContext ctx)
         {
-            String programName = null;
             try
             {
-                programName = statementsParser.parseProgramClose(ctx.getText()).programCloseName;
+                final String txt = ctx.getText();
+                final String programName = statementsParser.parseProgramClose(txt).programCloseName;
+                final int exitProgramStartChrIdx = Utils.getStartChrIdx(ctx);
+                final int exitProgramEndChrIdx = exitProgramStartChrIdx + txt.length() - numSufWhitespaces(txt);
+                if (programName.equals(currentProgramName))
+                {
+                    programStmtEndChrIdx.put(currentProgramName, exitProgramEndChrIdx);
+                    currentProgramName = null;
+                } else
+                {
+                    String errMsg = String.format("End program name \"%s\" does not match current program name \"%s\"",
+                            programName, currentProgramName);
+                    throw new FortranSemanticException(errMsg, exitProgramStartChrIdx, null, null);
+                }
             } catch (Exception e)
             {
                 onError(e);
-            }
-            if (programName.equals(currentProgramName))
-            {
-                int currentProgramEndLine = getLineNum(ctx.start);
-                programLineEnd.put(currentProgramName, currentProgramEndLine);
-                currentProgramName = null;
-            } else
-            {
-                String errMsg = String.format("End program name \"%s\" does not match current program name \"%s\"",
-                        programName, currentProgramName);
-                int lineNum = ctx.start.getLine();
-                onError(new FortranSemanticException(errMsg, lineNum, 0));
             }
         }
 
         @Override
         public void exitUse_stmt(FortranDepScannerParser.Use_stmtContext ctx)
         {
-            String useModuleName = null;
             try
             {
-                useModuleName = statementsParser.parseUse(ctx.getText()).useModuleName;
+                final String txt = ctx.getText();
+                String useModuleName = statementsParser.parseUse(txt).useModuleName;
+                int numPrefWS = numPrefWhitespaces(txt);
+                int numSufWS = numSufWhitespaces(txt);
+                int startIdx = Utils.getStartChrIdx(ctx);
+                final int useModuleStartChrIdx = startIdx + numPrefWS;
+                final int useModuleEndChrIdx = startIdx + txt.length() - numSufWS;
+                final StmtPos pos = new StmtPos(useModuleStartChrIdx, useModuleEndChrIdx);
+                if (currentModuleName != null)
+                {
+                    moduleDependencies.get(currentModuleName).put(useModuleName, pos);
+                } else if (currentProgramName != null)
+                {
+                    programDependencies.get(currentProgramName).put(useModuleName, pos);
+                }
             } catch (Exception e)
             {
                 onError(e);
             }
-            if (currentModuleName != null)
+        }
+
+        static List<FortranModuleBasicInfo> getModInfo(
+                LinkedHashMap<String, LinkedHashMap<String, StmtPos>> moduleDependencies,
+                Map<String, Integer> moduleStmtStartChrIdx, Map<String, Integer> moduleStmtEndChrIdx)
+        {
+            ArrayList<FortranModuleBasicInfo> modules = new ArrayList<FortranModuleBasicInfo>(
+                    moduleDependencies.size());
+            for (Map.Entry<String, LinkedHashMap<String, StmtPos>> entry : moduleDependencies.entrySet())
             {
-                moduleDependencies.get(currentModuleName).add(useModuleName);
-            } else if (currentProgramName != null)
-            {
-                programDependencies.get(currentProgramName).add(useModuleName);
+                String moduleName = entry.getKey();
+                int startChrIdx = moduleStmtStartChrIdx.get(moduleName);
+                int endChrIdx = moduleStmtEndChrIdx.get(moduleName);
+                FortranStatementBasicPosition modPos = new FortranStatementBasicPosition(moduleName, startChrIdx,
+                        endChrIdx);
+                List<FortranStatementBasicPosition> useModPositions = new ArrayList<FortranStatementBasicPosition>();
+                for (Map.Entry<String, StmtPos> useEntry : entry.getValue().entrySet())
+                {
+                    String useModName = useEntry.getKey();
+                    int useModStartChrIdx = useEntry.getValue().chrStartIdx;
+                    int useModEndChrIdx = useEntry.getValue().chrEndIdx;
+                    useModPositions
+                            .add(new FortranStatementBasicPosition(useModName, useModStartChrIdx, useModEndChrIdx));
+                }
+                useModPositions = Collections.unmodifiableList(useModPositions);
+                modules.add(new FortranModuleBasicInfo(modPos, Collections.unmodifiableList(useModPositions)));
             }
+            return Collections.unmodifiableList(modules);
+        }
+
+        public FortranFileBasicSummary getSummary()
+        {
+            List<FortranModuleBasicInfo> modules = getModInfo(moduleDependencies, moduleStmtStartChrIdx,
+                    moduleStmtEndChrIdx);
+            List<FortranModuleBasicInfo> programs = getModInfo(programDependencies, programStmtStartChrIdx,
+                    programStmtEndChrIdx);
+            FortranFileBasicSummary summary = new FortranFileBasicSummary(modules,
+                    !programs.isEmpty() ? programs.get(0) : null);
+            return summary;
         }
     }
 
@@ -203,8 +286,7 @@ public class FortranDepParser
     ParserErrorListener lexerErrorListener;
     ParserErrorListener parserErrorListener;
 
-    public FortranFileBasicSummary parse(InputStream input, List<Integer> lineBreakSubstLines)
-            throws FortranException, IOException, Exception
+    public FortranFileBasicSummary parse(InputStream input) throws FortranException, IOException, Exception
     {
         lexer.reset();
         parser.reset();
@@ -242,16 +324,7 @@ public class FortranDepParser
         {
             throw listener.error();
         }
-
-        if (lineBreakSubstLines != null && !lineBreakSubstLines.isEmpty())
-        {
-            adjustStartsForLinebreaks(listener.moduleLineStart, lineBreakSubstLines);
-            adjustStartsForLinebreaks(listener.programLineStart, lineBreakSubstLines);
-        }
-
-        FortranFileBasicSummary res = new FortranFileBasicSummary(listener.moduleDependencies, listener.moduleLineStart,
-                listener.moduleLineEnd, listener.programDependencies, listener.programLineStart,
-                listener.programLineEnd);
+        FortranFileBasicSummary res = listener.getSummary();
         return res;
     }
 

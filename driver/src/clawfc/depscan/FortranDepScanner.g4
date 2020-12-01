@@ -26,13 +26,24 @@ PROGRAM_CLOSE_STMT : SEP? END SEP PROGRAM SEP IDENTIFIER SEP?;
 
 USE_STMT : SEP? USE SEP IDENTIFIER SEP? (',' SEP? (RENAME_LIST_STMT | ONLY_LIST_STMT))?;
 
-RENAME_LIST_STMT : RENAME_STMT (',' SEP? RENAME_STMT)*;
+fragment RENAME_LIST_STMT : RENAME_STMT (',' SEP? RENAME_STMT)*;
 fragment RENAME_STMT : IDENTIFIER SEP? '=>' SEP? IDENTIFIER SEP?;
 
-ONLY_LIST_STMT : SEP? ONLY SEP? ':' SEP? ONLY_STMT (',' SEP? ONLY_STMT)*;
+fragment ONLY_LIST_STMT : SEP? ONLY SEP? ':' SEP? ONLY_STMT (',' SEP? ONLY_STMT)*;
 fragment ONLY_STMT : IDENTIFIER SEP? ('=>' SEP? IDENTIFIER SEP?)?;
 
-OTHER_STMT : (~'\n')+ ->skip;
+STRING : ((DQ (~'"' | QUOTED_DQ)* DQ) |
+          (SQ (~'\'' | QUOTED_SQ)* SQ)) ->skip;
+fragment QUOTED_DQ : DQ DQ;
+fragment QUOTED_SQ : SQ SQ;
+
+OTHER : (~[\n;'"])+ ->skip;
+
+EOL : '\n' ->skip;
+SEMICOLON : ';' ->skip;
+
+DQ : '"' ->skip;
+SQ : '\'' ->skip;
 
 fragment USE : U S E;
 fragment MODULE : M O D U L E;
@@ -47,7 +58,6 @@ fragment DIGIT : [0-9];
 
 fragment SEP : WS+;
 fragment WS : [ \t\r];
-EOL : '\n' ->skip;
 
 fragment A : [aA];
 fragment B : [bB];

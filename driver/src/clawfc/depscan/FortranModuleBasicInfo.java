@@ -4,90 +4,32 @@
  */
 package clawfc.depscan;
 
-import java.util.Collection;
 import java.util.List;
 
 public class FortranModuleBasicInfo
 {
-    private final clawfc.depscan.serial.FortranModuleBasicInfo _data;
-
-    public clawfc.depscan.serial.FortranModuleBasicInfo data()
-    {
-        return _data;
-    }
+    final FortranStatementBasicPosition _module;
+    final List<FortranStatementBasicPosition> _useModules;
 
     public String getName()
     {
-        return _data.getName();
+        return getModule().getName();
     }
 
-    // WARNING!!! startLineNum is the number of the line AFTER "module <name>"
-    // statement
-    public long getStartLineNum()
+    public FortranStatementBasicPosition getModule()
     {
-        return _data.getStartLineNum();
+        return _module;
     }
 
-    // WARNING!!! endLineNum is the number of the line where "end module <name>"
-    // statement is located
-    public long getEndLineNum()
+    public List<FortranStatementBasicPosition> getUseModules()
     {
-        return _data.getEndLineNum();
+        return _useModules;
     }
 
-    public List<String> getUsedModules()
+    public FortranModuleBasicInfo(FortranStatementBasicPosition module, List<FortranStatementBasicPosition> useModules)
     {
-        return _data.getUsedModules().getName();
-    }
-
-    public FortranModuleBasicInfo(clawfc.depscan.serial.FortranModuleBasicInfo data)
-    {
-        _data = data;
-    }
-
-    public FortranModuleBasicInfo(String name, long startLineNum, long endLineNum, Collection<String> usedModuleNames)
-    {
-        _data = new clawfc.depscan.serial.FortranModuleBasicInfo();
-        assign(_data, name, startLineNum, endLineNum, usedModuleNames);
-    }
-
-    public static void assign(clawfc.depscan.serial.FortranModuleBasicInfo info, String name, long startLineNum,
-            long endLineNum, Collection<String> usedModuleNames)
-    {
-        info.setName(name);
-        info.setStartLineNum(startLineNum);
-        info.setEndLineNum(endLineNum);
-        info.setUsedModules(new clawfc.depscan.serial.FortranModuleBasicInfo.UsedModules());
-        info.getUsedModules().getName().addAll(usedModuleNames);
-    }
-
-    public static void assign(clawfc.depscan.serial.FortranModuleBasicInfo info,
-            clawfc.depscan.serial.FortranModuleBasicInfo other)
-    {
-        assign(info, other.getName(), other.getStartLineNum(), other.getEndLineNum(), other.getUsedModules().getName());
-    }
-
-    public static boolean equals(clawfc.depscan.serial.FortranModuleBasicInfo info,
-            clawfc.depscan.serial.FortranModuleBasicInfo other)
-    {
-
-        if (!info.getName().equals(other.getName()))
-        {
-            return false;
-        }
-        if (info.getStartLineNum() != other.getStartLineNum())
-        {
-            return false;
-        }
-        if (info.getEndLineNum() != other.getEndLineNum())
-        {
-            return false;
-        }
-        if (!info.getUsedModules().getName().equals(other.getUsedModules().getName()))
-        {
-            return false;
-        }
-        return true;
+        _module = module;
+        _useModules = useModules;
     }
 
     @Override
@@ -106,6 +48,14 @@ public class FortranModuleBasicInfo
             return false;
         }
         FortranModuleBasicInfo other = (FortranModuleBasicInfo) obj;
-        return equals(this._data, other._data);
+        if (!getModule().equals(other.getModule()))
+        {
+            return false;
+        }
+        if (!getUseModules().equals(other.getUseModules()))
+        {
+            return false;
+        }
+        return true;
     }
 }

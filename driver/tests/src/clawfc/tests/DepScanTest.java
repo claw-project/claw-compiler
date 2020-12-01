@@ -57,6 +57,15 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         }
     }
 
+    static FortranFileSummary loadInfo(String txt) throws Exception
+    {
+        FortranFileSummaryDeserializer deserializer = new FortranFileSummaryDeserializer(true);
+        try (InputStream inStrm = clawfc.depscan.Utils.toInputStream(txt))
+        {
+            return deserializer.deserialize(inStrm);
+        }
+    }
+
     static void addPath(Path infoPath, Path src) throws Exception
     {
         FortranFileSummary info = loadInfo(infoPath);
@@ -168,7 +177,7 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         {
             final String refTxt = refTemplate.replace("{i}", String.valueOf(i));
             final Path resFilepath = INT_DIR.resolve(String.format("input/%s.f90.fif", i));
-            assertTrue(txtFileEqualsTxt(resFilepath, refTxt));
+            assertEquals(loadInfo(refTxt), loadInfo(resFilepath));
         }
     }
 

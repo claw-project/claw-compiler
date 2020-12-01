@@ -7,10 +7,9 @@ package clawfc.ut;
 import java.util.Arrays;
 import java.util.List;
 
-import clawfc.depscan.FilterUtils;
-import clawfc.depscan.FilterUtils.Op;
-import clawfc.depscan.FilterUtils.OpType;
-import clawfc.depscan.FilteredContent;
+import clawfc.depscan.FilteredContentSequence;
+import clawfc.depscan.FilteredContentSequence.Op;
+import clawfc.depscan.FilteredContentSequence.OpType;
 import clawfc.depscan.InsertedFilteredContent;
 import clawfc.depscan.RemovedFilteredContent;
 import junit.framework.TestCase;
@@ -100,33 +99,33 @@ public class FilterUtilsTest extends TestCase
     {
         {
             List<Op> emptySeq = Arrays.asList();
-            List<FilteredContent> contents = FilterUtils.decomposeIntoSeqs(emptySeq);
-            assertEquals(null, FilterUtils.getOriginalChrIdx(contents, -1));
+            FilteredContentSequence contents = FilteredContentSequence.decomposeIntoSeqs(emptySeq);
+            assertEquals(null, contents.getOriginalChrIdx(-1));
             for (int i = 0; i < 10; ++i)
             {
-                assertEquals(Integer.valueOf(i), FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(Integer.valueOf(i), contents.getOriginalChrIdx(i));
             }
         }
         {
             List<Op> seq = Arrays.asList(new Op(OpType.Add, 0, "01"));
-            List<FilteredContent> contents = FilterUtils.decomposeIntoSeqs(seq);
-            assertEquals(null, FilterUtils.getOriginalChrIdx(contents, -1));
+            FilteredContentSequence contents = FilteredContentSequence.decomposeIntoSeqs(seq);
+            assertEquals(null, contents.getOriginalChrIdx(-1));
             for (int i = 0; i < 2; ++i)
             {
-                assertEquals(null, FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(null, contents.getOriginalChrIdx(i));
             }
             for (int i = 3; i < 10; ++i)
             {
-                assertEquals(Integer.valueOf(i - 2), FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(Integer.valueOf(i - 2), contents.getOriginalChrIdx(i));
             }
         }
         {
             List<Op> seq = Arrays.asList(new Op(OpType.Remove, 0, "01"));
-            List<FilteredContent> contents = FilterUtils.decomposeIntoSeqs(seq);
-            assertEquals(null, FilterUtils.getOriginalChrIdx(contents, -1));
+            FilteredContentSequence contents = FilteredContentSequence.decomposeIntoSeqs(seq);
+            assertEquals(null, contents.getOriginalChrIdx(-1));
             for (int i = 0; i < 10; ++i)
             {
-                assertEquals(Integer.valueOf(i + 2), FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(Integer.valueOf(i + 2), contents.getOriginalChrIdx(i));
             }
         }
         {
@@ -137,15 +136,15 @@ public class FilterUtilsTest extends TestCase
 //          after reversal: __2345
 
             List<Op> seq = Arrays.asList(new Op(OpType.Add, 0, "aa"), new Op(OpType.Remove, 0, "rr"));
-            List<FilteredContent> contents = FilterUtils.decomposeIntoSeqs(seq);
-            assertEquals(null, FilterUtils.getOriginalChrIdx(contents, -1));
+            FilteredContentSequence contents = FilteredContentSequence.decomposeIntoSeqs(seq);
+            assertEquals(null, contents.getOriginalChrIdx(-1));
             for (int i = 0; i < 2; ++i)
             {
-                assertEquals(null, FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(null, contents.getOriginalChrIdx(i));
             }
             for (int i = 2; i < 10; ++i)
             {
-                assertEquals(Integer.valueOf(i), FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(Integer.valueOf(i), contents.getOriginalChrIdx(i));
             }
         }
         {
@@ -156,27 +155,27 @@ public class FilterUtilsTest extends TestCase
 //          after reversal: __2367__
             List<Op> seq = Arrays.asList(new Op(OpType.Remove, 0, "rr"), new Op(OpType.Remove, 4, "rr"),
                     new Op(OpType.Add, 0, "aa"), new Op(OpType.Add, 8, "aa"));
-            List<FilteredContent> contents = FilterUtils.decomposeIntoSeqs(seq);
-            assertEquals(null, FilterUtils.getOriginalChrIdx(contents, -1));
+            FilteredContentSequence contents = FilteredContentSequence.decomposeIntoSeqs(seq);
+            assertEquals(null, contents.getOriginalChrIdx(-1));
             for (int i = 0; i < 2; ++i)
             {
-                assertEquals(null, FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(null, contents.getOriginalChrIdx(i));
             }
             for (int i = 2; i < 3; ++i)
             {
-                assertEquals(Integer.valueOf(i), FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(Integer.valueOf(i), contents.getOriginalChrIdx(i));
             }
             for (int i = 4; i < 5; ++i)
             {
-                assertEquals(Integer.valueOf(i + 2), FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(Integer.valueOf(i + 2), contents.getOriginalChrIdx(i));
             }
             for (int i = 6; i < 7; ++i)
             {
-                assertEquals(null, FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(null, contents.getOriginalChrIdx(i));
             }
             for (int i = 8; i < 10; ++i)
             {
-                assertEquals(Integer.valueOf(i), FilterUtils.getOriginalChrIdx(contents, i));
+                assertEquals(Integer.valueOf(i), contents.getOriginalChrIdx(i));
             }
         }
     }

@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <fortran_file_summary>
-    <module start_char_pos="0" end_char_pos="51" uses_claw="true" name="mod21" start_line_num="0" end_line_num="3">
+    <module uses_claw="true">
+        <info start_line_idx="0" end_line_idx="4" name="mod21" start_char_idx="0" end_char_idx="50"/>
         <used_modules>
-            <name>mod13</name>
+            <use start_line_idx="1" end_line_idx="2" name="mod13" start_char_idx="17" end_char_idx="26"/>
         </used_modules>
     </module>
-    <module start_char_pos="52" end_char_pos="82" uses_claw="false" name="mod22" start_line_num="5" end_line_num="6">
+    <module uses_claw="false">
+        <info start_line_idx="5" end_line_idx="7" name="mod22" start_char_idx="52" end_char_idx="81"/>
         <used_modules/>
     </module>
-    <module start_char_pos="83" end_char_pos="127" uses_claw="false" name="mod23" start_line_num="8" end_line_num="10">
+    <module uses_claw="false">
+        <info start_line_idx="8" end_line_idx="11" name="mod23" start_char_idx="83" end_char_idx="126"/>
         <used_modules>
-            <name>mod22</name>
+            <use start_line_idx="9" end_line_idx="10" name="mod22" start_char_idx="100" end_char_idx="109"/>
         </used_modules>
     </module>
-    <program start_char_pos="128" end_char_pos="182" uses_claw="false" name="p2" start_line_num="12" end_line_num="15">
+    <program uses_claw="false">
+        <info start_line_idx="12" end_line_idx="16" name="p2" start_char_idx="128" end_char_idx="181"/>
         <used_modules>
-            <name>mod22</name>
-            <name>mod23</name>
+            <use start_line_idx="13" end_line_idx="14" name="mod22" start_char_idx="143" end_char_idx="152"/>
+            <use start_line_idx="14" end_line_idx="15" name="mod23" start_char_idx="157" end_char_idx="166"/>
         </used_modules>
     </program>
 </fortran_file_summary>

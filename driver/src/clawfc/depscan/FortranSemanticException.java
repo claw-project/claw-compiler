@@ -6,9 +6,9 @@ package clawfc.depscan;
 
 public class FortranSemanticException extends FortranException
 {
-    public FortranSemanticException(String msg, int line, int charPositionInLine)
+    public FortranSemanticException(String msg, Integer charIdxInFile, Integer lineIdx, Integer charIdxInLine)
     {
-        super(msg, line, charPositionInLine);
+        super(msg, charIdxInFile, lineIdx, charIdxInLine);
     }
 
     public FortranSemanticException(String msg)

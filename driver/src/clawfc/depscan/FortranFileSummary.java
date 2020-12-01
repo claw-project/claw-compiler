@@ -6,12 +6,8 @@ package clawfc.depscan;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import clawfc.utils.AsciiArrayIOStream;
 
 public class FortranFileSummary
 {
@@ -51,37 +47,6 @@ public class FortranFileSummary
         _data.setFilePath(strPath);
     }
 
-    static class HasCLAW
-    {
-        BitSet _lineHasCLAW;
-
-        public HasCLAW(int numLines, FortranFileCLAWLinesInfo clawLinesInfo)
-        {
-            _lineHasCLAW = new BitSet(numLines);
-            for (Integer i : clawLinesInfo.clawDirectives)
-            {
-                _lineHasCLAW.set(i);
-            }
-            for (Integer i : clawLinesInfo.clawGuards)
-            {
-                _lineHasCLAW.set(i);
-            }
-        }
-
-        public boolean run(int startLine, int endLine)
-        {
-            for (int i = startLine; i <= endLine; ++i)
-            {
-                if (_lineHasCLAW.get(i))
-                {
-                    return true;
-                }
-            }
-            return false;
-
-        }
-    }
-
     public FortranFileSummary(clawfc.depscan.serial.FortranFileSummary data)
     {
         _data = data;
@@ -102,35 +67,26 @@ public class FortranFileSummary
         }
     }
 
-    public FortranFileSummary(FortranFileBasicSummary in, AsciiArrayIOStream.LinesInfo linesInfo,
-            FortranFileCLAWLinesInfo clawLinesInfo)
-    {
-        _data = new clawfc.depscan.serial.FortranFileSummary();
-        HasCLAW hasCLAW = new HasCLAW(linesInfo.numLines(), clawLinesInfo);
-        _modules = new ArrayList<FortranModuleInfo>(in.modules.size());
-        for (FortranModuleBasicInfo bInfo : in.modules)
-        {
-            int startPos = linesInfo.lineStartByteIdx((int) bInfo.getStartLineNum());
-            int endPos = linesInfo.lineEndByteIdx((int) bInfo.getEndLineNum());
-            boolean usesCLAW = hasCLAW.run((int) bInfo.getStartLineNum(), (int) bInfo.getEndLineNum());
-            FortranModuleInfo info = new FortranModuleInfo(bInfo, startPos, endPos, usesCLAW);
-            _modules.add(info);
-            _data.getModule().add(info.data());
-        }
-        if (in.program == null)
-        {
-            _program = null;
-        } else
-        {
-            FortranModuleBasicInfo info = in.program;
-            int startPos = linesInfo.lineStartByteIdx((int) info.getStartLineNum());
-            int endPos = linesInfo.lineEndByteIdx((int) info.getEndLineNum());
-            boolean usesCLAW = hasCLAW.run((int) info.getStartLineNum(), (int) info.getEndLineNum());
-            _program = new FortranModuleInfo(info, startPos, endPos, usesCLAW);
-            _data.setProgram(_program._data);
-        }
-        _filePath = null;
-    }
+    /*
+     * public FortranFileSummary(FortranFileBasicSummary in,
+     * AsciiArrayIOStream.LinesInfo linesInfo, FortranFileCLAWLinesInfo
+     * clawLinesInfo) { _data = new clawfc.depscan.serial.FortranFileSummary();
+     * HasCLAW hasCLAW = new HasCLAW(linesInfo.numLines(), clawLinesInfo); _modules
+     * = new ArrayList<FortranModuleInfo>(in.modules.size()); for
+     * (FortranModuleBasicInfo bInfo : in.modules) { int startPos =
+     * linesInfo.lineStartByteIdx((int) bInfo.getStartLineIdx()); int endPos =
+     * linesInfo.lineEndByteIdx((int) bInfo.getEndLineIdx()); boolean usesCLAW =
+     * hasCLAW.run((int) bInfo.getStartLineIdx(), (int) bInfo.getEndLineIdx());
+     * FortranModuleInfo info = new FortranModuleInfo(bInfo, startPos, endPos,
+     * usesCLAW); _modules.add(info); _data.getModule().add(info.data()); } if
+     * (in.program == null) { _program = null; } else { FortranModuleBasicInfo info
+     * = in.program; int startPos = linesInfo.lineStartByteIdx((int)
+     * info.getStartLineIdx()); int endPos = linesInfo.lineEndByteIdx((int)
+     * info.getEndLineIdx()); boolean usesCLAW = hasCLAW.run((int)
+     * info.getStartLineIdx(), (int) info.getEndLineIdx()); _program = new
+     * FortranModuleInfo(info, startPos, endPos, usesCLAW);
+     * _data.setProgram(_program._data); } _filePath = null; }
+     */
 
     public FortranFileSummary(List<FortranModuleInfo> modules, FortranModuleInfo program)
     {
