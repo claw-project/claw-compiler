@@ -22,7 +22,10 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import clawfc.depscan.FilteredContentSequence;
 import clawfc.depscan.FortranLineBreaksFilter;
+import clawfc.depscan.FortranLineBreaksFinder;
+import clawfc.depscan.FortranLineBreaksFinder.LineBreakInfo;
 import clawfc.depscan.FortranSyntaxException;
+import clawfc.depscan.Utils;
 import clawfc.depscan.parser.FortranLineBreaksFilterBaseListener;
 import clawfc.depscan.parser.FortranLineBreaksFilterLexer;
 import clawfc.depscan.parser.FortranLineBreaksFilterParser;
@@ -242,5 +245,24 @@ public class FortranLineBreaksFilterTest extends TestCase
             String expectedRes = "\n" + "\n" + "\n" + "module x\n" + "end module x\n";
             verifyFilter(in, expectedRes, true, Arrays.asList(0, 1, 2));
         }
+    }
+
+    void verifyLineBreaksFinder(String txt, List<FortranLineBreaksFinder.LineBreakInfo> ref)
+            throws IOException, FortranSyntaxException
+    {
+        FortranLineBreaksFinder finder = new FortranLineBreaksFinder();
+        InputStream txtStrm = Utils.toInputStream(txt);
+        List<LineBreakInfo> res = finder.run(txtStrm);
+        assertEquals(ref, res);
+    }
+
+    public void testLineBreaksFinder() throws Exception
+    {
+        verifyLineBreaksFinder("", Arrays.asList());
+        verifyLineBreaksFinder("bla", Arrays.asList());
+        verifyLineBreaksFinder("unbreak&\n  \n\nable", Arrays.asList(new LineBreakInfo(7, 13, false)));
+        verifyLineBreaksFinder("unbreak&\n  \n&able", Arrays.asList(new LineBreakInfo(7, 13, true)));
+        verifyLineBreaksFinder("un&\n&break&\nable",
+                Arrays.asList(new LineBreakInfo(2, 5, true), new LineBreakInfo(10, 12, false)));
     }
 }
