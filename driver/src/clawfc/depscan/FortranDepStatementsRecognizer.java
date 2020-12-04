@@ -4,16 +4,12 @@
  */
 package clawfc.depscan;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 
 import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ConsoleErrorListener;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -138,7 +134,7 @@ public class FortranDepStatementsRecognizer
 
     public FortranDepStatementsRecognizer() throws IOException
     {
-        lexer = new FortranDepStatementsRecognizerLexer(toCharStream(""));
+        lexer = new FortranDepStatementsRecognizerLexer(Utils.toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);
@@ -154,8 +150,7 @@ public class FortranDepStatementsRecognizer
         parser.reset();
         lexerErrorListener.reset();
         parserErrorListener.reset();
-        InputStream inStrm = new ByteArrayInputStream(input.getBytes(StandardCharsets.US_ASCII));
-        CharStream chrStrm = CharStreams.fromStream(inStrm, StandardCharsets.US_ASCII);
+        CharStream chrStrm = Utils.toCharStream(input);
         lexer.setInputStream(chrStrm);
         CommonTokenStream tokStrm = new CommonTokenStream(lexer);
         parser.setInputStream(tokStrm);
@@ -214,12 +209,5 @@ public class FortranDepStatementsRecognizer
         return run(input, () -> {
             return parser.use_stmt();
         });
-    }
-
-    static CharStream toCharStream(String str) throws IOException
-    {
-        InputStream inStrm = new ByteArrayInputStream(str.getBytes(StandardCharsets.US_ASCII));
-        CharStream chrStrm = CharStreams.fromStream(inStrm, StandardCharsets.US_ASCII);
-        return chrStrm;
     }
 }
