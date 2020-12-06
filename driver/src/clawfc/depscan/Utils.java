@@ -8,7 +8,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,5 +77,18 @@ public class Utils
             res = -res - 1;
         }
         return res;
+    }
+
+    public static Path findFile(String includeStr, Collection<Path> searchPath)
+    {
+        for (Path dir : searchPath)
+        {
+            Path testPath = dir.resolve(includeStr);
+            if (clawfc.Utils.fileExists(testPath))
+            {
+                return testPath;
+            }
+        }
+        return null;
     }
 }

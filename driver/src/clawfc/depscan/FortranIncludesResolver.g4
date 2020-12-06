@@ -4,24 +4,23 @@
  * @author Mikhail Zhigun
  * @copyright 2020, MeteoSwiss
  */
-grammar FortranIncludeChecker;
+grammar FortranIncludesResolver;
 
-root : (include_line | other_line)* EOF;
+root : (include_line)* EOF;
 
 include_line : INCLUDE_STATEMENT_LINE;
-other_line : OTHER_LINE;
 
-INCLUDE_STATEMENT_LINE : SEP? INCLUDE SEP STRING SEP? EOL;
-OTHER_LINE : (~'\n')* EOL;
+INCLUDE_STATEMENT_LINE : SEP? INCLUDE SEP INCLUDE_STRING SEP? EOL;
+OTHER_LINE : (~'\n')* EOL ->skip;
 
-fragment STRING : (DQ (~'"' | QUOTED_DQ)* DQ)
+fragment INCLUDE_STRING : (DQ (~'"' | QUOTED_DQ)* DQ)
                 | (SQ (~'\'' | QUOTED_SQ)* SQ);
 
 fragment SEP : WS+;
 fragment WS : [ \t\r];
+fragment EOL : '\n';
 fragment QUOTED_DQ : DQ DQ;
 fragment QUOTED_SQ : SQ SQ;
-fragment EOL : '\n';
 fragment DQ : '"';
 fragment SQ : '\'';
 fragment INCLUDE : I N C L U D E;

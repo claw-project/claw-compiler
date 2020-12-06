@@ -128,6 +128,17 @@ public class FilteredContentSequence
         return idx;
     }
 
+    /**
+     * Reverses the rearrangement effects of the successively applied sequence of
+     * filters
+     */
+    public FortranStatementBasicPosition getOriginal(FortranStatementBasicPosition basicPos)
+    {
+        int newStartChrIdx = getOriginalChrIdx(basicPos.getStartCharIdx());
+        int newEndChrIdx = getOriginalChrIdx(basicPos.getEndCharIdx() - 1) + 1;// Index is not inclusive
+        return new FortranStatementBasicPosition(basicPos.getName(), newStartChrIdx, newEndChrIdx);
+    }
+
     public String partialReverse(String filteredStr, char fillChr)
     {
         Map<Integer, Character> res = new LinkedHashMap<Integer, Character>();

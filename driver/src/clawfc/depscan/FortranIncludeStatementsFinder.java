@@ -6,8 +6,9 @@ package clawfc.depscan;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 
 import org.antlr.v4.runtime.CharStream;
@@ -22,35 +23,43 @@ import clawfc.depscan.parser.FortranIncludesResolverLexer;
 import clawfc.depscan.parser.FortranIncludesResolverParser;
 
 /**
- * Detects Fortran include statements
+ * Finds Fortran include statements
  */
-public class FortranIncludeChecker
+public class FortranIncludeStatementsFinder
 {
     static class Listener extends FortranIncludesResolverBaseListener
     {
-        OutputStream outStrm;
-        IOException _error;
-        boolean _includeFound;
+        Exception _error;
+        List<FortranStatementBasicPosition> includes;
+        FortranIncludeStatementRecognizer recognizer;
 
-        public boolean includeFound()
-        {
-            return _includeFound;
-        }
-
-        public IOException error()
+        public Exception error()
         {
             return _error;
         }
 
-        public Listener()
+        public Listener() throws IOException
         {
             _error = null;
+            includes = new ArrayList<FortranStatementBasicPosition>();
+            recognizer = new FortranIncludeStatementRecognizer();
         }
 
         @Override
         public void exitInclude_line(FortranIncludesResolverParser.Include_lineContext ctx)
         {
-            _includeFound = true;
+            String txt = ctx.getText();
+            final int startChrIdx = Utils.getStartChrIdx(ctx);
+            final int endChrIdx = startChrIdx + txt.length();
+            try
+            {
+                String filePathStr = recognizer.run(txt);
+                includes.add(new FortranStatementBasicPosition(filePathStr, startChrIdx, endChrIdx));
+            } catch (Exception e)
+            {
+                _error = e;
+                throw new CancellationException("FortranIncludeStatementRecognizer failed");
+            }
         }
     }
 
@@ -63,7 +72,7 @@ public class FortranIncludeChecker
     /**
      * @throws IOException
      */
-    public FortranIncludeChecker() throws IOException
+    public FortranIncludeStatementsFinder() throws IOException
     {
         lexer = new FortranIncludesResolverLexer(Utils.toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
@@ -77,8 +86,9 @@ public class FortranIncludeChecker
 
     /**
      * @return true if at least one include statement found
+     * @throws Exception
      */
-    public boolean run(InputStream input) throws IOException, FortranSyntaxException
+    public List<FortranStatementBasicPosition> run(InputStream input) throws Exception
     {
         lexer.reset();
         parser.reset();
@@ -116,6 +126,6 @@ public class FortranIncludeChecker
         {
             throw listener.error();
         }
-        return listener.includeFound();
+        return listener.includes;
     }
 }

@@ -13,6 +13,6 @@ public class Main
         TestsRunner.main(args, UtilsTest.class, FortranCLAWScannerTest.class, FortranCLAWDetectorTest.class,
                 FortranCommentsFilterTest.class, FortranDepStatementsRecognizerTest.class,
                 FortranLineBreaksFilterTest.class, FortranDepScannerTest.class, FortranBuildInfoTest.class,
-                BuildTest.class, FortranIncludeCheckerTest.class, FilterUtilsTest.class);
+                BuildTest.class, FortranIncludeTest.class, FilterUtilsTest.class);
     }
 }

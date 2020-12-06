@@ -4,6 +4,8 @@
  */
 package clawfc.depscan;
 
+import static clawfc.depscan.FortranStatementPosition.createPosition;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -154,20 +156,10 @@ public class FortranDepScanner
             final AsciiArrayIOStream.LinesInfo linesInfo)
     {
         List<clawfc.depscan.FortranStatementPosition> useModules = basicInfo.getUseModules().stream()
-                .map((x) -> createPos(x, linesInfo)).collect(Collectors.toList());
-        clawfc.depscan.FortranStatementPosition modPos = createPos(basicInfo.getModule(), linesInfo);
+                .map((x) -> createPosition(x, linesInfo)).collect(Collectors.toList());
+        clawfc.depscan.FortranStatementPosition modPos = createPosition(basicInfo.getModule(), linesInfo);
         boolean usesClaw = modUsesClaw.contains(basicInfo.getModule().getName());
         return new FortranModuleInfo(modPos, useModules, usesClaw);
-    }
-
-    clawfc.depscan.FortranStatementPosition createPos(FortranStatementBasicPosition basicPos,
-            AsciiArrayIOStream.LinesInfo linesInfo)
-    {
-        int startLineIdx = linesInfo.getLineIdx(basicPos.getStartCharIdx());
-        int endLineIdx = linesInfo.getLineIdx(basicPos.getEndCharIdx());
-        ++endLineIdx;// EndCharIdx is always on the same line as the last symbol
-        return new clawfc.depscan.FortranStatementPosition(basicPos.getName(), basicPos.getStartCharIdx(),
-                basicPos.getEndCharIdx(), startLineIdx, endLineIdx);
     }
 
     Set<String> detectClaw(ByteArrayIOStream inStrm, FortranFileBasicSummary summary)
@@ -196,14 +188,6 @@ public class FortranDepScanner
                 .run(inStrm.getAsInputStreamUnsafe(info.getModule().getStartCharIdx(), info.getModule().length()));
     }
 
-    static FortranStatementBasicPosition restoreOriginalCharPositions(FilteredContentSequence fSeq,
-            FortranStatementBasicPosition info)
-    {
-        int newStartChrIdx = fSeq.getOriginalChrIdx(info.getStartCharIdx());
-        int newEndChrIdx = fSeq.getOriginalChrIdx(info.getEndCharIdx() - 1) + 1;// Index is not inclusive
-        return new FortranStatementBasicPosition(info.getName(), newStartChrIdx, newEndChrIdx);
-    }
-
     static FortranModuleBasicInfo restoreOriginalCharPositions(final FilteredContentSequence fSeq,
             FortranModuleBasicInfo info)
     {
@@ -211,9 +195,9 @@ public class FortranDepScanner
         {
             return null;
         }
-        FortranStatementBasicPosition newMod = restoreOriginalCharPositions(fSeq, info.getModule());
+        FortranStatementBasicPosition newMod = fSeq.getOriginal(info.getModule());
         List<FortranStatementBasicPosition> newUseModules = info.getUseModules().stream()
-                .map((x) -> restoreOriginalCharPositions(fSeq, x)).collect(Collectors.toList());
+                .map((x) -> fSeq.getOriginal(x)).collect(Collectors.toList());
         return new FortranModuleBasicInfo(newMod, Collections.unmodifiableList(newUseModules));
     }
 

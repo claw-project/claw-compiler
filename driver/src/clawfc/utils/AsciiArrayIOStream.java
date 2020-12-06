@@ -4,6 +4,12 @@
  */
 package clawfc.utils;
 
+import static clawfc.Utils.copy;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,13 +55,28 @@ public class AsciiArrayIOStream extends ByteArrayIOStream
 
         public Integer getLineIdx(int charIdx)
         {
+            if (charIdx < 0)
+            {
+                return null;
+            } else if (charIdx >= size())
+            {
+                return size();
+            } else
+            {
+                int lineIdx = Utils.firstGreater(_lineStartCharIdx, charIdx) - 1;
+                return lineIdx;
+            }
+        }
+
+        public Integer getLineChrOffset(int charIdx)
+        {
             if (charIdx < 0 || charIdx >= size())
             {
                 return null;
             } else
             {
                 int lineIdx = Utils.firstGreater(_lineStartCharIdx, charIdx) - 1;
-                return lineIdx;
+                return charIdx - _lineStartCharIdx[lineIdx];
             }
         }
 
@@ -92,6 +113,32 @@ public class AsciiArrayIOStream extends ByteArrayIOStream
         }
     }
 
+    public static LinesInfo getLinesInfo(Path filePath) throws IOException
+    {
+        try (InputStream inStrm = Files.newInputStream(filePath))
+        {
+            return getLinesInfo(inStrm, false);
+        }
+    }
+
+    public static LinesInfo getLinesInfo(InputStream inStrm) throws IOException
+    {
+        return getLinesInfo(inStrm, true);
+    }
+
+    public static LinesInfo getLinesInfo(InputStream inStrm, boolean resetInputStream) throws IOException
+    {
+        LinesInfo linesInfo = null;
+        if (resetInputStream)
+        {
+            inStrm.reset();
+        }
+        AsciiArrayIOStream asciiStrm = new AsciiArrayIOStream();
+        copy(inStrm, asciiStrm);
+        linesInfo = asciiStrm.getLinesInfo();
+        return linesInfo;
+    }
+
     public LinesInfo getLinesInfo()
     {
         return new LinesInfo(this.buf, this.count);
@@ -105,5 +152,10 @@ public class AsciiArrayIOStream extends ByteArrayIOStream
     public AsciiArrayIOStream(int size)
     {
         super(size);
+    }
+
+    public AsciiArrayIOStream(Path filePath) throws IOException
+    {
+        super(filePath);
     }
 }

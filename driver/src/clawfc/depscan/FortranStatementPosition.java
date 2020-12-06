@@ -6,6 +6,8 @@ package clawfc.depscan;
 
 import static java.lang.Math.toIntExact;
 
+import clawfc.utils.AsciiArrayIOStream;
+
 public class FortranStatementPosition
 {
     clawfc.depscan.serial.FortranStatementPosition data;
@@ -102,5 +104,15 @@ public class FortranStatementPosition
             return false;
         }
         return true;
+    }
+
+    public static clawfc.depscan.FortranStatementPosition createPosition(FortranStatementBasicPosition basicPos,
+            AsciiArrayIOStream.LinesInfo linesInfo)
+    {
+        int startLineIdx = linesInfo.getLineIdx(basicPos.getStartCharIdx());
+        int endLineIdx = linesInfo.getLineIdx(basicPos.getEndCharIdx());
+        ++endLineIdx;// EndCharIdx is always on the same line as the last symbol
+        return new clawfc.depscan.FortranStatementPosition(basicPos.getName(), basicPos.getStartCharIdx(),
+                basicPos.getEndCharIdx(), startLineIdx, endLineIdx);
     }
 }

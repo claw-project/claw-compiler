@@ -73,6 +73,22 @@ public class Utils
         }
     }
 
+    public static void copy(InputStream in, OutputStream out, byte[] buffer, int numBytes) throws IOException
+    {
+        while (numBytes > 0)
+        {
+            int len = in.read(buffer, 0, Integer.min(buffer.length, numBytes));
+            if (len != -1)
+            {
+                out.write(buffer, 0, len);
+            } else
+            {
+                return;
+            }
+            numBytes -= len;
+        }
+    }
+
     public static void dumpIntoFile(Path filename, InputStream in) throws IOException
     {
         try (OutputStream out = Files.newOutputStream(filename))
