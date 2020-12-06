@@ -4,11 +4,14 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.copy;
 import static clawfc.depscan.FortranStatementPosition.createPosition;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -24,17 +27,26 @@ public class FortranDepScanner
     FortranLineBreaksFilter lineBreaksFilter;
     FortranDepParser parser;
     FortranCLAWScanner clawScanner;
+    FortranIncludeChecker incChecker;
+    FortranIncludesResolver incResolver;
+
+    public static class ContainsIncludesException extends Exception
+    {
+    }
 
     public FortranDepScanner() throws Exception
     {
         commentsFilter = new FortranCommentsFilter();
         lineBreaksFilter = new FortranLineBreaksFilter();
+        incChecker = new FortranIncludeChecker();
         parser = new FortranDepParser();
         clawScanner = new FortranCLAWScanner();
+        incResolver = new FortranIncludesResolver();
     }
 
     public FortranFileBasicSummary basicScan(InputStream input, OutputStream outWithoutComments,
-            OutputStream outWithoutLineBreaks) throws FortranException, IOException, Exception
+            OutputStream outWithoutLineBreaks)
+            throws FortranException, IOException, Exception, ContainsIncludesException
     {
         FilteredContentSequence fSeq = new FilteredContentSequence();
         try
@@ -47,6 +59,10 @@ public class FortranDepScanner
             FilteredContentSequence fLineBreaks = runLineBreaksFilter(inputWithoutComments, inputWithoutLineBreaks);
             dumpStream(inputWithoutLineBreaks, outWithoutLineBreaks);
             fSeq.add(fLineBreaks);
+            if (incChecker.run(inputWithoutLineBreaks.getAsInputStreamUnsafe()))
+            {
+                throw new ContainsIncludesException();
+            }
             FortranFileBasicSummary res = runParser(inputWithoutLineBreaks);
             res = restoreOriginalCharPositions(fSeq, res);
             return res;
@@ -60,19 +76,46 @@ public class FortranDepScanner
         }
     }
 
-    public FortranFileBasicSummary basicScan(InputStream input) throws FortranException, IOException, Exception
+    public FortranFileBasicSummary basicScan(InputStream input)
+            throws FortranException, IOException, Exception, ContainsIncludesException
     {
         return basicScan(input, null, null);
     }
 
     public FortranFileSummary scan(InputStream input) throws FortranException, IOException, Exception
     {
+        return scan(input, null, null, null);
+    }
+
+    public FortranFileSummary scan(InputStream input, Path inputFilePath, OutputStream inputWithResolvedIncludes,
+            List<Path> incSearchPath) throws FortranException, IOException, Exception
+    {
         AsciiArrayIOStream inStrm = new AsciiArrayIOStream();
         clawfc.Utils.copy(input, inStrm);
         AsciiArrayIOStream.LinesInfo linesInfo = inStrm.getLinesInfo();
-        FortranFileBasicSummary basicRes = basicScan(inStrm.getAsInputStreamUnsafe(), null, null);
+        FortranFileBasicSummary basicRes = null;
+        List<Path> incPaths = Collections.emptyList();
+        try
+        {
+            basicRes = basicScan(inStrm.getAsInputStreamUnsafe(), null, null);
+        } catch (ContainsIncludesException e)
+        {
+            AsciiArrayIOStream inputWithResolvedIncludesBuf = new AsciiArrayIOStream();
+            if (incSearchPath == null)
+            {
+                incSearchPath = Collections.emptyList();
+            }
+            Set<Path> incPathsSet = incResolver.run(inputFilePath, inStrm, inputWithResolvedIncludesBuf, incSearchPath);
+            linesInfo = inputWithResolvedIncludesBuf.getLinesInfo();
+            if (inputWithResolvedIncludes != null)
+            {
+                copy(inputWithResolvedIncludesBuf.getAsInputStreamUnsafe(), inputWithResolvedIncludes);
+            }
+            incPaths = Collections.unmodifiableList(new ArrayList<Path>(incPathsSet));
+            basicRes = basicScan(inputWithResolvedIncludesBuf.getAsInputStreamUnsafe(), null, null);
+        }
         Set<String> modUsesClaw = detectClaw(inStrm, basicRes);
-        FortranFileSummary res = getSummary(basicRes, modUsesClaw, linesInfo);
+        FortranFileSummary res = getSummary(basicRes, modUsesClaw, linesInfo, incPaths);
         return res;
     }
 
@@ -140,7 +183,7 @@ public class FortranDepScanner
     }
 
     FortranFileSummary getSummary(FortranFileBasicSummary basicSummary, Set<String> modUsesClaw,
-            AsciiArrayIOStream.LinesInfo linesInfo)
+            AsciiArrayIOStream.LinesInfo linesInfo, List<Path> incPaths)
     {
         List<FortranModuleInfo> modules = basicSummary.modules.stream()
                 .map((x) -> createInfo(x, modUsesClaw, linesInfo)).collect(Collectors.toList());
@@ -149,7 +192,7 @@ public class FortranDepScanner
         {
             program = createInfo(basicSummary.program, modUsesClaw, linesInfo);
         }
-        return new FortranFileSummary(modules, program);
+        return new FortranFileSummary(modules, program, incPaths);
     }
 
     FortranModuleInfo createInfo(FortranModuleBasicInfo basicInfo, final Set<String> modUsesClaw,

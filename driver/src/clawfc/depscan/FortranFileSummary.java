@@ -6,6 +6,7 @@ package clawfc.depscan;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ public class FortranFileSummary
     List<FortranModuleInfo> _modules;
     FortranModuleInfo _program;
     Path _filePath;
+    List<Path> _includes;
 
     public clawfc.depscan.serial.FortranFileSummary data()
     {
@@ -29,6 +31,11 @@ public class FortranFileSummary
     public List<FortranModuleInfo> getModules()
     {
         return _modules;
+    }
+
+    public List<Path> getIncludes()
+    {
+        return _includes;
     }
 
     public Path getFilePath()
@@ -65,50 +72,45 @@ public class FortranFileSummary
         {
             _filePath = null;
         }
+        _includes = data.getInclude().stream().map(Paths::get).collect(Collectors.toList());
     }
-
-    /*
-     * public FortranFileSummary(FortranFileBasicSummary in,
-     * AsciiArrayIOStream.LinesInfo linesInfo, FortranFileCLAWLinesInfo
-     * clawLinesInfo) { _data = new clawfc.depscan.serial.FortranFileSummary();
-     * HasCLAW hasCLAW = new HasCLAW(linesInfo.numLines(), clawLinesInfo); _modules
-     * = new ArrayList<FortranModuleInfo>(in.modules.size()); for
-     * (FortranModuleBasicInfo bInfo : in.modules) { int startPos =
-     * linesInfo.lineStartByteIdx((int) bInfo.getStartLineIdx()); int endPos =
-     * linesInfo.lineEndByteIdx((int) bInfo.getEndLineIdx()); boolean usesCLAW =
-     * hasCLAW.run((int) bInfo.getStartLineIdx(), (int) bInfo.getEndLineIdx());
-     * FortranModuleInfo info = new FortranModuleInfo(bInfo, startPos, endPos,
-     * usesCLAW); _modules.add(info); _data.getModule().add(info.data()); } if
-     * (in.program == null) { _program = null; } else { FortranModuleBasicInfo info
-     * = in.program; int startPos = linesInfo.lineStartByteIdx((int)
-     * info.getStartLineIdx()); int endPos = linesInfo.lineEndByteIdx((int)
-     * info.getEndLineIdx()); boolean usesCLAW = hasCLAW.run((int)
-     * info.getStartLineIdx(), (int) info.getEndLineIdx()); _program = new
-     * FortranModuleInfo(info, startPos, endPos, usesCLAW);
-     * _data.setProgram(_program._data); } _filePath = null; }
-     */
 
     public FortranFileSummary(List<FortranModuleInfo> modules, FortranModuleInfo program)
     {
-        initialize(modules, program, null);
+        initialize(modules, program, null, Arrays.asList());
     }
 
     public FortranFileSummary(List<FortranModuleInfo> modules, FortranModuleInfo program, Path path)
     {
-        initialize(modules, program, path);
+        initialize(modules, program, path, Arrays.asList());
     }
 
-    void initialize(List<FortranModuleInfo> modules, FortranModuleInfo program, Path path)
+    public FortranFileSummary(List<FortranModuleInfo> modules, FortranModuleInfo program, List<Path> includes)
+    {
+        initialize(modules, program, null, includes);
+    }
+
+    public FortranFileSummary(List<FortranModuleInfo> modules, FortranModuleInfo program, Path path,
+            List<Path> includes)
+    {
+        initialize(modules, program, path, includes);
+    }
+
+    void initialize(List<FortranModuleInfo> modules, FortranModuleInfo program, Path path, List<Path> includes)
     {
         _data = new clawfc.depscan.serial.FortranFileSummary();
         _modules = modules;
         _program = program;
+        _includes = includes;
         if (program != null)
         {
             _data.setProgram(_program._data);
         }
         modules.forEach(info -> {
             _data.getModule().add(info.data());
+        });
+        includes.forEach(incPath -> {
+            _data.getInclude().add(incPath.toString());
         });
         setFilePath(path);
     }
@@ -158,6 +160,10 @@ public class FortranFileSummary
             {
                 return false;
             }
+        }
+        if (!getIncludes().equals(other.getIncludes()))
+        {
+            return false;
         }
         return true;
     }

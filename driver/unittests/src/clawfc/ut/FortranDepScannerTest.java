@@ -8,10 +8,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -27,6 +30,7 @@ import clawfc.depscan.FortranFileBasicSummary;
 import clawfc.depscan.FortranFileSummary;
 import clawfc.depscan.FortranFileSummaryDeserializer;
 import clawfc.depscan.FortranFileSummarySerializer;
+import clawfc.depscan.FortranIncludesResolver;
 import clawfc.depscan.FortranModuleBasicInfo;
 import clawfc.depscan.FortranModuleInfo;
 import clawfc.depscan.FortranSemanticException;
@@ -37,6 +41,7 @@ import clawfc.depscan.Utils;
 import clawfc.depscan.parser.FortranDepScannerBaseListener;
 import clawfc.depscan.parser.FortranDepScannerLexer;
 import clawfc.depscan.parser.FortranDepScannerParser;
+import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.ByteArrayIOStream;
 import junit.framework.TestCase;
 
@@ -569,7 +574,7 @@ public class FortranDepScannerTest extends TestCase
         verifyScan("module x\n" + "end module x\n",
                 Arrays.asList(new FortranModuleInfo(Pos("x", 0, 21, 0, 2), Arrays.asList(), false)),
                 (FortranModuleInfo) null);
-        verifyScan("module x;" + "end module x;",
+        verifyScan("module x;" + "end module x;\n",
                 Arrays.asList(new FortranModuleInfo(Pos("x", 0, 21, 0, 1), Arrays.asList(), false)),
                 (FortranModuleInfo) null);
 
@@ -642,6 +647,32 @@ public class FortranDepScannerTest extends TestCase
                 new FortranModuleInfo(Pos("x", 0, 30, 0, 3), Arrays.asList(), true));
     }
 
+    protected final Path RES_DIR = clawfc.ut.Resources.DIR;
+
+    public void testWithIncludes() throws Exception
+    {
+        final Path IN_DIR = RES_DIR.resolve("scan/include/input");
+        final Path IN_FILEPATH = IN_DIR.resolve("2.f90");
+        List<Path> incSearchPath = Arrays.asList(IN_DIR);
+        AsciiArrayIOStream resOutStrm = new AsciiArrayIOStream();
+        FortranFileSummary res = depScanner.scan(Files.newInputStream(IN_FILEPATH), IN_FILEPATH, resOutStrm,
+                incSearchPath);
+        AsciiArrayIOStream refOutStrm = new AsciiArrayIOStream();
+        FortranFileSummary ref = null;
+        Set<Path> refIncFiles = null;
+        {
+            FortranIncludesResolver resolver = new FortranIncludesResolver();
+            refIncFiles = resolver.run(IN_FILEPATH, new AsciiArrayIOStream(IN_FILEPATH), refOutStrm, incSearchPath);
+        }
+        assertEquals(clawfc.Utils.collectIntoString(refOutStrm.getAsInputStreamUnsafe()),
+                clawfc.Utils.collectIntoString(resOutStrm.getAsInputStreamUnsafe()));
+        {
+            FortranFileSummary refBase = depScanner.scan(refOutStrm.getAsInputStreamUnsafe());
+            ref = new FortranFileSummary(refBase.getModules(), refBase.getProgram(), new ArrayList<Path>(refIncFiles));
+        }
+        assertEquals(ref, res);
+    }
+
     void verifySerialization(FortranFileSummary obj) throws Exception
     {
         FortranFileSummarySerializer serializer = new FortranFileSummarySerializer();
@@ -684,5 +715,14 @@ public class FortranDepScannerTest extends TestCase
                 new FortranModuleInfo(Pos("p1", 80, 123, 10, 15),
                         Arrays.asList(Pos("y1", 91, 97, 11, 12), Pos("z1", 102, 108, 13, 14)), false),
                 Paths.get("/tmp/bla-dir/bla.file")));
+        verifySerialization(new FortranFileSummary(
+                Arrays.asList(
+                        new FortranModuleInfo(Pos("x", 0, 37, 0, 5),
+                                Arrays.asList(Pos("y", 9, 14, 1, 2), Pos("z", 19, 24, 3, 4)), false),
+                        new FortranModuleInfo(Pos("x1", 38, 79, 5, 10),
+                                Arrays.asList(Pos("y1", 48, 54, 6, 7), Pos("z1", 59, 65, 8, 9)), false)),
+                new FortranModuleInfo(Pos("p1", 80, 123, 10, 15),
+                        Arrays.asList(Pos("y1", 91, 97, 11, 12), Pos("z1", 102, 108, 13, 14)), false),
+                Paths.get("/tmp/bla-dir/bla.file"), Arrays.asList(Paths.get("/inc_dir1"), Paths.get("inc_dir2"))));
     }
 }

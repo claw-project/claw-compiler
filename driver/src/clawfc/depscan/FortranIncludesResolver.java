@@ -259,7 +259,7 @@ public class FortranIncludesResolver
         return e;
     }
 
-    public FilteredContentSequence runCommentsFilter(InputStream input, AsciiArrayIOStream inputWithoutComments)
+    FilteredContentSequence runCommentsFilter(InputStream input, AsciiArrayIOStream inputWithoutComments)
             throws IOException, FortranSyntaxException
     {
         FilteredContentSequence fComments = null;
@@ -275,8 +275,8 @@ public class FortranIncludesResolver
         return fComments;
     }
 
-    public FilteredContentSequence runLineBreaksFilter(AsciiArrayIOStream inputStrm,
-            AsciiArrayIOStream inputWithoutLinebreaks) throws IOException, FortranSyntaxException
+    FilteredContentSequence runLineBreaksFilter(AsciiArrayIOStream inputStrm, AsciiArrayIOStream inputWithoutLinebreaks)
+            throws IOException, FortranSyntaxException
     {
         FilteredContentSequence fLineBreaks = null;
         try
@@ -289,7 +289,7 @@ public class FortranIncludesResolver
         return fLineBreaks;
     }
 
-    public List<FortranStatementBasicPosition> runIncludesFinder(AsciiArrayIOStream inputStrm) throws Exception
+    List<FortranStatementBasicPosition> runIncludesFinder(AsciiArrayIOStream inputStrm) throws Exception
     {
         try
         {
