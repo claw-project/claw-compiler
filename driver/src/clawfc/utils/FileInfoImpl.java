@@ -4,6 +4,8 @@
  */
 package clawfc.utils;
 
+import static clawfc.Utils.sprintf;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,11 +16,16 @@ public class FileInfoImpl implements clawfc.FileInfo
     final Path path;
     final FileTime ts;
 
-    public FileInfoImpl(Path path) throws IOException
+    public FileInfoImpl(Path path) throws Exception
     {
         this.path = path;
-        ts = Files.getLastModifiedTime(path);
-
+        try
+        {
+            ts = Files.getLastModifiedTime(path);
+        } catch (IOException e)
+        {
+            throw new Exception(sprintf("Failed to stat \"%s\"", path), e);
+        }
     }
 
     public Path getPath()

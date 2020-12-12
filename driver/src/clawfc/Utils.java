@@ -4,20 +4,32 @@
  */
 package clawfc;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 public class Utils
 {
+    public static final byte ASCII_NEWLINE_VALUE = (byte) '\n';
+    public static final byte ASCII_SPACE_VALUE = (byte) ' ';
     public static final String[] FORTRAN_FILE_EXTENSIONS = new String[] { "f", "F", "f90", "F90", "f95", "F95", "f03",
             "F03" };
     public static final String DEFAULT_TOP_TEMP_DIR = "/dev/shm";
@@ -44,12 +56,20 @@ public class Utils
         String result = null;
         try (Scanner s = new Scanner(istrm).useDelimiter("\\A"))
         {
-            result = s.hasNext() ? s.next() : null;
+            result = s.hasNext() ? s.next() : "";
         } finally
         {
             istrm.close();
         }
         return result;
+    }
+
+    public static String collectIntoString(Path inFilePath) throws IOException
+    {
+        try (InputStream inStrm = Files.newInputStream(inFilePath))
+        {
+            return collectIntoString(inStrm);
+        }
     }
 
     public static String getCmdOutput(List<String> args) throws Exception
@@ -89,6 +109,21 @@ public class Utils
         }
     }
 
+    public static void replaceInLines(InputStream in, OutputStream out, CharSequence from, CharSequence to)
+            throws IOException
+    {
+        try (BufferedReader inReader = new BufferedReader(new InputStreamReader(in));
+                PrintWriter outWriter = new PrintWriter(out))
+        {
+            while (inReader.ready())
+            {
+                String inLine = inReader.readLine();
+                String outLine = inLine.replace(from, to);
+                outWriter.println(outLine);
+            }
+        }
+    }
+
     public static void dumpIntoFile(Path filename, InputStream in) throws IOException
     {
         try (OutputStream out = Files.newOutputStream(filename))
@@ -117,11 +152,139 @@ public class Utils
         Files.walk(path).map(Path::toFile).sorted((o1, o2) -> -o1.compareTo(o2)).forEach(File::delete);
     }
 
+    public static void cleanDir(Path dirPath) throws IOException
+    {
+        Files.walk(dirPath).filter(Files::isRegularFile).map(Path::toFile).forEach(File::delete);
+    }
+
     public static void writeTextToFile(Path path, String text) throws IOException
     {
         try (PrintWriter out = new PrintWriter(path.toString()))
         {
             out.println(text);
         }
+    }
+
+    public static class NullOutputStream extends OutputStream
+    {
+        @Override
+        public void write(int b) throws IOException
+        {
+        }
+    }
+
+    static ExecutorService createThreadPool(boolean useMultiProcessing)
+    {
+        if (useMultiProcessing)
+        {
+            int maxNumThreads = Runtime.getRuntime().availableProcessors();
+            return Executors.newFixedThreadPool(maxNumThreads);
+        } else
+        {
+            return Executors.newSingleThreadExecutor();
+        }
+    }
+
+    static public class ExecuteTasks
+    {
+        final ExecutorService es;
+        final List<Future<Void>> taskFutures;
+
+        public ExecuteTasks(boolean useMultiProcessing)
+        {
+            es = createThreadPool(useMultiProcessing);
+            taskFutures = Collections.synchronizedList(new ArrayList<Future<Void>>());
+        }
+
+        protected void submitTask(Callable<Void> task)
+        {
+            taskFutures.add(es.submit(task));
+        }
+
+        public void join() throws Exception
+        {
+            try
+            {
+                for (int i = 0; i < taskFutures.size(); ++i)
+                {
+                    Future<Void> taskFuture = taskFutures.get(i);
+                    try
+                    {
+                        taskFuture.get();
+                    } catch (InterruptedException e)
+                    {
+                    } catch (ExecutionException e)
+                    {
+                        Throwable cause = e.getCause();
+                        if (cause instanceof Exception)
+                        {
+                            throw (Exception) cause;
+                        } else
+                        {
+                            throw e;
+                        }
+                    }
+                }
+            } finally
+            {
+                es.shutdownNow();
+            }
+        }
+    }
+
+    static void executeTasksUntilFirstError(List<Callable<Void>> tasks, boolean useMultiProcessing) throws Exception
+    {
+        ExecuteTasks execTasks = new ExecuteTasks(useMultiProcessing);
+        for (Callable<Void> task : tasks)
+        {
+            execTasks.submitTask(task);
+        }
+        execTasks.join();
+    }
+
+    public static <T> int firstGreater(List<? extends Comparable<? super T>> list, T key)
+    {
+        int res = Collections.binarySearch(list, key);
+        if (res >= 0)
+        {
+            res += 1;
+        } else
+        {
+            res = -res - 1;
+        }
+        return res;
+    }
+
+    public static int firstGreater(int[] arr, int key)
+    {
+        int res = Arrays.binarySearch(arr, key);
+        if (res >= 0)
+        {
+            res += 1;
+        } else
+        {
+            res = -res - 1;
+        }
+        return res;
+    }
+
+    public static String sprintf(String format, Object... args)
+    {
+        return String.format(format, args);
+    }
+
+    static Path getOrCreateDir(Path dirPath) throws Exception
+    {
+        if (!Utils.dirExists(dirPath))
+        {
+            try
+            {
+                Files.createDirectories(dirPath);
+            } catch (Exception e)
+            {
+                throw new Exception(sprintf("Could not create directory %s", dirPath), e);
+            }
+        }
+        return dirPath;
     }
 }

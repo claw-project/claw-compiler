@@ -48,7 +48,7 @@ public class ByteArrayIOStream extends ByteArrayOutputStream
 
     public ByteArrayInputStream getAsInputStreamUnsafe(int offset, int count)
     {
-        ByteArrayInputStream res = new ByteArrayInputStream(this.buf, offset, this.count);
+        ByteArrayInputStream res = new ByteArrayInputStream(this.buf, offset, count);
         return res;
     }
 }

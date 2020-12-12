@@ -4,7 +4,9 @@
  */
 package clawfc.utils;
 
+import static clawfc.Utils.ASCII_NEWLINE_VALUE;
 import static clawfc.Utils.copy;
+import static clawfc.Utils.firstGreater;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,8 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-
-import clawfc.depscan.Utils;
 
 public class AsciiArrayIOStream extends ByteArrayIOStream
 {
@@ -63,7 +63,7 @@ public class AsciiArrayIOStream extends ByteArrayIOStream
                 return size();
             } else
             {
-                int lineIdx = Utils.firstGreater(_lineStartCharIdx, charIdx) - 1;
+                int lineIdx = firstGreater(_lineStartCharIdx, charIdx) - 1;
                 return lineIdx;
             }
         }
@@ -75,7 +75,7 @@ public class AsciiArrayIOStream extends ByteArrayIOStream
                 return null;
             } else
             {
-                int lineIdx = Utils.firstGreater(_lineStartCharIdx, charIdx) - 1;
+                int lineIdx = firstGreater(_lineStartCharIdx, charIdx) - 1;
                 return charIdx - _lineStartCharIdx[lineIdx];
             }
         }
@@ -149,13 +149,49 @@ public class AsciiArrayIOStream extends ByteArrayIOStream
         super();
     }
 
-    public AsciiArrayIOStream(int size)
+    public AsciiArrayIOStream(int capacity)
     {
-        super(size);
+        super(capacity);
     }
 
     public AsciiArrayIOStream(Path filePath) throws IOException
     {
         super(filePath);
+    }
+
+    public Integer findLineStartChrIdx(int chrIdx)
+    {
+        if (chrIdx >= 0 && chrIdx < count)
+        {
+            for (int i = chrIdx; i >= 1; --i)
+            {
+                if (buf[i - 1] == ASCII_NEWLINE_VALUE)
+                {
+                    return i;
+                }
+            }
+            return 0;
+        } else
+        {
+            return null;
+        }
+
+    }
+
+    public int size()
+    {
+        return count;
+    }
+
+    public Byte getChr(int chrIdx)
+    {
+        if (chrIdx >= 0 && chrIdx < count)
+        {
+            return buf[chrIdx];
+        } else
+        {
+            return null;
+        }
+
     }
 }
