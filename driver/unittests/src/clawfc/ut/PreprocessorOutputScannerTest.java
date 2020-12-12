@@ -6,6 +6,7 @@ package clawfc.ut;
 
 import static clawfc.Utils.collectIntoString;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,14 +42,11 @@ public class PreprocessorOutputScannerTest extends TestCase
         verifyLineMarkerString(r, "# 1 \"/data/tmp/dep-test/i\\\"nc/m.inc\" 1", "/data/tmp/dep-test/i\\\"nc/m.inc");
     }
 
-    void verifyPreprocessorOutputScanner(PreprocessorOutputScanner scanner, String inputName) throws Exception
+    public static Set<Path> readPathsFromFile(Path incFilesLstFilePath) throws IOException
     {
-        Path inputFilePath = IN_DIR.resolve(inputName + ".txt");
-        Path refNoPPFilePath = REF_DIR.resolve(inputName + ".f90");
-        Path refIncFilesLstFilePath = REF_DIR.resolve(inputName + ".inc");
         Set<Path> refIncPaths = new HashSet<Path>();
         {
-            List<String> lines = Files.readAllLines(refIncFilesLstFilePath);
+            List<String> lines = Files.readAllLines(incFilesLstFilePath);
             for (String line : lines)
             {
                 line = line.strip();
@@ -59,6 +57,15 @@ public class PreprocessorOutputScannerTest extends TestCase
             }
             refIncPaths = Collections.unmodifiableSet(refIncPaths);
         }
+        return refIncPaths;
+    }
+
+    void verifyPreprocessorOutputScanner(PreprocessorOutputScanner scanner, String inputName) throws Exception
+    {
+        Path inputFilePath = IN_DIR.resolve(inputName + ".txt");
+        Path refNoPPFilePath = REF_DIR.resolve(inputName + ".f90");
+        Path refIncFilesLstFilePath = REF_DIR.resolve(inputName + ".inc");
+        Set<Path> refIncPaths = readPathsFromFile(refIncFilesLstFilePath);
         AsciiArrayIOStream refNoPp = new AsciiArrayIOStream(refNoPPFilePath);
         AsciiArrayIOStream input = new AsciiArrayIOStream(inputFilePath);
         AsciiArrayIOStream resNoPp = new AsciiArrayIOStream();
