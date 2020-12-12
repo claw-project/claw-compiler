@@ -11,9 +11,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 
 import clawfc.Utils;
 import clawfc.utils.AsciiArrayIOStream;
+import clawfc.utils.PathHashGenerator;
 import junit.framework.TestCase;
 
 public class UtilsTest extends TestCase
@@ -113,5 +117,25 @@ public class UtilsTest extends TestCase
             assertEquals(lInfo.getLineStartByteIdx(1), 4);
             assertEquals(lInfo.lineByteLength(1), 3);
         }
+    }
+
+    public void testPathHash() throws NoSuchAlgorithmException
+    {
+        PathHashGenerator hashGen = new PathHashGenerator();
+        final Path testPath = Paths.get("/tmp/f1/f2/test.txt");
+        final String ref = hashGen.generate(testPath);
+        assertEquals(40, ref.length());
+        for (int i = 0; i < 100; ++i)
+        {
+            String res = hashGen.generate(testPath);
+            assertEquals(ref, res);
+        }
+        for (int i = 0; i < 100; ++i)
+        {
+            PathHashGenerator hashGen2 = new PathHashGenerator();
+            String res = hashGen.generate(testPath);
+            assertEquals(ref, res);
+        }
+        assertEquals(ref, hashGen.generate(Paths.get("/tmp/f1/../f1/f2/test.txt")));
     }
 }
