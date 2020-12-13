@@ -25,6 +25,7 @@ import clawfc.Configuration;
 import clawfc.Preprocessor;
 import clawfc.Preprocessor.PreprocessorInfo;
 import clawfc.Utils;
+import clawfc.depscan.FortranIncludesResolver;
 import clawfc.depscan.PreprocessorOutputScanner;
 import clawfc.utils.AsciiArrayIOStream;
 import junit.framework.TestCase;
@@ -88,8 +89,9 @@ public class PreprocessorTest extends TestCase
                     .unmodifiableList(Preprocessor.prepareArgs(info, accDirLanguage, predefinedMacros, ppIncludeDirs));
             PreprocessorOutputScanner outputScanner = new PreprocessorOutputScanner();
             Set<Path> resIncFilePaths = new LinkedHashSet<Path>();
+            FortranIncludesResolver includesResolver = new FortranIncludesResolver();
             AsciiArrayIOStream res = Preprocessor.run(inputFilePath, resIncFilePaths, workingDir, info, cmdArgsTemplate,
-                    outputScanner);
+                    includesResolver, ppIncludeDirs, outputScanner);
             String refStr = collectWithoutEmptyLines(Files.newInputStream(refFilePath));
             String resStr = collectWithoutEmptyLines(res.getAsInputStreamUnsafe());
             Set<Path> refIncPaths = readRelativePathsFromFile(IN_DIR, refIncFilesLstFilePath);
@@ -142,6 +144,11 @@ public class PreprocessorTest extends TestCase
     public void testAcceleratorDirectiveLanguage() throws Exception
     {
         verifyPP("acc_dir_language", Collections.emptyList(), Collections.emptyList(), "openmp");
+    }
+
+    public void testFortranIncludes() throws Exception
+    {
+        verifyPP("fortran_includes", Arrays.asList("inc"));
     }
 
 }

@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import clawfc.depscan.FortranIncludesResolver;
 import clawfc.depscan.PreprocessorOutputScanner;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.SubprocessFailed;
@@ -90,9 +91,24 @@ public class Preprocessor
 
     final PreprocessorInfo info;
     final List<String> cmdArgsTemplate;
-    final ThreadLocal<Path> workingDir;
+
+    class ThreadLocalData
+    {
+        public final Path workingDir;
+        public final FortranIncludesResolver includesResolver;
+
+        public ThreadLocalData(Path workingDir) throws Exception
+        {
+            this.workingDir = workingDir;
+            this.includesResolver = new FortranIncludesResolver();
+        }
+    }
+
+    final ThreadLocal<ThreadLocalData> threadLocalData;
     final Path driverTempDir;
+    final FortranIncludesResolver includesResolver;
     final PreprocessorOutputScanner outputScanner;
+    final List<Path> ppIncSearchPath;
 
     public Preprocessor(Configuration cfg, Options opts, Path driverTempDir) throws Exception
     {
@@ -109,9 +125,11 @@ public class Preprocessor
         info = new PreprocessorInfo(ppCmd, ppType);
         cmdArgsTemplate = Collections.unmodifiableList(prepareArgs(info, opts.acceleratorDirectiveLanguage(),
                 opts.predefinedMacros(), opts.preprocessingIncludeDirs()));
-        this.workingDir = new ThreadLocal<Path>();
+        this.threadLocalData = new ThreadLocal<ThreadLocalData>();
         this.driverTempDir = driverTempDir;
+        includesResolver = new FortranIncludesResolver();
         outputScanner = new PreprocessorOutputScanner();
+        ppIncSearchPath = opts.preprocessingIncludeDirs();
     }
 
     public static class Failed extends SubprocessFailed
@@ -199,8 +217,8 @@ public class Preprocessor
     }
 
     public static AsciiArrayIOStream run(Path inputFilePath, Set<Path> outIncFilePaths, Path workingDir,
-            PreprocessorInfo info, List<String> cmdArgsTemplate, PreprocessorOutputScanner scanner)
-            throws Exception, Failed
+            PreprocessorInfo info, List<String> cmdArgsTemplate, FortranIncludesResolver includesResolver,
+            List<Path> ppIncSearchPath, PreprocessorOutputScanner scanner) throws Exception, Failed
     {
         if (outIncFilePaths != null)
         {
@@ -221,33 +239,37 @@ public class Preprocessor
         final int retCode = p.waitFor();
         if (retCode == 0)
         {
-            AsciiArrayIOStream buf;
+            AsciiArrayIOStream bufPP;
             if (info.supportsRedirection)
             {
-                buf = new AsciiArrayIOStream();
+                bufPP = new AsciiArrayIOStream();
                 try (InputStream inStrm = p.getInputStream())
                 {
-                    Utils.copy(inStrm, buf);
+                    Utils.copy(inStrm, bufPP);
                 }
             } else
             {
                 Path outFilePath = internalOutputFilePath(info, inputFilePath, workingDir);
-                buf = new AsciiArrayIOStream(outFilePath);
+                bufPP = new AsciiArrayIOStream(outFilePath);
                 Files.delete(outFilePath);
             }
-            final Byte lastChr = buf.getChr(buf.size() - 1);
+            final Byte lastChr = bufPP.getChr(bufPP.size() - 1);
             if (lastChr != null && lastChr != ASCII_NEWLINE_VALUE)
             {
-                buf.write(ASCII_NEWLINE_VALUE);
+                bufPP.write(ASCII_NEWLINE_VALUE);
             }
-            AsciiArrayIOStream res = new AsciiArrayIOStream();
-            Set<Path> resIncFilePaths = scanner.run(buf.getAsInputStreamUnsafe(), res);
+            AsciiArrayIOStream bufNoMarkers = new AsciiArrayIOStream();
+            Set<Path> resIncFilePaths = scanner.run(bufPP.getAsInputStreamUnsafe(), bufNoMarkers);
+            bufPP = null;
             resIncFilePaths.remove(inputFilePath);
+            AsciiArrayIOStream bufNoFtnInc = new AsciiArrayIOStream();
+            Set<Path> ftnIncFilePaths = includesResolver.run(inputFilePath, bufNoMarkers, bufNoFtnInc, ppIncSearchPath);
+            resIncFilePaths.addAll(ftnIncFilePaths);
             if (outIncFilePaths != null)
             {
                 outIncFilePaths.addAll(resIncFilePaths);
             }
-            return res;
+            return bufNoFtnInc;
         } else
         {
             try (InputStream pStderr = p.getErrorStream())
@@ -259,12 +281,13 @@ public class Preprocessor
 
     public AsciiArrayIOStream run(Path inputFilePath, Set<Path> outIncFilePaths) throws Failed, Exception
     {
-        Path localWorkingDir = workingDir.get();
-        if (localWorkingDir == null)
+        ThreadLocalData localData = threadLocalData.get();
+        if (localData == null)
         {
-            localWorkingDir = Files.createTempDirectory(driverTempDir, "fpp");
-            workingDir.set(localWorkingDir);
+            localData = new ThreadLocalData(Files.createTempDirectory(driverTempDir, "fpp"));
+            threadLocalData.set(localData);
         }
-        return run(inputFilePath, outIncFilePaths, localWorkingDir, info, cmdArgsTemplate, outputScanner);
+        return run(inputFilePath, outIncFilePaths, localData.workingDir, info, cmdArgsTemplate,
+                localData.includesResolver, ppIncSearchPath, outputScanner);
     }
 }
