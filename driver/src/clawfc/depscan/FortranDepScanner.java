@@ -82,12 +82,12 @@ public class FortranDepScanner
         return basicScan(input, null, null);
     }
 
-    public FortranFileSummary scan(InputStream input) throws FortranException, IOException, Exception
+    public FortranFileBuildInfo scan(InputStream input) throws FortranException, IOException, Exception
     {
         return scan(input, null, null, null);
     }
 
-    public FortranFileSummary scan(InputStream input, Path inputFilePath, OutputStream inputWithResolvedIncludes,
+    public FortranFileBuildInfo scan(InputStream input, Path inputFilePath, OutputStream inputWithResolvedIncludes,
             List<Path> incSearchPath) throws FortranException, IOException, Exception
     {
         AsciiArrayIOStream inStrm = new AsciiArrayIOStream();
@@ -117,7 +117,7 @@ public class FortranDepScanner
             basicRes = basicScan(inputWithResolvedIncludesBuf.getAsInputStreamUnsafe(), null, null);
             modUsesClaw = detectClaw(inputWithResolvedIncludesBuf, basicRes);
         }
-        FortranFileSummary res = getSummary(basicRes, modUsesClaw, linesInfo, incPaths);
+        FortranFileBuildInfo res = getSummary(basicRes, modUsesClaw, linesInfo, incPaths);
         return res;
     }
 
@@ -184,7 +184,7 @@ public class FortranDepScanner
         }
     }
 
-    FortranFileSummary getSummary(FortranFileBasicSummary basicSummary, Set<String> modUsesClaw,
+    FortranFileBuildInfo getSummary(FortranFileBasicSummary basicSummary, Set<String> modUsesClaw,
             AsciiArrayIOStream.LinesInfo linesInfo, List<Path> incPaths)
     {
         List<FortranModuleInfo> modules = basicSummary.modules.stream()
@@ -194,7 +194,7 @@ public class FortranDepScanner
         {
             program = createInfo(basicSummary.program, modUsesClaw, linesInfo);
         }
-        return new FortranFileSummary(modules, program, incPaths);
+        return new FortranFileBuildInfo(modules, program, incPaths);
     }
 
     FortranModuleInfo createInfo(FortranModuleBasicInfo basicInfo, final Set<String> modUsesClaw,

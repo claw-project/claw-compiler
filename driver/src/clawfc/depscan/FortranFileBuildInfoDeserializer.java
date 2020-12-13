@@ -15,14 +15,14 @@ import clawfc.Configuration;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 
-public class FortranFileSummaryDeserializer
+public class FortranFileBuildInfoDeserializer
 {
     final Unmarshaller _unmarshaller;
-    final String SCHEMA_FILE = "/clawfc/depscan/serial/dep_info.xsd";
+    final String SCHEMA_FILE = "/clawfc/depscan/serial/file_build_info.xsd";
 
-    public FortranFileSummaryDeserializer(boolean validate) throws Exception
+    public FortranFileBuildInfoDeserializer(boolean validate) throws Exception
     {
-        JAXBContext contextObj = JAXBContext.newInstance(clawfc.depscan.serial.FortranFileSummary.class);
+        JAXBContext contextObj = JAXBContext.newInstance(clawfc.depscan.serial.FortranFileBuildInfo.class);
         _unmarshaller = contextObj.createUnmarshaller();
         if (validate)
         {
@@ -36,10 +36,10 @@ public class FortranFileSummaryDeserializer
         }
     }
 
-    public clawfc.depscan.FortranFileSummary deserialize(InputStream in) throws Exception
+    public clawfc.depscan.FortranFileBuildInfo deserialize(InputStream in) throws Exception
     {
-        FortranFileSummary deObj = new FortranFileSummary(
-                (clawfc.depscan.serial.FortranFileSummary) _unmarshaller.unmarshal(in));
+        FortranFileBuildInfo deObj = new FortranFileBuildInfo(
+                (clawfc.depscan.serial.FortranFileBuildInfo) _unmarshaller.unmarshal(in));
         return deObj;
     }
 }

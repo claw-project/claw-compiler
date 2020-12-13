@@ -22,7 +22,7 @@ import clawfc.BuildOrder;
 import clawfc.FileInfo;
 import clawfc.ModuleInfo;
 import clawfc.depscan.FortranDepScanner;
-import clawfc.depscan.FortranFileSummary;
+import clawfc.depscan.FortranFileBuildInfo;
 import clawfc.depscan.FortranModuleInfo;
 import clawfc.depscan.FortranSemanticException;
 import clawfc.utils.AsciiArrayIOStream;
@@ -31,12 +31,12 @@ import junit.framework.TestCase;
 class TestModuleInfo implements clawfc.ModuleInfo
 {
     final String name;
-    final FortranFileSummary fileSrcInfo;
+    final FortranFileBuildInfo fileSrcInfo;
     final FortranModuleInfo moduleInfo;
     final Path filePath;
     final FileInfo fileInfo;
 
-    public TestModuleInfo(String name, Path filePath, FortranFileSummary fileInfo, FortranModuleInfo moduleInfo)
+    public TestModuleInfo(String name, Path filePath, FortranFileBuildInfo fileInfo, FortranModuleInfo moduleInfo)
             throws Exception
     {
         this.name = name;
@@ -119,7 +119,7 @@ class TestModuleInfo implements clawfc.ModuleInfo
     }
 
     @Override
-    public FortranFileSummary getSrcSummary()
+    public FortranFileBuildInfo getSrcSummary()
     {
         throw new RuntimeException("Not implemented");
     }
@@ -145,7 +145,7 @@ public class BuildTest extends TestCase
     {
         Map<String, ModuleInfo> res = new LinkedHashMap<String, ModuleInfo>();
         FortranDepScanner depScanner = new FortranDepScanner();
-        FortranFileSummary fileInfo = depScanner.scan(Files.newInputStream(filePath));
+        FortranFileBuildInfo fileInfo = depScanner.scan(Files.newInputStream(filePath));
         for (FortranModuleInfo moduleInfo : fileInfo.getModules())
         {
             String name = moduleInfo.getName();

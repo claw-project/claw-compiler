@@ -5,15 +5,16 @@ Copyright: 2020, MeteoSwiss
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-<xs:element name="fortran_file_summary">
-  <xs:complexType>
+<xs:element name='fortran_file_build_info'>
+    <xs:complexType>
     <xs:sequence>
        <xs:element name = 'module' type = 'FortranModuleInfo' minOccurs = '0' maxOccurs = 'unbounded' />
        <xs:element name = 'program' type = 'FortranModuleInfo' minOccurs = '0' maxOccurs = '1' />
-       <xs:element name = 'include' type = 'xs:string' minOccurs = '0' maxOccurs = 'unbounded' />
+       <xs:element name = 'include' type = 'xs:anyURI' minOccurs = '0' maxOccurs = 'unbounded' />
     </xs:sequence>
-    <xs:attribute name="file_path" type="xs:string"/>
-  </xs:complexType>
+    <xs:attribute name="src_path" type="xs:anyURI"/>
+    <xs:attribute name="pp_src_path" type="xs:anyURI"/>
+</xs:complexType>
 </xs:element>
 
 <xs:complexType name = "FortranModuleInfo">

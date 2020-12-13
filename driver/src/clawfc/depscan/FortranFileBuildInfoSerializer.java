@@ -9,19 +9,19 @@ import java.io.OutputStream;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 
-public class FortranFileSummarySerializer
+public class FortranFileBuildInfoSerializer
 {
     final Marshaller _marshaller;
 
-    public FortranFileSummarySerializer() throws Exception
+    public FortranFileBuildInfoSerializer() throws Exception
     {
-        JAXBContext contextObj = JAXBContext.newInstance(clawfc.depscan.serial.FortranFileSummary.class);
+        JAXBContext contextObj = JAXBContext.newInstance(clawfc.depscan.serial.FortranFileBuildInfo.class);
         _marshaller = contextObj.createMarshaller();
         _marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
     }
 
-    public void serialize(clawfc.depscan.FortranFileSummary summary, OutputStream out) throws Exception
+    public void serialize(clawfc.depscan.FortranFileBuildInfo summary, OutputStream out) throws Exception
     {
-        _marshaller.marshal(summary.data(), out);
+        _marshaller.marshal(summary.getData(), out);
     }
 }

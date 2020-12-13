@@ -27,9 +27,9 @@ import clawfc.depscan.FortranDepParser;
 import clawfc.depscan.FortranDepScanner;
 import clawfc.depscan.FortranException;
 import clawfc.depscan.FortranFileBasicSummary;
-import clawfc.depscan.FortranFileSummary;
-import clawfc.depscan.FortranFileSummaryDeserializer;
-import clawfc.depscan.FortranFileSummarySerializer;
+import clawfc.depscan.FortranFileBuildInfo;
+import clawfc.depscan.FortranFileBuildInfoDeserializer;
+import clawfc.depscan.FortranFileBuildInfoSerializer;
 import clawfc.depscan.FortranIncludesResolver;
 import clawfc.depscan.FortranModuleBasicInfo;
 import clawfc.depscan.FortranModuleInfo;
@@ -542,7 +542,7 @@ public class FortranDepScannerTest extends TestCase
         return depScanner.basicScan(Utils.toInputStream(s));
     }
 
-    FortranFileSummary scan(String s) throws IOException, FortranException, Exception
+    FortranFileBuildInfo scan(String s) throws IOException, FortranException, Exception
     {
         return depScanner.scan(Utils.toInputStream(s));
     }
@@ -558,8 +558,8 @@ public class FortranDepScannerTest extends TestCase
     void verifyScan(String s, List<FortranModuleInfo> expModules, FortranModuleInfo expectedProgram)
             throws IOException, FortranException, Exception
     {
-        FortranFileSummary res = scan(s);
-        FortranFileSummary expRes = new FortranFileSummary(expModules, expectedProgram);
+        FortranFileBuildInfo res = scan(s);
+        FortranFileBuildInfo expRes = new FortranFileBuildInfo(expModules, expectedProgram);
         assertEquals(expRes, res);
     }
 
@@ -655,10 +655,10 @@ public class FortranDepScannerTest extends TestCase
         final Path IN_FILEPATH = IN_DIR.resolve("2.f90");
         List<Path> incSearchPath = Arrays.asList(IN_DIR);
         AsciiArrayIOStream resOutStrm = new AsciiArrayIOStream();
-        FortranFileSummary res = depScanner.scan(Files.newInputStream(IN_FILEPATH), IN_FILEPATH, resOutStrm,
+        FortranFileBuildInfo res = depScanner.scan(Files.newInputStream(IN_FILEPATH), IN_FILEPATH, resOutStrm,
                 incSearchPath);
         AsciiArrayIOStream refOutStrm = new AsciiArrayIOStream();
-        FortranFileSummary ref = null;
+        FortranFileBuildInfo ref = null;
         Set<Path> refIncFiles = null;
         {
             FortranIncludesResolver resolver = new FortranIncludesResolver();
@@ -667,46 +667,46 @@ public class FortranDepScannerTest extends TestCase
         assertEquals(clawfc.Utils.collectIntoString(refOutStrm.getAsInputStreamUnsafe()),
                 clawfc.Utils.collectIntoString(resOutStrm.getAsInputStreamUnsafe()));
         {
-            FortranFileSummary refBase = depScanner.scan(refOutStrm.getAsInputStreamUnsafe());
-            ref = new FortranFileSummary(refBase.getModules(), refBase.getProgram(), new ArrayList<Path>(refIncFiles));
+            FortranFileBuildInfo refBase = depScanner.scan(refOutStrm.getAsInputStreamUnsafe());
+            ref = new FortranFileBuildInfo(refBase.getModules(), refBase.getProgram(), new ArrayList<Path>(refIncFiles));
         }
         assertEquals(ref, res);
     }
 
-    void verifySerialization(FortranFileSummary obj) throws Exception
+    void verifySerialization(FortranFileBuildInfo obj) throws Exception
     {
-        FortranFileSummarySerializer serializer = new FortranFileSummarySerializer();
-        FortranFileSummaryDeserializer deserializer = new FortranFileSummaryDeserializer(true);
+        FortranFileBuildInfoSerializer serializer = new FortranFileBuildInfoSerializer();
+        FortranFileBuildInfoDeserializer deserializer = new FortranFileBuildInfoDeserializer(true);
         ByteArrayIOStream buf = new ByteArrayIOStream();
         serializer.serialize(obj, buf);
-        FortranFileSummary deObj = deserializer.deserialize(buf.getAsInputStreamUnsafe());
+        FortranFileBuildInfo deObj = deserializer.deserialize(buf.getAsInputStreamUnsafe());
         assertEquals(obj, deObj);
     }
 
     public void testSerialization() throws Exception
     {
-        verifySerialization(new FortranFileSummary(Arrays.asList(), null));
-        verifySerialization(new FortranFileSummary(
+        verifySerialization(new FortranFileBuildInfo(Arrays.asList(), null));
+        verifySerialization(new FortranFileBuildInfo(
                 Arrays.asList(new FortranModuleInfo(Pos("x", 0, 21, 0, 2), Arrays.asList(), false)), null));
-        verifySerialization(new FortranFileSummary(
+        verifySerialization(new FortranFileBuildInfo(
                 Arrays.asList(new FortranModuleInfo(Pos("x", 0, 21, 0, 1), Arrays.asList(), false)),
                 (FortranModuleInfo) null));
-        verifySerialization(new FortranFileSummary(
+        verifySerialization(new FortranFileBuildInfo(
                 Arrays.asList(
                         new FortranModuleInfo(Pos("x", 0, 27, 0, 3), Arrays.asList(Pos("y", 9, 14, 1, 2)), false)),
                 (FortranModuleInfo) null));
-        verifySerialization(new FortranFileSummary(
+        verifySerialization(new FortranFileBuildInfo(
                 Arrays.asList(new FortranModuleInfo(Pos("x", 0, 37, 0, 5),
                         Arrays.asList(Pos("y", 9, 14, 1, 2), Pos("z", 19, 24, 3, 4)), false)),
                 (FortranModuleInfo) null));
-        verifySerialization(new FortranFileSummary(
+        verifySerialization(new FortranFileBuildInfo(
                 Arrays.asList(
                         new FortranModuleInfo(Pos("x", 0, 37, 0, 5),
                                 Arrays.asList(Pos("y", 9, 14, 1, 2), Pos("z", 19, 24, 3, 4)), false),
                         new FortranModuleInfo(Pos("x1", 38, 79, 5, 10),
                                 Arrays.asList(Pos("y1", 48, 54, 6, 7), Pos("z1", 59, 65, 8, 9)), false)),
                 (FortranModuleInfo) null));
-        verifySerialization(new FortranFileSummary(
+        verifySerialization(new FortranFileBuildInfo(
                 Arrays.asList(
                         new FortranModuleInfo(Pos("x", 0, 37, 0, 5),
                                 Arrays.asList(Pos("y", 9, 14, 1, 2), Pos("z", 19, 24, 3, 4)), false),
@@ -715,7 +715,7 @@ public class FortranDepScannerTest extends TestCase
                 new FortranModuleInfo(Pos("p1", 80, 123, 10, 15),
                         Arrays.asList(Pos("y1", 91, 97, 11, 12), Pos("z1", 102, 108, 13, 14)), false),
                 Paths.get("/tmp/bla-dir/bla.file")));
-        verifySerialization(new FortranFileSummary(
+        verifySerialization(new FortranFileBuildInfo(
                 Arrays.asList(
                         new FortranModuleInfo(Pos("x", 0, 37, 0, 5),
                                 Arrays.asList(Pos("y", 9, 14, 1, 2), Pos("z", 19, 24, 3, 4)), false),
