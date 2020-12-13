@@ -18,6 +18,8 @@ import java.security.NoSuchAlgorithmException;
 import clawfc.Utils;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.PathHashGenerator;
+import clawfc.utils.SimplePathHashGenerator;
+import clawfc.utils.UniquePathHashGenerator;
 import junit.framework.TestCase;
 
 public class UtilsTest extends TestCase
@@ -119,9 +121,30 @@ public class UtilsTest extends TestCase
         }
     }
 
-    public void testPathHash() throws NoSuchAlgorithmException
+    interface PathHashGeneratorFactory
     {
-        PathHashGenerator hashGen = new PathHashGenerator();
+        public PathHashGenerator create() throws NoSuchAlgorithmException;
+    }
+
+    class SimpleHashGeneratorFactory implements PathHashGeneratorFactory
+    {
+        public PathHashGenerator create() throws NoSuchAlgorithmException
+        {
+            return new SimplePathHashGenerator();
+        }
+    }
+
+    class UniqueHashGeneratorFactory implements PathHashGeneratorFactory
+    {
+        public PathHashGenerator create() throws NoSuchAlgorithmException
+        {
+            return new UniquePathHashGenerator();
+        }
+    }
+
+    public void verifyPathHashGenerator(PathHashGeneratorFactory factory) throws NoSuchAlgorithmException
+    {
+        PathHashGenerator hashGen = factory.create();
         final Path testPath = Paths.get("/tmp/f1/f2/test.txt");
         final String ref = hashGen.generate(testPath);
         assertEquals(40, ref.length());
@@ -132,10 +155,21 @@ public class UtilsTest extends TestCase
         }
         for (int i = 0; i < 100; ++i)
         {
-            PathHashGenerator hashGen2 = new PathHashGenerator();
-            String res = hashGen.generate(testPath);
+            PathHashGenerator hashGen2 = factory.create();
+            String res = hashGen2.generate(testPath);
             assertEquals(ref, res);
         }
         assertEquals(ref, hashGen.generate(Paths.get("/tmp/f1/../f1/f2/test.txt")));
+        assertFalse(ref.equals(hashGen.generate(Paths.get("/tmp/f1/f2/test.txt_"))));
+    }
+
+    public void testSimplePathHashGenerator() throws NoSuchAlgorithmException
+    {
+        verifyPathHashGenerator(new SimpleHashGeneratorFactory());
+    }
+
+    public void testUniquePathHashGenerator() throws NoSuchAlgorithmException
+    {
+        verifyPathHashGenerator(new UniqueHashGeneratorFactory());
     }
 }
