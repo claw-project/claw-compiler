@@ -4,6 +4,7 @@
  */
 package clawfc.ut;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import clawfc.depscan.FortranDepScanner;
 import clawfc.depscan.FortranFileSummary;
 import clawfc.depscan.FortranModuleInfo;
 import clawfc.depscan.FortranSemanticException;
+import clawfc.utils.AsciiArrayIOStream;
 import junit.framework.TestCase;
 
 class TestModuleInfo implements clawfc.ModuleInfo
@@ -99,7 +101,37 @@ class TestModuleInfo implements clawfc.ModuleInfo
     }
 
     @Override
-    public FileInfo getModFileInfo()
+    public FileInfo getXModFileInfo()
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public boolean XModIsUpToDate(Map<String, ModuleInfo> availModsByName)
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public boolean hasXModFile()
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public FortranFileSummary getSrcSummary()
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public List<FileInfo> getIncludeFilesInfo()
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public AsciiArrayIOStream getPreprocessedSrc(boolean preserveOffset) throws IOException
     {
         throw new RuntimeException("Not implemented");
     }

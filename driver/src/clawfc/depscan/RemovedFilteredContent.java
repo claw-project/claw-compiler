@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import clawfc.Utils;
+import static clawfc.Utils.firstGreater;
 
 /**
  * Stores sequences removed by the Filter
@@ -95,7 +96,7 @@ public class RemovedFilteredContent implements FilteredContent
         }
         if (!data.isEmpty())
         {
-            int idx = clawfc.depscan.Utils.firstGreater(data, chrIdxFiltered) - 1;
+            int idx = firstGreater(data, chrIdxFiltered) - 1;
             if (idx >= 0)
             {
                 Data d = data.get(idx);

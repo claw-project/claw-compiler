@@ -86,12 +86,13 @@ public class FortranIncludeTest extends TestCase
     public void testParser() throws Exception
     {
         verifyParsing("include \"file.inc\"\n", "file.inc");
-        verifyParsing(" \r\tinclude \"file.inc\"\n", "file.inc");
-        verifyParsing(" \r\tinclude \r\t\"file.inc\"\n", "file.inc");
-        verifyParsing(" \r\tinclude \r\t\"file.inc\"\r\t \n", "file.inc");
-        verifyParsing(" \r\tinclude \r\t\"\"\"file.inc\"\r\t \n", "\"file.inc");
-        verifyParsing(" \r\tinclude \r\t'file.inc'\r\t \n", "file.inc");
-        verifyParsing(" \r\tinclude \r\t'''file.inc'\r\t \n", "'file.inc");
+        verifyParsing(" \tinclude \"file.inc\"\n", "file.inc");
+        verifyParsing(" \tinclude \"file.inc\"\r\n", "file.inc");
+        verifyParsing(" \tinclude \t\"file.inc\"\n", "file.inc");
+        verifyParsing(" \tinclude \t\"file.inc\"\t \n", "file.inc");
+        verifyParsing(" \tinclude \t\"\"\"file.inc\"\t \n", "\"file.inc");
+        verifyParsing(" \tinclude \t'file.inc'\t \n", "file.inc");
+        verifyParsing(" \tinclude \t'''file.inc'\t \n", "'file.inc");
     }
 
     void verifyResolver(FortranIncludesResolver resolver, Path dir, String name) throws Exception

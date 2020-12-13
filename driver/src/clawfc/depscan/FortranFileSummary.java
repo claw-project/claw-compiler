@@ -6,9 +6,13 @@ package clawfc.depscan;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import clawfc.FileInfo;
+import clawfc.utils.FileInfoImpl;
 
 public class FortranFileSummary
 {
@@ -113,6 +117,17 @@ public class FortranFileSummary
             _data.getInclude().add(incPath.toString());
         });
         setFilePath(path);
+    }
+
+    public List<FileInfo> getIncludeFilesInfo() throws Exception
+    {
+        List<Path> includes = getIncludes();
+        List<FileInfo> incFilesInfo = new ArrayList<FileInfo>();
+        for (Path includeFilepath : includes)
+        {
+            incFilesInfo.add(new FileInfoImpl(includeFilepath));
+        }
+        return incFilesInfo;
     }
 
     @Override

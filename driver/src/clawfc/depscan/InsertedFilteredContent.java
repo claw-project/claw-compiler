@@ -4,6 +4,8 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.firstGreater;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -93,7 +95,7 @@ public class InsertedFilteredContent implements FilteredContent
         }
         if (!data.isEmpty())
         {
-            final int idx = clawfc.depscan.Utils.firstGreater(data, chrIdxFiltered) - 1;
+            final int idx = firstGreater(data, chrIdxFiltered) - 1;
             if (idx >= 0)
             {
                 Data d = data.get(idx);
@@ -119,7 +121,7 @@ public class InsertedFilteredContent implements FilteredContent
         }
         if (!data.isEmpty())
         {
-            int idx = clawfc.depscan.Utils.firstGreater(this.startChrIndex, chrIdx) - 1;
+            int idx = firstGreater(this.startChrIndex, chrIdx) - 1;
             if (idx >= 0 && idx < data.size())
             {
                 int offset = data.get(idx).offset;

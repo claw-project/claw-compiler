@@ -21,6 +21,7 @@ OTHER : (~[&\n])+ |
         '&' (~'\n')* ~[&\r\t\n] SEP? |
         '&';
 
+EOL : ('\r')? '\n';
+
 fragment SEP : WS+;
-fragment WS : [ \t\r];
-EOL : '\n';
+fragment WS : [ \t];

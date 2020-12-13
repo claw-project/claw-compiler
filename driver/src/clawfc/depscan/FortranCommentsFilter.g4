@@ -18,7 +18,7 @@ OTHER : (~[!"'\n])+;
 COMMENT : EM (~'\n')*;
 STRING : (DQ (~'"' | QUOTED_DQ)* DQ) |
                   (SQ (~'\'' | QUOTED_SQ)* SQ);
-EOL : '\n';
+EOL : ('\r')? '\n';
 
 fragment QUOTED_DQ : DQ DQ;
 fragment QUOTED_SQ : SQ SQ;

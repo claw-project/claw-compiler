@@ -11,17 +11,18 @@ root : (claw_directive_line | claw_guard_line)* EOF;
 claw_directive_line : CLAW_DIRECTIVE_LINE;
 claw_guard_line : CLAW_GUARD_LINE;
 
-CLAW_DIRECTIVE_LINE : SEP? '!' SEP? '$' CLAW (SEP (~'\n')*)?;
+CLAW_DIRECTIVE_LINE : SEP? '!' SEP? '$' CLAW (SEP NOT_EOL_CHR*)?;
 CLAW_GUARD_LINE :     SEP? '!' SEP? '$' (ACC | OMP) SEP CLAW SEP?;
-OTHER_LINE : (~'\n')+ ->skip;
+OTHER_LINE : NOT_EOL_CHR+ ->skip;
 
-EOL : '\n' ->skip;
+EOL : ('\r')? '\n' ->skip;
+fragment NOT_EOL_CHR:  ~[\r\n];
 
 fragment ACC : A C C;
 fragment CLAW : C L A W;
 fragment OMP : O M P;
 fragment SEP : WS+;
-fragment WS : [ \t\r];
+fragment WS : [ \t];
 
 fragment A : [aA];
 fragment B : [bB];

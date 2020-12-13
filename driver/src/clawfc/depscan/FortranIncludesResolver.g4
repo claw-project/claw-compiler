@@ -17,8 +17,8 @@ fragment INCLUDE_STRING : (DQ (~'"' | QUOTED_DQ)* DQ)
                 | (SQ (~'\'' | QUOTED_SQ)* SQ);
 
 fragment SEP : WS+;
-fragment WS : [ \t\r];
-fragment EOL : '\n';
+fragment WS : [ \t];
+fragment EOL : ('\r')? '\n';
 fragment QUOTED_DQ : DQ DQ;
 fragment QUOTED_SQ : SQ SQ;
 fragment DQ : '"';

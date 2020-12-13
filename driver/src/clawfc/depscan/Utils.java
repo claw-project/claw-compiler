@@ -7,13 +7,9 @@ package clawfc.depscan;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -54,32 +50,6 @@ public class Utils
         return startChrIdx;
     }
 
-    public static <T> int firstGreater(List<? extends Comparable<? super T>> list, T key)
-    {
-        int res = Collections.binarySearch(list, key);
-        if (res >= 0)
-        {
-            res += 1;
-        } else
-        {
-            res = -res - 1;
-        }
-        return res;
-    }
-
-    public static int firstGreater(int[] arr, int key)
-    {
-        int res = Arrays.binarySearch(arr, key);
-        if (res >= 0)
-        {
-            res += 1;
-        } else
-        {
-            res = -res - 1;
-        }
-        return res;
-    }
-
     public static Path findFile(String includeStr, Collection<Path> searchPath)
     {
         for (Path dir : searchPath)
@@ -91,13 +61,5 @@ public class Utils
             }
         }
         return null;
-    }
-
-    public static class NullOutputStream extends OutputStream
-    {
-        @Override
-        public void write(int b) throws IOException
-        {
-        }
     }
 }

@@ -29,14 +29,18 @@ public class Build
 
     public static String moduleNameWithLocation(ModuleInfo info)
     {
-        Path srcFilePath = info.getSrcFileInfo().getPath();
-        if (info.getSrcFileInfo() != null)
+        if (info.hasSource())
         {
+            Path srcFilePath = info.getSrcFileInfo().getPath();
             long lineNum = info.getModuleSrcInfo().getStartLineIdx() + 1;
             return String.format("%s (%s:%s)", info.getName(), srcFilePath, lineNum);
+        } else if (info.hasXModFile())
+        {
+            Path xmodFilePath = info.getXModFileInfo().getPath();
+            return String.format("%s (%s)", info.getName(), xmodFilePath);
         } else
         {
-            return String.format("%s (%s)", info.getName(), srcFilePath);
+            return String.format("%s (no source or xmod file)", info.getName());
         }
     }
 
@@ -188,31 +192,31 @@ public class Build
         @Override
         public Map<String, ModuleInfo> getUsedModules()
         {
-            return Collections.unmodifiableMap(usedModules);
+            return usedModules;
         }
 
         @Override
         public Set<String> getTargetModules()
         {
-            return Collections.unmodifiableSet(targetModuleNames);
+            return targetModuleNames;
         }
 
         @Override
-        public Set<String> getProcessedModules()
+        public synchronized Set<String> getProcessedModules()
         {
-            return Collections.unmodifiableSet(processed);
+            return Collections.unmodifiableSet(new HashSet<String>(processed));
         }
 
         @Override
-        public boolean done()
+        public synchronized boolean done()
         {
             return processed.size() == usedModules.size();
         }
 
         public ParallelOrder(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames)
         {
-            this.usedModules = usedModules;
-            this.targetModuleNames = targetModuleNames;
+            this.usedModules = Collections.unmodifiableMap(usedModules);
+            this.targetModuleNames = Collections.unmodifiableSet(targetModuleNames);
             deps = getDependencies(usedModules);
             revDeps = reverseDependencies(usedModules);
             waiting = new LinkedList<String>(getStartSet(usedModules));
@@ -221,7 +225,7 @@ public class Build
         }
 
         @Override
-        public String next()
+        public synchronized String next()
         {
             String modName = waiting.poll();
             if (modName == null)
@@ -235,7 +239,7 @@ public class Build
         }
 
         @Override
-        public void onProcessed(String modName)
+        public synchronized void onProcessed(String modName)
         {
             if (!currentSet.remove(modName))
             {

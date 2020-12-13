@@ -95,9 +95,11 @@ public class FortranDepScanner
         AsciiArrayIOStream.LinesInfo linesInfo = inStrm.getLinesInfo();
         FortranFileBasicSummary basicRes = null;
         List<Path> incPaths = Collections.emptyList();
+        Set<String> modUsesClaw;
         try
         {
             basicRes = basicScan(inStrm.getAsInputStreamUnsafe(), null, null);
+            modUsesClaw = detectClaw(inStrm, basicRes);
         } catch (ContainsIncludesException e)
         {
             AsciiArrayIOStream inputWithResolvedIncludesBuf = new AsciiArrayIOStream();
@@ -113,8 +115,8 @@ public class FortranDepScanner
             }
             incPaths = Collections.unmodifiableList(new ArrayList<Path>(incPathsSet));
             basicRes = basicScan(inputWithResolvedIncludesBuf.getAsInputStreamUnsafe(), null, null);
+            modUsesClaw = detectClaw(inputWithResolvedIncludesBuf, basicRes);
         }
-        Set<String> modUsesClaw = detectClaw(inStrm, basicRes);
         FortranFileSummary res = getSummary(basicRes, modUsesClaw, linesInfo, incPaths);
         return res;
     }

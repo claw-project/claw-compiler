@@ -191,11 +191,10 @@ public class FortranLineBreaksFilterTest extends TestCase
         verifyLineBreaksFilter("\n", new String[] {});
         verifyLineBreaksFilter("bla\n", new String[] {});
         verifyLineBreaksFilter("module&\n" + "x\n", new String[] { "&\n" });
-        verifyLineBreaksFilter("module&\r\t\n" + "x\n", new String[] { "&\r\t\n" });
-        verifyLineBreaksFilter("module&\r\t\n" + "\r\tx\n", new String[] { "&\r\t\n\r\t" });
-        verifyLineBreaksFilter("module&\r\t\n" + "\r\t\n" + "\r\tx\n", new String[] { "&\r\t\n\r\t\n\r\t" });
-        verifyLineBreaksFilter("module&\r\t\n" + "\r\t\n" + "\r\t\n" + "\r\tx\n",
-                new String[] { "&\r\t\n\r\t\n\r\t\n\r\t" });
+        verifyLineBreaksFilter("module&\t\n" + "x\n", new String[] { "&\t\n" });
+        verifyLineBreaksFilter("module&\t\n" + "\tx\n", new String[] { "&\t\n\t" });
+        verifyLineBreaksFilter("module&\t\n" + "\t\n" + "\tx\n", new String[] { "&\t\n\t\n\t" });
+        verifyLineBreaksFilter("module&\t\n" + "\t\n" + "\t\n" + "\tx\n", new String[] { "&\t\n\t\n\t\n\t" });
         verifyLineBreaksFilter("module&\n" + " end& \n" + "x\n", new String[] { "&\n ", "& \n" });
     }
 
@@ -204,7 +203,7 @@ public class FortranLineBreaksFilterTest extends TestCase
         String expectedRes = "module x\n" + "end module x\n";
         verifyFilter("module x\n" + "end module x\n", expectedRes);
         verifyFilter("mod&\n" + "&ule x\n" + "end module x\n", expectedRes);
-        verifyFilter("mod&\n   " + "\r\r\n" + "   &ule x\n" + "end module x\n", expectedRes);
+        verifyFilter("mod&\n   " + "\n" + "   &ule x\n" + "end module x\n", expectedRes);
         verifyFilter("mod&\n" + "&ule x\n" + "end mod&\n" + "&ule x\n", expectedRes);
         verifyFilter("mod&\n" + "&ule x\n" + "end&  \n" + "mod&\n" + "&ule x\n", expectedRes);
         verifyFilter("mod&\n" + "&ule x\n" + "end&  \n" + "mod&\n" + "&ule x\n", expectedRes);
@@ -225,7 +224,7 @@ public class FortranLineBreaksFilterTest extends TestCase
             verifyFilter(in, expectedRes, true, Arrays.asList(0));
         }
         {
-            String in = "mod&\n   " + "\r\r\n" + "   &ule x\n" + "end module x\n";
+            String in = "mod&\n   " + "\n" + "   &ule x\n" + "end module x\n";
             String expectedRes = "\n" + "\n" + "module x\n" + "end module x\n";
             verifyFilter(in, expectedRes, true, Arrays.asList(0, 1));
         }

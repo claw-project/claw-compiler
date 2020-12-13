@@ -204,9 +204,9 @@ public class FortranDepScannerTest extends TestCase
         acceptModuleOpenString("module x");
         acceptModuleOpenString(" module x");
         acceptModuleOpenString("\tmodule x");
-        acceptModuleOpenString("\rmodule x");
+        acceptModuleOpenString("\tmodule x");
         acceptModuleOpenString("module x ");
-        acceptModuleOpenString("module x\r");
+        acceptModuleOpenString("module x\t");
         acceptModuleOpenString("module x\t");
         for (int i = 0, n = "module".length(); i < n; ++i)
         {
@@ -233,9 +233,9 @@ public class FortranDepScannerTest extends TestCase
     {
         acceptModuleCloseString("end module x");
         acceptModuleCloseString(" end module x");
-        acceptModuleCloseString("\rend module x");
         acceptModuleCloseString("\tend module x");
-        acceptModuleCloseString("\tend\r\rmodule  x ");
+        acceptModuleCloseString("\tend module x");
+        acceptModuleCloseString("\tend\t\tmodule  x ");
         for (int i = 0, n = "end".length(); i < n; ++i)
         {
             String str = flipChrCase("end", i) + " module x";
@@ -246,7 +246,7 @@ public class FortranDepScannerTest extends TestCase
             String str = "end " + flipChrCase("module", i) + " x";
             acceptModuleCloseString(str);
         }
-        rejectModuleCloseString("\tend\r\rmodule  x z");
+        rejectModuleCloseString("\tend\t\tmodule  x z");
     }
 
     void acceptProgramOpenString(String str) throws IOException
@@ -264,9 +264,9 @@ public class FortranDepScannerTest extends TestCase
         acceptProgramOpenString("program x");
         acceptProgramOpenString(" program x");
         acceptProgramOpenString("\tprogram x");
-        acceptProgramOpenString("\rprogram x");
+        acceptProgramOpenString("\tprogram x");
         acceptProgramOpenString("program x ");
-        acceptProgramOpenString("program x\r");
+        acceptProgramOpenString("program x\t");
         acceptProgramOpenString("program x\t");
         for (int i = 0, n = "program".length(); i < n; ++i)
         {
@@ -293,9 +293,9 @@ public class FortranDepScannerTest extends TestCase
     {
         acceptProgramCloseString("end Program x");
         acceptProgramCloseString(" end Program x");
-        acceptProgramCloseString("\rend Program x");
         acceptProgramCloseString("\tend Program x");
-        acceptProgramCloseString("\tend\r\rProgram  xy_23");
+        acceptProgramCloseString("\tend Program x");
+        acceptProgramCloseString("\tend\t\tProgram  xy_23");
         for (int i = 0, n = "end".length(); i < n; ++i)
         {
             String str = flipChrCase("end", i) + " Program x";
@@ -306,7 +306,7 @@ public class FortranDepScannerTest extends TestCase
             String str = "end " + flipChrCase("Program", i) + " x";
             acceptProgramCloseString(str);
         }
-        rejectProgramCloseString("\tend\r\rprogram x z");
+        rejectProgramCloseString("\tend\t\tprogram x z");
     }
 
     void acceptUseString(String str) throws IOException
@@ -443,23 +443,23 @@ public class FortranDepScannerTest extends TestCase
         verifyParse("module x\n" + "end module x\n",
                 Arrays.asList(new FortranModuleBasicInfo(BPos("x", 0, 21), Arrays.asList())),
                 (FortranModuleBasicInfo) null);
-        verifyParse(" \r\tmodule x\n" + "end module x\n",
+        verifyParse(" \t\tmodule x\n" + "end module x\n",
                 Arrays.asList(new FortranModuleBasicInfo(BPos("x", 3, 24), Arrays.asList())),
                 (FortranModuleBasicInfo) null);
-        verifyParse(" \r\tmodule x\n" + "end module x \r\t\n",
+        verifyParse(" \t\tmodule x\n" + "end module x \t\t\n",
                 Arrays.asList(new FortranModuleBasicInfo(BPos("x", 3, 24), Arrays.asList())),
                 (FortranModuleBasicInfo) null);
-        verifyParse(" \r\tprogram x\n" + "end program x\n", Arrays.asList(),
+        verifyParse(" \t\tprogram x\n" + "end program x\n", Arrays.asList(),
                 new FortranModuleBasicInfo(BPos("x", 3, 26), Arrays.asList()));
-        verifyParse(" \r\tprogram x\n" + "end program x \r\t\n", Arrays.asList(),
+        verifyParse(" \t\tprogram x\n" + "end program x \t\t\n", Arrays.asList(),
                 new FortranModuleBasicInfo(BPos("x", 3, 26), Arrays.asList()));
         verifyParse("module x\n" + "use y\n" + "end module x\n",
                 Arrays.asList(new FortranModuleBasicInfo(BPos("x", 0, 27), Arrays.asList(BPos("y", 9, 14)))),
                 (FortranModuleBasicInfo) null);
-        verifyParse("module x\n" + " \r\tuse y\n" + "end module x\n",
+        verifyParse("module x\n" + " \t\tuse y\n" + "end module x\n",
                 Arrays.asList(new FortranModuleBasicInfo(BPos("x", 0, 30), Arrays.asList(BPos("y", 12, 17)))),
                 (FortranModuleBasicInfo) null);
-        verifyParse("module x\n" + " \r\tuse y \r\t\n" + "end module x\n",
+        verifyParse("module x\n" + " \t\tuse y \t\t\n" + "end module x\n",
                 Arrays.asList(new FortranModuleBasicInfo(BPos("x", 0, 33), Arrays.asList(BPos("y", 12, 17)))),
                 (FortranModuleBasicInfo) null);
         verifyParse("module x\n" + "use y\n" + "bla\n" + "use z\n" + "end module x\n", Arrays.asList(

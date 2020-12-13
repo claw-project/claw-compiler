@@ -4,6 +4,8 @@
  */
 package clawfc.depscan;
 
+import static java.lang.Math.toIntExact;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,24 +26,24 @@ public class FortranModuleInfo
         return _data.getInfo().getName();
     }
 
-    public long getStartLineIdx()
+    public int getStartLineIdx()
     {
-        return _data.getInfo().getStartLineIdx();
+        return toIntExact(_data.getInfo().getStartLineIdx());
     }
 
-    public long getEndLineIdx()
+    public int getEndLineIdx()
     {
-        return _data.getInfo().getEndLineIdx();
+        return toIntExact(_data.getInfo().getEndLineIdx());
     }
 
-    public long getStartCharIdx()
+    public int getStartCharIdx()
     {
-        return data().getInfo().getStartCharIdx();
+        return toIntExact(data().getInfo().getStartCharIdx());
     }
 
-    public long getEndCharIdx()
+    public int getEndCharIdx()
     {
-        return data().getInfo().getEndCharIdx();
+        return toIntExact(data().getInfo().getEndCharIdx());
     }
 
     public List<String> getUsedModuleNames()

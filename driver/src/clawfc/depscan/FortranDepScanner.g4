@@ -39,7 +39,7 @@ fragment QUOTED_SQ : SQ SQ;
 
 OTHER : (~[\n;'"])+ ->skip;
 
-EOL : '\n' ->skip;
+EOL : ('\r')? '\n' ->skip;
 SEMICOLON : ';' ->skip;
 
 DQ : '"' ->skip;
@@ -57,7 +57,7 @@ fragment LETTER : [a-zA-Z];
 fragment DIGIT : [0-9];
 
 fragment SEP : WS+;
-fragment WS : [ \t\r];
+fragment WS : [ \t];
 
 fragment A : [aA];
 fragment B : [bB];

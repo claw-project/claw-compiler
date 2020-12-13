@@ -49,7 +49,7 @@ fragment LETTER : [a-zA-Z];
 fragment DIGIT : [0-9];
 
 SEP : WS+ -> skip;
-fragment WS : [ \t\r];
+fragment WS : [ \t];
 
 fragment A : [aA];
 fragment B : [bB];

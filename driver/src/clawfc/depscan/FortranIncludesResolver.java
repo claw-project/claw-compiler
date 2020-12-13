@@ -4,6 +4,7 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.copy;
 import static clawfc.utils.AsciiArrayIOStream.getLinesInfo;
 
 import java.io.IOException;
@@ -132,6 +133,9 @@ public class FortranIncludesResolver
         }
     }
 
+    /*
+     * Methos is NOT thread-safe
+     */
     public Set<Path> run(Path filePath, ByteArrayIOStream input, OutputStream output,
             Collection<Path> includesSearchPath) throws FortranException, IOException, Exception
     {
@@ -190,7 +194,7 @@ public class FortranIncludesResolver
         for (FortranStatementBasicPosition incStmt : includeStatements)
         {
             final int bytesToRead = currentPos - incStmt.getStartCharIdx();
-            clawfc.Utils.copy(input, output, copyBuffer, bytesToRead);
+            copy(input, output, copyBuffer, bytesToRead);
             input.skip(incStmt.length());
             // ------------------------------------
             Path incFilePath = resolveIncludeStatement(inputFilePath, input, incStmt);
