@@ -563,7 +563,8 @@ public class FortranDepScannerTest extends TestCase
         assertEquals(expRes, res);
     }
 
-    static FortranStatementPosition Pos(String name, int startCharIdx, int endCharIdx, int startLineIdx, int endLineIdx)
+    public static FortranStatementPosition Pos(String name, int startCharIdx, int endCharIdx, int startLineIdx,
+            int endLineIdx)
     {
         return new FortranStatementPosition(name, startCharIdx, endCharIdx, startLineIdx, endLineIdx);
     }
@@ -668,7 +669,8 @@ public class FortranDepScannerTest extends TestCase
                 clawfc.Utils.collectIntoString(resOutStrm.getAsInputStreamUnsafe()));
         {
             FortranFileBuildInfo refBase = depScanner.scan(refOutStrm.getAsInputStreamUnsafe());
-            ref = new FortranFileBuildInfo(refBase.getModules(), refBase.getProgram(), new ArrayList<Path>(refIncFiles));
+            ref = new FortranFileBuildInfo(refBase.getModules(), refBase.getProgram(),
+                    new ArrayList<Path>(refIncFiles));
         }
         assertEquals(ref, res);
     }

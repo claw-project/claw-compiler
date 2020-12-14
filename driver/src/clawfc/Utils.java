@@ -14,6 +14,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -273,7 +275,7 @@ public class Utils
         return String.format(format, args);
     }
 
-    static Path getOrCreateDir(Path dirPath) throws Exception
+    public static Path getOrCreateDir(Path dirPath) throws Exception
     {
         if (!Utils.dirExists(dirPath))
         {
@@ -286,5 +288,26 @@ public class Utils
             }
         }
         return dirPath;
+    }
+
+    public static FileTime max(FileTime ts1, FileTime ts2)
+    {
+        if (ts1.compareTo(ts2) > 0)
+        {
+            return ts1;
+        } else
+        {
+            return ts2;
+        }
+    }
+
+    public static String removeExtension(String filename)
+    {
+        return filename.substring(0, filename.lastIndexOf('.'));
+    }
+
+    public static void touch(Path path) throws IOException
+    {
+        Files.setLastModifiedTime(path, FileTime.from(Instant.now()));
     }
 }
