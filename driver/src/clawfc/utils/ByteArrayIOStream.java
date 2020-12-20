@@ -29,6 +29,13 @@ public class ByteArrayIOStream extends ByteArrayOutputStream
         }
     }
 
+    public ByteArrayIOStream(byte[] data) throws IOException
+    {
+        super();
+        this.buf = data;
+        this.count = data.length;
+    }
+
     public ByteArrayIOStream(int size)
     {
         super(size);

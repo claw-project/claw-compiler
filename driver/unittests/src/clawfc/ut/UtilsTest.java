@@ -5,12 +5,15 @@
 package clawfc.ut;
 
 import static clawfc.Utils.collectIntoString;
+import static clawfc.Utils.fileExists;
+import static clawfc.Utils.saveToFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
@@ -171,5 +174,36 @@ public class UtilsTest extends TestCase
     public void testUniquePathHashGenerator() throws NoSuchAlgorithmException
     {
         verifyPathHashGenerator(new UniqueHashGeneratorFactory());
+    }
+
+    public void testSaveToFile() throws IOException
+    {
+        final String dataString = "test data";
+        final String dataString2 = "test data2";
+        AsciiArrayIOStream data = new AsciiArrayIOStream(dataString);
+        AsciiArrayIOStream data2 = new AsciiArrayIOStream(dataString2);
+        Path tmpDir = Files.createTempDirectory(null);
+        tmpDir.toFile().deleteOnExit();
+        try
+        {
+            // Create file
+            Path filePath = tmpDir.resolve("test.txt");
+            saveToFile(data.getAsInputStreamUnsafe(), filePath);
+            assertTrue(fileExists(filePath));
+            final String resStr = collectIntoString(Files.newInputStream(filePath));
+            assertEquals(dataString, resStr);
+            // Replace existing
+            saveToFile(data2.getAsInputStreamUnsafe(), filePath);
+            assertTrue(fileExists(filePath));
+            final String resStr2 = collectIntoString(Files.newInputStream(filePath));
+            assertEquals(dataString2, resStr2);
+
+        } finally
+        {
+            if (tmpDir != null)
+            {
+                Utils.removeDir(tmpDir);
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -309,5 +310,25 @@ public class Utils
     public static void touch(Path path) throws IOException
     {
         Files.setLastModifiedTime(path, FileTime.from(Instant.now()));
+    }
+
+    public static void saveToFile(InputStream data, Path filePath) throws IOException
+    {
+        if (fileExists(filePath))
+        {
+            Files.delete(filePath);
+        }
+        Path outDirPath = filePath.getParent();
+        Path outTmpFilePath = Files.createTempFile(outDirPath, null, null);
+        outTmpFilePath.toFile().deleteOnExit();
+        try (OutputStream out = Files.newOutputStream(outTmpFilePath))
+        {
+            copy(data, out);
+        } catch (Exception e)
+        {
+            Files.deleteIfExists(outTmpFilePath);
+            throw e;
+        }
+        Files.move(outTmpFilePath, filePath, StandardCopyOption.ATOMIC_MOVE);
     }
 }

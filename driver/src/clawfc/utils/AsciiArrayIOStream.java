@@ -10,6 +10,7 @@ import static clawfc.Utils.firstGreater;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -157,6 +158,11 @@ public class AsciiArrayIOStream extends ByteArrayIOStream
     public AsciiArrayIOStream(Path filePath) throws IOException
     {
         super(filePath);
+    }
+
+    public AsciiArrayIOStream(String str) throws IOException
+    {
+        super(str.getBytes(StandardCharsets.US_ASCII));
     }
 
     public Integer findLineStartChrIdx(int chrIdx)
