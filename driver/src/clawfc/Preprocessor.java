@@ -124,12 +124,12 @@ public class Preprocessor
         }
         info = new PreprocessorInfo(ppCmd, ppType);
         cmdArgsTemplate = Collections.unmodifiableList(prepareArgs(info, opts.acceleratorDirectiveLanguage(),
-                opts.predefinedMacros(), opts.preprocessingIncludeDirs()));
+                opts.predefinedMacros(), opts.preprocessorIncludeDirs()));
         this.threadLocalData = new ThreadLocal<ThreadLocalData>();
         this.driverTempDir = driverTempDir;
         includesResolver = new FortranIncludesResolver();
         outputScanner = new PreprocessorOutputScanner();
-        ppIncSearchPath = opts.preprocessingIncludeDirs();
+        ppIncSearchPath = opts.preprocessorIncludeDirs();
     }
 
     public static class Failed extends SubprocessFailed
