@@ -8,19 +8,19 @@ import static clawfc.BuildInfo.BUILDINFO_FILE_EXTENSIONS;
 import static clawfc.Utils.fileExists;
 import static clawfc.Utils.max;
 import static clawfc.Utils.removeExtension;
+import static clawfc.Utils.saveToFile;
 import static clawfc.Utils.sprintf;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.FileTime;
 
 import clawfc.depscan.FortranFileBuildInfo;
 import clawfc.depscan.FortranFileBuildInfoDeserializer;
 import clawfc.depscan.FortranFileBuildInfoSerializer;
+import clawfc.utils.AsciiArrayIOStream;
 
 public class FortranFileBuildInfoData
 {
@@ -169,13 +169,13 @@ public class FortranFileBuildInfoData
      * @return Output file path
      * @throws Exception
      */
-    public Path save(Path dirPath, String hash, FortranFileBuildInfoSerializer serializer) throws Exception
+    public Path save(Path outDirPath, String hash, FortranFileBuildInfoSerializer serializer) throws Exception
     {
         if (filePath != null)
         {
             Path loadDirPath = filePath.getParent().normalize();
-            dirPath = dirPath.normalize();
-            if (loadDirPath.equals(dirPath))
+            outDirPath = outDirPath.normalize();
+            if (loadDirPath.equals(outDirPath))
             {// It is the same file that was loaded, no need to save it
                 return loadDirPath;
             }
@@ -186,17 +186,10 @@ public class FortranFileBuildInfoData
         }
         String basename = removeExtension(getInfo().getSrcFilePath().getFileName().toString());
         String outFilename = sprintf("%s_%s.%s", hash, basename, BUILDINFO_FILE_EXTENSIONS[0]);
-        Path outFilePath = dirPath.resolve(outFilename);
-        Path outTmpFilePath = Files.createTempFile(dirPath, null, null);
-        try (OutputStream out = Files.newOutputStream(outTmpFilePath))
-        {
-            serializer.serialize(info, out);
-        } catch (Exception e)
-        {
-            Files.deleteIfExists(outTmpFilePath);
-            throw e;
-        }
-        Files.move(outTmpFilePath, outFilePath, StandardCopyOption.ATOMIC_MOVE);
+        Path outFilePath = outDirPath.resolve(outFilename);
+        AsciiArrayIOStream serializedInfo = new AsciiArrayIOStream();
+        serializer.serialize(info, serializedInfo);
+        saveToFile(serializedInfo.getAsInputStreamUnsafe(), outFilePath);
         return outFilePath;
     }
 

@@ -43,6 +43,13 @@ public class FortranFileBuildInfo
         return includes;
     }
 
+    public List<Path> setIncludes(List<Path> includes)
+    {
+        List<Path> oldIncludes = this.includes;
+        this.includes = includes;
+        return oldIncludes;
+    }
+
     public Path getSrcFilePath()
     {
         return srcFilePath;

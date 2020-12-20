@@ -253,33 +253,4 @@ public class FortranFileBuildInfoDataTest extends TestCase
         }
 
     }
-    /*
-     * public void testLoad() throws IOException { Path tmpDir =
-     * Files.createTempDirectory(null); try { Path srcFilePath =
-     * tmpDir.resolve("src.f90"); Path ppSrcFilePath = tmpDir.resolve("pp.src.f90");
-     * Path incFilePath1 = tmpDir.resolve("1.inc"); Path incFilePath2 =
-     * tmpDir.resolve("2.inc"); FortranFileBuildInfo info =
-     * createInfo(Arrays.asList(incFilePath1, incFilePath2));
-     * FortranFileBuildInfoData data = new FortranFileBuildInfoData(info);
-     * verifyCreateDataException(info, "source file not set");
-     * info.setSrcFilePath(srcFilePath); verifyCreateDataException(info,
-     * sprintf("Failed to stat source file \"%s\"", srcFilePath));
-     * Files.write(srcFilePath, "src".getBytes()); verifyCreateDataException(info,
-     * sprintf("preprocessed source file not set"));
-     * info.setPPSrcFilePath(ppSrcFilePath); verifyCreateDataException(info,
-     * sprintf("Failed to stat preprocessed source file \"%s\"", ppSrcFilePath));
-     * Files.write(ppSrcFilePath, "pp.src".getBytes());
-     * verifyCreateDataException(info, sprintf("Failed to stat include file \"%s\"",
-     * incFilePath1)); Files.write(incFilePath1, "inc1".getBytes());
-     * verifyCreateDataException(info, sprintf("Failed to stat include file \"%s\"",
-     * incFilePath2)); Files.write(incFilePath2, "inc2".getBytes());
-     * FortranFileBuildInfoData data = new FortranFileBuildInfoData(info);
-     * assertEquals(info, data.getInfo()); // -------------------------------------
-     * verifyCreateDataTS(info, srcFilePath); verifyCreateDataTS(info,
-     * ppSrcFilePath); verifyCreateDataTS(info, incFilePath1);
-     * verifyCreateDataTS(info, incFilePath2); } finally { if (tmpDir != null) {
-     * removeDir(tmpDir); } }
-     * 
-     * }
-     */
 }

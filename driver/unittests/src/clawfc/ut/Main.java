@@ -14,6 +14,7 @@ public class Main
                 FortranCommentsFilterTest.class, FortranDepStatementsRecognizerTest.class,
                 FortranLineBreaksFilterTest.class, PreprocessorOutputScannerTest.class, PreprocessorTest.class,
                 FortranDepScannerTest.class, FortranBuildInfoTest.class, BuildTest.class, FortranIncludeTest.class,
-                FilterUtilsTest.class, FortranFrontEndTest.class, FortranFileBuildInfoDataTest.class);
+                FilterUtilsTest.class, FortranFrontEndTest.class, FortranFileBuildInfoDataTest.class,
+                PreprocessedFortranSourceDataTest.class);
     }
 }

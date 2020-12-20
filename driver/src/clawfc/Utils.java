@@ -307,6 +307,11 @@ public class Utils
         return filename.substring(0, filename.lastIndexOf('.'));
     }
 
+    public static String getExtension(String filename)
+    {
+        return filename.substring(filename.lastIndexOf('.') + 1);
+    }
+
     public static void touch(Path path) throws IOException
     {
         Files.setLastModifiedTime(path, FileTime.from(Instant.now()));
