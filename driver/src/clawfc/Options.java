@@ -32,15 +32,18 @@ public class Options
     final boolean _printCfg;
     final boolean _printOpts;
     final boolean _printCLAWFiles;
-    final boolean _genDepInfoFiles;
+    final boolean _genBuildInfoFiles;
+    final boolean _genModFiles;
     final List<Path> _inputFiles;
     final Path _outputFile;
     final Path _outputDir;
-    final Path _outputModDir;
+    final Path _ppOutDir;
+    final Path _modOutDir;
     final String _userTarget;
     final List<Path> _ppIncDirs;
     final List<Path> _srcIncDirs;
     final List<Path> _binfoIncDirs;
+    final Path _binfoOutDir;
     final List<Path> _modIncDirs;
     final List<String> _addMacros;
     final String _accDirLanguage;
@@ -63,6 +66,7 @@ public class Options
     final boolean _stopAfterDepScan;
     final boolean _stopAfterFFront;
     final boolean _stopAfterDepRes;
+    final boolean _stopAfterXmodGen;
     final boolean _stopAfterTrans;
     final List<String> _ppOpts;
     final List<String> _ffrontOpts;
@@ -111,9 +115,14 @@ public class Options
         return _printCLAWFiles;
     }
 
-    public boolean generateDepInfoFiles()
+    public boolean generateBuildInfoFiles()
     {
-        return _genDepInfoFiles;
+        return _genBuildInfoFiles;
+    }
+
+    public boolean generateModFiles()
+    {
+        return _genModFiles;
     }
 
     public boolean disableMultiprocessing()
@@ -138,7 +147,12 @@ public class Options
 
     public Path outputModulesDir()
     {
-        return _outputModDir;
+        return _modOutDir;
+    }
+
+    public Path preprocessedSourcesOutputDir()
+    {
+        return _ppOutDir;
     }
 
     public String userTarget()
@@ -146,7 +160,7 @@ public class Options
         return _userTarget;
     }
 
-    public List<Path> preprocessingIncludeDirs()
+    public List<Path> preprocessorIncludeDirs()
     {
         return _ppIncDirs;
     }
@@ -164,6 +178,11 @@ public class Options
     public List<Path> buildInfoIncludeDirs()
     {
         return _binfoIncDirs;
+    }
+
+    public Path buildInfoOutputDir()
+    {
+        return _binfoOutDir;
     }
 
     public List<String> predefinedMacros()
@@ -249,6 +268,11 @@ public class Options
     public boolean stopAfterDepResolution()
     {
         return _stopAfterDepRes;
+    }
+
+    public boolean stopAfterXmodGeneration()
+    {
+        return _stopAfterXmodGen;
     }
 
     public boolean stopAfterTranslation()
@@ -353,16 +377,19 @@ public class Options
                     .help("Output file for the transformed FORTRAN code. If not given, code is printed to stdout.");
             outOpts.addArgument("-O", "--output-dir").help("Output directory for transformed FORTRAN files");
             ArgumentGroup cOpts = parser.addArgumentGroup("Compiler options");
-            cOpts.addArgument("-I", "--pp-include-dir").nargs("*").action(Arguments.append())
-                    .help("Add the directory to the search path for preprocessor include files");
+            cOpts.addArgument("-I", "--pp-include-dir").nargs("*").action(Arguments.append()).help(
+                    "Add the directory to the search path for include files reference in preprocessor directives");
+            outOpts.addArgument("-PO", "--pp-output-dir")
+                    .help("Output directory for preprocessed FORTRAN source files");
             cOpts.addArgument("-D", "--add-macro").nargs("*").action(Arguments.append()).help("Predefine macro");
-            cOpts.addArgument("-S", "--src-include-dir").nargs("*").action(Arguments.append())
+            cOpts.addArgument("-SI", "--src-include-dir").nargs("*").action(Arguments.append())
                     .help("Add the directory to the search path for the source of referenced Fortran modules");
-            cOpts.addArgument("-J", "--output-mod-dir").help("Output directory for .xmod files.");
+            cOpts.addArgument("-J", "-MO", "--mod-output-dir").help("Output directory for .xmod files.");
             cOpts.addArgument("-M", "--mod-include-dir").nargs("*").action(Arguments.append())
                     .help("Input directory for .xmod files.");
-            cOpts.addArgument("-B", "--buildinfo-include-dir").nargs("*").action(Arguments.append())
+            cOpts.addArgument("-BI", "--buildinfo-include-dir").nargs("*").action(Arguments.append())
                     .help("Include directory for BuildInfo files");
+            cOpts.addArgument("-BO", "--buildinfo-output-dir").help("Output directory for BuildInfo files");
             cOpts.addArgument("-t", "--target").help("Type of target accelerator hardware");
             cOpts.addArgument("-d", "--directive")
                     .help("Specify accelerator directive language to be used for code generation");
@@ -376,7 +403,7 @@ public class Options
             cOpts.addArgument("--no-module-cache").action(Arguments.storeTrue())
                     .help("Deactivate module cache in the front-end");
             cOpts.addArgument("-f", "--force").action(Arguments.storeTrue())
-                    .help("Force the translation of files without directives");
+                    .help("Force the translation of modules without directives");
             cOpts.addArgument("--force-pure").action(Arguments.storeTrue())
                     .help("Force compiler to exit when transformation applied to PURE subroutine/function");
             cOpts.addArgument("--add-paren").action(Arguments.storeTrue())
@@ -393,16 +420,21 @@ public class Options
                     .help("Save intermediate files and stop after preprocess");
             cOpts.addArgument("--skip-pp").action(Arguments.storeTrue())
                     .help("Do not apply preprocessing to input and include files");
-            cOpts.addArgument("--stop-depscan").action(Arguments.storeTrue())
+            MutuallyExclusiveGroup sOpts = parser.addMutuallyExclusiveGroup("Compiler debug options");
+            sOpts.addArgument("--stop-depscan").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after dependencies scan");
-            cOpts.addArgument("--stop-dependencies").action(Arguments.storeTrue())
+            sOpts.addArgument("--stop-dependencies").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after dependencies resolution");
-            cOpts.addArgument("--stop-frontend").action(Arguments.storeTrue())
+            sOpts.addArgument("--stop-xmod-gen").action(Arguments.storeTrue())
+                    .help("Save intermediate files and stop after Xmod generation");
+            sOpts.addArgument("--stop-frontend").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after frontend");
-            cOpts.addArgument("--stop-translator").action(Arguments.storeTrue())
+            sOpts.addArgument("--stop-translator").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after translator");
             cOpts.addArgument("--gen-buildinfo-files").action(Arguments.storeTrue())
                     .help("Generate build information files for input and then stop");
+            cOpts.addArgument("--gen-mod-files").action(Arguments.storeTrue())
+                    .help("Generate xmod files for input and then stop");
             cOpts.addArgument("-x", "--override-cfg-key").nargs("*").action(Arguments.append())
                     .help("Override a configuration key:value pair from the command line. Higher "
                             + "priority over base configuration and user configuration");
@@ -450,12 +482,14 @@ public class Options
         _inputFiles = getPathList(parsedArgs, "fortran_file");
         _outputFile = getOptionalPath(parsedArgs, "output_file");
         _outputDir = getOptionalPath(parsedArgs, "output_dir");
-        _outputModDir = getOptionalPath(parsedArgs, "output_mod_dir");
+        _ppOutDir = getOptionalPath(parsedArgs, "pp_output_dir");
+        _modOutDir = getOptionalPath(parsedArgs, "mod_output_dir");
         _userTarget = parsedArgs.getString("target");
         _ppIncDirs = getPathList(parsedArgs, "pp_include_dir");
         _srcIncDirs = getPathList(parsedArgs, "src_include_dir");
         _modIncDirs = getPathList(parsedArgs, "mod_include_dir");
         _binfoIncDirs = getPathList(parsedArgs, "buildinfo_include_dir");
+        _binfoOutDir = getOptionalPath(parsedArgs, "buildinfo_output_dir");
         _addMacros = getStringList(parsedArgs, "add_macro");
         _accDirLanguage = parsedArgs.getString("directive");
         _configFile = parsedArgs.getString("config");
@@ -475,6 +509,7 @@ public class Options
         _stopAfterDepScan = parsedArgs.getBoolean("stop_depscan");
         _stopAfterFFront = parsedArgs.getBoolean("stop_frontend");
         _stopAfterDepRes = parsedArgs.getBoolean("stop_dependencies");
+        _stopAfterXmodGen = parsedArgs.getBoolean("stop_xmod_gen");
         _stopAfterTrans = parsedArgs.getBoolean("stop_translator");
         _ppOpts = getStringList(parsedArgs, "add_pp_opts");
         _ffrontOpts = getStringList(parsedArgs, "add_ffront_opts");
@@ -486,10 +521,11 @@ public class Options
         _exitOnPureFunction = parsedArgs.getBoolean("force_pure");
         _addParenToBinOpts = parsedArgs.getBoolean("add_paren");
         _genTransReport = parsedArgs.getBoolean("report");
-        _fCompilerType = parsedArgs.getString("fc_compiler_type");
-        _fCompilerCmd = parsedArgs.getString("fc_compiler_cmd");
+        _fCompilerType = parsedArgs.getString("fc_type");
+        _fCompilerCmd = parsedArgs.getString("fc_cmd");
         _disableMP = parsedArgs.getBoolean("disable_mp");
-        _genDepInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");
+        _genBuildInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");
+        _genModFiles = parsedArgs.getBoolean("gen_mod_files");
     }
 
     String toString(List<Path> paths)
@@ -503,7 +539,7 @@ public class Options
     {
         String res = "";
         res += "Input files: \n\t" + toString(inputFiles());
-        res += "Preprocessor include directories: \n\t" + toString(preprocessingIncludeDirs());
+        res += "Preprocessor include directories: \n\t" + toString(preprocessorIncludeDirs());
         res += "Source include directories: \n\t" + toString(sourceIncludeDirs());
         res += "Buildinfo include directories: \n\t" + toString(buildInfoIncludeDirs());
         res += "Module include directories: \n\t" + toString(moduleIncludeDirs());
@@ -511,6 +547,8 @@ public class Options
         res += String.format("Output file: \"%s\"\n", outputFile());
         res += String.format("Output directory: \"%s\"\n", outputDir());
         res += String.format("Output xmod directory: \"%s\"\n", outputModulesDir());
+        res += String.format("Output buildinfo directory: \"%s\"\n", buildInfoOutputDir());
+        res += String.format("Preprocessed sources output directory: \"%s\"\n", preprocessedSourcesOutputDir());
         res += "User target: " + userTarget() + "\n";
         res += "Accelerator directive language: " + acceleratorDirectiveLanguage() + "\n";
         res += "Config file: " + configFile() + "\n";
@@ -531,6 +569,7 @@ public class Options
         res += String.format("Stop after dependencies scan: %s\n", stopAfterDepScan());
         res += String.format("Stop after OMNI Fortran Front-End: %s\n", stopAfterOmniFFront());
         res += String.format("Stop after dependencies resolution: %s\n", stopAfterDepResolution());
+        res += String.format("Stop after Xmod generation: %s\n", stopAfterXmodGeneration());
         res += String.format("Stop after translator: %s\n", stopAfterTranslation());
         res += String.format("Add preprocessor options: \n\t%s\n", String.join("\n\t", preprocessorOptions()));
         res += String.format("Add OMNI Fortran Front-End options: \n\t%s\n", String.join("\n\t", OmniFFrontOptions()));
@@ -552,7 +591,8 @@ public class Options
         res += String.format("Fortran compiler type: %s\n", fortranCompilerType());
         res += String.format("Fortran compiler cmd: %s\n", fortranCompilerCmd());
         res += String.format("Disable multiprocessing: %s\n", disableMultiprocessing());
-        res += String.format("Generate dependencies info files: %s\n", generateDepInfoFiles());
+        res += String.format("Generate dependencies info files: %s\n", generateBuildInfoFiles());
+        res += String.format("Generate xmod files: %s\n", generateModFiles());
         return res;
     }
 

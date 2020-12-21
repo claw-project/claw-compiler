@@ -10,7 +10,6 @@ public class Main
 {
     public static void main(String[] args)
     {
-        TestsRunner.main(args, clawfc.tests.DriverTest.class, clawfc.tests.PreprocessorTest.class,
-                clawfc.tests.DepScanTest.class);
+        TestsRunner.main(args, DriverTest.class, PreprocessorTest.class, DepScanTest.class, XmodGenerationTest.class);
     }
 }

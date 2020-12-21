@@ -96,18 +96,19 @@ public class Preprocessor
     {
         public final Path workingDir;
         public final FortranIncludesResolver includesResolver;
+        public final PreprocessorOutputScanner outputScanner;
 
         public ThreadLocalData(Path workingDir) throws Exception
         {
             this.workingDir = workingDir;
-            this.includesResolver = new FortranIncludesResolver();
+            includesResolver = new FortranIncludesResolver();
+            outputScanner = new PreprocessorOutputScanner();
         }
     }
 
     final ThreadLocal<ThreadLocalData> threadLocalData;
     final Path driverTempDir;
-    final FortranIncludesResolver includesResolver;
-    final PreprocessorOutputScanner outputScanner;
+
     final List<Path> ppIncSearchPath;
 
     public Preprocessor(Configuration cfg, Options opts, Path driverTempDir) throws Exception
@@ -127,8 +128,6 @@ public class Preprocessor
                 opts.predefinedMacros(), opts.preprocessorIncludeDirs()));
         this.threadLocalData = new ThreadLocal<ThreadLocalData>();
         this.driverTempDir = driverTempDir;
-        includesResolver = new FortranIncludesResolver();
-        outputScanner = new PreprocessorOutputScanner();
         ppIncSearchPath = opts.preprocessorIncludeDirs();
     }
 
@@ -288,6 +287,6 @@ public class Preprocessor
             threadLocalData.set(localData);
         }
         return run(inputFilePath, outIncFilePaths, localData.workingDir, info, cmdArgsTemplate,
-                localData.includesResolver, ppIncSearchPath, outputScanner);
+                localData.includesResolver, ppIncSearchPath, localData.outputScanner);
     }
 }

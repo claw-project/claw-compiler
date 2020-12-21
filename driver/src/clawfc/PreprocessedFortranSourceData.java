@@ -73,7 +73,7 @@ public class PreprocessedFortranSourceData
         } catch (Preprocessor.Failed e)
         {
             String errMsg = sprintf("Exception thrown while preprocessing input file \"%s\":\n%s", srcFilePath,
-                    e.toString());
+                    e.getMessage());
             throw new Exception(errMsg, e);
         }
         PreprocessedFortranSourceData data = new PreprocessedFortranSourceData(srcFilePath, ppSrc,
@@ -94,7 +94,7 @@ public class PreprocessedFortranSourceData
      * @return Output file path
      * @throws Exception
      */
-    public Path save(Path outDirPath, String hash) throws Exception
+    public Path save(Path outDirPath, String srcDirHash) throws Exception
     {
         if (ppSrcFilePath != null)
         {
@@ -105,9 +105,18 @@ public class PreprocessedFortranSourceData
                 return ppSrcFilePath;
             }
         }
-        String outFilename = sprintf("%s_%s.pp.%s", hash, basename, extension);
+        String outFilename = sprintf("%s_%s.pp.%s", srcDirHash, basename, extension);
         Path outFilePath = outDirPath.resolve(outFilename);
         saveToFile(getPPSource().getAsInputStreamUnsafe(), outFilePath);
+        return outFilePath;
+    }
+
+    public static Path getOutputFilePath(String srcFileName, Path outDir, String srcDirHash)
+    {
+        String basename = removeExtension(srcFileName);
+        String extension = getExtension(srcFileName);
+        String outFilename = sprintf("%s_%s.pp.%s", srcDirHash, basename, extension);
+        Path outFilePath = outDir.resolve(outFilename);
         return outFilePath;
     }
 

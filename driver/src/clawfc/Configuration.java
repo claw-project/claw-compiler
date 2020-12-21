@@ -4,14 +4,11 @@
  */
 package clawfc;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.logging.Logger;
-import java.lang.System;
-import java.lang.StringBuilder;
-import java.nio.file.Paths;
-import java.nio.file.Path;
 
 public class Configuration
 {
@@ -27,7 +24,7 @@ public class Configuration
     {
         return cfgProperties.getProperty("claw.version");
     }
-    
+
     public String commit()
     {
         return cfgProperties.getProperty("claw.commit");
@@ -68,8 +65,7 @@ public class Configuration
         if (OMNI_HOME_ENV != null)
         {
             return Paths.get(OMNI_HOME_ENV);
-        } 
-        else
+        } else
         {
             return Paths.get(cfgProperties.getProperty("omni.home"));
         }
@@ -78,6 +74,16 @@ public class Configuration
     public Path omniFrontEnd()
     {
         return omniInstallRoot().resolve(cfgProperties.getProperty("omni.fortran.frontend")).normalize();
+    }
+
+    public Path omniDefaultStdXmodDir()
+    {
+        return omniInstallRoot().resolve("fincludes");
+    }
+
+    public Path defaultStdXmodDir()
+    {
+        return installRoot().resolve("fincludes");
     }
 
     public Configuration() throws Exception
@@ -111,8 +117,7 @@ public class Configuration
         s.append(String.format("claw.defaultFortranCompilerType : %s\n", defaultFortranCompilerType()));
         s.append(String.format("claw.defaultFortranCompilerCmd : %s\n", defaultFortranCompilerCmd()));
         s.append(String.format("claw.installRoot : %s\n", installRoot()));
-        s.append(String.format("claw.cfg.dir : %s [%s]\n", configDir(),
-                cfgProperties.getProperty("claw.cfg.dir")));
+        s.append(String.format("claw.cfg.dir : %s [%s]\n", configDir(), cfgProperties.getProperty("claw.cfg.dir")));
         s.append(String.format("omni.version.string : %s\n", omniVersion()));
         s.append(String.format("omni.version.tag : %s\n", omniVersionTag()));
         s.append(String.format("omni.home : %s [%s]\n", omniInstallRoot().toString(),
