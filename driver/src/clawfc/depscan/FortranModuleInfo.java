@@ -79,22 +79,6 @@ public class FortranModuleInfo
         _data.setUsesClaw(usesClaw);
     }
 
-    /*
-     * public FortranModuleInfo(FortranModuleBasicInfo info, long startCharPos, long
-     * endCharPos, boolean usesCLAW) { _data = new
-     * clawfc.depscan.serial.FortranModuleInfo();
-     * clawfc.depscan.FortranModuleBasicInfo.assign(data(), info.data());
-     * data().setStartCharPos(startCharPos); data().setEndCharPos(endCharPos);
-     * data().setUsesClaw(usesCLAW); }
-     * 
-     * public FortranModuleInfo(String name, long startLineNum, long endLineNum,
-     * Collection<String> usedModuleNames, long startCharPos, long endCharPos,
-     * boolean usesCLAW) { _data = new clawfc.depscan.serial.FortranModuleInfo();
-     * clawfc.depscan.FortranModuleBasicInfo.assign(data(), name, startLineNum,
-     * endLineNum, usedModuleNames); data().setStartCharPos(startCharPos);
-     * data().setEndCharPos(endCharPos); data().setUsesClaw(usesCLAW); }
-     */
-
     @Override
     public boolean equals(Object obj)
     {

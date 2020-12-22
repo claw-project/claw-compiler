@@ -193,9 +193,11 @@ public class FortranIncludesResolver
         int currentPos = 0;
         for (FortranStatementBasicPosition incStmt : includeStatements)
         {
-            final int bytesToRead = currentPos - incStmt.getStartCharIdx();
+            final int bytesToRead = incStmt.getStartCharIdx() - currentPos;
+            currentPos += bytesToRead;
             copy(input, output, copyBuffer, bytesToRead);
             input.skip(incStmt.length());
+            currentPos += incStmt.length();
             // ------------------------------------
             Path incFilePath = resolveIncludeStatement(inputFilePath, input, incStmt);
             includeFiles.add(incFilePath);

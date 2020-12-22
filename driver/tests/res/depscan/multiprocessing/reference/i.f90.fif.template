@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<fortran_file_summary>
+<fortran_file_build_info src_path="{in_dir}/{i}.f90" pp_src_path="{in_dir}/{i}.f90">
     <module uses_claw="true">
         <info start_line_idx="0" end_line_idx="3" name="mod{i}1" start_char_idx="0" end_char_idx="36"/>
         <used_modules/>
@@ -21,4 +21,4 @@
             <use start_line_idx="13" end_line_idx="14" name="mod{i}3" start_char_idx="143" end_char_idx="152"/>
         </used_modules>
     </program>
-</fortran_file_summary>
+</fortran_file_build_info>

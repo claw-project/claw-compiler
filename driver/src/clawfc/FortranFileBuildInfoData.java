@@ -7,7 +7,6 @@ package clawfc;
 import static clawfc.BuildInfo.BUILDINFO_FILE_EXTENSIONS;
 import static clawfc.Utils.fileExists;
 import static clawfc.Utils.max;
-import static clawfc.Utils.removeExtension;
 import static clawfc.Utils.saveToFile;
 import static clawfc.Utils.sprintf;
 
@@ -155,8 +154,11 @@ public class FortranFileBuildInfoData
         FileTime lastTS;
         FileTime srcFileTS = getFileTimestamp(info.getSrcFilePath(), "source");
         lastTS = srcFileTS;
-        FileTime ppSrcFileTS = getFileTimestamp(info.getPPSrcFilePath(), "preprocessed source");
-        lastTS = max(lastTS, ppSrcFileTS);
+        if (info.getPPSrcFilePath() != null)
+        {
+            FileTime ppSrcFileTS = getFileTimestamp(info.getPPSrcFilePath(), "preprocessed source");
+            lastTS = max(lastTS, ppSrcFileTS);
+        }
         for (Path incFilePath : info.getIncludes())
         {
             FileTime incTS = getFileTimestamp(incFilePath, "include");
@@ -169,7 +171,7 @@ public class FortranFileBuildInfoData
      * @return Output file path
      * @throws Exception
      */
-    public Path save(Path outDirPath, String hash, FortranFileBuildInfoSerializer serializer) throws Exception
+    public Path save(Path outDirPath, String srcDirHash, FortranFileBuildInfoSerializer serializer) throws Exception
     {
         if (filePath != null)
         {
@@ -184,12 +186,25 @@ public class FortranFileBuildInfoData
         {
             serializer = new FortranFileBuildInfoSerializer();
         }
-        String basename = removeExtension(getInfo().getSrcFilePath().getFileName().toString());
-        String outFilename = sprintf("%s_%s.%s", hash, basename, BUILDINFO_FILE_EXTENSIONS[0]);
-        Path outFilePath = outDirPath.resolve(outFilename);
+        String srcFilename = getInfo().getSrcFilePath().getFileName().toString();
+        Path outFilePath = getOutputFilePath(srcFilename, outDirPath, srcDirHash);
         AsciiArrayIOStream serializedInfo = new AsciiArrayIOStream();
         serializer.serialize(info, serializedInfo);
         saveToFile(serializedInfo.getAsInputStreamUnsafe(), outFilePath);
+        return outFilePath;
+    }
+
+    public static Path getOutputFilePath(String srcFilename, Path outDir, String srcDirHash)
+    {
+        String outFilename;
+        if (srcDirHash != null)
+        {
+            outFilename = sprintf("%s_%s.%s", srcDirHash, srcFilename, BUILDINFO_FILE_EXTENSIONS[0]);
+        } else
+        {
+            outFilename = sprintf("%s.%s", srcFilename, BUILDINFO_FILE_EXTENSIONS[0]);
+        }
+        Path outFilePath = outDir.resolve(outFilename);
         return outFilePath;
     }
 

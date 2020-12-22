@@ -25,8 +25,7 @@ public class PreprocessedFortranSourceData
     AsciiArrayIOStream ppSrc;
     final List<Path> incFilePaths;
     final Path ppSrcFilePath;
-    final String basename;
-    final String extension;
+    final String srcFilename;
 
     public synchronized AsciiArrayIOStream getPPSource() throws IOException
     {
@@ -48,9 +47,7 @@ public class PreprocessedFortranSourceData
         this.ppSrc = ppSrc;
         this.incFilePaths = incFilePaths;
         this.ppSrcFilePath = ppSrcFilePath;
-        final String filename = srcFilePath.getFileName().toString();
-        this.basename = removeExtension(filename);
-        this.extension = getExtension(filename);
+        this.srcFilename = srcFilePath.getFileName().toString();
     }
 
     /* Load existing preprocessed source from path in info */
@@ -105,8 +102,7 @@ public class PreprocessedFortranSourceData
                 return ppSrcFilePath;
             }
         }
-        String outFilename = sprintf("%s_%s.pp.%s", srcDirHash, basename, extension);
-        Path outFilePath = outDirPath.resolve(outFilename);
+        Path outFilePath = getOutputFilePath(srcFilename, outDirPath, srcDirHash);
         saveToFile(getPPSource().getAsInputStreamUnsafe(), outFilePath);
         return outFilePath;
     }

@@ -301,18 +301,9 @@ public class Driver
                         buildInfoBySrcPath, pp, opts.skipPreprocessing(), enableMultiprocessing);
                 final UniquePathHashGenerator dirHashGen = new UniquePathHashGenerator();
                 precomputeDirHashes(dirHashGen, opts.inputFiles(), opts.preprocessorIncludeDirs());
-                Map<Path, Path> ppSrcPathBySrcPath;
-                if (opts.preprocessedSourcesOutputDir() != null)
-                {
-                    info("Verifying output directory for preprocessed sources...");
-                    getOrCreateDir(opts.preprocessedSourcesOutputDir());
-                    info("Saving preprocessed input sources...");
-                    ppSrcPathBySrcPath = savePreprocessedSources(opts.inputFiles(), inputPPSrcFiles,
-                            opts.preprocessedSourcesOutputDir(), dirHashGen, enableMultiprocessing);
-                } else
-                {
-                    ppSrcPathBySrcPath = Collections.emptyMap();
-                }
+                final Map<Path, Path> ppSrcPathBySrcPath = savePreprocessedSources("input", opts.inputFiles(),
+                        inputPPSrcFiles, opts.preprocessedSourcesOutputDir(), dirHashGen, opts.skipPreprocessing(),
+                        enableMultiprocessing);
                 if (!opts.stopAfterPreprocessing())
                 {
                     info("Scanning input files for build information...");
@@ -322,8 +313,16 @@ public class Driver
                     {
                         info("Verifying output buildinfo dir...");
                         getOrCreateDir(opts.buildInfoOutputDir());
-                        saveBuildInfo(opts.inputFiles(), buildInfoBySrcPath, opts.buildInfoOutputDir(), dirHashGen,
-                                enableMultiprocessing);
+                        if (!opts.generateBuildInfoFiles())
+                        {
+                            saveBuildInfo(opts.inputFiles(), buildInfoBySrcPath, opts.buildInfoOutputDir(), dirHashGen,
+                                    enableMultiprocessing);
+                        } else
+                        {
+                            saveBuildInfo(opts.inputFiles(), buildInfoBySrcPath, opts.buildInfoOutputDir(), null,
+                                    enableMultiprocessing);
+                            return;
+                        }
                     }
                 }
                 if (opts.printCLAWFiles())
@@ -336,16 +335,9 @@ public class Driver
                 info("Preprocessing include files...");
                 Map<Path, PreprocessedFortranSourceData> incPPSrcFiles = preprocessFiles(includeFiles,
                         buildInfoBySrcPath, pp, opts.skipPreprocessing(), enableMultiprocessing);
-                Map<Path, Path> ppIncSrcPathBySrcPath;
-                if (opts.preprocessedSourcesOutputDir() != null)
-                {
-                    info("Saving preprocessed include sources...");
-                    ppIncSrcPathBySrcPath = savePreprocessedSources(includeFiles, incPPSrcFiles,
-                            opts.preprocessedSourcesOutputDir(), dirHashGen, enableMultiprocessing);
-                } else
-                {
-                    ppIncSrcPathBySrcPath = Collections.emptyMap();
-                }
+                Map<Path, Path> ppIncSrcPathBySrcPath = savePreprocessedSources("include", includeFiles, incPPSrcFiles,
+                        opts.preprocessedSourcesOutputDir(), dirHashGen, opts.skipPreprocessing(),
+                        enableMultiprocessing);
                 if (opts.stopAfterPreprocessing())
                 {
                     return;
@@ -353,6 +345,11 @@ public class Driver
                 info("Scanning include files for build information...");
                 scanFiles(includeFiles, buildInfoBySrcPath, incPPSrcFiles, ppIncSrcPathBySrcPath,
                         enableMultiprocessing);
+                if (opts.buildInfoOutputDir() != null)
+                {
+                    saveBuildInfo(includeFiles, buildInfoBySrcPath, opts.buildInfoOutputDir(), dirHashGen,
+                            enableMultiprocessing);
+                }
                 if (opts.stopAfterDepScan())
                 {
                     return;
@@ -980,6 +977,32 @@ public class Driver
         return Collections.unmodifiableMap(ppSrcByPath);
     }
 
+    static Map<Path, Path> savePreprocessedSources(String category, List<Path> srcPaths,
+            Map<Path, PreprocessedFortranSourceData> ppSrcByPath, final Path outDirPath,
+            final PathHashGenerator pathHashGen, boolean skipPP, boolean enableMultiprocessing) throws Exception
+    {
+        Map<Path, Path> ppSrcPathBySrcPath;
+        if (outDirPath != null)
+        {
+            info("Verifying output directory for preprocessed sources...");
+            getOrCreateDir(outDirPath);
+            info(sprintf("Saving preprocessed %s sources...", category));
+            ppSrcPathBySrcPath = savePreprocessedSources(srcPaths, ppSrcByPath, outDirPath, pathHashGen,
+                    enableMultiprocessing);
+        } else if (skipPP)
+        {
+            ppSrcPathBySrcPath = new HashMap<Path, Path>();
+            for (Path path : srcPaths)
+            {
+                ppSrcPathBySrcPath.put(path, path);
+            }
+        } else
+        {
+            ppSrcPathBySrcPath = Collections.emptyMap();
+        }
+        return ppSrcPathBySrcPath;
+    }
+
     /**
      * @return Mapping between source files and preprocessed source files
      */
@@ -1028,16 +1051,23 @@ public class Driver
         return tmpInputFilesDir;
     }
 
-    static Map<Path, FortranFileBuildInfoData> loadBuildInfoFromFiles(List<Path> binfoDirs, List<Path> inputFiles,
-            List<Path> includeDirs, boolean enableMultiprocessing) throws Exception
+    static List<Path> createBuildInfoFilesList(List<Path> binfoDirs) throws Exception
     {
         List<Path> uniqueDirs = BuildInfo.createDirListFromPaths(binfoDirs);
         Map<Path, List<Path>> binfoDirFiles = BuildInfo.createBuildinfoDirFileLists(uniqueDirs);
-        int n = 0;
+        List<Path> binfoFiles = new ArrayList<Path>();
         for (Map.Entry<Path, List<Path>> incDir : binfoDirFiles.entrySet())
         {
-            n += incDir.getValue().size();
+            binfoFiles.addAll(incDir.getValue());
         }
+        return Collections.unmodifiableList(binfoFiles);
+    }
+
+    static Map<Path, FortranFileBuildInfoData> loadBuildInfoFromFiles(List<Path> binfoDirs, List<Path> inputFiles,
+            List<Path> includeDirs, boolean enableMultiprocessing) throws Exception
+    {
+        final List<Path> binfoFilePaths = createBuildInfoFilesList(binfoDirs);
+        final int n = binfoFilePaths.size();
         FortranFileBuildInfoData[] data = new FortranFileBuildInfoData[n];
         // -----------------------------------------------
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
@@ -1045,51 +1075,47 @@ public class Driver
         // -----------------------------------------------
         final Set<Path> inputFilesSet = Collections.unmodifiableSet(new HashSet<Path>(inputFiles));
         final Set<Path> includeDirsSet = Collections.unmodifiableSet(new HashSet<Path>(includeDirs));
-        int i = 0;
-        for (Map.Entry<Path, List<Path>> binfoDir : binfoDirFiles.entrySet())
+        for (int i = 0; i < n; ++i)
         {
-            for (final Path binfoPath : binfoDir.getValue())
+            final int dataIdx = i;
+            final Path binfoPath = binfoFilePaths.get(i);
+            tasks.add(new Callable<Void>()
             {
-                final int dataIdx = i;
-                ++i;
-                tasks.add(new Callable<Void>()
+                public Void call() throws Exception
                 {
-                    public Void call() throws Exception
+                    FortranFileBuildInfoDeserializer localDeserializer = deserializer.get();
+                    if (localDeserializer == null)
                     {
-                        FortranFileBuildInfoDeserializer localDeserializer = deserializer.get();
-                        if (localDeserializer == null)
-                        {
-                            localDeserializer = new FortranFileBuildInfoDeserializer(true);
-                            deserializer.set(localDeserializer);
-                        }
-                        try
-                        {
-                            FortranFileBuildInfoData binfoData = FortranFileBuildInfoData.load(binfoPath,
-                                    localDeserializer);
-                            Path srcFilePath = binfoData.info.getSrcFilePath();
-                            Path srcFileDirPath = srcFilePath.getParent();
-                            if (inputFilesSet.contains(srcFilePath) || includeDirsSet.contains(srcFileDirPath))
-                            {
-                                data[dataIdx] = binfoData;
-                            } else
-                            {
-                                Driver.warning(sprintf(
-                                        "Build information file \"%s\" was discarded. It refers to source file outside input and include directories.",
-                                        binfoPath));
-                            }
-                        } catch (FortranFileBuildInfoData.LoadFailed e)
-                        {
-                            Driver.warning(e.getMessage());
-                        } catch (Exception e)
-                        {
-                            String errMsg = sprintf("Exception thrown while loading build information file \"%s\"",
-                                    binfoPath.toString());
-                            throw new Exception(errMsg, e);
-                        }
-                        return null;
+                        localDeserializer = new FortranFileBuildInfoDeserializer(true);
+                        deserializer.set(localDeserializer);
                     }
-                });
-            }
+                    try
+                    {
+                        FortranFileBuildInfoData binfoData = FortranFileBuildInfoData.load(binfoPath,
+                                localDeserializer);
+                        Path srcFilePath = binfoData.info.getSrcFilePath();
+                        Path srcFileDirPath = srcFilePath.getParent();
+                        if (inputFilesSet.contains(srcFilePath) || includeDirsSet.contains(srcFileDirPath))
+                        {
+                            data[dataIdx] = binfoData;
+                        } else
+                        {
+                            Driver.warning(sprintf(
+                                    "Build information file \"%s\" was discarded. It refers to source file outside input and include directories.",
+                                    binfoPath));
+                        }
+                    } catch (FortranFileBuildInfoData.LoadFailed e)
+                    {
+                        Driver.warning(e.getMessage());
+                    } catch (Exception e)
+                    {
+                        String errMsg = sprintf("Exception thrown while loading build information file \"%s\"",
+                                binfoPath.toString());
+                        throw new Exception(errMsg, e);
+                    }
+                    return null;
+                }
+            });
         }
         executeTasksUntilFirstError(tasks, enableMultiprocessing);
         Map<Path, FortranFileBuildInfoData> res = new HashMap<Path, FortranFileBuildInfoData>();
@@ -1131,7 +1157,7 @@ public class Driver
                         serializer.set(localSerializer);
                     }
                     FortranFileBuildInfoData data = binfoBySrcPath.get(srcPath);
-                    final String dirHash = pathHashGen.generate(srcPath.getParent());
+                    final String dirHash = pathHashGen != null ? pathHashGen.generate(srcPath.getParent()) : null;
                     data.save(outBuildInfoDir, dirHash, localSerializer);
                     return null;
                 }
@@ -1204,9 +1230,12 @@ public class Driver
         executeTasksUntilFirstError(tasks, enableMultiprocessing);
         for (int i = 0; i < n; ++i)
         {
-            final Path srcPath = inputFiles.get(i);
             final FortranFileBuildInfoData binfoData = binfoDataLst[i];
-            binfoBySrcPath.put(srcPath, binfoData);
+            if (binfoData != null)
+            {
+                final Path srcPath = inputFiles.get(i);
+                binfoBySrcPath.put(srcPath, binfoData);
+            }
         }
     }
 
@@ -1323,7 +1352,7 @@ public class Driver
             }
             if (opts.buildInfoOutputDir() != null)
             {
-                if (opts.preprocessedSourcesOutputDir() == null)
+                if (opts.preprocessedSourcesOutputDir() == null && !opts.skipPreprocessing())
                 {
                     throw new Exception("Output directory for preprocessed FORTRAN source files -PO/--pp-output-dir"
                             + " must be specified too when using -BO/--buildinfo-output-dir");

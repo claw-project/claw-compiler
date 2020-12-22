@@ -47,6 +47,11 @@ public class FortranFileBuildInfo
     {
         List<Path> oldIncludes = this.includes;
         this.includes = includes;
+        data.getInclude().clear();
+        for (Path incPath : includes)
+        {
+            data.getInclude().add(incPath.toString());
+        }
         return oldIncludes;
     }
 

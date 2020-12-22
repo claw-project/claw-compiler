@@ -1,10 +1,3 @@
-module mod11
-!$claw
-end module mod11
-
-module mod12
-end module mod12
-
 module mod13
     use mod12
 end module mod13

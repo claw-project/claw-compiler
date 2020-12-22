@@ -4,6 +4,8 @@
  */
 package clawfc;
 
+import static clawfc.Utils.sprintf;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -530,70 +532,71 @@ public class Options
 
     String toString(List<Path> paths)
     {
-        return String.join("\n\t", inputFiles().stream().map((path) -> path.toString()).collect(Collectors.toList()))
-                + "\n";
+        final String res = String.join("\n\t",
+                paths.stream().map((path) -> path.toString()).collect(Collectors.toList()));
+        return res != "" ? "\t" + res + "\n" : res;
     }
 
     @Override
     public String toString()
     {
-        String res = "";
-        res += "Input files: \n\t" + toString(inputFiles());
-        res += "Preprocessor include directories: \n\t" + toString(preprocessorIncludeDirs());
-        res += "Source include directories: \n\t" + toString(sourceIncludeDirs());
-        res += "Buildinfo include directories: \n\t" + toString(buildInfoIncludeDirs());
-        res += "Module include directories: \n\t" + toString(moduleIncludeDirs());
-        res += "Predefined macros: \n\t" + String.join("\n\t", predefinedMacros()) + "\n";
-        res += String.format("Output file: \"%s\"\n", outputFile());
-        res += String.format("Output directory: \"%s\"\n", outputDir());
-        res += String.format("Output xmod directory: \"%s\"\n", outputModulesDir());
-        res += String.format("Output buildinfo directory: \"%s\"\n", buildInfoOutputDir());
-        res += String.format("Preprocessed sources output directory: \"%s\"\n", preprocessedSourcesOutputDir());
-        res += "User target: " + userTarget() + "\n";
-        res += "Accelerator directive language: " + acceleratorDirectiveLanguage() + "\n";
-        res += "Config file: " + configFile() + "\n";
-        res += String.format("Config overrides: \n\t%s\n", String.join("\n\t", cfgKeysOverrides()));
-        res += "Model Config file: " + modelConfigFile() + "\n";
-        res += String.format("Only preprocess: %s\n", onlyPreprocess());
-        res += String.format("Verbose output: %s\n", verbose());
-        res += String.format("Keep comments: %s\n", keepComments());
-        res += String.format("Force translation: %s\n", forceTranslation());
-        res += String.format("Resolve dependencies: %s\n", resolveDependencies());
-        res += String.format("Show debug output: %s\n", showDebugOutput());
-        res += String.format("Keep intermediate files: %s\n", keepIntermediateFiles());
-        res += String.format("Intermediate files directory: %s\n", intermediateFilesDir().toString());
-        res += String.format("OMNI Fortran Front-End debugging enabled: %s\n", debugOmniFFront());
-        res += String.format("Disable OMNI Fortran Front-End module cache: %s\n", disableOmniFFrontModuleCache());
-        res += String.format("Skip preprocessing: %s\n", skipPreprocessing());
-        res += String.format("Stop after preprocessing: %s\n", stopAfterPreprocessing());
-        res += String.format("Stop after dependencies scan: %s\n", stopAfterDepScan());
-        res += String.format("Stop after OMNI Fortran Front-End: %s\n", stopAfterOmniFFront());
-        res += String.format("Stop after dependencies resolution: %s\n", stopAfterDepResolution());
-        res += String.format("Stop after Xmod generation: %s\n", stopAfterXmodGeneration());
-        res += String.format("Stop after translator: %s\n", stopAfterTranslation());
-        res += String.format("Add preprocessor options: \n\t%s\n", String.join("\n\t", preprocessorOptions()));
-        res += String.format("Add OMNI Fortran Front-End options: \n\t%s\n", String.join("\n\t", OmniFFrontOptions()));
-        res += String.format("Add translation options: \n\t%s\n", String.join("\n\t", translatorOptions()));
-        res += String.format("Max Fortran line length: %s\n", maxFortranLineLength());
-        res += String.format("Add preprocessor line directives: %s\n", addPreprocLineDirectives());
-        res += String.format("Dump CX2T args: %s\n", dumpCX2TArgs());
-        res += String.format("Exit on pure function: %s\n", exitOnPureFunction());
-        res += String.format("Add parenthesis to binary opts: %s\n", addParenToBinaryOpts());
-        res += String.format("Generate transformation report: %s\n", genTransReport());
-        res += String.format("Max Fortran line length: %s\n", maxFortranLineLength());
-        res += String.format("Print install configuration: %s\n", printInstallCfg());
-        res += String.format("Print configuration: %s\n", printCfg());
-        res += String.format("Print install version: %s\n", printVersion());
-        res += String.format("Print supported targets: %s\n", printTargets());
-        res += String.format("Print supported accelerator directive languages: %s\n", printDirectives());
-        res += String.format("Print options: %s\n", printOptions());
-        res += String.format("Print input CLAW files: %s\n", printCLAWFiles());
-        res += String.format("Fortran compiler type: %s\n", fortranCompilerType());
-        res += String.format("Fortran compiler cmd: %s\n", fortranCompilerCmd());
-        res += String.format("Disable multiprocessing: %s\n", disableMultiprocessing());
-        res += String.format("Generate dependencies info files: %s\n", generateBuildInfoFiles());
-        res += String.format("Generate xmod files: %s\n", generateModFiles());
-        return res;
+        StringBuilder res = new StringBuilder();
+        res.append("Input files: \n" + toString(inputFiles()));
+        res.append("Preprocessor include directories: \n" + toString(preprocessorIncludeDirs()));
+        res.append("Source include directories: \n" + toString(sourceIncludeDirs()));
+        res.append("Buildinfo include directories: \n" + toString(buildInfoIncludeDirs()));
+        res.append("Module include directories: \n" + toString(moduleIncludeDirs()));
+        res.append("Predefined macros: \n\t" + String.join("\n\t", predefinedMacros()) + "\n");
+        res.append(sprintf("Output file: \"%s\"\n", outputFile()));
+        res.append(sprintf("Output directory: \"%s\"\n", outputDir()));
+        res.append(sprintf("Output xmod directory: \"%s\"\n", outputModulesDir()));
+        res.append(sprintf("Output buildinfo directory: \"%s\"\n", buildInfoOutputDir()));
+        res.append(sprintf("Preprocessed sources output directory: \"%s\"\n", preprocessedSourcesOutputDir()));
+        res.append("User target: " + userTarget() + "\n");
+        res.append("Accelerator directive language: " + acceleratorDirectiveLanguage() + "\n");
+        res.append("Config file: " + configFile() + "\n");
+        res.append(sprintf("Config overrides: \n\t%s\n", String.join("\n\t", cfgKeysOverrides())));
+        res.append("Model Config file: " + modelConfigFile() + "\n");
+        res.append(sprintf("Only preprocess: %s\n", onlyPreprocess()));
+        res.append(sprintf("Verbose output: %s\n", verbose()));
+        res.append(sprintf("Keep comments: %s\n", keepComments()));
+        res.append(sprintf("Force translation: %s\n", forceTranslation()));
+        res.append(sprintf("Resolve dependencies: %s\n", resolveDependencies()));
+        res.append(sprintf("Show debug output: %s\n", showDebugOutput()));
+        res.append(sprintf("Keep intermediate files: %s\n", keepIntermediateFiles()));
+        res.append(sprintf("Intermediate files directory: %s\n", intermediateFilesDir()));
+        res.append(sprintf("OMNI Fortran Front-End debugging enabled: %s\n", debugOmniFFront()));
+        res.append(sprintf("Disable OMNI Fortran Front-End module cache: %s\n", disableOmniFFrontModuleCache()));
+        res.append(sprintf("Skip preprocessing: %s\n", skipPreprocessing()));
+        res.append(sprintf("Stop after preprocessing: %s\n", stopAfterPreprocessing()));
+        res.append(sprintf("Stop after dependencies scan: %s\n", stopAfterDepScan()));
+        res.append(sprintf("Stop after OMNI Fortran Front-End: %s\n", stopAfterOmniFFront()));
+        res.append(sprintf("Stop after dependencies resolution: %s\n", stopAfterDepResolution()));
+        res.append(sprintf("Stop after Xmod generation: %s\n", stopAfterXmodGeneration()));
+        res.append(sprintf("Stop after translator: %s\n", stopAfterTranslation()));
+        res.append(sprintf("Add preprocessor options: \n\t%s\n", String.join("\n\t", preprocessorOptions())));
+        res.append(sprintf("Add OMNI Fortran Front-End options: \n\t%s\n", String.join("\n\t", OmniFFrontOptions())));
+        res.append(sprintf("Add translation options: \n\t%s\n", String.join("\n\t", translatorOptions())));
+        res.append(sprintf("Max Fortran line length: %s\n", maxFortranLineLength()));
+        res.append(sprintf("Add preprocessor line directives: %s\n", addPreprocLineDirectives()));
+        res.append(sprintf("Dump CX2T args: %s\n", dumpCX2TArgs()));
+        res.append(sprintf("Exit on pure function: %s\n", exitOnPureFunction()));
+        res.append(sprintf("Add parenthesis to binary opts: %s\n", addParenToBinaryOpts()));
+        res.append(sprintf("Generate transformation report: %s\n", genTransReport()));
+        res.append(sprintf("Max Fortran line length: %s\n", maxFortranLineLength()));
+        res.append(sprintf("Print install configuration: %s\n", printInstallCfg()));
+        res.append(sprintf("Print configuration: %s\n", printCfg()));
+        res.append(sprintf("Print install version: %s\n", printVersion()));
+        res.append(sprintf("Print supported targets: %s\n", printTargets()));
+        res.append(sprintf("Print supported accelerator directive languages: %s\n", printDirectives()));
+        res.append(sprintf("Print options: %s\n", printOptions()));
+        res.append(sprintf("Print input CLAW files: %s\n", printCLAWFiles()));
+        res.append(sprintf("Fortran compiler type: %s\n", fortranCompilerType()));
+        res.append(sprintf("Fortran compiler cmd: %s\n", fortranCompilerCmd()));
+        res.append(sprintf("Disable multiprocessing: %s\n", disableMultiprocessing()));
+        res.append(sprintf("Generate dependencies info files: %s\n", generateBuildInfoFiles()));
+        res.append(sprintf("Generate xmod files: %s\n", generateModFiles()));
+        return res.toString();
     }
 
     Path getOptionalPath(Namespace parsedArgs, String name)
