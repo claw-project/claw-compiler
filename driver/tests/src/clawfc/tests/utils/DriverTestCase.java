@@ -44,7 +44,7 @@ public abstract class DriverTestCase extends TestCase
         }
     }
 
-    protected class Result
+    protected static class Result
     {
         public final String stderr;
         public final String stdout;
@@ -56,13 +56,13 @@ public abstract class DriverTestCase extends TestCase
         }
     }
 
-    void resetStdStreams()
+    static void resetStdStreams()
     {
         System.setErr(new PrintStream(new FileOutputStream(FileDescriptor.err)));
         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
     }
 
-    protected Result run(String[] args) throws Exception
+    protected static Result run(String[] args) throws Exception
     {
         Result res;
         ByteArrayIOStream stdErr = new ByteArrayIOStream();
@@ -86,7 +86,7 @@ public abstract class DriverTestCase extends TestCase
         return res;
     }
 
-    public String readTxt(Path path) throws Exception
+    public static String readTxt(Path path) throws Exception
     {
         assertTrue(fileExists(path));
         return new String(Files.readAllBytes(Paths.get(path.toString())), StandardCharsets.UTF_8);
@@ -109,13 +109,13 @@ public abstract class DriverTestCase extends TestCase
         return true;
     }
 
-    public void assertTxtFileEqualsTxt(Path res, String refTxt) throws Exception
+    public static void assertTxtFileEqualsTxt(Path res, String refTxt) throws Exception
     {
         String resTxt = readTxt(res);
         assertEquals(refTxt, resTxt);
     }
 
-    public void assertEqualsTxtFiles(Path res, Path ref) throws Exception
+    public static void assertEqualsTxtFiles(Path res, Path ref) throws Exception
     {
 
         String refTxt = readTxt(ref);

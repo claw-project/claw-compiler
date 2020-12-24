@@ -176,7 +176,7 @@ public class UtilsTest extends TestCase
         verifyPathHashGenerator(new UniqueHashGeneratorFactory());
     }
 
-    public void testSaveToFile() throws IOException
+    public void testSaveToFile() throws Exception
     {
         final String dataString = "test data";
         final String dataString2 = "test data2";

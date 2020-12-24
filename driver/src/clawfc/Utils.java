@@ -29,6 +29,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
+import clawfc.utils.FileInfoImpl;
+
 public class Utils
 {
     public static final byte ASCII_NEWLINE_VALUE = (byte) '\n';
@@ -291,6 +293,15 @@ public class Utils
         return dirPath;
     }
 
+    public static void recreateDir(Path dirPath) throws Exception
+    {
+        if (dirExists(dirPath))
+        {
+            removeDir(dirPath);
+        }
+        getOrCreateDir(dirPath);
+    }
+
     public static FileTime max(FileTime ts1, FileTime ts2)
     {
         if (ts1.compareTo(ts2) > 0)
@@ -317,7 +328,7 @@ public class Utils
         Files.setLastModifiedTime(path, FileTime.from(Instant.now()));
     }
 
-    public static void saveToFile(InputStream data, Path filePath) throws IOException
+    public static FileInfo saveToFile(InputStream data, Path filePath) throws Exception
     {
         if (fileExists(filePath))
         {
@@ -335,5 +346,6 @@ public class Utils
             throw e;
         }
         Files.move(outTmpFilePath, filePath, StandardCopyOption.ATOMIC_MOVE);
+        return new FileInfoImpl(filePath);
     }
 }

@@ -31,12 +31,12 @@ public class Build
     {
         if (info.hasSource())
         {
-            Path srcFilePath = info.getSrcFileInfo().getPath();
+            Path srcFilePath = info.getSrcPath();
             long lineNum = info.getModuleSrcInfo().getStartLineIdx() + 1;
             return String.format("%s (%s:%s)", info.getName(), srcFilePath, lineNum);
-        } else if (info.hasXModFile())
+        } else if (info.getXMod() != null && info.getXMod().getFilePath() != null)
         {
-            Path xmodFilePath = info.getXModFileInfo().getPath();
+            Path xmodFilePath = info.getXMod().getFilePath();
             return String.format("%s (%s)", info.getName(), xmodFilePath);
         } else
         {
@@ -83,8 +83,8 @@ public class Build
         String moduleWithLocation(String name)
         {
             ModuleInfo info = availModules.get(name);
-            Path srcFilePath = info.getSrcFileInfo().getPath();
-            if (info.getSrcFileInfo() != null)
+            Path srcFilePath = info.getSrcPath();
+            if (info.getModuleSrcInfo() != null)
             {
                 long lineNum = info.getModuleSrcInfo().getStartLineIdx() + 1;
                 return String.format("%s (%s:%s)", name, srcFilePath, lineNum);

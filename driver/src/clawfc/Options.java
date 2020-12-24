@@ -40,7 +40,7 @@ public class Options
     final Path _outputFile;
     final Path _outputDir;
     final Path _ppOutDir;
-    final Path _modOutDir;
+    final Path _xmodOutDir;
     final String _userTarget;
     final List<Path> _ppIncDirs;
     final List<Path> _srcIncDirs;
@@ -147,9 +147,9 @@ public class Options
         return _outputDir;
     }
 
-    public Path outputModulesDir()
+    public Path xmodOutputDir()
     {
-        return _modOutDir;
+        return _xmodOutDir;
     }
 
     public Path preprocessedSourcesOutputDir()
@@ -386,9 +386,9 @@ public class Options
             cOpts.addArgument("-D", "--add-macro").nargs("*").action(Arguments.append()).help("Predefine macro");
             cOpts.addArgument("-SI", "--src-include-dir").nargs("*").action(Arguments.append())
                     .help("Add the directory to the search path for the source of referenced Fortran modules");
-            cOpts.addArgument("-J", "-MO", "--mod-output-dir").help("Output directory for .xmod files.");
-            cOpts.addArgument("-M", "--mod-include-dir").nargs("*").action(Arguments.append())
+            cOpts.addArgument("-M", "-MI", "--mod-include-dir").nargs("*").action(Arguments.append())
                     .help("Input directory for .xmod files.");
+            cOpts.addArgument("-J", "-MO", "--mod-output-dir").help("Output directory for .xmod files.");
             cOpts.addArgument("-BI", "--buildinfo-include-dir").nargs("*").action(Arguments.append())
                     .help("Include directory for BuildInfo files");
             cOpts.addArgument("-BO", "--buildinfo-output-dir").help("Output directory for BuildInfo files");
@@ -485,7 +485,7 @@ public class Options
         _outputFile = getOptionalPath(parsedArgs, "output_file");
         _outputDir = getOptionalPath(parsedArgs, "output_dir");
         _ppOutDir = getOptionalPath(parsedArgs, "pp_output_dir");
-        _modOutDir = getOptionalPath(parsedArgs, "mod_output_dir");
+        _xmodOutDir = getOptionalPath(parsedArgs, "mod_output_dir");
         _userTarget = parsedArgs.getString("target");
         _ppIncDirs = getPathList(parsedArgs, "pp_include_dir");
         _srcIncDirs = getPathList(parsedArgs, "src_include_dir");
@@ -549,7 +549,7 @@ public class Options
         res.append("Predefined macros: \n\t" + String.join("\n\t", predefinedMacros()) + "\n");
         res.append(sprintf("Output file: \"%s\"\n", outputFile()));
         res.append(sprintf("Output directory: \"%s\"\n", outputDir()));
-        res.append(sprintf("Output xmod directory: \"%s\"\n", outputModulesDir()));
+        res.append(sprintf("Output xmod directory: \"%s\"\n", xmodOutputDir()));
         res.append(sprintf("Output buildinfo directory: \"%s\"\n", buildInfoOutputDir()));
         res.append(sprintf("Preprocessed sources output directory: \"%s\"\n", preprocessedSourcesOutputDir()));
         res.append("User target: " + userTarget() + "\n");

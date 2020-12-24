@@ -8,7 +8,6 @@ import static clawfc.Utils.collectIntoString;
 import static clawfc.Utils.removeDir;
 import static clawfc.Utils.saveToFile;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
@@ -23,7 +22,7 @@ import junit.framework.TestCase;
 
 public class PreprocessedFortranSourceDataTest extends TestCase
 {
-    public void testLoadFromExistingFile() throws IOException
+    public void testLoadFromExistingFile() throws Exception
     {
 
         Path tmpDir = Files.createTempDirectory(null);
@@ -47,7 +46,7 @@ public class PreprocessedFortranSourceDataTest extends TestCase
         }
     }
 
-    public void testLoadWithBuildInfo() throws IOException
+    public void testLoadWithBuildInfo() throws Exception
     {
 
         Path tmpDir = Files.createTempDirectory(null);

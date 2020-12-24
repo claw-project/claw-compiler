@@ -20,7 +20,9 @@ import java.util.stream.Stream;
 import clawfc.Build;
 import clawfc.BuildOrder;
 import clawfc.FileInfo;
+import clawfc.FortranFileBuildInfoData;
 import clawfc.ModuleInfo;
+import clawfc.XmodData;
 import clawfc.depscan.FortranDepScanner;
 import clawfc.depscan.FortranFileBuildInfo;
 import clawfc.depscan.FortranModuleInfo;
@@ -95,43 +97,25 @@ class TestModuleInfo implements clawfc.ModuleInfo
     }
 
     @Override
-    public FileInfo getSrcFileInfo()
-    {
-        return fileInfo;
-    }
-
-    @Override
-    public FileInfo getXModFileInfo()
-    {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public boolean XModIsUpToDate(Map<String, ModuleInfo> availModsByName)
-    {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public boolean hasXModFile()
-    {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public FortranFileBuildInfo getSrcSummary()
-    {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public List<FileInfo> getIncludeFilesInfo()
-    {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
     public AsciiArrayIOStream getPreprocessedSrc(boolean preserveOffset) throws IOException
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public Path getSrcPath()
+    {
+        return this.filePath;
+    }
+
+    @Override
+    public FortranFileBuildInfoData getSrcFileBinfoData()
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public XmodData getXMod()
     {
         throw new RuntimeException("Not implemented");
     }

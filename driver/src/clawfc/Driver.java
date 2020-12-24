@@ -4,24 +4,21 @@
  */
 package clawfc;
 
-import static clawfc.Utils.ASCII_NEWLINE_VALUE;
-import static clawfc.Utils.ASCII_SPACE_VALUE;
-import static clawfc.Utils.copy;
 import static clawfc.Utils.executeTasksUntilFirstError;
 import static clawfc.Utils.fileExists;
 import static clawfc.Utils.getOrCreateDir;
+import static clawfc.Utils.max;
+import static clawfc.Utils.removeExtension;
+import static clawfc.Utils.saveToFile;
 import static clawfc.Utils.sprintf;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,14 +31,17 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import claw.ClawX2T;
+import clawfc.ModuleData.ModuleDesignation;
+import clawfc.ModuleData.ModuleType;
 import clawfc.Utils.ExecuteTasks;
 import clawfc.depscan.FortranDepScanner;
 import clawfc.depscan.FortranFileBuildInfo;
 import clawfc.depscan.FortranFileBuildInfoDeserializer;
 import clawfc.depscan.FortranFileBuildInfoSerializer;
 import clawfc.depscan.FortranModuleInfo;
-import clawfc.depscan.FortranSemanticException;
 import clawfc.utils.AsciiArrayIOStream;
+import clawfc.utils.ByteArrayIOStream;
+import clawfc.utils.FileInfoImpl;
 import clawfc.utils.PathHashGenerator;
 import clawfc.utils.UniquePathHashGenerator;
 
@@ -119,119 +119,6 @@ public class Driver
         }
     }
 
-    static class SourceFileData
-    {
-        final Path inDir;
-        final FileInfo inFileInfo;
-
-        public AsciiArrayIOStream pp;
-        public AsciiArrayIOStream ppWithResolvedIncludes;
-        public Path tempDir;
-        public Path ppFilename;
-        public FortranFileBuildInfo info;
-        public List<FileInfo> incFilesInfo;
-
-        public Path inPath()
-        {
-            return inFileInfo.getPath();
-        }
-
-        public Path ppPath()
-        {
-            return tempDir.resolve(ppFilename);
-        }
-
-        public Path ppErrLogPath()
-        {
-            return tempDir.resolve(ppFilename + ".log");
-        }
-
-        public Path infoFilePath(Path dir)
-        {
-            return dir.resolve(inPath().getFileName() + ".fif");
-        }
-
-        public Path infoFilePath()
-        {
-            return infoFilePath(tempDir);
-        }
-
-        public SourceFileData(Path inPath) throws Exception
-        {
-            inDir = Utils.dirPath(inPath);
-            inFileInfo = new clawfc.utils.FileInfoImpl(inPath);
-            pp = null;
-            ppWithResolvedIncludes = null;
-            tempDir = null;
-            ppFilename = null;
-            info = null;
-            incFilesInfo = null;
-        }
-
-        public Path getPath()
-        {
-            return inFileInfo.getPath();
-        }
-
-        public FileTime getLastModifiedTS()
-        {
-            return inFileInfo.getLastModifiedTS();
-        }
-    }
-
-    static class BuildInfoFileData
-    {
-        private FortranFileBuildInfo info;
-        public final Path filePath;
-        private List<FileInfo> incFilesInfo;
-
-        FortranFileBuildInfo getInfo()
-        {
-            return info;
-        }
-
-        void setIncludeFilesInfo(List<FileInfo> info)
-        {
-            this.incFilesInfo = info;
-        }
-
-        List<FileInfo> getIncludeFilesInfo()
-        {
-            return incFilesInfo;
-        }
-
-        void setInfo(FortranFileBuildInfo info)
-        {
-            this.info = info;
-        }
-
-        public BuildInfoFileData(Path filePath)
-        {
-            this.info = null;
-            this.filePath = filePath;
-            this.incFilesInfo = null;
-        }
-
-        public BuildInfoFileData(FortranFileBuildInfo info, Path filePath)
-        {
-            this.info = info;
-            this.filePath = filePath;
-            this.incFilesInfo = null;
-        }
-    }
-
-    class PPSourceFileData
-    {
-        public final AsciiArrayIOStream ppSrc;
-        public final Set<Path> incFilePaths;
-
-        public PPSourceFileData(AsciiArrayIOStream ppSrc, Set<Path> incFilePaths)
-        {
-            this.ppSrc = ppSrc;
-            this.incFilePaths = incFilePaths;
-        }
-    }
-
     void execute(Options opts) throws Exception
     {
         if (opts.printInstallCfg())
@@ -269,13 +156,6 @@ public class Driver
             try
             {
                 final boolean enableMultiprocessing = !opts.disableMultiprocessing();
-                /*
-                 * Map<String, ModuleFileData> inputModules; if
-                 * (!opts.moduleIncludeDirs().isEmpty()) {
-                 * info("Searching for module files..."); inputModules =
-                 * searchForModules(opts.moduleIncludeDirs()); } else { inputModules =
-                 * Collections.emptyMap(); }
-                 */
                 Map<Path, FortranFileBuildInfoData> buildInfoBySrcPath;
                 if (!opts.buildInfoIncludeDirs().isEmpty())
                 {
@@ -290,11 +170,6 @@ public class Driver
                 tmpDir = createTempDir(opts);
                 info(tmpDir.toString(), 1);
                 info("Creating temp dirs for input files...");
-                /*
-                 * SourceFileData[] inputFilesData = createInputData(opts.inputFiles()); if
-                 * (opts.keepIntermediateFiles()) { createInputFilesTempDir(inputFilesData,
-                 * tmpDir); }
-                 */
                 final Preprocessor pp = new Preprocessor(cfg(), opts, tmpDir);
                 info("Preprocessing input files...");
                 Map<Path, PreprocessedFortranSourceData> inputPPSrcFiles = preprocessFiles(opts.inputFiles(),
@@ -354,23 +229,52 @@ public class Driver
                 {
                     return;
                 }
-                /*
-                 * info("Verifying build set..."); final Map<String, ModuleInfo> availModules =
-                 * getAvailableModulesInfo(inputFilesData, includeFilesData, inputModules);
-                 * final boolean onlyCLAWTargets = !opts.forceTranslation(); final Set<String>
-                 * targetModuleNames = getTargetModuleNames(availModules, false,
-                 * onlyCLAWTargets); final Map<String, ModuleInfo> usedModules =
-                 * Build.removeUnreferencedModules(availModules, targetModuleNames); final
-                 * FortranFrontEnd ffront = new FortranFrontEnd(cfg(), opts, tmpDir); if
-                 * (opts.resolveDependencies()) { info("Generating xmods...");
-                 * generateXmods(ffront, usedModules, targetModuleNames, false,
-                 * enableMultiprocessing, opts.showDebugOutput()); } else { if
-                 * (opts.generateModFiles()) { info("Generating xmods for targets...");
-                 * generateXmods(ffront, usedModules, targetModuleNames, true,
-                 * enableMultiprocessing, opts.showDebugOutput()); } } if
-                 * (opts.generateModFiles()) { return; } if (opts.stopAfterXmodGeneration()) {
-                 * return; }
-                 */
+                final Map<String, XmodData> inputXmods;
+                if (!opts.moduleIncludeDirs().isEmpty())
+                {
+                    info("Load input Xmod files...");
+                    inputXmods = loadXmodFiles(opts.moduleIncludeDirs());
+                } else
+                {
+                    inputXmods = Collections.emptyMap();
+                }
+                info("Verifying build set...");
+                final Map<String, ModuleInfo> availModules = getAvailableModulesInfo(buildInfoBySrcPath,
+                        inputPPSrcFiles, incPPSrcFiles, inputXmods);
+                final boolean onlyCLAWTargets = !opts.forceTranslation();
+                final Set<String> targetModuleNames = getTargetModuleNames(availModules, false, onlyCLAWTargets);
+                final Map<String, ModuleInfo> usedModules = Build.removeUnreferencedModules(availModules,
+                        targetModuleNames);
+                info("Verifying input xmod files...");
+                setXmodData(usedModules, targetModuleNames, inputXmods);
+                final FortranFrontEnd ffront = new FortranFrontEnd(cfg(), opts, tmpDir);
+                if (opts.resolveDependencies())
+                {
+                    info("Generating xmods...");
+                    generateXmods(ffront, usedModules, targetModuleNames, false, enableMultiprocessing,
+                            opts.showDebugOutput());
+                } else
+                {
+                    if (opts.generateModFiles())
+                    {
+                        info("Generating xmods for targets...");
+                        generateXmods(ffront, usedModules, targetModuleNames, true, enableMultiprocessing,
+                                opts.showDebugOutput());
+                    }
+                }
+                if (opts.xmodOutputDir() != null)
+                {
+                    saveXmods(usedModules, targetModuleNames, !opts.resolveDependencies(), opts.xmodOutputDir());
+                }
+                if (opts.generateModFiles())
+                {
+                    return;
+                }
+                if (opts.stopAfterXmodGeneration())
+                {
+                    return;
+                }
+
             } finally
             {
                 if (tmpDir != null && !opts.keepIntermediateFiles())
@@ -459,77 +363,47 @@ public class Driver
                         Build.moduleNameWithLocation(modInfo)));
                 return true;
             }
-            final boolean isTarget = targetModuleNames.contains(modName);
-            if (onlyForTargets && !isTarget)
+            if (modInfo.getXMod() != null)
             {
-                if (!modInfo.hasXModFile())
-                {
-                    error(sprintf("Xmod generation: Error! Xmod file for dependency module %s is not available",
-                            Build.moduleNameWithLocation(modInfo)));
-                    return false;
-                }
-                if (!modInfo.XModIsUpToDate(usedModules))
-                {
-                    error(sprintf("Xmod generation: Error! Xmod file for dependency module %s is not up to date",
-                            Build.moduleNameWithLocation(modInfo)));
-                    return false;
-                }
                 info(sprintf("Xmod generation: %s.xmod for dependency module %s is up to date", modName,
                         Build.moduleNameWithLocation(modInfo)));
                 return true;
             }
-            final Path outFilePath = ffront.getOutModDir().resolve(modName + ".xmod");
-            if (modInfo.XModIsUpToDate(usedModules))
+            final boolean isTarget = targetModuleNames.contains(modName);
+            if (onlyForTargets && !isTarget)
             {
-                StringBuilder infoMsg = new StringBuilder();
-                infoMsg.append(sprintf("Xmod generation: %s.xmod is up to date", modName));
-                if (isTarget)
-                {
-                    final Path currentXModPath = modInfo.getXModFileInfo().getPath();
-                    if (!currentXModPath.equals(outFilePath))
-                    {
-                        Files.copy(currentXModPath, outFilePath);
-                        infoMsg.append('\n');
-                        infoMsg.append(sprintf("Xmod generation: copied %s.xmod to output dir", modName));
-                    }
-                    info(infoMsg.toString());
-                }
-                return true;
-            } else
-            {
-                if (modInfo.hasSource())
-                {
-                    AsciiArrayIOStream outStrm = new AsciiArrayIOStream();
-                    try
-                    {
-                        AsciiArrayIOStream modPPSrc = modInfo.getPreprocessedSrc(true);
-                        ffront.generateXmod(modInfo.getSrcFileInfo().getPath(), modPPSrc.getAsInputStreamUnsafe(),
-                                outStrm);
-                    } catch (FortranFrontEnd.Failed failed)
-                    {
-                        String errMsg = sprintf("Xmod generation: Error! Call to Omni frontend for %s failed",
-                                Build.moduleNameWithLocation(modInfo));
-                        if (printDebugOutput)
-                        {
-                            errMsg += "\n" + failed.getMessage();
-                        }
-                        error(errMsg);
-                        return false;
-                    }
-                    try (OutputStream outFile = Files.newOutputStream(outFilePath))
-                    {
-                        copy(outStrm.getAsInputStreamUnsafe(), outFile);
-                    }
-                    return true;
-                } else
-                {
-                    error(sprintf("Xmod generation: Error! Source for %s is not available",
-                            Build.moduleNameWithLocation(modInfo)));
-                    return false;
-                }
+                error(sprintf("Xmod generation: Error! Up to date xmod file for dependency module %s is not available",
+                        Build.moduleNameWithLocation(modInfo)));
+                return false;
             }
+            if (modInfo.getXMod() != null)
+            {
+                info(sprintf("Xmod generation: %s.xmod for dependency module %s is up to date", modName,
+                        Build.moduleNameWithLocation(modInfo)));
+                return true;
+            }
+            ByteArrayIOStream xmodDataStrm = new ByteArrayIOStream();
+            try
+            {
+                AsciiArrayIOStream modPPSrc = modInfo.getPreprocessedSrc(true);
+                ffront.generateXmod(modInfo.getSrcPath(), modPPSrc.getAsInputStreamUnsafe(), xmodDataStrm);
+            } catch (FortranFrontEnd.Failed failed)
+            {
+                String errMsg = sprintf("Xmod generation: Error! Call to Omni frontend for %s failed",
+                        Build.moduleNameWithLocation(modInfo));
+                if (printDebugOutput)
+                {
+                    errMsg += "\n" + failed.getMessage();
+                }
+                error(errMsg);
+                return false;
+            }
+            final Path xmodFilePath = XmodData.getOutputFilePath(ffront.getOutModDir(), modName);
+            final FileInfo xmodFInfo = saveToFile(xmodDataStrm.getAsInputStreamUnsafe(), xmodFilePath);
+            final XmodData xmodData = new XmodData(modName, xmodFInfo, xmodDataStrm);
+            ((ModuleData) modInfo).setXMod(xmodData);
+            return true;
         }
-
     };
 
     static void generateXmods(FortranFrontEnd ffront, Map<String, ModuleInfo> usedModules,
@@ -548,270 +422,136 @@ public class Driver
         }
     }
 
-    static class ModuleData implements ModuleInfo
-    {
-        final String name;
-        final boolean _isProgram;
-        final boolean _isInput;
-        SourceFileData srcFileData;
-        ModuleFileData modFileData;
-        FortranModuleInfo modInfo;
-
-        public ModuleData(SourceFileData srcData, FortranModuleInfo info, ModuleFileData modFileData, boolean isInput,
-                boolean isTarget)
+    static void saveXmods(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames,
+            final boolean onlyForTargets, final Path outDirPath) throws Exception
+    {// It is best to save xmods in order so that file modifications dates will be in
+     // the right sequence
+        BuildOrder buildOrder = Build.getParallelOrder(usedModules, targetModuleNames);
+        for (String modName = buildOrder.next(); modName != null; modName = buildOrder.next())
         {
-            name = info.getName();
-            _isProgram = isInput;
-            _isInput = isTarget;
-            srcFileData = srcData;
-            this.modFileData = modFileData;
-            modInfo = info;
-        }
-
-        public ModuleData(String name, ModuleFileData modFileData)
-        {
-            this.name = name;
-            _isProgram = false;
-            _isInput = false;
-            srcFileData = null;
-            this.modFileData = modFileData;
-            modInfo = null;
-        }
-
-        @Override
-        public String getName()
-        {
-            return name;
-        }
-
-        @Override
-        public boolean isProgram()
-        {
-            return _isProgram;
-        }
-
-        @Override
-        public boolean isModule()
-        {
-            return !isProgram();
-        }
-
-        public SourceFileData getSourceFileData()
-        {
-            return srcFileData;
-        }
-
-        @Override
-        public boolean isInput()
-        {
-            return _isInput;
-        }
-
-        @Override
-        public boolean usesCLAW()
-        {
-            return modInfo.getUsesClaw();
-        }
-
-        @Override
-        public boolean hasSource()
-        {
-            return srcFileData != null;
-        }
-
-        @Override
-        public Collection<String> getUsedModules()
-        {
-            if (!hasSource())
+            if (!(onlyForTargets && !targetModuleNames.contains(modName)))
             {
-                return (Collection<String>) null;
-            } else
-            {
-                return modInfo.getUsedModuleNames();
-            }
-        }
-
-        @Override
-        public clawfc.depscan.FortranModuleInfo getModuleSrcInfo()
-        {
-            return modInfo;
-        }
-
-        @Override
-        public FileInfo getSrcFileInfo()
-        {
-            return srcFileData.inFileInfo;
-        }
-
-        @Override
-        public FileInfo getXModFileInfo()
-        {
-            return modFileData;
-        }
-
-        @Override
-        public boolean hasXModFile()
-        {
-            return modFileData != null;
-        }
-
-        @Override
-        public boolean XModIsUpToDate(Map<String, ModuleInfo> availModsByName)
-        {
-            if (!hasXModFile())
-            {
-                return false;
-            }
-            final FileTime modFileTS = getXModFileInfo().getLastModifiedTS();
-            if (hasSource())
-            {
-                final FileTime srcFileTS = getSrcFileInfo().getLastModifiedTS();
-                if (srcFileTS.compareTo(modFileTS) > 0)
+                final ModuleInfo modInfo = usedModules.get(modName);
+                if (modInfo.isModule())
                 {
-                    return false;
+                    final XmodData xmodData = modInfo.getXMod();
+                    xmodData.save(outDirPath);
                 }
             }
-            for (String depModname : getUsedModules())
-            {
-                ModuleInfo depModInfo = availModsByName.get(depModname);
-                if (depModInfo.hasSource())
-                {
-                    final FileTime depSrcFileTS = depModInfo.getSrcFileInfo().getLastModifiedTS();
-                    if (depSrcFileTS.compareTo(modFileTS) > 0)
-                    {
-                        return false;
-                    }
-                }
-                if (depModInfo.hasXModFile())
-                {
-                    final FileTime depModFileTS = depModInfo.getXModFileInfo().getLastModifiedTS();
-                    if (depModFileTS.compareTo(modFileTS) > 0)
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
-
-        @Override
-        public FortranFileBuildInfo getSrcSummary()
-        {
-            if (srcFileData != null)
-            {
-                return srcFileData.info;
-            } else
-            {
-                return null;
-            }
-        }
-
-        @Override
-        public List<FileInfo> getIncludeFilesInfo()
-        {
-            return srcFileData.incFilesInfo;
-        }
-
-        @Override
-        public AsciiArrayIOStream getPreprocessedSrc(boolean preserveOffset) throws IOException
-        {
-            AsciiArrayIOStream src = null;
-            if (srcFileData.ppWithResolvedIncludes != null)
-            {
-                src = srcFileData.ppWithResolvedIncludes;
-            } else
-            {
-                src = srcFileData.pp;
-            }
-            FortranModuleInfo mInfo = getModuleSrcInfo();
-            final int startChrIdx = mInfo.getStartCharIdx();
-            final int endChrIDx = mInfo.getEndCharIdx();
-            final int count = endChrIDx - startChrIdx;
-            if (preserveOffset)
-            {
-                final int lineOffset = mInfo.getStartLineIdx();
-                final int lineStartChrOffset = startChrIdx - src.findLineStartChrIdx(mInfo.getStartCharIdx());
-                final int size = lineOffset + lineStartChrOffset + count;
-                AsciiArrayIOStream buf = new AsciiArrayIOStream(size);
-                for (int i = 0; i < lineOffset; ++i)
-                {
-                    buf.write(ASCII_NEWLINE_VALUE);
-                }
-                for (int i = 0; i < lineStartChrOffset; ++i)
-                {
-                    buf.write(ASCII_SPACE_VALUE);
-                }
-                try (InputStream srcStrm = src.getAsInputStreamUnsafe(startChrIdx, count))
-                {
-                    copy(srcStrm, buf);
-                }
-                return buf;
-            } else
-            {
-                return src;
-            }
+            buildOrder.onProcessed(modName);
         }
     }
 
-    static class GetAvailableModulesInfo
+    static Map<String, ModuleInfo> getAvailableModulesInfo(Map<Path, FortranFileBuildInfoData> buildInfoBySrcPath,
+            Map<Path, PreprocessedFortranSourceData> inputPPSrcFiles,
+            Map<Path, PreprocessedFortranSourceData> incPPSrcFiles, Map<String, XmodData> inputXmods) throws Exception
     {
-        public static Map<String, ModuleInfo> run(SourceFileData[] inputFilesData, SourceFileData[] incFilesData,
-                Map<String, ModuleFileData> inputModules) throws Exception
+        Map<String, ModuleInfo> infoByName = new HashMap<String, ModuleInfo>();
+        // Add all modules with infos
+        for (Map.Entry<Path, FortranFileBuildInfoData> entry : buildInfoBySrcPath.entrySet())
         {
-            Map<String, ModuleInfo> res = new LinkedHashMap<String, ModuleInfo>();
-            for (SourceFileData data : inputFilesData)
+            final Path srcFilePath = entry.getKey();
+            final FortranFileBuildInfoData fileData = entry.getValue();
+            ModuleDesignation modDesignation;
+            PreprocessedFortranSourceData srcData;
+            srcData = inputPPSrcFiles.get(srcFilePath);
+            if (srcData != null)
             {
-                add(res, data, true, inputModules);
-            }
-            for (SourceFileData data : incFilesData)
+                modDesignation = ModuleDesignation.Input;
+            } else
             {
-                add(res, data, false, inputModules);
-            }
-            for (Map.Entry<String, ModuleFileData> entry : inputModules.entrySet())
-            {
-                final String modName = entry.getKey();
-                if (!res.containsKey(modName))
+                srcData = incPPSrcFiles.get(srcFilePath);
+                if (srcData != null)
                 {
-                    res.put(modName, new ModuleData(modName, entry.getValue()));
+                    modDesignation = ModuleDesignation.Include;
+                } else
+                {// Should be unreachable
+                    final String errStr = sprintf(
+                            "FortranFileBuildInfoData for %s does not have corresponding preprocessed source data",
+                            srcFilePath);
+                    throw new Exception(errStr);
                 }
             }
-            return Collections.unmodifiableMap(res);
+            for (FortranModuleInfo modInfo : fileData.getInfo().getModules())
+            {
+                final String modName = modInfo.getName();
+                final ModuleData modData = new ModuleData(ModuleType.Module, modDesignation, modInfo, fileData,
+                        srcData);
+                ModuleInfo oldData = infoByName.put(modName, modData);
+                if (oldData != null)
+                {
+                    final String errStr = sprintf("Module %s is defined in 2 source files:\n\t%s\n\t%s", modName,
+                            oldData.getSrcPath(), modData.getSrcPath());
+                    throw new Exception(errStr);
+                }
+            }
+            if (fileData.getInfo().getProgram() != null)
+            {
+                final FortranModuleInfo modInfo = fileData.getInfo().getProgram();
+                final String modName = modInfo.getName();
+                final ModuleData modData = new ModuleData(ModuleType.Program, modDesignation, modInfo, fileData,
+                        srcData);
+                ModuleInfo oldData = infoByName.put(modName, modData);
+                if (oldData != null)
+                {
+                    final String errStr = sprintf("Program %s is defined in 2 source files:\n\t%s\n\t%s", modName,
+                            oldData.getSrcPath(), modData.getSrcPath());
+                    throw new Exception(errStr);
+                }
+            }
         }
-
-        static void add(Map<String, ModuleInfo> res, SourceFileData inFileData, boolean isInput,
-                Map<String, ModuleFileData> inputModules) throws Exception
+        // Add all modules without buildinfo
+        for (Map.Entry<String, XmodData> entry : inputXmods.entrySet())
         {
-            for (FortranModuleInfo modInfo : inFileData.info.getModules())
+            final String modName = entry.getKey();
+            ModuleInfo modData = infoByName.get(modName);
+            if (modData == null)
             {
-                add(res, inFileData, modInfo, false, isInput, inputModules);
-            }
-            FortranModuleInfo programInfo = inFileData.info.getProgram();
-            if (programInfo != null)
-            {
-                add(res, inFileData, programInfo, true, isInput, inputModules);
+                modData = new ModuleData(modName, ModuleDesignation.Include, entry.getValue());
+                infoByName.put(modName, modData);
             }
         }
-
-        static void add(Map<String, ModuleInfo> res, SourceFileData inFileData, FortranModuleInfo modInfo,
-                boolean isProgram, boolean isInput, Map<String, ModuleFileData> inputModules) throws Exception
-        {
-            final String modName = modInfo.getName();
-            if (res.containsKey(modName))
-            {
-                ModuleInfo oldData = res.get(modName);
-                String errMsg = sprintf("Module \"%s\" defined in file \"%s\" is also defined in \"%s\"", modName,
-                        oldData.getSrcFileInfo().getPath());
-                throw new FortranSemanticException(errMsg);
-            }
-            ModuleData data = new ModuleData(inFileData, modInfo, inputModules.get(modName), isProgram, isInput);
-            res.put(modName, data);
-        }
+        return Collections.unmodifiableMap(infoByName);
     }
 
-    static Map<String, ModuleInfo> getAvailableModulesInfo(SourceFileData[] inputFilesData,
-            SourceFileData[] incFilesData, Map<String, ModuleFileData> inputModules) throws Exception
+    static void setXmodData(Map<String, ModuleInfo> infoByName, Set<String> targetModuleNames,
+            Map<String, XmodData> inputXmods)
     {
-        return GetAvailableModulesInfo.run(inputFilesData, incFilesData, inputModules);
+        BuildOrder buildOrder = Build.getParallelOrder(infoByName, targetModuleNames);
+        Map<String, FileTime> lastTS = new HashMap<String, FileTime>();
+        while (!buildOrder.done())
+        {
+            final String modName = buildOrder.next();
+            ModuleInfo modInfo = infoByName.get(modName);
+            XmodData modXmodData = modInfo.getXMod();
+            if (modXmodData == null)
+            {
+                FileTime modLastTS = modInfo.getSrcFileBinfoData().getTimestamp();
+                for (String depModName : modInfo.getUsedModules())
+                {
+                    final FileTime depModLastTS = lastTS.get(depModName);
+                    modLastTS = max(modLastTS, depModLastTS);
+                }
+                XmodData inXmod = inputXmods.get(modName);
+                if (inXmod != null)
+                {
+                    final FileTime inXmodTS = inXmod.getTimestamp();
+                    if (inXmodTS.compareTo(modLastTS) >= 0)
+                    {
+                        ((ModuleData) modInfo).setXMod(inXmod);
+                        modLastTS = inXmodTS;
+                    } else
+                    {
+                        warning(sprintf("Ignoring outdated input Xmod file \"%s\"", inXmod.getFilePath()));
+                    }
+                }
+                lastTS.put(modName, modLastTS);
+            } else
+            {
+                lastTS.put(modName, modXmodData.getTimestamp());
+            }
+            buildOrder.onProcessed(modName);
+        }
     }
 
     static Set<String> getTargetModuleNames(Map<String, ModuleInfo> availModules, boolean onlyModules, boolean onlyCLAW)
@@ -862,55 +602,25 @@ public class Driver
         }
     }
 
-    static SourceFileData[] createInputData(List<Path> inputFiles) throws Exception
+    static Map<String, XmodData> loadXmodFiles(List<Path> includeDirs) throws Exception
     {
-        SourceFileData[] inputFilesData = new SourceFileData[inputFiles.size()];
-        for (int i = 0; i < inputFilesData.length; ++i)
-        {
-            inputFilesData[i] = new SourceFileData(inputFiles.get(i));
-        }
-        return inputFilesData;
-    }
-
-    static class ModuleFileData implements FileInfo
-    {
-        final Path filePath;
-        final FileTime timestamp;
-
-        public Path getPath()
-        {
-            return filePath;
-        }
-
-        public FileTime getLastModifiedTS()
-        {
-            return timestamp;
-        }
-
-        public ModuleFileData(Path filePath) throws IOException
-        {
-            this.filePath = filePath;
-            timestamp = Files.getLastModifiedTime(filePath);
-        }
-    }
-
-    static Map<String, ModuleFileData> searchForModules(List<Path> includeDirs) throws Exception
-    {
-        Map<String, ModuleFileData> modByName = new HashMap<String, ModuleFileData>();
+        Map<String, XmodData> modByName = new LinkedHashMap<String, XmodData>();
         List<Path> uniqueDirs = BuildInfo.createDirListFromPaths(includeDirs);
         Map<Path, List<Path>> incDirFiles = BuildInfo.createModuleDirFileLists(uniqueDirs);
         for (Map.Entry<Path, List<Path>> dirFiles : incDirFiles.entrySet())
         {
-            for (Path modFile : dirFiles.getValue())
+            for (Path modFilePath : dirFiles.getValue())
             {
-                final String modFileName = modFile.getFileName().toString();
-                final String modName = modFileName.substring(0, modFileName.lastIndexOf('.'));// Remove extension
-                ModuleFileData modData = new ModuleFileData(modFile);
-                ModuleFileData oldData = modByName.put(modName, modData);
+                final String modFileName = modFilePath.getFileName().toString();
+                final String modName = removeExtension(modFileName);
+                XmodData data = new XmodData(modName, new FileInfoImpl(modFilePath));
+                XmodData oldData = modByName.put(modName, data);
                 if (oldData != null)
                 {
-                    throw new Exception(
-                            sprintf("Duplicate module files \"%s\" and \"%s\"", oldData.filePath, modData.filePath));
+                    final String errMsg = sprintf("Ignoring duplicate module files \"%s\" and \"%s\"",
+                            oldData.getFilePath(), data.getFilePath());
+                    warning(errMsg);
+                    continue;
                 }
             }
         }
@@ -1038,17 +748,6 @@ public class Driver
             ppSrcBySrc.put(srcFilePath, ppSrcFilePath);
         }
         return ppSrcBySrc;
-    }
-
-    static Path createInputFilesTempDir(SourceFileData[] inputFilesData, Path tmpDir) throws IOException
-    {
-        Path tmpInputFilesDir = tmpDir.resolve("input");
-        for (SourceFileData data : inputFilesData)
-        {
-            data.tempDir = tmpInputFilesDir;
-        }
-        Files.createDirectories(tmpInputFilesDir);
-        return tmpInputFilesDir;
     }
 
     static List<Path> createBuildInfoFilesList(List<Path> binfoDirs) throws Exception
@@ -1371,7 +1070,7 @@ public class Driver
             }
             if (opts.generateModFiles())
             {
-                if (opts.outputModulesDir() == null)
+                if (opts.xmodOutputDir() == null)
                 {
                     throw new Exception("Output directory for .xmod files must be specified");
                 }

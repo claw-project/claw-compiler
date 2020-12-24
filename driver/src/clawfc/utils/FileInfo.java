@@ -2,7 +2,7 @@
  * @author Mikhail Zhigun
  * @copyright Copyright 2020, MeteoSwiss
  */
-package clawfc;
+package clawfc.utils;
 
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
