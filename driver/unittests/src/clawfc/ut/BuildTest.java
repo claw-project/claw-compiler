@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 
 import clawfc.Build;
 import clawfc.BuildOrder;
-import clawfc.FileInfo;
 import clawfc.FortranFileBuildInfoData;
 import clawfc.ModuleInfo;
 import clawfc.XmodData;
@@ -28,6 +27,7 @@ import clawfc.depscan.FortranFileBuildInfo;
 import clawfc.depscan.FortranModuleInfo;
 import clawfc.depscan.FortranSemanticException;
 import clawfc.utils.AsciiArrayIOStream;
+import clawfc.utils.FileInfo;
 import junit.framework.TestCase;
 
 class TestModuleInfo implements clawfc.ModuleInfo

@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import clawfc.FileInfo;
+import clawfc.utils.FileInfo;
 import clawfc.utils.FileInfoImpl;
 
 public class FortranFileBuildInfo

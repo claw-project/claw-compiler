@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
+import clawfc.utils.FileInfo;
 import clawfc.utils.FileInfoImpl;
 
 public class Utils

@@ -11,6 +11,7 @@ import static clawfc.Utils.max;
 import static clawfc.Utils.removeExtension;
 import static clawfc.Utils.saveToFile;
 import static clawfc.Utils.sprintf;
+import clawfc.utils.FileInfo;
 
 import java.io.IOException;
 import java.nio.file.Files;

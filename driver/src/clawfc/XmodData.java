@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 
 import clawfc.utils.ByteArrayIOStream;
+import clawfc.utils.FileInfo;
 
 public class XmodData
 {

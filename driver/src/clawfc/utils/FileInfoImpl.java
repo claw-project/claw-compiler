@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 
-public class FileInfoImpl implements clawfc.FileInfo
+public class FileInfoImpl implements FileInfo
 {
     final Path path;
     final FileTime ts;
