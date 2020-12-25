@@ -4,6 +4,8 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.toCharStream;
+
 import java.io.IOException;
 import java.util.concurrent.CancellationException;
 
@@ -49,7 +51,7 @@ public class PreprocessorLineMarkerRecognizer
 
     public PreprocessorLineMarkerRecognizer() throws IOException
     {
-        lexer = new PreprocessorLineMarkerRecognizerLexer(Utils.toCharStream(""));
+        lexer = new PreprocessorLineMarkerRecognizerLexer(toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);
@@ -65,7 +67,7 @@ public class PreprocessorLineMarkerRecognizer
         parser.reset();
         lexerErrorListener.reset();
         parserErrorListener.reset();
-        CharStream chrStrm = Utils.toCharStream(input);
+        CharStream chrStrm = toCharStream(input);
         lexer.setInputStream(chrStrm);
         CommonTokenStream tokStrm = new CommonTokenStream(lexer);
         parser.setInputStream(tokStrm);

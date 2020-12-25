@@ -4,6 +4,8 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.toCharStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -113,7 +115,7 @@ public class FortranLineBreaksFinder
 
     public FortranLineBreaksFinder() throws IOException
     {
-        lexer = new FortranLineBreaksFilterLexer(Utils.toCharStream(""));
+        lexer = new FortranLineBreaksFilterLexer(toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);

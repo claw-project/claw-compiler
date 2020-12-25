@@ -8,6 +8,7 @@ import static clawfc.FortranFileBuildInfoData.getOutputFilePath;
 import static clawfc.Utils.collectIntoString;
 import static clawfc.Utils.saveToFile;
 import static clawfc.Utils.sprintf;
+import static clawfc.Utils.toInputStream;
 import static clawfc.Utils.touch;
 
 import java.io.InputStream;
@@ -42,7 +43,7 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
 
     public static FortranFileBuildInfo loadInfo(String txt) throws Exception
     {
-        try (InputStream inStrm = clawfc.depscan.Utils.toInputStream(txt))
+        try (InputStream inStrm = toInputStream(txt))
         {
             return loadInfo(inStrm);
         }

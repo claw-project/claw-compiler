@@ -4,15 +4,13 @@
  */
 package clawfc.depscan;
 
-import java.io.ByteArrayInputStream;
+import static clawfc.Utils.toCharStream;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Collection;
 
 import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 
@@ -25,19 +23,6 @@ public class Utils
         lexer.setInputStream(chrStrm);
         CommonTokenStream tokStrm = new CommonTokenStream(lexer);
         return tokStrm;
-    }
-
-    public static InputStream toInputStream(String str) throws IOException
-    {
-        InputStream inStrm = new ByteArrayInputStream(str.getBytes(StandardCharsets.US_ASCII));
-        return inStrm;
-    }
-
-    public static CharStream toCharStream(String str) throws IOException
-    {
-        InputStream inStrm = toInputStream(str);
-        CharStream chrStrm = CharStreams.fromStream(inStrm, StandardCharsets.US_ASCII);
-        return chrStrm;
     }
 
     public static int getStartChrIdx(org.antlr.v4.runtime.ParserRuleContext ctx)

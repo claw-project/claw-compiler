@@ -4,6 +4,8 @@
  */
 package clawfc.ut;
 
+import static clawfc.Utils.toInputStream;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,7 +27,6 @@ import clawfc.depscan.FortranLineBreaksFilter;
 import clawfc.depscan.FortranLineBreaksFinder;
 import clawfc.depscan.FortranLineBreaksFinder.LineBreakInfo;
 import clawfc.depscan.FortranSyntaxException;
-import clawfc.depscan.Utils;
 import clawfc.depscan.parser.FortranLineBreaksFilterBaseListener;
 import clawfc.depscan.parser.FortranLineBreaksFilterLexer;
 import clawfc.depscan.parser.FortranLineBreaksFilterParser;
@@ -250,7 +251,7 @@ public class FortranLineBreaksFilterTest extends TestCase
             throws IOException, FortranSyntaxException
     {
         FortranLineBreaksFinder finder = new FortranLineBreaksFinder();
-        InputStream txtStrm = Utils.toInputStream(txt);
+        InputStream txtStrm = toInputStream(txt);
         List<LineBreakInfo> res = finder.run(txtStrm);
         assertEquals(ref, res);
     }

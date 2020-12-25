@@ -5,12 +5,14 @@
 package clawfc;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -28,6 +30,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
+
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 
 import clawfc.utils.FileInfo;
 import clawfc.utils.FileInfoImpl;
@@ -348,5 +353,33 @@ public class Utils
         }
         Files.move(outTmpFilePath, filePath, StandardCopyOption.ATOMIC_MOVE);
         return new FileInfoImpl(filePath);
+    }
+
+    public static InputStream toInputStream(String str) throws IOException
+    {
+        InputStream inStrm = new ByteArrayInputStream(toAscii(str));
+        return inStrm;
+    }
+
+    public static CharStream toCharStream(String str) throws IOException
+    {
+        InputStream inStrm = toInputStream(str);
+        CharStream chrStrm = CharStreams.fromStream(inStrm, StandardCharsets.US_ASCII);
+        return chrStrm;
+    }
+
+    public static byte[] toAscii(String str)
+    {
+        return str.getBytes(StandardCharsets.US_ASCII);
+    }
+
+    public static int getEolStartIndex(String str)
+    {
+        int res = str.lastIndexOf('\r');
+        if (res < 0)
+        {
+            res = str.lastIndexOf('\n');
+        }
+        return res;
     }
 }

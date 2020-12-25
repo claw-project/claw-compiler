@@ -48,6 +48,10 @@ public class ByteArrayIOStream extends ByteArrayOutputStream
         return res;
     }
 
+    /*
+     * "Unsafe" means that it is not safe to write to the stream as long as input
+     * stream returned by this method is used.
+     */
     public ByteArrayInputStream getAsInputStreamUnsafe()
     {
         return getAsInputStreamUnsafe(0, this.count);

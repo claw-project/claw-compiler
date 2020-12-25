@@ -4,6 +4,8 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.toCharStream;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
@@ -134,7 +136,7 @@ public class FortranDepStatementsRecognizer
 
     public FortranDepStatementsRecognizer() throws IOException
     {
-        lexer = new FortranDepStatementsRecognizerLexer(Utils.toCharStream(""));
+        lexer = new FortranDepStatementsRecognizerLexer(toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);
@@ -150,7 +152,7 @@ public class FortranDepStatementsRecognizer
         parser.reset();
         lexerErrorListener.reset();
         parserErrorListener.reset();
-        CharStream chrStrm = Utils.toCharStream(input);
+        CharStream chrStrm = toCharStream(input);
         lexer.setInputStream(chrStrm);
         CommonTokenStream tokStrm = new CommonTokenStream(lexer);
         parser.setInputStream(tokStrm);

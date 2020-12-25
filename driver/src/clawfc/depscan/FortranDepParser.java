@@ -4,6 +4,8 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.toCharStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -374,7 +376,7 @@ public class FortranDepParser
     public FortranDepParser() throws Exception
     {
         statementsParser = new FortranDepStatementsRecognizer();
-        lexer = new FortranDepScannerLexer(Utils.toCharStream(""));
+        lexer = new FortranDepScannerLexer(toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);

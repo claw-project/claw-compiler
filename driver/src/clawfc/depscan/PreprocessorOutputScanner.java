@@ -4,6 +4,8 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.toCharStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -108,7 +110,7 @@ public class PreprocessorOutputScanner
      */
     public PreprocessorOutputScanner() throws IOException
     {
-        lexer = new PreprocessorOutputSplitterLexer(Utils.toCharStream(""));
+        lexer = new PreprocessorOutputSplitterLexer(toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);

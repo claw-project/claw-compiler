@@ -4,6 +4,8 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.toCharStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -85,7 +87,7 @@ public class FortranCommentsFilter
 
     public FortranCommentsFilter() throws IOException
     {
-        lexer = new FortranCommentsFilterLexer(Utils.toCharStream(""));
+        lexer = new FortranCommentsFilterLexer(toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);

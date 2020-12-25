@@ -4,6 +4,8 @@
  */
 package clawfc.ut;
 
+import static clawfc.Utils.toInputStream;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,7 +39,6 @@ import clawfc.depscan.FortranSemanticException;
 import clawfc.depscan.FortranStatementBasicPosition;
 import clawfc.depscan.FortranStatementPosition;
 import clawfc.depscan.FortranSyntaxException;
-import clawfc.depscan.Utils;
 import clawfc.depscan.parser.FortranDepScannerBaseListener;
 import clawfc.depscan.parser.FortranDepScannerLexer;
 import clawfc.depscan.parser.FortranDepScannerParser;
@@ -413,7 +414,7 @@ public class FortranDepScannerTest extends TestCase
 
     FortranFileBasicSummary parse(String s) throws IOException, FortranException, Exception
     {
-        return depParser.parse(Utils.toInputStream(s));
+        return depParser.parse(toInputStream(s));
     }
 
     void verifyParse(String s, List<FortranModuleBasicInfo> expModules, FortranModuleBasicInfo expectedProgram)
@@ -539,12 +540,12 @@ public class FortranDepScannerTest extends TestCase
 
     FortranFileBasicSummary basicScan(String s) throws IOException, FortranException, Exception
     {
-        return depScanner.basicScan(Utils.toInputStream(s));
+        return depScanner.basicScan(toInputStream(s));
     }
 
     FortranFileBuildInfo scan(String s) throws IOException, FortranException, Exception
     {
-        return depScanner.scan(Utils.toInputStream(s));
+        return depScanner.scan(toInputStream(s));
     }
 
     void verifyBasicScan(String s, List<FortranModuleBasicInfo> expModules, FortranModuleBasicInfo expectedProgram)

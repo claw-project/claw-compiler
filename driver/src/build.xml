@@ -39,6 +39,8 @@
     <!-- Dependencies scan parser classes -->
     <property name="dep.scan.parser.dir"
               value="${dep.scan.dir}/parser"/>
+    <property name="driver.parsers.dir"
+              value="${driver.gen.src.dir}/clawfc/parsers"/>
 
     <!-- Initialization step -->
     <target name="init" description="Initialize build directories">
@@ -46,11 +48,12 @@
         <mkdir dir="${driver.classes.dir}"/>
         <mkdir dir="${dep.scan.dir}"/>
         <mkdir dir="${dep.scan.parser.dir}"/>
+        <mkdir dir="${driver.parsers.dir}"/>
     </target>
 
     <!-- Check if dependencies scan parsers are up-to-date or need to be re-generated -->
-    <target name="antlr" depends="init" description="Generate parsers from ANTLR grammar file">
-        <outofdate outputsources="outdated.sources">
+    <target name="antlr.depscan" depends="init" description="Generate parsers from ANTLR grammar file">
+        <outofdate outputsources="antlr.depscan.outdated.sources">
           <sourcefiles>
             <fileset dir="${driver.src.dir}/clawfc/depscan" casesensitive="yes">
               <include name="*.g4"/>
@@ -58,17 +61,40 @@
           </sourcefiles>
           <targetfiles path="${driver.dep}"/>
             <sequential>
-                <echo message="  ${outdated.sources}"/>
+                <echo message="  ${antlr.depscan.outdated.sources}"/>
                 <java jvm="${java.exec}" classname="org.antlr.v4.Tool" fork="true" failonerror="true" classpathref="antlr.path">
                     <arg value="-o"/>
                     <arg value="${dep.scan.parser.dir}"/>
                     <arg value="-package"/>
                     <arg value="clawfc.depscan.parser"/>
-                    <arg line="${outdated.sources}"/>
+                    <arg line="${antlr.depscan.outdated.sources}"/>
                 </java>
             </sequential>
         </outofdate>
     </target>
+
+    <target name="antlr.clawfc" depends="init" description="Generate parsers from ANTLR grammar file">
+        <outofdate outputsources="antlr.clawfc.outdated.sources">
+          <sourcefiles>
+            <fileset dir="${driver.src.dir}/clawfc" casesensitive="yes">
+              <include name="*.g4"/>
+            </fileset>
+          </sourcefiles>
+          <targetfiles path="${driver.dep}"/>
+            <sequential>
+                <echo message="  ${antlr.clawfc.outdated.sources}"/>
+                <java jvm="${java.exec}" classname="org.antlr.v4.Tool" fork="true" failonerror="true" classpathref="antlr.path">
+                    <arg value="-o"/>
+                    <arg value="${driver.parsers.dir}"/>
+                    <arg value="-package"/>
+                    <arg value="clawfc.parsers"/>
+                    <arg line="${antlr.clawfc.outdated.sources}"/>
+                </java>
+            </sequential>
+        </outofdate>
+    </target>
+
+    <target name="antlr" depends="antlr.depscan,antlr.clawfc" description="Generate parsers from ANTLR grammar files"/>
 
     <target name="xjc"  depends="init" description="Generate serialization classes from xsd schemas">
         <outofdate outputsources="outdated.xsds">

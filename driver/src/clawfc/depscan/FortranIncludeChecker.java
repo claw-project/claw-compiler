@@ -4,6 +4,8 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.toCharStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -65,7 +67,7 @@ public class FortranIncludeChecker
      */
     public FortranIncludeChecker() throws IOException
     {
-        lexer = new FortranIncludesResolverLexer(Utils.toCharStream(""));
+        lexer = new FortranIncludesResolverLexer(toCharStream(""));
         lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
         lexerErrorListener = new ParserErrorListener();
         lexer.addErrorListener(lexerErrorListener);
