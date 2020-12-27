@@ -35,9 +35,13 @@ public interface ModuleInfo
 
     public Path getSrcPath();
 
+    public Path getPPSrcPath();
+
     FortranFileBuildInfoData getSrcFileBinfoData();
 
     public XmodData getXMod();
+
+    public AsciiArrayIOStream getXast();
 
     // public List<FileInfo> getIncludeFilesInfo();
 

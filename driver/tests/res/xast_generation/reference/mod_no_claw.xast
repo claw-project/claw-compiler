@@ -1,0 +1,23 @@
+<XcodeProgram source="&lt;stdin&gt;"
+              language="Fortran"
+              time="2020-12-27 20:50:05"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc">
+      <name>mod_no_claw</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FmoduleDefinition name="mod_no_claw" lineno="1" file="&lt;stdin&gt;">
+      <symbols>
+      </symbols>
+      <declarations>
+        <FuseDecl name="mod11" lineno="2" file="&lt;stdin&gt;">
+        </FuseDecl>
+      </declarations>
+    </FmoduleDefinition>
+  </globalDeclarations>
+</XcodeProgram>

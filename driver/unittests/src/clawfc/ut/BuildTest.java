@@ -119,6 +119,19 @@ class TestModuleInfo implements clawfc.ModuleInfo
     {
         throw new RuntimeException("Not implemented");
     }
+
+    @Override
+    public Path getPPSrcPath()
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public AsciiArrayIOStream getXast()
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
 }
 
 public class BuildTest extends TestCase

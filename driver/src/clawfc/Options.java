@@ -41,6 +41,7 @@ public class Options
     final Path _outputDir;
     final Path _ppOutDir;
     final Path _xmodOutDir;
+    final Path _xastOutDir;
     final String _userTarget;
     final List<Path> _ppIncDirs;
     final List<Path> _srcIncDirs;
@@ -69,6 +70,7 @@ public class Options
     final boolean _stopAfterFFront;
     final boolean _stopAfterDepRes;
     final boolean _stopAfterXmodGen;
+    final boolean _stopAfterXastGen;
     final boolean _stopAfterTrans;
     final List<String> _ppOpts;
     final List<String> _ffrontOpts;
@@ -150,6 +152,11 @@ public class Options
     public Path xmodOutputDir()
     {
         return _xmodOutDir;
+    }
+
+    public Path xastOutputDir()
+    {
+        return _xastOutDir;
     }
 
     public Path preprocessedSourcesOutputDir()
@@ -277,6 +284,11 @@ public class Options
         return _stopAfterXmodGen;
     }
 
+    public boolean stopAfterXastGeneration()
+    {
+        return _stopAfterXastGen;
+    }
+
     public boolean stopAfterTranslation()
     {
         return _stopAfterTrans;
@@ -392,6 +404,7 @@ public class Options
             cOpts.addArgument("-BI", "--buildinfo-include-dir").nargs("*").action(Arguments.append())
                     .help("Include directory for BuildInfo files");
             cOpts.addArgument("-BO", "--buildinfo-output-dir").help("Output directory for BuildInfo files");
+            cOpts.addArgument("-XO", "--xast-output-dir").help("Output directory for modules transformed into XML-AST");
             cOpts.addArgument("-t", "--target").help("Type of target accelerator hardware");
             cOpts.addArgument("-d", "--directive")
                     .help("Specify accelerator directive language to be used for code generation");
@@ -418,17 +431,15 @@ public class Options
             cOpts.addArgument("--keep-int-files").action(Arguments.storeTrue()).help("Keep intermediate files");
             cOpts.addArgument("--debug-ffront").action(Arguments.storeTrue())
                     .help("Drive OMNI Fortran front-end in debug mode");
-            cOpts.addArgument("--stop-pp").action(Arguments.storeTrue())
-                    .help("Save intermediate files and stop after preprocess");
             cOpts.addArgument("--skip-pp").action(Arguments.storeTrue())
                     .help("Do not apply preprocessing to input and include files");
             MutuallyExclusiveGroup sOpts = parser.addMutuallyExclusiveGroup("Compiler debug options");
-            sOpts.addArgument("--stop-depscan").action(Arguments.storeTrue())
-                    .help("Save intermediate files and stop after dependencies scan");
+            sOpts.addArgument("--stop-pp").action(Arguments.storeTrue()).help("Stop after preprocessing");
+            sOpts.addArgument("--stop-depscan").action(Arguments.storeTrue()).help("Stop after dependencies scan");
             sOpts.addArgument("--stop-dependencies").action(Arguments.storeTrue())
-                    .help("Save intermediate files and stop after dependencies resolution");
-            sOpts.addArgument("--stop-xmod-gen").action(Arguments.storeTrue())
-                    .help("Save intermediate files and stop after Xmod generation");
+                    .help("Stop after dependencies resolution");
+            sOpts.addArgument("--stop-xmod-gen").action(Arguments.storeTrue()).help("Stop after Xmod generation");
+            sOpts.addArgument("--stop-xast-gen").action(Arguments.storeTrue()).help("Stop after XML-AST generation");
             sOpts.addArgument("--stop-frontend").action(Arguments.storeTrue())
                     .help("Save intermediate files and stop after frontend");
             sOpts.addArgument("--stop-translator").action(Arguments.storeTrue())
@@ -486,6 +497,7 @@ public class Options
         _outputDir = getOptionalPath(parsedArgs, "output_dir");
         _ppOutDir = getOptionalPath(parsedArgs, "pp_output_dir");
         _xmodOutDir = getOptionalPath(parsedArgs, "mod_output_dir");
+        _xastOutDir = getOptionalPath(parsedArgs, "xast_output_dir");
         _userTarget = parsedArgs.getString("target");
         _ppIncDirs = getPathList(parsedArgs, "pp_include_dir");
         _srcIncDirs = getPathList(parsedArgs, "src_include_dir");
@@ -512,6 +524,7 @@ public class Options
         _stopAfterFFront = parsedArgs.getBoolean("stop_frontend");
         _stopAfterDepRes = parsedArgs.getBoolean("stop_dependencies");
         _stopAfterXmodGen = parsedArgs.getBoolean("stop_xmod_gen");
+        _stopAfterXastGen = parsedArgs.getBoolean("stop_xast_gen");
         _stopAfterTrans = parsedArgs.getBoolean("stop_translator");
         _ppOpts = getStringList(parsedArgs, "add_pp_opts");
         _ffrontOpts = getStringList(parsedArgs, "add_ffront_opts");
@@ -550,6 +563,7 @@ public class Options
         res.append(sprintf("Output file: \"%s\"\n", outputFile()));
         res.append(sprintf("Output directory: \"%s\"\n", outputDir()));
         res.append(sprintf("Output xmod directory: \"%s\"\n", xmodOutputDir()));
+        res.append(sprintf("Output xast directory: \"%s\"\n", xastOutputDir()));
         res.append(sprintf("Output buildinfo directory: \"%s\"\n", buildInfoOutputDir()));
         res.append(sprintf("Preprocessed sources output directory: \"%s\"\n", preprocessedSourcesOutputDir()));
         res.append("User target: " + userTarget() + "\n");
@@ -573,6 +587,7 @@ public class Options
         res.append(sprintf("Stop after OMNI Fortran Front-End: %s\n", stopAfterOmniFFront()));
         res.append(sprintf("Stop after dependencies resolution: %s\n", stopAfterDepResolution()));
         res.append(sprintf("Stop after Xmod generation: %s\n", stopAfterXmodGeneration()));
+        res.append(sprintf("Stop after Xast generation: %s\n", stopAfterXastGeneration()));
         res.append(sprintf("Stop after translator: %s\n", stopAfterTranslation()));
         res.append(sprintf("Add preprocessor options: \n\t%s\n", String.join("\n\t", preprocessorOptions())));
         res.append(sprintf("Add OMNI Fortran Front-End options: \n\t%s\n", String.join("\n\t", OmniFFrontOptions())));

@@ -15,6 +15,11 @@ import java.nio.file.Path;
 
 public class ByteArrayIOStream extends ByteArrayOutputStream
 {
+    public int getSize()
+    {
+        return count;
+    }
+
     public ByteArrayIOStream()
     {
         super();

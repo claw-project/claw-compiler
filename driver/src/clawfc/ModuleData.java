@@ -33,6 +33,7 @@ public class ModuleData implements ModuleInfo
     final FortranFileBuildInfoData srcFileBinfoData;
     final PreprocessedFortranSourceData srcData;
     XmodData xmodData;
+    AsciiArrayIOStream xast;
 
     public ModuleData(ModuleType type, ModuleDesignation designation, FortranModuleInfo info,
             FortranFileBuildInfoData srcFileBinfoData, PreprocessedFortranSourceData srcData)
@@ -44,6 +45,7 @@ public class ModuleData implements ModuleInfo
         this.srcFileBinfoData = srcFileBinfoData;
         this.srcData = srcData;
         this.xmodData = null;
+        this.xast = null;
     }
 
     public ModuleData(String name, ModuleDesignation designation, XmodData xmodData)
@@ -55,6 +57,7 @@ public class ModuleData implements ModuleInfo
         this.srcFileBinfoData = null;
         this.srcData = null;
         this.xmodData = xmodData;
+        this.xast = null;
     }
 
     @Override
@@ -136,12 +139,13 @@ public class ModuleData implements ModuleInfo
         final int startChrIdx = mInfo.getStartCharIdx();
         final int endChrIDx = mInfo.getEndCharIdx();
         final int count = endChrIDx - startChrIdx;
+        AsciiArrayIOStream buf;
         if (preserveOffset)
         {
             final int lineOffset = mInfo.getStartLineIdx();
             final int lineStartChrOffset = startChrIdx - src.findLineStartChrIdx(mInfo.getStartCharIdx());
             final int size = lineOffset + lineStartChrOffset + count;
-            AsciiArrayIOStream buf = new AsciiArrayIOStream(size);
+            buf = new AsciiArrayIOStream(size + 1);
             for (int i = 0; i < lineOffset; ++i)
             {
                 buf.write(ASCII_NEWLINE_VALUE);
@@ -150,20 +154,42 @@ public class ModuleData implements ModuleInfo
             {
                 buf.write(ASCII_SPACE_VALUE);
             }
-            try (InputStream srcStrm = src.getAsInputStreamUnsafe(startChrIdx, count))
-            {
-                copy(srcStrm, buf);
-            }
-            return buf;
         } else
         {
-            return src;
+            buf = new AsciiArrayIOStream(count + 1);
         }
+        try (InputStream srcStrm = src.getAsInputStreamUnsafe(startChrIdx, count))
+        {
+            copy(srcStrm, buf);
+        }
+        if (buf.getChr(buf.getSize() - 1) != '\n')
+        {
+            // Most Fortran parsers breakdown without newline at the end of the text
+            buf.write(ASCII_NEWLINE_VALUE);
+        }
+        return buf;
     }
 
     @Override
     public Path getSrcPath()
     {
         return srcFileBinfoData.getInfo().getSrcFilePath();
+    }
+
+    @Override
+    public Path getPPSrcPath()
+    {
+        return srcFileBinfoData.getInfo().getPPSrcFilePath();
+    }
+
+    @Override
+    public AsciiArrayIOStream getXast()
+    {
+        return xast;
+    }
+
+    public void setXast(AsciiArrayIOStream xast)
+    {
+        this.xast = xast;
     }
 }

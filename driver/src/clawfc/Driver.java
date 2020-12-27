@@ -11,7 +11,6 @@ import static clawfc.Utils.max;
 import static clawfc.Utils.removeExtension;
 import static clawfc.Utils.saveToFile;
 import static clawfc.Utils.sprintf;
-import clawfc.utils.FileInfo;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,6 +41,7 @@ import clawfc.depscan.FortranFileBuildInfoSerializer;
 import clawfc.depscan.FortranModuleInfo;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.ByteArrayIOStream;
+import clawfc.utils.FileInfo;
 import clawfc.utils.FileInfoImpl;
 import clawfc.utils.PathHashGenerator;
 import clawfc.utils.UniquePathHashGenerator;
@@ -275,6 +275,16 @@ public class Driver
                 {
                     return;
                 }
+                info("Generating xast...");
+                generateXast(ffront, usedModules, targetModuleNames, enableMultiprocessing, opts.showDebugOutput());
+                if (opts.xastOutputDir() != null)
+                {
+                    saveXast(usedModules, targetModuleNames, opts.xastOutputDir());
+                }
+                if (opts.stopAfterXastGeneration())
+                {
+                    return;
+                }
 
             } finally
             {
@@ -387,7 +397,7 @@ public class Driver
             try
             {
                 AsciiArrayIOStream modPPSrc = modInfo.getPreprocessedSrc(true);
-                ffront.generateXmod(modInfo.getSrcPath(), modPPSrc.getAsInputStreamUnsafe(), xmodDataStrm);
+                ffront.generateXmod(modInfo.getPPSrcPath(), modPPSrc.getAsInputStreamUnsafe(), xmodDataStrm);
             } catch (FortranFrontEnd.Failed failed)
             {
                 String errMsg = sprintf("Xmod generation: Error! Call to Omni frontend for %s failed",
@@ -440,6 +450,75 @@ public class Driver
                 }
             }
             buildOrder.onProcessed(modName);
+        }
+    }
+
+    static void generateXast(FortranFrontEnd ffront, Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames,
+            boolean enableMultiprocessing, boolean printFfrontDebugOutput) throws Exception
+    {
+        final int n = targetModuleNames.size();
+        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
+        final ThreadLocal<AddIgnoreDirectiveFilter> addIgnoreFilter = new ThreadLocal<AddIgnoreDirectiveFilter>();
+        for (final String modName : targetModuleNames)
+        {
+            final ModuleInfo modInfo = usedModules.get(modName);
+            tasks.add(new Callable<Void>()
+            {
+                public Void call() throws Exception
+                {
+                    AddIgnoreDirectiveFilter localAddIgnoreFilter = addIgnoreFilter.get();
+                    if (localAddIgnoreFilter == null)
+                    {
+                        localAddIgnoreFilter = new AddIgnoreDirectiveFilter();
+                        addIgnoreFilter.set(localAddIgnoreFilter);
+                    }
+                    AsciiArrayIOStream xastDataStrm = new AsciiArrayIOStream();
+                    Path ppSrcPath = modInfo.getPPSrcPath();
+                    AsciiArrayIOStream modPPSrc = modInfo.getPreprocessedSrc(ppSrcPath != null);
+                    AsciiArrayIOStream modPPSrcWithIgnore = new AsciiArrayIOStream();
+                    try
+                    {
+                        localAddIgnoreFilter.run(modPPSrc.getAsInputStreamUnsafe(), modPPSrcWithIgnore);
+                    } catch (Exception e)
+                    {
+                        String errMsg = sprintf("Exception throws while applying ignore directive to %s",
+                                Build.moduleNameWithLocation(modInfo));
+                        throw new Exception(errMsg, e);
+                    }
+                    modPPSrc = null;
+                    try
+                    {
+                        ffront.generateAST(modInfo.getPPSrcPath(), modPPSrcWithIgnore.getAsInputStreamUnsafe(),
+                                xastDataStrm);
+                    } catch (FortranFrontEnd.Failed failed)
+                    {
+                        String errMsg = sprintf("Xmod generation: Error! Call to Omni frontend for %s failed",
+                                Build.moduleNameWithLocation(modInfo));
+                        if (printFfrontDebugOutput)
+                        {
+                            errMsg += "\n" + failed.getMessage();
+                        }
+                        error(errMsg);
+                        throw new Exception(errMsg, failed);
+                    }
+                    ((ModuleData) modInfo).setXast(xastDataStrm);
+                    return null;
+                }
+            });
+        }
+        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+    }
+
+    static void saveXast(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames, final Path outDirPath)
+            throws Exception
+    {
+        getOrCreateDir(outDirPath);
+        for (final String modName : targetModuleNames)
+        {
+            final ModuleInfo modInfo = usedModules.get(modName);
+            AsciiArrayIOStream xast = modInfo.getXast();
+            final Path outFilePath = outDirPath.resolve(modName + ".xast");
+            saveToFile(xast.getAsInputStreamUnsafe(), outFilePath);
         }
     }
 
@@ -1081,7 +1160,7 @@ public class Driver
             {
             } else if (opts.stopAfterDepResolution())
             {
-            } else if (opts.stopAfterOmniFFront())
+            } else if (opts.stopAfterXastGeneration())
             {
 
             } else if (opts.stopAfterTranslation())

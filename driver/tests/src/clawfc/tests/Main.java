@@ -10,6 +10,7 @@ public class Main
 {
     public static void main(String[] args)
     {
-        TestsRunner.main(args, DriverTest.class, PreprocessorTest.class, DepScanTest.class, XmodGenerationTest.class);
+        TestsRunner.main(args, DriverTest.class, PreprocessorTest.class, DepScanTest.class, XmodGenerationTest.class,
+                XastGenerationTest.class);
     }
 }
