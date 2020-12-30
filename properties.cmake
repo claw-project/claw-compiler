@@ -73,7 +73,7 @@ set(CLAWFC_TESTS_REPORT_DIR "${CMAKE_BINARY_DIR}/driver/test-reports")
 #
 # OMNI Compiler variables
 #
-set(OMNI_GIT_COMMIT_HASH "92a35f9dbe3601f6177b099825d318cbc3285945" CACHE STRING
+set(OMNI_GIT_COMMIT_HASH "3d3be593a4bb511f65bd0ec4a4266043c2eb3d1a" CACHE STRING
     "OMNI compiler tools GIT commit hash")
 set(OMNI_GIT_REPOSITORY "https://github.com/claw-project/xcodeml-tools.git" CACHE STRING
     "OMNI compiler tools GIT repository URL")
