@@ -225,7 +225,7 @@ add_custom_command(
 option(GENERATE_ECLIPSE_IDE_PROJECTS "Generate Eclipse IDE projects" ON)
 if(GENERATE_ECLIPSE_IDE_PROJECTS)
   message(STATUS "Generating Eclipse projects")
-  foreach(PROJECT_NAME cx2t clawfc clawfc-ut clawfc-tests)
+  foreach(PROJECT_NAME cx2t cx2t-ut clawfc clawfc-ut clawfc-tests)
       file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/ide/eclipse/${PROJECT_NAME})
       configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/${PROJECT_NAME}.project.in
                      ${CMAKE_BINARY_DIR}/ide/eclipse/${PROJECT_NAME}/.project

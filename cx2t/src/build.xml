@@ -21,7 +21,7 @@
         <pathelement path="${antlr.dep}"/>
         <pathelement path="${antlr4.dep}"/>
         <pathelement path="${antlr4.runtime.dep}"/>
-        <pathelement path="${commoncli.dep}"/>
+        <pathelement path="${argparse4j.dep}"/>
         <pathelement path="${omni.xcodeml-common.dep}"/>
         <pathelement path="${toml.dep}"/>
     </path>
@@ -80,7 +80,10 @@
              includes="claw/shenron/**"/>
         <!-- CLAW X2T WANI -->
         <jar jarfile="${dist.dir}/${claw.wani.jar}" basedir="${classes.dir}"
-             includes="claw/ClawX2T.class claw/ClawVersion.class claw/wani/**"/>
+             includes="claw/ClawX2T.class claw/ClawVersion.class claw/wani/**">
+            <zipfileset dir="${src.dir}/claw/config" includes="**/*.xml **/*.xsd"
+                prefix="claw/config"/>
+        </jar>
         <!-- -->
         <jar jarfile="${dist.dir}/${external.jar}" basedir="${classes.dir}"
              includes="external/**"/>

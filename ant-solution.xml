@@ -16,17 +16,6 @@
       <mkdir dir="${int.home.dir}/bin"/>
       <mkdir dir="${int.home.dir}/etc"/>
       <mkdir dir="${int.home.dir}/libexec"/>
-      <copy todir="${int.home.dir}/etc" overwrite="false">
-          <fileset dir="${root.dir}/driver/etc" casesensitive="yes">
-            <include name="claw_config.xsd"/>
-            <include name="claw-default.xml"/>
-            <include name="claw-external-set.xml"/>
-            <include name="claw-high-level-set.xml"/>
-            <include name="claw-internal-set.xml"/>
-            <include name="claw-low-level-set.xml"/>
-            <include name="claw_transformation_set.xsd"/>
-          </fileset>
-      </copy>
     </target>
 
     <target name="fetch-deps" depends="prepare-int-dir">
