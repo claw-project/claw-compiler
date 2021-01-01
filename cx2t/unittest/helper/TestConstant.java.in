@@ -41,5 +41,5 @@ public class TestConstant {
   public static final Path TEST_MODEL_DATA1 =
     Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/modeldata1.xml");
   public static final Path TEST_CONFIG_PATH =
-    Paths.get("@CMAKE_SOURCE_DIR@/driver/etc/");
+    Paths.get("@CMAKE_SOURCE_DIR@/cx2t/src/claw/config");
 }
