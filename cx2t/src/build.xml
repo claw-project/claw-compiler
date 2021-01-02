@@ -80,7 +80,7 @@
              includes="claw/shenron/**"/>
         <!-- CLAW X2T WANI -->
         <jar jarfile="${dist.dir}/${claw.wani.jar}" basedir="${classes.dir}"
-             includes="claw/ClawX2T.class claw/ClawVersion.class claw/wani/**">
+             includes="claw/ClawX2T.class claw/ClawVersion.class claw/Options.class claw/wani/**">
             <zipfileset dir="${src.dir}/claw/config" includes="**/*.xml **/*.xsd"
                 prefix="claw/config"/>
         </jar>

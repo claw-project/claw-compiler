@@ -16,6 +16,6 @@ public class Main
                 FortranDepScannerTest.class, FortranBuildInfoTest.class, BuildTest.class, FortranIncludeTest.class,
                 FilterUtilsTest.class, FortranFrontEndTest.class, FortranFileBuildInfoDataTest.class,
                 PreprocessedFortranSourceDataTest.class, IgnoreDirectiveFilterTest.class,
-                VerbatimDirectiveFilterTest.class);
+                VerbatimDirectiveFilterTest.class, ClawX2TCLITest.class);
     }
 }

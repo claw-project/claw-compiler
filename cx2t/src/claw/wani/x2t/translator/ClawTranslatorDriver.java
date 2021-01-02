@@ -44,7 +44,6 @@ public class ClawTranslatorDriver
     private ClawTranslator _translator;
     private XcodeProgram _translationUnit = null;
     private final Configuration _cfg;
-    private final Context _context;
 
     public Configuration cfg()
     {
@@ -53,7 +52,7 @@ public class ClawTranslatorDriver
 
     public Context context()
     {
-        return _context;
+        return _cfg.context();
     }
 
     /**
@@ -61,10 +60,9 @@ public class ClawTranslatorDriver
      *
      * @throws Exception If translator cannot be created.
      */
-    public ClawTranslatorDriver(Configuration cfg, Context context) throws Exception
+    public ClawTranslatorDriver(Configuration cfg) throws Exception
     {
         _cfg = cfg;
-        _context = context;
         // Create translator
         String translatorClassPath = cfg.getParameter(Configuration.TRANSLATOR);
         if (translatorClassPath == null || translatorClassPath.equals(""))
@@ -76,8 +74,8 @@ public class ClawTranslatorDriver
         {
             // Check if class is there
             Class<?> translatorClass = Class.forName(translatorClassPath);
-            Constructor<?> ctor = translatorClass.getConstructor();
-            _translator = (ClawTranslator) ctor.newInstance();
+            Constructor<?> ctor = translatorClass.getConstructor(Configuration.class);
+            _translator = (ClawTranslator) ctor.newInstance(cfg);
         } catch (ClassNotFoundException e)
         {
             throw new Exception("Cannot create translator", e);

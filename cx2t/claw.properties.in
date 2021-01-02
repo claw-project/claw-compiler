@@ -89,6 +89,8 @@ istack-commons-runtime.dep=${3rdparty.dist.dir}/${istack-commons-runtime.jar}
 
 # OMNI compiler libraries and paths
 omni.xcodeml-common.dep=@OMNI_JAR_TOOLS@
+omni.xcodeml-c-backend.dep=@OMNI_JAR_C_BACKEND@
+omni.xcodeml-f-backend.dep=@OMNI_JAR_F_BACKEND@
 
 # CLAW X2T libraries
 claw.wani.jar=claw-x2t-wani.jar
@@ -104,6 +106,7 @@ driver.dep=${driver.dist.dir}/${driver.jar}
 driver.libs.dir=../share/claw
 d.l.dir=${driver.libs.dir}
 driver.runtime.classpath=${d.l.dir}/${claw.tatsu.jar} ${d.l.dir}/${claw.wani.jar} ${d.l.dir}/${claw.shenron.jar} \
+    ${omni.xcodeml-common.dep} \
     ${d.l.dir}/${commoncli.jar} ${d.l.dir}/${antlr4.jar} ${d.l.dir}/${antlr4.runtime.jar} ${d.l.dir}/${toml.jar} \
     ${d.l.dir}/${argparse4j.jar} ${d.l.dir}/${jaxb-runtime.jar} ${d.l.dir}/${jaxb-core.jar} \
     ${d.l.dir}/jakarta.xml.bind-api.jar ${d.l.dir}/${jakarta.activation.jar} ${d.l.dir}/${istack-commons-runtime.jar}
@@ -127,8 +130,11 @@ driver.ut.src.dir=@CLAWFC_UT_SRC_DIR@
 driver.ut.gen.src.dir=@CLAWFC_UT_GEN_SRC_DIR@
 driver.ut.res.dir=@CLAWFC_UT_RES_DIR@
 driver.ut.classes.dir=@CLAWFC_UT_CLASSES_DIR@
-driver.ut.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep} ${jaxb-runtime.dep} ${jaxb-core.dep} \
-    ${jakarta.xml.bind-api.dep} ${jakarta.activation.dep} ${istack-commons-runtime.dep}
+driver.ut.runtime.classpath=${driver.dep} \
+    ${d.l.dir}/${claw.tatsu.jar} ${d.l.dir}/${claw.wani.jar}  ${d.l.dir}/${claw.shenron.jar} \
+    ${omni.xcodeml-common.dep} ${omni.xcodeml-f-backend.dep} \
+    ${junit.dep} ${hamcrest.dep} ${jaxb-runtime.dep} ${jaxb-core.dep} ${jakarta.xml.bind-api.dep} \
+    ${jakarta.activation.dep} ${istack-commons-runtime.dep}
 driver.ut.report.dir=@CLAWFC_UT_REPORT_DIR@
 
 # CLAW driver tests

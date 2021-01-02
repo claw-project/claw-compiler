@@ -68,7 +68,6 @@ public class ClawTranslator implements Translator
     private final Map<ClawDirectiveKey, Deque<ClawPragma>> _blockDirectives;
     private int _transformationCounter = 0;
     private final Configuration _cfg;
-    private final Context _context;
 
     public Configuration cfg()
     {
@@ -77,17 +76,16 @@ public class ClawTranslator implements Translator
 
     public Context context()
     {
-        return _context;
+        return _cfg.context();
     }
 
     /**
      * ClawTranslator ctor. Creates the transformation groups needed for the CLAW
      * transformation and order the accordingly to their interpretation order.
      */
-    public ClawTranslator(Configuration cfg, Context context)
+    public ClawTranslator(Configuration cfg)
     {
         _cfg = cfg;
-        _context = context;
         /*
          * Use LinkedHashMap to be able to iterate through the map entries with the
          * insertion order.

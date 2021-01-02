@@ -132,6 +132,12 @@ class TestModuleInfo implements clawfc.ModuleInfo
         throw new RuntimeException("Not implemented");
     }
 
+    @Override
+    public AsciiArrayIOStream getTxast()
+    {
+        throw new RuntimeException("Not implemented");
+    }
+
 }
 
 public class BuildTest extends TestCase

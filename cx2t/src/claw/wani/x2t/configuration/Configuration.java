@@ -261,18 +261,19 @@ public class Configuration
             _accelerator = new AcceleratorConfiguration(_parameters);
         }
 
-        context().init(getCurrentDirective(), getCurrentTarget(), _accelerator, userMaxColumns);
-
-        if (modelConfigFilePath != null)
-        {
-            getModelConfig().load(modelConfigFilePath);
-        }
         if (userMaxColumns != null)
         {
             _userMaxColumns = userMaxColumns;
         } else
         {
             _userMaxColumns = 0;
+        }
+
+        context().init(getCurrentDirective(), getCurrentTarget(), accelerator(), getUserMaxColumns());
+
+        if (modelConfigFilePath != null)
+        {
+            getModelConfig().load(modelConfigFilePath);
         }
     }
 
@@ -848,7 +849,7 @@ public class Configuration
     {
         StringBuilder sb = new StringBuilder();
         sb.append(format("- CLAW Compiler configuration -%n\n"));
-        sb.append(format("Default directive directive: %s%n\n", getCurrentDirective()));
+        sb.append(format("Default directive: %s%n\n", getCurrentDirective()));
         sb.append(format("Default target: %s%n\n", getCurrentTarget()));
         sb.append("Current transformation order:\n");
         int i = 0;
