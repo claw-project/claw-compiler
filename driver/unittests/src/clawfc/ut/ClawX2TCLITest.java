@@ -110,6 +110,33 @@ public class ClawX2TCLITest extends TestCase
         assertTrue(res.stdout.contains("Max Fortran line length: 80"));
     }
 
+    public void testAddParentheses() throws Exception
+    {
+        {
+            final String[] args = new String[] { "--print-opts" };
+            Result res = run(args);
+            assertTrue(res.stdout.contains("Add parenthesis to binary opts: false"));
+        }
+        {
+            final String[] args = new String[] { "--print-opts", "--add-paren" };
+            Result res = run(args);
+            assertTrue(res.stdout.contains("Add parenthesis to binary opts: true"));
+        }
+        final Path INPUT_FILE = RES_DIR.resolve("ClawCX2T/add_paren/input/original_code.xml");
+        final Path REF_FILE = RES_DIR.resolve("ClawCX2T/add_paren/reference/reference.f90");
+        final Path OUTPUT_FILE = TMP_DIR.resolve("out.f90");
+        {
+            final String[] args = new String[] { INPUT_FILE.toString(), "--add-paren", "-f", OUTPUT_FILE.toString() };
+            Result res = run(args);
+            // final String refStr = Utils.collectIntoString(INPUT_FILE);
+            final String resStr = res.stdout;
+            assertEquals("", resStr);
+            final String outStr = collectIntoString(OUTPUT_FILE);
+            final String refStr = collectIntoString(REF_FILE);
+            assertEquals(refStr, outStr);
+        }
+    }
+
     public void testInputFile() throws Exception
     {
         final Path INPUT_FILE = RES_DIR.resolve("ClawCX2T/run/input/original_code.xml");

@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.helper.HelpScreenException;
@@ -22,7 +21,7 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Namespace;
 
-public class CLIOptions// extends ConfigurationOptions
+public class CLIOptions extends ConfigurationOptions
 {
     public static final Path STARTUP_DIR = Paths.get(System.getProperty("user.dir"));
 
@@ -31,17 +30,6 @@ public class CLIOptions// extends ConfigurationOptions
     final boolean _printTargets;
     final boolean _printDirectives;
     final boolean _printCfg;
-    final String _targetPlatform;
-    final Path _configFile;
-    final Path _configDir;
-    final String _accDirLanguage;
-    final Path _modelConfigFile;
-    final List<String> _cfgKeyOverrides;
-    final boolean _showDebugOutput;
-    final Integer _maxFLineLength;
-    final boolean _suppressPPLineDirectives;
-    final boolean _exitOnPureFunction;
-    final boolean _addParenToBinOpts;
     final Path _transReportFile;
     final List<Path> _modIncDirs;
     final Path _inputFile;
@@ -73,61 +61,6 @@ public class CLIOptions// extends ConfigurationOptions
         return _printCfg;
     }
 
-    public String targetPlatform()
-    {
-        return _targetPlatform;
-    }
-
-    public Path configFilePath()
-    {
-        return _configFile;
-    }
-
-    public Path configDirPath()
-    {
-        return _configDir;
-    }
-
-    public String accDirectiveLanguage()
-    {
-        return _accDirLanguage;
-    }
-
-    public Path modelConfigFilePath()
-    {
-        return this._modelConfigFile;
-    }
-
-    public List<String> cfgKeysOverrides()
-    {
-        return _cfgKeyOverrides;
-    }
-
-    public boolean showDebugOutput()
-    {
-        return _showDebugOutput;
-    }
-
-    public Integer maxFortranLineLength()
-    {
-        return _maxFLineLength;
-    }
-
-    public boolean suppressPreprocLineDirectives()
-    {
-        return _suppressPPLineDirectives;
-    }
-
-    public boolean exitOnPureFunction()
-    {
-        return _exitOnPureFunction;
-    }
-
-    public boolean addParenToBinaryOpts()
-    {
-        return _addParenToBinOpts;
-    }
-
     public Path translationReportFilePath()
     {
         return _transReportFile;
@@ -155,24 +88,19 @@ public class CLIOptions// extends ConfigurationOptions
 
     CLIOptions(Namespace parsedArgs)
     {
+        super(parsedArgs.getString("target"), getOptionalPath(parsedArgs, "config"),
+                getOptionalPath(parsedArgs, "config_path"), parsedArgs.getString("directive"),
+                getOptionalPath(parsedArgs, "model_config"), getStringList(parsedArgs, "override_cfg_key"),
+                parsedArgs.getBoolean("debug"), parsedArgs.getInt("max_fortran_line_length"),
+                parsedArgs.getBoolean("suppress_pp_line_directives"), parsedArgs.getBoolean("force_pure"),
+                parsedArgs.getBoolean("add_paren"));
         _printVersion = parsedArgs.getBoolean("version");
         _printTargets = parsedArgs.getBoolean("target_list");
         _printDirectives = parsedArgs.getBoolean("directive_list");
         _printCfg = parsedArgs.getBoolean("show_config");
         _printOpts = parsedArgs.getBoolean("print_opts");
-        _targetPlatform = parsedArgs.getString("target");
-        _accDirLanguage = parsedArgs.getString("directive");
-        _showDebugOutput = parsedArgs.getBoolean("debug");
-        _configFile = getOptionalPath(parsedArgs, "config");
-        _configDir = getOptionalPath(parsedArgs, "config_path");
-        _modelConfigFile = getOptionalPath(parsedArgs, "model_config");
-        _suppressPPLineDirectives = parsedArgs.getBoolean("suppress_pp_line_directives");
-        _exitOnPureFunction = parsedArgs.getBoolean("force_pure");
-        _addParenToBinOpts = parsedArgs.getBoolean("add_paren");
         _transReportFile = getOptionalPath(parsedArgs, "report");
-        _maxFLineLength = parsedArgs.getInt("max_fortran_line_length");
         _modIncDirs = getPathList(parsedArgs, "mod_include_dir");
-        _cfgKeyOverrides = getStringList(parsedArgs, "override_cfg_key");
         _inputFile = getOptionalPath(parsedArgs, "input_xast_file");
         _outputTxastFile = getOptionalPath(parsedArgs, "out_xast_file");
         _outputSrcFile = getOptionalPath(parsedArgs, "out_ftn_file");
@@ -230,13 +158,6 @@ public class CLIOptions// extends ConfigurationOptions
         return opts;
     }
 
-    String toString(List<Path> paths)
-    {
-        final String res = String.join("\n\t",
-                paths.stream().map((path) -> path.toString()).collect(Collectors.toList()));
-        return res != "" ? "\t" + res + "\n" : res;
-    }
-
     @Override
     public String toString()
     {
@@ -247,26 +168,15 @@ public class CLIOptions// extends ConfigurationOptions
         res.append(format("Print supported accelerator directive languages: %s\n", printDirectives()));
         res.append(format("Print configuration: %s\n", printCfg()));
         res.append(format("Input file: %s\n", inputFilePath()));
-        res.append(format("Suppress preprocessor line directives in decompiled source: %s\n",
-                suppressPreprocLineDirectives()));
-        res.append(format("Configuration directory: %s\n", configDirPath()));
-        res.append(format("Translator configuration file: %s\n", configFilePath()));
-        res.append(format("Target platform: %s\n", targetPlatform()));
-        res.append(format("Accelerator directive language: %s\n", accDirectiveLanguage()));
-        res.append(format("Print debug output: %s\n", showDebugOutput()));
         res.append(format("Output FORTRAN file: %s\n", outputFortranFilePath()));
         res.append(format("Output XCodeML AST file: %s\n", outputTranslatedXastFilePath()));
         res.append(format("Output translation report file: %s\n", translationReportFilePath()));
         res.append("Module include directories: \n" + toString(moduleIncludeDirs()));
-        res.append(format("Max Fortran line length: %s\n", maxFortranLineLength()));
-        res.append(format("Exit on pure function: %s\n", exitOnPureFunction()));
-        res.append(format("Model Config file: %s\n", modelConfigFilePath()));
-        res.append(format("Config overrides: \n\t%s\n", String.join("\n\t", cfgKeysOverrides())));
-        res.append(format("Add parenthesis to binary opts: %s\n", addParenToBinaryOpts()));
+        res.append(super.toString());
         return res.toString();
     }
 
-    Path getOptionalPath(Namespace parsedArgs, String name)
+    static Path getOptionalPath(Namespace parsedArgs, String name)
     {
         String str = parsedArgs.getString(name);
         Path path = null;
@@ -294,7 +204,7 @@ public class CLIOptions// extends ConfigurationOptions
         return Collections.unmodifiableList(res);
     }
 
-    List<String> getStringList(Namespace parsedArgs, String name)
+    static List<String> getStringList(Namespace parsedArgs, String name)
     {
         List<String> res = new ArrayList<String>();
         List<List<String>> strs = parsedArgs.<List<String>>getList(name);

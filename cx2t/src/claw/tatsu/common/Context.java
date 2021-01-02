@@ -31,7 +31,7 @@ public class Context
     private CompilerDirective _compilerDirective;
     private Target _target;
     private ModuleCache _moduleCache;
-    private final PrintStream _errorStream;
+    private PrintStream _errorStream;
     private final IXmOption _xmOption;
 
     protected Context()
@@ -43,7 +43,12 @@ public class Context
     public Context(PrintStream errorStream, IXmOption xmOption)
     {
         _errorStream = errorStream;
-        _xmOption = new XmOptionLocal();
+        _xmOption = xmOption;
+    }
+
+    public void setErrorStream(PrintStream errorStream)
+    {
+        _errorStream = errorStream;
     }
 
     /**

@@ -5,6 +5,8 @@
 package claw.wani.report;
 
 import java.io.FileWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,8 +15,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import claw.wani.ClawVersion;
 import claw.shenron.transformation.TransformationGroup;
+import claw.wani.ClawVersion;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
@@ -30,7 +32,7 @@ public class ClawTransformationReport
 {
 
     private static final int MAX_COL = 80;
-    private FileWriter _report;
+    private OutputStreamWriter _report;
 
     /**
      * Constructs a transformation report object.
@@ -41,6 +43,11 @@ public class ClawTransformationReport
     public ClawTransformationReport(Path reportPath) throws Exception
     {
         _report = new FileWriter(reportPath.toString());
+    }
+
+    public ClawTransformationReport(OutputStream outStrm) throws Exception
+    {
+        _report = new OutputStreamWriter(outStrm);
     }
 
     /**
