@@ -84,7 +84,7 @@ class _CFG:
     @property
     def ANTLR4_RUNTIME(self): return self.__ANTLR4_RUNTIME
     @property
-    def COMMON_CLI(self): return self.__COMMON_CLI
+    def COMMON_CLI(self): return self.__ARGPARSE4J
     @property
     def TOML(self): return self.__TOML
 
@@ -120,7 +120,7 @@ class _CFG:
         self.__CLAW_X2T_CONFIG_PATH = join_path(self.CLAW_HOME, 'etc')
         self.__ANTLR4 = join_path(self.CLAW_HOME, 'share/claw/antlr4.jar')
         self.__ANTLR4_RUNTIME = join_path(self.CLAW_HOME, 'share/claw/antlr4-runtime.jar')
-        self.__COMMON_CLI = join_path(self.CLAW_HOME, 'share/claw/commons-cli.jar')
+        self.__ARGPARSE4J = join_path(self.CLAW_HOME, 'share/claw/argparse4j.jar')
         self.__TOML = join_path(self.CLAW_HOME, 'share/claw/cava-toml.jar')
         s = self
         trans_jars = [s.OMNI_JAR_TOOLS, s.OMNI_JAR_F_BACKEND, s.OMNI_JAR_C_BACKEND, s.CLAW_X2T_TATSU_JAR,

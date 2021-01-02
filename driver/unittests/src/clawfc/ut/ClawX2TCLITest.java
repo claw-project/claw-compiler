@@ -103,6 +103,13 @@ public class ClawX2TCLITest extends TestCase
         }
     }
 
+    public void testMaxFLineLength() throws Exception
+    {
+        final String[] args = new String[] { "--print-opts", "-w", "80" };
+        Result res = run(args);
+        assertTrue(res.stdout.contains("Max Fortran line length: 80"));
+    }
+
     public void testInputFile() throws Exception
     {
         final Path INPUT_FILE = RES_DIR.resolve("ClawCX2T/run/input/original_code.xml");

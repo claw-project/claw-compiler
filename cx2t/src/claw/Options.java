@@ -208,7 +208,7 @@ public class Options
             cOpts.addArgument("-r", "--report").help("Output file for the transformation report");
             cOpts.addArgument("-M", "--mod-include-dir").nargs("*").action(Arguments.append())
                     .help("Search directory for .xmod files");
-            cOpts.addArgument("-w", "--max-fortran-line-length")
+            cOpts.addArgument("-w", "--max-fortran-line-length").type(Integer.class)
                     .help("Number of character per line in decompiled code");
             cOpts.addArgument("-fp", "--force-pure").action(Arguments.storeTrue())
                     .help("Exit the translator if a PURE subroutine/function has to be transformed");

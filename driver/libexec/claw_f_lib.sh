@@ -915,8 +915,8 @@ function claw::applyPreprocessorPass() {
 #         CLAW_X2T_MODEL_CONFIG_OPT
 ###################################################################
 function claw::format_cx2t_params() {
-  # Set configuraions directory
-  CLAW_X2T_CONFIG_OPT="--config-path=${CLAW_X2T_CONFIG_PATH}"
+  # Set configuraion directory (not needed anymore, it is now inside jar)
+  CLAW_X2T_CONFIG_OPT=
 
   # Set user defined configuration
   if [[ ${user_config} == true ]]; then
