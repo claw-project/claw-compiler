@@ -118,8 +118,7 @@ public class ClawX2TCLITest extends TestCase
             Result res = run(args);
             // final String refStr = Utils.collectIntoString(INPUT_FILE);
             final String resStr = res.stdout;
-            assertTrue(res.stdout.contains("XcodeProgram"));
-            // assertTrue(res.stdout.contains("Default directive: openmp"));
+            assertTrue(resStr.contains("PROGRAM claw_test"));
         }
     }
 
@@ -146,7 +145,7 @@ public class ClawX2TCLITest extends TestCase
             Result res = run(args);
             // final String refStr = Utils.collectIntoString(INPUT_FILE);
             final String resStr = res.stdout;
-            assertTrue(res.stdout.contains("XcodeProgram"));
+            assertEquals("", resStr);
             final String outStr = collectIntoString(OUTPUT_FILE);
             final String refStr = collectIntoString(REF_FILE);
             assertEquals(refStr, outStr);

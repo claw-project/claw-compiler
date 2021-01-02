@@ -6,7 +6,6 @@ package claw.wani.x2t.translator;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -208,13 +207,12 @@ public class ClawTranslatorDriver
      * 
      * @throws Exception
      */
-    public void transform(OutputStream outputStream) throws Exception
+    public void transform() throws Exception
     {
         try
         {
-            if (outputStream != null && !_canTransform)
+            if (!_canTransform)
             {
-                _translationUnit.write(outputStream, ClawConstant.INDENT_OUTPUT);
                 return;
             }
 
@@ -244,12 +242,6 @@ public class ClawTranslatorDriver
                     flushErrors();
                     throw ex;
                 }
-            }
-
-            if (outputStream != null)
-            {
-                // Write transformed IR to file
-                _translationUnit.write(outputStream, ClawConstant.INDENT_OUTPUT);
             }
         } catch (Exception ex)
         {

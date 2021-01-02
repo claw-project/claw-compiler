@@ -495,7 +495,7 @@ for input_file in "${f_files_transformation[@]}"; do
   # Debug output
   [[ ${enable_debug_omni} == true ]] && echo "CLAW DRIVER: Translation + backend"
   [[ ${enable_debug_omni} == true ]] && echo "${OMNI_FX2X_CMD} \
-    ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} ${CLAW_X2T_TARGET_OPT}
+    ${OMNI_FX2X_OPT} ${CLAW_X2T_TRANSLATOR_OPT} ${CLAW_X2T_TARGET_OPT} \
     ${CLAW_X2T_DIRECTIVE_OPT} ${CLAW_X2T_CONFIG_OPT} \
     ${CLAW_X2T_MODEL_CONFIG_OPT} \
     ${CLAW_X2T_MAX_COLUMN_OPT} ${CLAW_X2T_LINE_OPT} \

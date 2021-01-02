@@ -20,6 +20,7 @@ import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.backend.OmniBackendDriver;
+import claw.wani.ClawConstant;
 import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
@@ -215,6 +216,17 @@ public class ClawX2T
         }
     }
 
+    static OutputStream getOutputAsStream(Path outputFilePath) throws IOException
+    {
+        if (outputFilePath != null)
+        {
+            return Files.newOutputStream(outputFilePath);
+        } else
+        {
+            return System.out;
+        }
+    }
+
     /**
      * Main point of entry of the program.
      *
@@ -297,9 +309,14 @@ public class ClawX2T
         {
             translatorDriver.analyze(in);
         }
-        try (OutputStream out = getXCodeMLOutputAsStream(opts.outputTranslatedXastFilePath()))
+        translatorDriver.transform();
+
+        if (opts.outputTranslatedXastFilePath() != null)
         {
-            translatorDriver.transform(out);
+            try (OutputStream out = getXCodeMLOutputAsStream(opts.outputTranslatedXastFilePath()))
+            {
+                translatorDriver.getTranslationUnit().write(out, ClawConstant.INDENT_OUTPUT);
+            }
         }
         translatorDriver.flush();
 
@@ -309,17 +326,14 @@ public class ClawX2T
             report.generate(args, translatorDriver, cfg);
         }
 
-        if (opts.outputFortranFilePath() != null)
+        try (OutputStream out = getOutputAsStream(opts.outputFortranFilePath()))
         {
-            try (OutputStream out = Files.newOutputStream(opts.outputFortranFilePath()))
-            {
-                OmniBackendDriver backend = new OmniBackendDriver(OmniBackendDriver.Lang.FORTRAN);
-                backend.decompile(out, translatorDriver.getTranslationUnit().getDocument(), cfg.getUserMaxColumns(),
-                        opts.suppressPreprocLineDirectives(), xmOption);
-            } catch (Exception e)
-            {
-                throw new Exception("Failed to decompile XcodeML to Fortran", e);
-            }
+            OmniBackendDriver backend = new OmniBackendDriver(OmniBackendDriver.Lang.FORTRAN);
+            backend.decompile(out, translatorDriver.getTranslationUnit().getDocument(), cfg.getUserMaxColumns(),
+                    opts.suppressPreprocLineDirectives(), xmOption);
+        } catch (Exception e)
+        {
+            throw new Exception("Failed to decompile XcodeML to Fortran", e);
         }
     }
 }
