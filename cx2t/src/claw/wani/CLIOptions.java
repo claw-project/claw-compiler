@@ -2,7 +2,7 @@
  * @author Mikhail Zhigun
  * @copyright Copyright 2020, MeteoSwiss
  */
-package claw;
+package claw.wani;
 
 import static java.lang.String.format;
 
@@ -22,7 +22,7 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Namespace;
 
-public class Options
+public class CLIOptions// extends ConfigurationOptions
 {
     public static final Path STARTUP_DIR = Paths.get(System.getProperty("user.dir"));
 
@@ -153,7 +153,7 @@ public class Options
         return _outputSrcFile;
     }
 
-    Options(Namespace parsedArgs)
+    CLIOptions(Namespace parsedArgs)
     {
         _printVersion = parsedArgs.getBoolean("version");
         _printTargets = parsedArgs.getBoolean("target_list");
@@ -178,7 +178,7 @@ public class Options
         _outputSrcFile = getOptionalPath(parsedArgs, "out_ftn_file");
     }
 
-    public static Options parseCmdlineArguments(String[] args) throws Exception
+    public static CLIOptions parseArguments(String[] args) throws Exception
     {
         ArgumentParser parser = ArgumentParsers.newFor("claw-cx2t").build().description("The CLAW Compiler is a "
                 + "source-to-source translator working on the XcodeML intermediate representation");
@@ -226,7 +226,7 @@ public class Options
             parser.handleError(ape);
             throw ape;
         }
-        Options opts = new Options(parsedArgs);
+        CLIOptions opts = new CLIOptions(parsedArgs);
         return opts;
     }
 

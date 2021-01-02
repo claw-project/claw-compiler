@@ -2,9 +2,9 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw;
+package claw.wani;
 
-import static claw.Options.parseCmdlineArguments;
+import static claw.wani.CLIOptions.parseArguments;
 import static claw.wani.x2t.configuration.Configuration.CONFIG_XSD;
 import static claw.wani.x2t.configuration.Configuration.DEFAULT_CONFIG_FILE;
 import static claw.wani.x2t.configuration.Configuration.SET_XSD;
@@ -13,14 +13,15 @@ import static java.lang.String.format;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.xcodeml.backend.OmniBackendDriver;
-import claw.wani.ClawConstant;
 import claw.wani.report.ClawTransformationReport;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslatorDriver;
@@ -48,7 +49,7 @@ public class ClawX2T
 
     public static void printVersion()
     {
-        System.out.println(claw.ClawVersion.VERSION);
+        System.out.println(claw.wani.ClawVersion.VERSION);
     }
 
     public static void verifyTargetOption(final String target) throws Exception
@@ -178,7 +179,7 @@ public class ClawX2T
         }
     }
 
-    static void verifyOptions(Options opts) throws Exception
+    static void verifyCLIOptions(CLIOptions opts) throws Exception
     {
         verifyTargetOption(opts.targetPlatform());
         verifyDirectiveOption(opts.accDirectiveLanguage());
@@ -235,7 +236,7 @@ public class ClawX2T
      */
     public static void main(String[] args) throws Exception
     {
-        final Options opts = parseCmdlineArguments(args);
+        final CLIOptions opts = parseArguments(args);
         if (opts == null)
         {// Helper screen
             return;
@@ -256,7 +257,7 @@ public class ClawX2T
             printDirectiveLanguages();
             return;
         }
-        verifyOptions(opts);
+        verifyCLIOptions(opts);
 
         // Set decompiler options
         IXmOption xmOption = new XmOptionLocal();
@@ -336,4 +337,111 @@ public class ClawX2T
             throw new Exception("Failed to decompile XcodeML to Fortran", e);
         }
     }
+
+    public static class InputArgs
+    {
+        public InputArgs(String targetPlatform, Path configFile, Path configDir, String accDirLanguage,
+                Path modelConfigFile, List<String> cfgKeyOverrides, boolean showDebugOutput, Integer maxFLineLength,
+                boolean suppressPPLineDirectives, boolean exitOnPureFunction, boolean addParenToBinOpts,
+                List<Path> modIncDirs, InputStream inXast, OutputStream outReport, OutputStream outputXast,
+                OutputStream outputSrc, PrintStream outputErr)
+        {
+            this.outputErr = outputErr;
+            this.targetPlatform = targetPlatform;
+            this.configFile = configFile;
+            this.configDir = configDir;
+            this.accDirLanguage = accDirLanguage;
+            this.modelConfigFile = modelConfigFile;
+            this.cfgKeyOverrides = cfgKeyOverrides;
+            this.showDebugOutput = showDebugOutput;
+            this.maxFLineLength = maxFLineLength;
+            this.suppressPPLineDirectives = suppressPPLineDirectives;
+            this.exitOnPureFunction = exitOnPureFunction;
+            this.addParenToBinOpts = addParenToBinOpts;
+            this.modIncDirs = modIncDirs;
+            this.inXast = inXast;
+            this.outReport = outReport;
+            this.outputXast = outputXast;
+            this.outputSrc = outputSrc;
+        }
+
+        final String targetPlatform;
+        final Path configFile;
+        final Path configDir;
+        final String accDirLanguage;
+        final Path modelConfigFile;
+        final List<String> cfgKeyOverrides;
+        final boolean showDebugOutput;
+        final Integer maxFLineLength;
+        final boolean suppressPPLineDirectives;
+        final boolean exitOnPureFunction;
+        final boolean addParenToBinOpts;
+        final List<Path> modIncDirs;
+        final InputStream inXast;
+        final OutputStream outReport;
+        final OutputStream outputXast;
+        final OutputStream outputSrc;
+        final PrintStream outputErr;
+    }
+
+    /*
+     * Configuration createCfg(String targetPlatform, Path configFile, Path
+     * configDir, String accDirLanguage, Path modelConfigFile, List<String>
+     * cfgKeyOverrides, boolean showDebugOutput, Integer maxFLineLength, boolean
+     * suppressPPLineDirectives, boolean exitOnPureFunction, boolean
+     * addParenToBinOpts, PrintStream outputErr) { // Set decompiler options
+     * IXmOption xmOption = new XmOptionLocal(); if (args.suppressPPLineDirectives)
+     * { xmOption.setIsSuppressLineDirective(true); } if (args.showDebugOutput) {
+     * xmOption.setDebugOutput(true); } if (args.addParenToBinOpts) {
+     * xmOption.setAddPar(true); } // Prepare configuration final Context
+     * transContext = new Context(args.outputErr, xmOption); final Configuration cfg
+     * = Configuration.load(args.configDir, args.configFile, args.modelConfigFile,
+     * args.targetPlatform, args.accDirLanguage, args.maxFLineLength, transContext);
+     * for (String keyValue : args.cfgKeysOverrides) { String key =
+     * keyValue.substring(0, keyValue.indexOf(":")); String value =
+     * keyValue.substring(keyValue.indexOf(":") + 1);
+     * cfg.overrideConfigurationParameter(key, value); } if
+     * (args.exitOnPureFunction) { cfg.setForcePure(); } }
+     * 
+     * public static void run(InputArgs args) throws Exception { // Set decompiler
+     * options IXmOption xmOption = new XmOptionLocal(); if
+     * (args.suppressPPLineDirectives) { xmOption.setIsSuppressLineDirective(true);
+     * } if (args.showDebugOutput) { xmOption.setDebugOutput(true); } if
+     * (args.addParenToBinOpts) { xmOption.setAddPar(true); } // Prepare
+     * configuration final Context transContext = new Context(args.outputErr,
+     * xmOption); final Configuration cfg = Configuration.load(args.configDir,
+     * args.configFile, args.modelConfigFile, args.targetPlatform,
+     * args.accDirLanguage, args.maxFLineLength, transContext); for (String keyValue
+     * : args.cfgKeysOverrides) { String key = keyValue.substring(0,
+     * keyValue.indexOf(":")); String value =
+     * keyValue.substring(keyValue.indexOf(":") + 1);
+     * cfg.overrideConfigurationParameter(key, value); } if
+     * (args.exitOnPureFunction) { cfg.setForcePure(); } if (args.printCfg()) {
+     * System.out.println(cfg); return; } if (cfg.getCurrentTarget() == Target.FPGA)
+     * { throw new Exception("FPGA target is not supported"); } // Setup translation
+     * context for (Path xmodSrchPath : args.moduleIncludeDirs()) {
+     * transContext.getModuleCache().addSearchPath(xmodSrchPath.toString()); } //
+     * Perform transformations
+     * 
+     * ClawTranslatorDriver translatorDriver = new ClawTranslatorDriver(cfg);
+     * 
+     * try (InputStream in = getInputAsStream(args.inputFilePath())) {
+     * translatorDriver.analyze(in); } translatorDriver.transform();
+     * 
+     * if (args.outputTranslatedXastFilePath() != null) { try (OutputStream out =
+     * getXCodeMLOutputAsStream(args.outputTranslatedXastFilePath())) {
+     * translatorDriver.getTranslationUnit().write(out, ClawConstant.INDENT_OUTPUT);
+     * } } translatorDriver.flush();
+     * 
+     * if (args.translationReportFilePath() != null) { ClawTransformationReport
+     * report = new ClawTransformationReport(args.translationReportFilePath());
+     * report.generate(args, translatorDriver, cfg); }
+     * 
+     * try (OutputStream out = getOutputAsStream(args.outputFortranFilePath())) {
+     * OmniBackendDriver backend = new
+     * OmniBackendDriver(OmniBackendDriver.Lang.FORTRAN); backend.decompile(out,
+     * translatorDriver.getTranslationUnit().getDocument(), cfg.getUserMaxColumns(),
+     * args.suppressPreprocLineDirectives(), xmOption); } catch (Exception e) {
+     * throw new Exception("Failed to decompile XcodeML to Fortran", e); } }
+     */
 }

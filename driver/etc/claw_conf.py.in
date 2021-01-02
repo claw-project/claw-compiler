@@ -126,7 +126,7 @@ class _CFG:
         trans_jars = [s.OMNI_JAR_TOOLS, s.OMNI_JAR_F_BACKEND, s.OMNI_JAR_C_BACKEND, s.CLAW_X2T_TATSU_JAR,
                       s.CLAW_X2T_SHENRON_JAR, s.CLAW_X2T_WANI_JAR, s.COMMON_CLI, s.ANTLR4, s.ANTLR4_RUNTIME, s.TOML]
         trans_jars_str = ':'.join(trans_jars)
-        self.__OMNI_FX2X_MUST_OPT = '-cp %s claw.ClawX2T' % trans_jars_str
+        self.__OMNI_FX2X_MUST_OPT = '-cp %s claw.wani.ClawX2T' % trans_jars_str
         self.__OMNI_FX2X_OPT = '@JAVA_OPT@ %s @OMNI_X2X_FLAGS@' % self.__OMNI_FX2X_MUST_OPT
         self.__SHA1SUM_CMD = '@SHA1SUM_CMD@'
 

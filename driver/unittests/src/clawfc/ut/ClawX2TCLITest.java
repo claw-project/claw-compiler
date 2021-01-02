@@ -13,7 +13,7 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import claw.ClawX2T;
+import claw.wani.ClawX2T;
 import clawfc.Utils;
 import clawfc.utils.ByteArrayIOStream;
 import junit.framework.TestCase;
@@ -24,7 +24,7 @@ public class ClawX2TCLITest extends TestCase
     {
         final String[] args = new String[] { "--version" };
         Result res = run(args);
-        assertTrue(res.stdout.contains(claw.ClawVersion.VERSION));
+        assertTrue(res.stdout.contains(claw.wani.ClawVersion.VERSION));
     }
 
     public void testPrintTargets() throws Exception

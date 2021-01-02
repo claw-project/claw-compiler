@@ -16,7 +16,7 @@ import java.nio.file.Path;
 
 import org.junit.Test;
 
-import claw.ClawVersion;
+import claw.wani.ClawVersion;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;

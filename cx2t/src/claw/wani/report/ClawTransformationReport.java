@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import claw.ClawVersion;
+import claw.wani.ClawVersion;
 import claw.shenron.transformation.TransformationGroup;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;

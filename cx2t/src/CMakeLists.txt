@@ -5,7 +5,7 @@
 
 # Generate file with version number for Configuration check
 configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/claw/ClawVersion.java.in
-  ${CX2T_GEN_SRC_DIR}/claw/ClawVersion.java
+  ${CMAKE_CURRENT_SOURCE_DIR}/claw/wani/ClawVersion.java.in
+  ${CX2T_GEN_SRC_DIR}/claw/wani/ClawVersion.java
   @ONLY
 )

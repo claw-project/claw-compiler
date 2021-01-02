@@ -37,7 +37,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import claw.ClawVersion;
+import claw.wani.ClawVersion;
 import claw.shenron.transformation.BlockTransformation;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
@@ -118,7 +118,7 @@ public class Configuration
     private boolean _forcePure = false;
     private final ModelConfig _modelConfig;
     private final int _userMaxColumns;
-    Context _context;
+    final Context _context;
 
     public int getUserMaxColumns()
     {
