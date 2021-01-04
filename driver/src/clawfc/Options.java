@@ -461,7 +461,7 @@ public class Options
             cOpts.addArgument("--dump-cx2t-args").action(Arguments.storeTrue()).help("Print arguments passed to CX2T");
             cOpts.addArgument("--disable-mp").action(Arguments.storeTrue()).help("Disable multiprocessing");
             ArgumentGroup dcOpts = parser.addArgumentGroup("Decompiler options");
-            dcOpts.addArgument("--max-fortran-line-length", "-w").type(Integer.class)
+            dcOpts.addArgument("--max-fortran-line-length", "-w").type(Integer.class).setDefault(Integer.valueOf(80))
                     .help("Set the number of columns for the output FORTRAN file (default: 80)");
             dcOpts.addArgument("-l", "--add-pp-line-directives").action(Arguments.storeTrue())
                     .help("Add preprocessor line directives in the output FORTRAN file");
