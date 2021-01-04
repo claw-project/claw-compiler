@@ -178,7 +178,7 @@ public class Preprocessor
         args.add("-D" + info.macro);
         if (accDirLanguage != null)
         {
-            accDirLanguage = accDirLanguage.toLowerCase();
+            accDirLanguage = accDirLanguage.toLowerCase().strip();
             switch (accDirLanguage)
             {
             case "acc":
@@ -191,6 +191,10 @@ public class Preprocessor
             case "omp":
             {
                 args.add("-D_OPENMP");
+                break;
+            }
+            case "none":
+            {
                 break;
             }
             default:
