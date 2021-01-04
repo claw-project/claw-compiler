@@ -40,7 +40,7 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         final Path REF_MOD_DIR = RES_DIR.resolve("xmod_generation/input_files/reference");
         final Path OUT_MOD_DIR = TMP_DIR.resolve("mods");
         List<String> modNames = Arrays.asList("mod11.xmod", "mod12.xmod", "mod13.xmod");
-        String[] args = new String[] { "--stop-xmod-gen", "--skip-pp", "--disable-mp", "-J", OUT_MOD_DIR.toString(),
+        String[] args = new String[] { "--stop-xmod-gen", "--skip-pp", "--disable-mp", "-MO", OUT_MOD_DIR.toString(),
                 INPUT_FILEPATH.toString() };
         run(args);
         for (String modName : modNames)
@@ -58,7 +58,7 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         final Path REF_MOD_DIR = RES_DIR.resolve("xmod_generation/input_files/reference");
         final Path OUT_MOD_DIR = TMP_DIR.resolve("mods");
         List<String> modNames = Arrays.asList("mod11.xmod", "mod12.xmod", "mod13.xmod");
-        String[] args = new String[] { "--gen-mod-files", "--skip-pp", "--disable-mp", "-J", OUT_MOD_DIR.toString(),
+        String[] args = new String[] { "--gen-mod-files", "--skip-pp", "--disable-mp", "-MO", OUT_MOD_DIR.toString(),
                 INPUT_FILEPATH.toString() };
         run(args);
         for (String modName : modNames)
@@ -96,7 +96,8 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         final Path OUT_MOD_DIR = TMP_DIR.resolve("mods"), INT_DIR = TMP_DIR.resolve("int");
         List<String> modNames = Arrays.asList("mod1.xmod", "mod2.xmod");
         String[] args = new String[] { "--gen-mod-files", "--keep-int-files", "--skip-pp", "--disable-mp", "--int-dir",
-                INT_DIR.toString(), "-S", INC_DIR.toString(), "-J", OUT_MOD_DIR.toString(), INPUT_FILEPATH.toString() };
+                INT_DIR.toString(), "-S", INC_DIR.toString(), "-MO", OUT_MOD_DIR.toString(),
+                INPUT_FILEPATH.toString() };
         run(args);
         for (String modName : modNames)
         {
@@ -114,7 +115,7 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         final Path REF_MOD_DIR = RES_DIR.resolve("xmod_generation/xmod_include/reference");
         final Path OUT_MOD_DIR = TMP_DIR.resolve("mods");
         List<String> modNames = Arrays.asList("mod1.xmod", "mod2.xmod");
-        String[] args = new String[] { "--stop-xmod-gen", "--disable-mp", "-MI", MOD_INC_DIR.toString(), "-J",
+        String[] args = new String[] { "--stop-xmod-gen", "--disable-mp", "-MI", MOD_INC_DIR.toString(), "-MO",
                 OUT_MOD_DIR.toString(), INPUT_FILEPATH.toString() };
         run(args);
         for (String modName : modNames)
@@ -132,7 +133,7 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         final Path OUT_MOD_DIR = TMP_DIR.resolve("mods"), INT_DIR = TMP_DIR.resolve("int");
         List<String> modNames = Arrays.asList("mod11.xmod", "mod12.xmod", "mod13.xmod", "mod_no_claw.xmod");
         String[] args = new String[] { "--stop-xmod-gen", "--keep-int-files", "--skip-pp", "--disable-mp", "--force",
-                "--int-dir", INT_DIR.toString(), "-J", OUT_MOD_DIR.toString(), INPUT_FILEPATH.toString() };
+                "--int-dir", INT_DIR.toString(), "-MO", OUT_MOD_DIR.toString(), INPUT_FILEPATH.toString() };
         run(args);
         for (String modName : modNames)
         {
@@ -181,7 +182,7 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         }
         List<String> argsLst = new ArrayList<String>(
                 Arrays.asList("--stop-xmod-gen", "--keep-int-files", "--skip-pp", "--int-dir", INT_DIR.toString(), "-S",
-                        INPUT_INC_DIR.toString(), "-J", OUT_MOD_DIR.toString(), INPUT_FILEPATH.toString()));
+                        INPUT_INC_DIR.toString(), "-MO", OUT_MOD_DIR.toString(), INPUT_FILEPATH.toString()));
         String[] args = argsLst.stream().toArray(String[]::new);
         run(args);
         for (int i = 0; i < N; ++i)

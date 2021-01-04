@@ -394,7 +394,7 @@ public class Options
                     .help("Print input files which use CLAW directives");
             MutuallyExclusiveGroup outOpts = parser.addMutuallyExclusiveGroup("Compiler output options");
             outOpts.addArgument("-o", "--output-file")
-                    .help("Output file for the transformed FORTRAN code. If not given, code is printed to stdout.");
+                    .help("Output file for the transformed FORTRAN code. If not given, code is printed to stdout");
             outOpts.addArgument("-O", "--output-dir").help("Output directory for transformed FORTRAN files");
             ArgumentGroup cOpts = parser.addArgumentGroup("Compiler options");
             cOpts.addArgument("-I", "--pp-include-dir").nargs("*").action(Arguments.append()).help(
@@ -403,10 +403,13 @@ public class Options
                     .help("Output directory for preprocessed FORTRAN source files");
             cOpts.addArgument("-D", "--add-macro").nargs("*").action(Arguments.append()).help("Predefine macro");
             cOpts.addArgument("-SI", "--src-include-dir").nargs("*").action(Arguments.append())
-                    .help("Add the directory to the search path for the source of referenced Fortran modules");
+                    .help("Add directory to the search path for the source of referenced Fortran modules");
             cOpts.addArgument("-M", "-MI", "--mod-include-dir").nargs("*").action(Arguments.append())
-                    .help("Input directory for .xmod files.");
-            cOpts.addArgument("-J", "-MO", "--mod-output-dir").help("Output directory for .xmod files.");
+                    .help("Add directory to the search path for .xmod files.");
+            cOpts.addArgument("-MO", "--mod-output-dir").help("Output directory for .xmod files.");
+            cOpts.addArgument("-J").nargs("*").action(Arguments.append()).help(
+                    "DEPRECATED Add directory to the search path for the source of referenced Fortran modules and .xmod files."
+                            + " First given is also output directory for generated .xmod files");
             cOpts.addArgument("-BI", "--buildinfo-include-dir").nargs("*").action(Arguments.append())
                     .help("Include directory for BuildInfo files");
             cOpts.addArgument("-BO", "--buildinfo-output-dir").help("Output directory for BuildInfo files");
@@ -487,7 +490,7 @@ public class Options
         return opts;
     }
 
-    Options(Namespace parsedArgs)
+    Options(Namespace parsedArgs) throws Exception
     {
         _printInstallCfg = parsedArgs.getBoolean("print_install_cfg");
         _printVersion = parsedArgs.getBoolean("version");
@@ -500,15 +503,44 @@ public class Options
         _outputFile = getOptionalPath(parsedArgs, "output_file");
         _outputDir = getOptionalPath(parsedArgs, "output_dir");
         _ppOutDir = getOptionalPath(parsedArgs, "pp_output_dir");
-        _xmodOutDir = getOptionalPath(parsedArgs, "mod_output_dir");
         _xastOutDir = getOptionalPath(parsedArgs, "xast_output_dir");
         _transXastOutDir = getOptionalPath(parsedArgs, "txast_output_dir");
         _transReportOutDir = getOptionalPath(parsedArgs, "trans_report_output_dir");
         _transSrcOutDir = getOptionalPath(parsedArgs, "tsrc_output_dir");
         _targetPlatform = parsedArgs.getString("target");
         _ppIncDirs = getPathList(parsedArgs, "pp_include_dir");
-        _srcIncDirs = getPathList(parsedArgs, "src_include_dir");
-        _modIncDirs = getPathList(parsedArgs, "mod_include_dir");
+        {// "-J" option is deprecated, retained for compatibility
+            final List<Path> combinedModIncDirs = getPathList(parsedArgs, "J");
+            final List<Path> modSrcIncDirs = getPathList(parsedArgs, "src_include_dir");
+            final List<Path> modIncDirs = getPathList(parsedArgs, "mod_include_dir");
+            final Path modOutDir = getOptionalPath(parsedArgs, "mod_output_dir");
+            if (combinedModIncDirs.isEmpty())
+            {
+                _srcIncDirs = modSrcIncDirs;
+                _modIncDirs = modIncDirs;
+                _xmodOutDir = modOutDir;
+            } else
+            {
+                if (!modSrcIncDirs.isEmpty())
+                {
+                    throw new Exception(
+                            "-J and -SI options should not be used together. -J is deprecated, don't use it.");
+                } else if (!modIncDirs.isEmpty())
+                {
+                    throw new Exception(
+                            "-J and -MI options should not be used together. -J is deprecated, don't use it.");
+                } else if (modOutDir != null)
+                {
+                    throw new Exception(
+                            "-J and -MO options should not be used together. -J is deprecated, don't use it.");
+                } else
+                {
+                    _srcIncDirs = combinedModIncDirs;
+                    _modIncDirs = combinedModIncDirs;
+                    _xmodOutDir = combinedModIncDirs.get(0);
+                }
+            }
+        }
         _binfoIncDirs = getPathList(parsedArgs, "buildinfo_include_dir");
         _binfoOutDir = getOptionalPath(parsedArgs, "buildinfo_output_dir");
         _addMacros = getStringList(parsedArgs, "add_macro");
