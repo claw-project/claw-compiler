@@ -133,9 +133,16 @@ class TestModuleInfo implements clawfc.ModuleInfo
     }
 
     @Override
-    public AsciiArrayIOStream getTxast()
+    public AsciiArrayIOStream getTransXast()
     {
         throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public AsciiArrayIOStream getTransSrc()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

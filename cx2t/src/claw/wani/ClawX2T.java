@@ -320,20 +320,22 @@ public class ClawX2T
             report.generate(args, translatorDriver, cfg);
         }
 
-        try
+        if (outputSrc != null)
         {
-            OmniBackendDriver backend = new OmniBackendDriver(OmniBackendDriver.Lang.FORTRAN);
-            IXmOption xmOption = cfg.context().getXmOption();
-            backend.decompile(outputSrc, translatorDriver.getTranslationUnit().getDocument(), cfg.getUserMaxColumns(),
-                    xmOption.isSuppressLineDirective(), xmOption);
-        } catch (Exception e)
-        {
-            throw new Exception("Failed to decompile XcodeML to Fortran", e);
+            try
+            {
+                OmniBackendDriver backend = new OmniBackendDriver(OmniBackendDriver.Lang.FORTRAN);
+                IXmOption xmOption = cfg.context().getXmOption();
+                backend.decompile(outputSrc, translatorDriver.getTranslationUnit().getDocument(),
+                        cfg.getUserMaxColumns(), xmOption.isSuppressLineDirective(), xmOption);
+            } catch (Exception e)
+            {
+                throw new Exception("Failed to decompile XcodeML to Fortran", e);
+            }
         }
-
     }
 
-    static Configuration createCfg(ConfigurationOptions opts) throws Exception
+    public static Configuration createCfg(ConfigurationOptions opts) throws Exception
     {
         // Set decompiler options
         IXmOption xmOption = new XmOptionLocal();

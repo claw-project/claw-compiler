@@ -9,6 +9,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import clawfc.utils.FileInfo;
@@ -238,5 +240,19 @@ public class FortranFileBuildInfo
             return false;
         }
         return true;
+    }
+
+    public List<String> getModuleNames(boolean includeProgram)
+    {
+        SortedMap<Integer, String> nameByPos = new TreeMap<Integer, String>();
+        for (FortranModuleInfo modBInfo : getModules())
+        {
+            nameByPos.put(modBInfo.getStartCharIdx(), modBInfo.getName());
+        }
+        if (includeProgram && (getProgram() != null))
+        {
+            nameByPos.put(getProgram().getStartCharIdx(), getProgram().getName());
+        }
+        return Collections.unmodifiableList(new ArrayList<String>(nameByPos.values()));
     }
 }

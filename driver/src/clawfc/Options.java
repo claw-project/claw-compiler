@@ -42,7 +42,9 @@ public class Options
     final Path _ppOutDir;
     final Path _xmodOutDir;
     final Path _xastOutDir;
-    final String _userTarget;
+    final Path _transXastOutDir;
+    final Path _transSrcOutDir;
+    final String _targetPlatform;
     final List<Path> _ppIncDirs;
     final List<Path> _srcIncDirs;
     final List<Path> _binfoIncDirs;
@@ -50,8 +52,8 @@ public class Options
     final List<Path> _modIncDirs;
     final List<String> _addMacros;
     final String _accDirLanguage;
-    final String _configFile;
-    final String _modelConfigFile;
+    final Path _configFile;
+    final Path _modelConfigFile;
     final List<String> _cfgKeyOverrides;
     final boolean _disableMP;
     final boolean _onlyPreprocess;
@@ -67,11 +69,10 @@ public class Options
     final boolean _skipPP;
     final boolean _stopAfterPP;
     final boolean _stopAfterDepScan;
-    final boolean _stopAfterFFront;
-    final boolean _stopAfterDepRes;
     final boolean _stopAfterXmodGen;
     final boolean _stopAfterXastGen;
     final boolean _stopAfterTrans;
+    final boolean _stopAfterDec;
     final List<String> _ppOpts;
     final List<String> _ffrontOpts;
     final List<String> _transOpts;
@@ -159,14 +160,24 @@ public class Options
         return _xastOutDir;
     }
 
+    public Path transXastOutputDir()
+    {
+        return _transXastOutDir;
+    }
+
+    public Path transSrcOutputDir()
+    {
+        return _transSrcOutDir;
+    }
+
     public Path preprocessedSourcesOutputDir()
     {
         return _ppOutDir;
     }
 
-    public String userTarget()
+    public String targetPlatform()
     {
-        return _userTarget;
+        return _targetPlatform;
     }
 
     public List<Path> preprocessorIncludeDirs()
@@ -269,16 +280,6 @@ public class Options
         return _stopAfterDepScan;
     }
 
-    public boolean stopAfterOmniFFront()
-    {
-        return _stopAfterFFront;
-    }
-
-    public boolean stopAfterDepResolution()
-    {
-        return _stopAfterDepRes;
-    }
-
     public boolean stopAfterXmodGeneration()
     {
         return _stopAfterXmodGen;
@@ -292,6 +293,11 @@ public class Options
     public boolean stopAfterTranslation()
     {
         return _stopAfterTrans;
+    }
+
+    public boolean stopAfterDecompilation()
+    {
+        return _stopAfterDec;
     }
 
     public List<String> preprocessorOptions()
@@ -309,12 +315,12 @@ public class Options
         return _transOpts;
     }
 
-    public String configFile()
+    public Path configFile()
     {
         return _configFile;
     }
 
-    public String modelConfigFile()
+    public Path modelConfigFile()
     {
         return _modelConfigFile;
     }
@@ -404,7 +410,10 @@ public class Options
             cOpts.addArgument("-BI", "--buildinfo-include-dir").nargs("*").action(Arguments.append())
                     .help("Include directory for BuildInfo files");
             cOpts.addArgument("-BO", "--buildinfo-output-dir").help("Output directory for BuildInfo files");
-            cOpts.addArgument("-XO", "--xast-output-dir").help("Output directory for modules transformed into XML-AST");
+            cOpts.addArgument("-XO", "--xast-output-dir")
+                    .help("Output directory for modules transformed into XCodeML-AST");
+            cOpts.addArgument("-TXO", "--txast-output-dir").help("Output directory for translated XCodeML-AST modules");
+            cOpts.addArgument("-TSO", "--tsrc-output-dir").help("Output directory for decompiled source modules");
             cOpts.addArgument("-t", "--target").help("Type of target accelerator hardware");
             cOpts.addArgument("-d", "--directive")
                     .help("Specify accelerator directive language to be used for code generation");
@@ -436,14 +445,10 @@ public class Options
             MutuallyExclusiveGroup sOpts = parser.addMutuallyExclusiveGroup("Compiler debug options");
             sOpts.addArgument("--stop-pp").action(Arguments.storeTrue()).help("Stop after preprocessing");
             sOpts.addArgument("--stop-depscan").action(Arguments.storeTrue()).help("Stop after dependencies scan");
-            sOpts.addArgument("--stop-dependencies").action(Arguments.storeTrue())
-                    .help("Stop after dependencies resolution");
             sOpts.addArgument("--stop-xmod-gen").action(Arguments.storeTrue()).help("Stop after Xmod generation");
             sOpts.addArgument("--stop-xast-gen").action(Arguments.storeTrue()).help("Stop after XML-AST generation");
-            sOpts.addArgument("--stop-frontend").action(Arguments.storeTrue())
-                    .help("Save intermediate files and stop after frontend");
-            sOpts.addArgument("--stop-translator").action(Arguments.storeTrue())
-                    .help("Save intermediate files and stop after translator");
+            sOpts.addArgument("--stop-trans").action(Arguments.storeTrue()).help("Stop after translator");
+            sOpts.addArgument("--stop-dec").action(Arguments.storeTrue()).help("Stop after decompilation");
             cOpts.addArgument("--gen-buildinfo-files").action(Arguments.storeTrue())
                     .help("Generate build information files for input and then stop");
             cOpts.addArgument("--gen-mod-files").action(Arguments.storeTrue())
@@ -498,7 +503,9 @@ public class Options
         _ppOutDir = getOptionalPath(parsedArgs, "pp_output_dir");
         _xmodOutDir = getOptionalPath(parsedArgs, "mod_output_dir");
         _xastOutDir = getOptionalPath(parsedArgs, "xast_output_dir");
-        _userTarget = parsedArgs.getString("target");
+        _transXastOutDir = getOptionalPath(parsedArgs, "txast_output_dir");
+        _transSrcOutDir = getOptionalPath(parsedArgs, "tsrc_output_dir");
+        _targetPlatform = parsedArgs.getString("target");
         _ppIncDirs = getPathList(parsedArgs, "pp_include_dir");
         _srcIncDirs = getPathList(parsedArgs, "src_include_dir");
         _modIncDirs = getPathList(parsedArgs, "mod_include_dir");
@@ -506,8 +513,8 @@ public class Options
         _binfoOutDir = getOptionalPath(parsedArgs, "buildinfo_output_dir");
         _addMacros = getStringList(parsedArgs, "add_macro");
         _accDirLanguage = parsedArgs.getString("directive");
-        _configFile = parsedArgs.getString("config");
-        _modelConfigFile = parsedArgs.getString("model_config");
+        _configFile = getOptionalPath(parsedArgs, "config");
+        _modelConfigFile = getOptionalPath(parsedArgs, "model_config");
         _onlyPreprocess = parsedArgs.getBoolean("only_preprocess");
         _verbose = parsedArgs.getBoolean("verbose");
         _keepComments = parsedArgs.getBoolean("keep_comment");
@@ -521,11 +528,10 @@ public class Options
         _skipPP = parsedArgs.getBoolean("skip_pp");
         _stopAfterPP = parsedArgs.getBoolean("stop_pp");
         _stopAfterDepScan = parsedArgs.getBoolean("stop_depscan");
-        _stopAfterFFront = parsedArgs.getBoolean("stop_frontend");
-        _stopAfterDepRes = parsedArgs.getBoolean("stop_dependencies");
         _stopAfterXmodGen = parsedArgs.getBoolean("stop_xmod_gen");
         _stopAfterXastGen = parsedArgs.getBoolean("stop_xast_gen");
-        _stopAfterTrans = parsedArgs.getBoolean("stop_translator");
+        _stopAfterTrans = parsedArgs.getBoolean("stop_trans");
+        _stopAfterDec = parsedArgs.getBoolean("stop_dec");
         _ppOpts = getStringList(parsedArgs, "add_pp_opts");
         _ffrontOpts = getStringList(parsedArgs, "add_ffront_opts");
         _transOpts = getStringList(parsedArgs, "add_trans_opts");
@@ -564,9 +570,11 @@ public class Options
         res.append(sprintf("Output directory: \"%s\"\n", outputDir()));
         res.append(sprintf("Output xmod directory: \"%s\"\n", xmodOutputDir()));
         res.append(sprintf("Output xast directory: \"%s\"\n", xastOutputDir()));
+        res.append(sprintf("Output translated xast directory: \"%s\"\n", transXastOutputDir()));
+        res.append(sprintf("Output translated src directory: \"%s\"\n", transSrcOutputDir()));
         res.append(sprintf("Output buildinfo directory: \"%s\"\n", buildInfoOutputDir()));
         res.append(sprintf("Preprocessed sources output directory: \"%s\"\n", preprocessedSourcesOutputDir()));
-        res.append("User target: " + userTarget() + "\n");
+        res.append("User target: " + targetPlatform() + "\n");
         res.append("Accelerator directive language: " + acceleratorDirectiveLanguage() + "\n");
         res.append("Config file: " + configFile() + "\n");
         res.append(sprintf("Config overrides: \n\t%s\n", String.join("\n\t", cfgKeysOverrides())));
@@ -584,11 +592,10 @@ public class Options
         res.append(sprintf("Skip preprocessing: %s\n", skipPreprocessing()));
         res.append(sprintf("Stop after preprocessing: %s\n", stopAfterPreprocessing()));
         res.append(sprintf("Stop after dependencies scan: %s\n", stopAfterDepScan()));
-        res.append(sprintf("Stop after OMNI Fortran Front-End: %s\n", stopAfterOmniFFront()));
-        res.append(sprintf("Stop after dependencies resolution: %s\n", stopAfterDepResolution()));
         res.append(sprintf("Stop after Xmod generation: %s\n", stopAfterXmodGeneration()));
         res.append(sprintf("Stop after Xast generation: %s\n", stopAfterXastGeneration()));
         res.append(sprintf("Stop after translator: %s\n", stopAfterTranslation()));
+        res.append(sprintf("Stop after decompilation: %s\n", stopAfterDecompilation()));
         res.append(sprintf("Add preprocessor options: \n\t%s\n", String.join("\n\t", preprocessorOptions())));
         res.append(sprintf("Add OMNI Fortran Front-End options: \n\t%s\n", String.join("\n\t", OmniFFrontOptions())));
         res.append(sprintf("Add translation options: \n\t%s\n", String.join("\n\t", translatorOptions())));

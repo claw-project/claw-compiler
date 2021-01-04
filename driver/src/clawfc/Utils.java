@@ -40,6 +40,7 @@ import clawfc.utils.FileInfoImpl;
 public class Utils
 {
     public static final byte ASCII_NEWLINE_VALUE = (byte) '\n';
+    public static final byte ASCII_CARRIAGE_RETURN = (byte) '\r';
     public static final byte ASCII_SPACE_VALUE = (byte) ' ';
     public static final String[] FORTRAN_FILE_EXTENSIONS = new String[] { "f", "F", "f90", "F90", "f95", "F95", "f03",
             "F03" };

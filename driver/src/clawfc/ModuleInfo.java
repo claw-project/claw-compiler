@@ -43,6 +43,10 @@ public interface ModuleInfo
 
     public AsciiArrayIOStream getXast();
 
+    public AsciiArrayIOStream getTransXast();
+
+    public AsciiArrayIOStream getTransSrc();
+
     // public List<FileInfo> getIncludeFilesInfo();
 
     /**

@@ -4,6 +4,10 @@
  */
 package clawfc;
 
+import static clawfc.Utils.ASCII_CARRIAGE_RETURN;
+import static clawfc.Utils.ASCII_NEWLINE_VALUE;
+import static clawfc.Utils.collectIntoString;
+import static clawfc.Utils.copy;
 import static clawfc.Utils.executeTasksUntilFirstError;
 import static clawfc.Utils.fileExists;
 import static clawfc.Utils.getOrCreateDir;
@@ -13,12 +17,12 @@ import static clawfc.Utils.saveToFile;
 import static clawfc.Utils.sprintf;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,9 +32,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import claw.ClawX2T;
+import claw.wani.ClawX2T;
+import claw.wani.ConfigurationOptions;
 import clawfc.ModuleData.ModuleDesignation;
 import clawfc.ModuleData.ModuleType;
 import clawfc.Utils.ExecuteTasks;
@@ -130,20 +136,13 @@ public class Driver
             printVersion();
         } else if (opts.printTargets())
         {
-            ClawX2T.main(new String[] { "--target-list" });
+            ClawX2T.printTargets();
         } else if (opts.printDirectives())
         {
-            ClawX2T.main(new String[] { "--directive-list" });
+            ClawX2T.printDirectiveLanguages();
         } else if (opts.printCfg())
         {
-            ArrayList<String> args = new ArrayList<String>(
-                    Arrays.asList("--show-config", "--config-path=" + cfg().configDir()));
-            String cfg = opts.configFile();
-            if (cfg != null)
-            {
-                args.add("--config=" + cfg);
-            }
-            ClawX2T.main(args.stream().toArray(String[]::new));
+            printCX2TCfg(opts);
         } else if (opts.printOptions())
         {
             print(opts.toString());
@@ -275,17 +274,37 @@ public class Driver
                 {
                     return;
                 }
-                info("Generating xast...");
-                generateXast(ffront, usedModules, targetModuleNames, enableMultiprocessing, opts.showDebugOutput());
+                info("Generating XCodeML-AST...");
+                generateXast(ffront, usedModules, targetModuleNames, opts.showDebugOutput(), enableMultiprocessing);
                 if (opts.xastOutputDir() != null)
                 {
-                    saveXast(usedModules, targetModuleNames, opts.xastOutputDir());
+                    saveXast(usedModules, targetModuleNames, opts.xastOutputDir(), enableMultiprocessing);
                 }
                 if (opts.stopAfterXastGeneration())
                 {
                     return;
                 }
-
+                info("Translating XCodeML-AST...");
+                translate(usedModules, targetModuleNames, opts, ffront.getOutModDir(), enableMultiprocessing);
+                if (opts.transXastOutputDir() != null)
+                {
+                    saveTransXast(usedModules, targetModuleNames, opts.transXastOutputDir(), enableMultiprocessing);
+                }
+                if (opts.stopAfterTranslation())
+                {
+                    return;
+                }
+                if (opts.transSrcOutputDir() != null)
+                {
+                    saveTransSrc(usedModules, targetModuleNames, opts.transSrcOutputDir(), enableMultiprocessing);
+                }
+                if (opts.stopAfterDecompilation())
+                {
+                    return;
+                }
+                final Map<Path, AsciiArrayIOStream> outSrcBySrcPath = generateOutputSrc(opts.inputFiles(),
+                        buildInfoBySrcPath, availModules, targetModuleNames, enableMultiprocessing);
+                saveOutputSrc(outSrcBySrcPath, opts.outputFile(), opts.outputDir(), enableMultiprocessing);
             } finally
             {
                 if (tmpDir != null && !opts.keepIntermediateFiles())
@@ -294,6 +313,107 @@ public class Driver
                 }
             }
         }
+    }
+
+    static int getNumEndingNewlines(AsciiArrayIOStream buf)
+    {
+        int numNewLines = 0;
+        for (int idx = buf.getSize() - 1; idx >= 0; --idx)
+        {
+            final Byte chr = buf.getChr(idx);
+            if (chr == ASCII_NEWLINE_VALUE)
+            {
+                ++numNewLines;
+            } else if (chr != ASCII_CARRIAGE_RETURN)
+            {
+                break;
+            }
+        }
+        return numNewLines;
+    }
+
+    static Map<Path, AsciiArrayIOStream> generateOutputSrc(final List<Path> inputFiles,
+            final Map<Path, FortranFileBuildInfoData> buildInfoBySrcPath, final Map<String, ModuleInfo> usedModules,
+            final Set<String> targetModuleNames, boolean enableMultiprocessing) throws Exception
+    {
+        final int n = inputFiles.size();
+        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
+        Map<Path, AsciiArrayIOStream> outBySrcPath = new LinkedHashMap<Path, AsciiArrayIOStream>();
+        final byte[] MOD_SEPARATOR = new byte[] { ASCII_NEWLINE_VALUE };
+        for (final Path inputFilePath : inputFiles)
+        {
+            final AsciiArrayIOStream out = new AsciiArrayIOStream();
+            outBySrcPath.put(inputFilePath, out);
+            tasks.add(new Callable<Void>()
+            {
+                public Void call() throws Exception
+                {
+                    FortranFileBuildInfo bInfo = buildInfoBySrcPath.get(inputFilePath).getInfo();
+                    final List<String> modNames = bInfo.getModuleNames(true);
+                    for (final String modName : modNames)
+                    {
+                        final ModuleInfo modInfo = usedModules.get(modName);
+                        final boolean isTargetMod = targetModuleNames.contains(modName);
+                        final AsciiArrayIOStream modTransSrc = isTargetMod ? modInfo.getTransSrc()
+                                : modInfo.getPreprocessedSrc(false);
+                        copy(modTransSrc.getAsInputStreamUnsafe(), out);
+                        int numNewLines = getNumEndingNewlines(out);
+                        for (; numNewLines < 2; ++numNewLines)
+                        {
+                            out.write(ASCII_NEWLINE_VALUE);
+                        }
+                    }
+                    int numNewLines = getNumEndingNewlines(out);
+                    for (; numNewLines < 1; ++numNewLines)
+                    {
+                        out.write(ASCII_NEWLINE_VALUE);
+                    }
+                    return null;
+                }
+            });
+        }
+        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        return Collections.unmodifiableMap(outBySrcPath);
+    }
+
+    static void saveOutputSrc(final Map<Path, AsciiArrayIOStream> outSrcBySrcPath, Path outFilePath, Path outDirPath,
+            boolean enableMultiprocessing) throws Exception
+    {
+        if (outDirPath == null)
+        {
+            outDirPath = outFilePath.getParent();
+        }
+        getOrCreateDir(outDirPath);
+        if (outFilePath != null)
+        {
+            AsciiArrayIOStream outSrc = outSrcBySrcPath.entrySet().stream().findFirst().get().getValue();
+            saveToFile(outSrc.getAsInputStreamUnsafe(), outFilePath);
+        } else
+        {
+            saveOutputSrc(outSrcBySrcPath, outDirPath, enableMultiprocessing);
+        }
+    }
+
+    static void saveOutputSrc(final Map<Path, AsciiArrayIOStream> outSrcBySrcPath, final Path outDirPath,
+            boolean enableMultiprocessing) throws Exception
+    {
+        final int n = outSrcBySrcPath.size();
+        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
+        for (final Map.Entry<Path, AsciiArrayIOStream> entry : outSrcBySrcPath.entrySet())
+        {
+            tasks.add(new Callable<Void>()
+            {
+                public Void call() throws Exception
+                {
+                    final Path inFilePath = entry.getKey();
+                    Path outFilePath = outDirPath.resolve(inFilePath.getFileName());
+                    final AsciiArrayIOStream outSrc = entry.getValue();
+                    saveToFile(outSrc.getAsInputStreamUnsafe(), outFilePath);
+                    return null;
+                }
+            });
+        }
+        executeTasksUntilFirstError(tasks, enableMultiprocessing);
     }
 
     static void precomputeDirHashes(UniquePathHashGenerator hashGen, List<Path> inputFiles, List<Path> includeDirs)
@@ -454,7 +574,7 @@ public class Driver
     }
 
     static void generateXast(FortranFrontEnd ffront, Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames,
-            boolean enableMultiprocessing, boolean printFfrontDebugOutput) throws Exception
+            boolean printFfrontDebugOutput, boolean enableMultiprocessing) throws Exception
     {
         final int n = targetModuleNames.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
@@ -481,7 +601,7 @@ public class Driver
                         localAddIgnoreFilter.run(modPPSrc.getAsInputStreamUnsafe(), modPPSrcWithIgnore);
                     } catch (Exception e)
                     {
-                        String errMsg = sprintf("Exception throws while applying ignore directive to %s",
+                        String errMsg = sprintf("Exception throws while applying ignore directive to module %s",
                                 Build.moduleNameWithLocation(modInfo));
                         throw new Exception(errMsg, e);
                     }
@@ -492,7 +612,7 @@ public class Driver
                                 xastDataStrm);
                     } catch (FortranFrontEnd.Failed failed)
                     {
-                        String errMsg = sprintf("Xmod generation: Error! Call to Omni frontend for %s failed",
+                        String errMsg = sprintf("Xmod generation: Error! Call to Omni frontend for module %s failed",
                                 Build.moduleNameWithLocation(modInfo));
                         if (printFfrontDebugOutput)
                         {
@@ -509,17 +629,192 @@ public class Driver
         executeTasksUntilFirstError(tasks, enableMultiprocessing);
     }
 
-    static void saveXast(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames, final Path outDirPath)
-            throws Exception
+    static ConfigurationOptions toCX2TCfgOptions(final Options opts)
     {
-        getOrCreateDir(outDirPath);
+        final ConfigurationOptions cfgOpts = new ConfigurationOptions(opts.targetPlatform(), opts.configFile(), null,
+                opts.acceleratorDirectiveLanguage(), opts.modelConfigFile(), opts.cfgKeysOverrides(),
+                opts.showDebugOutput(), opts.maxFortranLineLength(), !opts.addPreprocLineDirectives(),
+                opts.exitOnPureFunction(), opts.addParenToBinaryOpts());
+        return cfgOpts;
+    }
+
+    static void printCX2TCfg(Options opts) throws Exception
+    {
+        final ConfigurationOptions cfgOpts = toCX2TCfgOptions(opts);
+        claw.wani.x2t.configuration.Configuration cfg = ClawX2T.createCfg(cfgOpts);
+        print(cfg.toString());
+    }
+
+    static void translate(final Map<String, ModuleInfo> usedModules, final Set<String> targetModuleNames,
+            final Options opts, final Path outModDir, final boolean enableMultiprocessing) throws Exception
+    {
+        final ConfigurationOptions cfgOpts = toCX2TCfgOptions(opts);
+        final boolean saveTransXast = opts.transXastOutputDir() != null;
+        final boolean saveDecSrc = !opts.stopAfterTranslation();
+        final boolean debugTransform = !opts.showDebugOutput();
+        final List<Path> modIncDirs = new ArrayList<Path>(opts.moduleIncludeDirs());
+        modIncDirs.add(outModDir);
+        final int n = targetModuleNames.size();
+        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
+        class ThreadLocalData
+        {
+            public ThreadLocalData() throws Exception
+            {
+                if (saveDecSrc)
+                {
+                    removeIgnoreFilter = new RemoveIgnoreDirectiveFilter();
+                    removeVerbatimFilter = new RemoveVerbatimDirectiveFilter();
+                    decSrc = new AsciiArrayIOStream();
+                    decSrcNoIgnore = new AsciiArrayIOStream();
+                } else
+                {
+                    removeIgnoreFilter = null;
+                    removeVerbatimFilter = null;
+                    decSrc = null;
+                    decSrcNoIgnore = null;
+                }
+            }
+
+            public void reset()
+            {
+                if (saveDecSrc)
+                {
+                    decSrc.reset();
+                    decSrcNoIgnore.reset();
+                }
+            }
+
+            public final RemoveIgnoreDirectiveFilter removeIgnoreFilter;
+            public final RemoveVerbatimDirectiveFilter removeVerbatimFilter;
+            public final AsciiArrayIOStream decSrc;
+            public final AsciiArrayIOStream decSrcNoIgnore;
+        }
+        final ThreadLocal<ThreadLocalData> threadLocalData = new ThreadLocal<ThreadLocalData>();
         for (final String modName : targetModuleNames)
         {
             final ModuleInfo modInfo = usedModules.get(modName);
-            AsciiArrayIOStream xast = modInfo.getXast();
-            final Path outFilePath = outDirPath.resolve(modName + ".xast");
-            saveToFile(xast.getAsInputStreamUnsafe(), outFilePath);
+            tasks.add(new Callable<Void>()
+            {
+                public Void call() throws Exception
+                {
+                    ThreadLocalData localData = threadLocalData.get();
+                    if (localData == null)
+                    {
+                        localData = new ThreadLocalData();
+                        threadLocalData.set(localData);
+                    }
+                    localData.reset();
+                    // -----------------------
+                    claw.wani.x2t.configuration.Configuration cfg = ClawX2T.createCfg(cfgOpts);
+                    AsciiArrayIOStream transXast = saveTransXast ? new AsciiArrayIOStream() : null;
+                    AsciiArrayIOStream errStrmBuf = new AsciiArrayIOStream();
+                    try
+                    {
+                        AsciiArrayIOStream xast = modInfo.getXast();
+                        ClawX2T.run(cfg, modIncDirs, xast.getAsInputStreamUnsafe(), null, transXast, localData.decSrc,
+                                new PrintStream(errStrmBuf), null);
+                    } catch (Exception e)
+                    {
+                        String errMsg = sprintf("Call to CX2T translator for module %s failed",
+                                Build.moduleNameWithLocation(modInfo));
+                        if (debugTransform)
+                        {
+                            errMsg += sprintf("\nstderr:\n\n%s",
+                                    collectIntoString(errStrmBuf.getAsInputStreamUnsafe()));
+                        }
+                        error(errMsg);
+                        throw new Exception(errMsg, e);
+                    }
+                    if (saveTransXast)
+                    {
+                        ((ModuleData) modInfo).setTransXast(transXast);
+                    }
+                    if (saveDecSrc)
+                    {
+                        try
+                        {
+                            localData.removeIgnoreFilter.run(localData.decSrc.getAsInputStreamUnsafe(),
+                                    localData.decSrcNoIgnore);
+                        } catch (Exception e)
+                        {
+                            String errMsg = sprintf("Removal of ignore directives failed for module %s",
+                                    Build.moduleNameWithLocation(modInfo));
+                            error(errMsg);
+                            throw new Exception(errMsg, e);
+                        }
+                        AsciiArrayIOStream decSrc = new AsciiArrayIOStream();
+                        try
+                        {
+                            localData.removeVerbatimFilter.run(localData.decSrcNoIgnore.getAsInputStreamUnsafe(),
+                                    decSrc);
+                        } catch (Exception e)
+                        {
+                            String errMsg = sprintf("Removal of verbatim directives failed for module %s",
+                                    Build.moduleNameWithLocation(modInfo));
+                            error(errMsg);
+                            throw new Exception(errMsg, e);
+                        }
+                        ((ModuleData) modInfo).setTransSrc(decSrc);
+                    }
+                    return null;
+                }
+            });
         }
+        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+    }
+
+    static void saveModData(final String dataType, final String extension,
+            Function<ModuleInfo, AsciiArrayIOStream> getData, Map<String, ModuleInfo> usedModules,
+            Set<String> targetModuleNames, final Path outDirPath, boolean enableMultiprocessing) throws Exception
+    {
+        getOrCreateDir(outDirPath);
+        final int n = targetModuleNames.size();
+        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
+        for (final String modName : targetModuleNames)
+        {
+            final ModuleInfo modInfo = usedModules.get(modName);
+            final AsciiArrayIOStream data = getData.apply(modInfo);
+            final Path outFilePath = outDirPath.resolve(modName + extension);
+            tasks.add(new Callable<Void>()
+            {
+                public Void call() throws Exception
+                {
+                    try
+                    {
+                        saveToFile(data.getAsInputStreamUnsafe(), outFilePath);
+                    } catch (Exception e)
+                    {
+                        String errMsg = sprintf("Failed to save %s for module %s", dataType,
+                                Build.moduleNameWithLocation(modInfo));
+                        error(errMsg);
+                        throw new Exception(errMsg, e);
+                    }
+                    return null;
+                }
+            });
+        }
+        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+    }
+
+    static void saveXast(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames, final Path outDirPath,
+            boolean enableMultiprocessing) throws Exception
+    {
+        saveModData("XCodeML-AST", ".xast", (ModuleInfo modInfo) -> modInfo.getXast(), usedModules, targetModuleNames,
+                outDirPath, enableMultiprocessing);
+    }
+
+    static void saveTransXast(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames, final Path outDirPath,
+            boolean enableMultiprocessing) throws Exception
+    {
+        saveModData("translated XCodeML-AST", ".xast", (ModuleInfo modInfo) -> modInfo.getTransXast(), usedModules,
+                targetModuleNames, outDirPath, enableMultiprocessing);
+    }
+
+    static void saveTransSrc(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames, final Path outDirPath,
+            boolean enableMultiprocessing) throws Exception
+    {
+        saveModData("translated source", ".f90", (ModuleInfo modInfo) -> modInfo.getTransSrc(), usedModules,
+                targetModuleNames, outDirPath, enableMultiprocessing);
     }
 
     static Map<String, ModuleInfo> getAvailableModulesInfo(Map<Path, FortranFileBuildInfoData> buildInfoBySrcPath,
@@ -1158,27 +1453,36 @@ public class Driver
             }
             if (opts.stopAfterXmodGeneration())
             {
-            } else if (opts.stopAfterDepResolution())
-            {
             } else if (opts.stopAfterXastGeneration())
-            {
-
-            } else if (opts.stopAfterTranslation())
             {
 
             } else
             {
-                if (opts.inputFiles().size() == 1)
+                ClawX2T.verifyDirectiveOption(opts.acceleratorDirectiveLanguage());
+                ClawX2T.verifyTargetOption(opts.targetPlatform());
+                ClawX2T.verifyConfigFile(opts.configFile());
+                ClawX2T.verifyModelConfigFile(opts.modelConfigFile());
+                if (opts.stopAfterTranslation())
                 {
-                    if (opts.outputFile() == null && opts.outputDir() == null)
-                    {
-                        throw new Exception(sprintf("Either output file or output dir must be specified"));
-                    }
-                } else if (opts.inputFiles().size() > 1)
+
+                } else if (opts.stopAfterDecompilation())
                 {
-                    if (opts.outputDir() == null)
+
+                } else
+                {
+                    if (opts.inputFiles().size() == 1)
                     {
-                        throw new Exception(sprintf("Output dir must be specified when multiple input files are used"));
+                        if (opts.outputFile() == null && opts.outputDir() == null)
+                        {
+                            throw new Exception(sprintf("Either output file or output dir must be specified"));
+                        }
+                    } else if (opts.inputFiles().size() > 1)
+                    {
+                        if (opts.outputDir() == null)
+                        {
+                            throw new Exception(
+                                    sprintf("Output dir must be specified when multiple input files are used"));
+                        }
                     }
                 }
             }

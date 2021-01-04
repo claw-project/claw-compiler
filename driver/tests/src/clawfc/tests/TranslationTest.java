@@ -11,15 +11,15 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
-public class XastGenerationTest extends clawfc.tests.utils.DriverTestCase
+public class TranslationTest extends clawfc.tests.utils.DriverTestCase
 {
     public void testInput() throws Exception
     {
-        final Path INPUT_FILEPATH = RES_DIR.resolve("xast_generation/without_src_files/input/1.f90");
-        final Path REF_MOD_DIR = RES_DIR.resolve("xast_generation/without_src_files/reference");
+        final Path INPUT_FILEPATH = RES_DIR.resolve("translation/without_src_files/input/1.f90");
+        final Path REF_MOD_DIR = RES_DIR.resolve("translation/without_src_files/reference");
         final Path OUT_XAST_DIR = TMP_DIR.resolve("xast");
         List<String> xastNames = Arrays.asList("mod11.xast", "mod12.xast", "mod13.xast", "p1.xast");
-        String[] args = new String[] { "--stop-xast-gen", "--disable-mp", "-XO", OUT_XAST_DIR.toString(),
+        String[] args = new String[] { "--debug", "--stop-trans", "--disable-mp", "-TXO", OUT_XAST_DIR.toString(),
                 INPUT_FILEPATH.toString() };
         run(args);
         for (String modName : xastNames)
@@ -35,11 +35,11 @@ public class XastGenerationTest extends clawfc.tests.utils.DriverTestCase
 
     public void testInputWithSourceFile() throws Exception
     {
-        final Path INPUT_FILEPATH = RES_DIR.resolve("xast_generation/with_src_files/input/1.f90");
-        final Path REF_MOD_DIR = RES_DIR.resolve("xast_generation/with_src_files/reference");
+        final Path INPUT_FILEPATH = RES_DIR.resolve("translation/with_src_files/input/1.f90");
+        final Path REF_MOD_DIR = RES_DIR.resolve("translation/with_src_files/reference");
         final Path OUT_XAST_DIR = TMP_DIR.resolve("xast");
         List<String> xastNames = Arrays.asList("mod11.xast", "mod12.xast", "mod13.xast", "p1.xast");
-        String[] args = new String[] { "--stop-xast-gen", "--disable-mp", "--skip-pp", "-XO", OUT_XAST_DIR.toString(),
+        String[] args = new String[] { "--stop-trans", "--disable-mp", "--skip-pp", "-TXO", OUT_XAST_DIR.toString(),
                 INPUT_FILEPATH.toString() };
         run(args);
         for (String modName : xastNames)
@@ -56,11 +56,11 @@ public class XastGenerationTest extends clawfc.tests.utils.DriverTestCase
 
     public void testForceInput() throws Exception
     {
-        final Path INPUT_FILEPATH = RES_DIR.resolve("xast_generation/without_src_files/input/1.f90");
-        final Path REF_MOD_DIR = RES_DIR.resolve("xast_generation/without_src_files/reference");
+        final Path INPUT_FILEPATH = RES_DIR.resolve("translation/without_src_files/input/1.f90");
+        final Path REF_MOD_DIR = RES_DIR.resolve("translation/without_src_files/reference");
         final Path OUT_XAST_DIR = TMP_DIR.resolve("xast");
         List<String> xastNames = Arrays.asList("mod11.xast", "mod12.xast", "mod13.xast", "mod_no_claw.xast", "p1.xast");
-        String[] args = new String[] { "--stop-xast-gen", "--force", "--disable-mp", "-XO", OUT_XAST_DIR.toString(),
+        String[] args = new String[] { "--stop-trans", "--force", "--disable-mp", "-TXO", OUT_XAST_DIR.toString(),
                 INPUT_FILEPATH.toString() };
         run(args);
         for (String modName : xastNames)
@@ -75,11 +75,11 @@ public class XastGenerationTest extends clawfc.tests.utils.DriverTestCase
 
     public void testMultiprocessing() throws Exception
     {
-        final Path INPUT_FILEPATH = RES_DIR.resolve("xast_generation/without_src_files/input/1.f90");
-        final Path REF_MOD_DIR = RES_DIR.resolve("xast_generation/without_src_files/reference");
+        final Path INPUT_FILEPATH = RES_DIR.resolve("translation/without_src_files/input/1.f90");
+        final Path REF_MOD_DIR = RES_DIR.resolve("translation/without_src_files/reference");
         final Path OUT_XAST_DIR = TMP_DIR.resolve("xast");
         List<String> xastNames = Arrays.asList("mod11.xast", "mod12.xast", "mod13.xast", "mod_no_claw.xast", "p1.xast");
-        String[] args = new String[] { "--stop-xast-gen", "--force", "-XO", OUT_XAST_DIR.toString(),
+        String[] args = new String[] { "--stop-trans", "--force", "-TXO", OUT_XAST_DIR.toString(),
                 INPUT_FILEPATH.toString() };
         run(args);
         for (String modName : xastNames)

@@ -11,6 +11,6 @@ public class Main
     public static void main(String[] args)
     {
         TestsRunner.main(args, DriverTest.class, PreprocessorTest.class, DepScanTest.class, XmodGenerationTest.class,
-                XastGenerationTest.class);
+                XastGenerationTest.class, TranslationTest.class, DecompilationTest.class, SourceReassemblyTest.class);
     }
 }

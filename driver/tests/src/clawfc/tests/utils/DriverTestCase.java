@@ -121,4 +121,14 @@ public abstract class DriverTestCase extends TestCase
         String refTxt = readTxt(ref);
         assertTxtFileEqualsTxt(res, refTxt);
     }
+
+    public static String removeTime(String in)
+    {
+        return in.replaceFirst("time=\".*\"", "time=\"\"");
+    }
+
+    public static String removeType(String in)
+    {
+        return in.replaceAll("type=\".*\"", "type=\"\"");
+    }
 }

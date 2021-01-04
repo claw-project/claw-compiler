@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<XcodeProgram compiler-info="XcodeML/Fortran-FrontEnd" language="Fortran" source="&lt;stdin&gt;" time="2021-01-03 22:46:13" version="1.0">
+  <typeTable>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc">
+      <name>mod13</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FmoduleDefinition file="&lt;stdin&gt;" lineno="1" name="mod13">
+      <symbols>
+      </symbols>
+      <declarations>
+        <FuseDecl file="&lt;stdin&gt;" lineno="2" name="mod12">
+        </FuseDecl>
+        <FpragmaStatement file="&lt;stdin&gt;" lineno="3">claw verbatim integer, parameter x = 2</FpragmaStatement>
+      </declarations>
+    </FmoduleDefinition>
+  </globalDeclarations>
+</XcodeProgram>
