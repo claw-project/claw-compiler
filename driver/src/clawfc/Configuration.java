@@ -89,7 +89,6 @@ public class Configuration
     public Configuration() throws Exception
     {
         cfgProperties = loadProperties();
-        String name = this.name();
     }
 
     Properties loadProperties() throws Exception

@@ -145,6 +145,13 @@ class TestModuleInfo implements clawfc.ModuleInfo
         return null;
     }
 
+    @Override
+    public AsciiArrayIOStream getTransReport()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
 
 public class BuildTest extends TestCase

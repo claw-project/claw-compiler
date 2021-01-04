@@ -7,6 +7,7 @@ package clawfc.tests;
 import static clawfc.Utils.collectIntoString;
 import static clawfc.Utils.fileExists;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +32,23 @@ public class TranslationTest extends clawfc.tests.utils.DriverTestCase
             assertEquals(refStr, resStr);
         }
         assertFalse(fileExists(OUT_XAST_DIR.resolve("mod_no_claw.xast")));
+    }
+
+    public void testReport() throws Exception
+    {
+        final Path INPUT_FILEPATH = RES_DIR.resolve("translation/without_src_files/input/1.f90");
+        final Path REF_MOD_DIR = RES_DIR.resolve("translation/without_src_files/reference");
+        final Path OUT_XAST_DIR = TMP_DIR.resolve("xast");
+        final Path OUT_REPORT_DIR = TMP_DIR.resolve("report");
+        List<String> modNames = Arrays.asList("mod11", "mod12", "mod13", "p1");
+        String[] args = new String[] { "--debug", "--stop-trans", "--disable-mp", "-TRO", OUT_REPORT_DIR.toString(),
+                INPUT_FILEPATH.toString() };
+        run(args);
+        for (String modName : modNames)
+        {
+            Path outReportPath = OUT_REPORT_DIR.resolve(modName + ".lst");
+            assertTrue(Files.exists(outReportPath));
+        }
     }
 
     public void testInputWithSourceFile() throws Exception

@@ -290,6 +290,10 @@ public class Driver
                 {
                     saveTransXast(usedModules, targetModuleNames, opts.transXastOutputDir(), enableMultiprocessing);
                 }
+                if (opts.transReportOutputDir() != null)
+                {
+                    saveTransReport(usedModules, targetModuleNames, opts.transReportOutputDir(), enableMultiprocessing);
+                }
                 if (opts.stopAfterTranslation())
                 {
                     return;
@@ -339,7 +343,6 @@ public class Driver
         final int n = inputFiles.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
         Map<Path, AsciiArrayIOStream> outBySrcPath = new LinkedHashMap<Path, AsciiArrayIOStream>();
-        final byte[] MOD_SEPARATOR = new byte[] { ASCII_NEWLINE_VALUE };
         for (final Path inputFilePath : inputFiles)
         {
             final AsciiArrayIOStream out = new AsciiArrayIOStream();
@@ -650,6 +653,7 @@ public class Driver
     {
         final ConfigurationOptions cfgOpts = toCX2TCfgOptions(opts);
         final boolean saveTransXast = opts.transXastOutputDir() != null;
+        final boolean genTransReport = opts.transReportOutputDir() != null;
         final boolean saveDecSrc = !opts.stopAfterTranslation();
         final boolean debugTransform = !opts.showDebugOutput();
         final List<Path> modIncDirs = new ArrayList<Path>(opts.moduleIncludeDirs());
@@ -707,12 +711,13 @@ public class Driver
                     // -----------------------
                     claw.wani.x2t.configuration.Configuration cfg = ClawX2T.createCfg(cfgOpts);
                     AsciiArrayIOStream transXast = saveTransXast ? new AsciiArrayIOStream() : null;
+                    AsciiArrayIOStream transReport = genTransReport ? new AsciiArrayIOStream() : null;
                     AsciiArrayIOStream errStrmBuf = new AsciiArrayIOStream();
                     try
                     {
                         AsciiArrayIOStream xast = modInfo.getXast();
-                        ClawX2T.run(cfg, modIncDirs, xast.getAsInputStreamUnsafe(), null, transXast, localData.decSrc,
-                                new PrintStream(errStrmBuf), null);
+                        ClawX2T.run(cfg, modIncDirs, xast.getAsInputStreamUnsafe(), transReport, transXast,
+                                localData.decSrc, new PrintStream(errStrmBuf), null);
                     } catch (Exception e)
                     {
                         String errMsg = sprintf("Call to CX2T translator for module %s failed",
@@ -728,6 +733,10 @@ public class Driver
                     if (saveTransXast)
                     {
                         ((ModuleData) modInfo).setTransXast(transXast);
+                    }
+                    if (genTransReport)
+                    {
+                        ((ModuleData) modInfo).setTransReport(transReport);
                     }
                     if (saveDecSrc)
                     {
@@ -814,6 +823,13 @@ public class Driver
             boolean enableMultiprocessing) throws Exception
     {
         saveModData("translated source", ".f90", (ModuleInfo modInfo) -> modInfo.getTransSrc(), usedModules,
+                targetModuleNames, outDirPath, enableMultiprocessing);
+    }
+
+    static void saveTransReport(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames,
+            final Path outDirPath, boolean enableMultiprocessing) throws Exception
+    {
+        saveModData("transformation report", ".lst", (ModuleInfo modInfo) -> modInfo.getTransReport(), usedModules,
                 targetModuleNames, outDirPath, enableMultiprocessing);
     }
 

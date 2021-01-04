@@ -36,6 +36,7 @@ public class ModuleData implements ModuleInfo
     AsciiArrayIOStream xast;
     AsciiArrayIOStream transXast;
     AsciiArrayIOStream transSrc;
+    AsciiArrayIOStream transReport;
 
     public ModuleData(ModuleType type, ModuleDesignation designation, FortranModuleInfo info,
             FortranFileBuildInfoData srcFileBinfoData, PreprocessedFortranSourceData srcData)
@@ -50,6 +51,7 @@ public class ModuleData implements ModuleInfo
         this.xast = null;
         this.transXast = null;
         this.transSrc = null;
+        this.transReport = null;
     }
 
     public ModuleData(String name, ModuleDesignation designation, XmodData xmodData)
@@ -64,6 +66,7 @@ public class ModuleData implements ModuleInfo
         this.xast = null;
         this.transXast = null;
         this.transSrc = null;
+        this.transReport = null;
     }
 
     @Override
@@ -219,5 +222,16 @@ public class ModuleData implements ModuleInfo
     public void setTransSrc(AsciiArrayIOStream transSrc)
     {
         this.transSrc = transSrc;
+    }
+
+    @Override
+    public AsciiArrayIOStream getTransReport()
+    {
+        return transReport;
+    }
+
+    public void setTransReport(AsciiArrayIOStream transReport)
+    {
+        this.transReport = transReport;
     }
 }

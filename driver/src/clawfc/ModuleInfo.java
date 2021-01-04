@@ -45,6 +45,8 @@ public interface ModuleInfo
 
     public AsciiArrayIOStream getTransXast();
 
+    public AsciiArrayIOStream getTransReport();
+
     public AsciiArrayIOStream getTransSrc();
 
     // public List<FileInfo> getIncludeFilesInfo();

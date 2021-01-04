@@ -43,6 +43,7 @@ public class Options
     final Path _xmodOutDir;
     final Path _xastOutDir;
     final Path _transXastOutDir;
+    final Path _transReportOutDir;
     final Path _transSrcOutDir;
     final String _targetPlatform;
     final List<Path> _ppIncDirs;
@@ -81,7 +82,6 @@ public class Options
     final boolean _dumpCX2TArgs;
     final boolean _exitOnPureFunction;
     final boolean _addParenToBinOpts;
-    final boolean _genTransReport;
     final String _fCompilerType;
     final String _fCompilerCmd;
 
@@ -163,6 +163,11 @@ public class Options
     public Path transXastOutputDir()
     {
         return _transXastOutDir;
+    }
+
+    public Path transReportOutputDir()
+    {
+        return _transReportOutDir;
     }
 
     public Path transSrcOutputDir()
@@ -355,11 +360,6 @@ public class Options
         return _addParenToBinOpts;
     }
 
-    public boolean genTransReport()
-    {
-        return _genTransReport;
-    }
-
     public String fortranCompilerType()
     {
         return _fCompilerType;
@@ -413,6 +413,7 @@ public class Options
             cOpts.addArgument("-XO", "--xast-output-dir")
                     .help("Output directory for modules transformed into XCodeML-AST");
             cOpts.addArgument("-TXO", "--txast-output-dir").help("Output directory for translated XCodeML-AST modules");
+            cOpts.addArgument("-TRO", "--trans-report-output-dir").help("Output directory for transformation reports");
             cOpts.addArgument("-TSO", "--tsrc-output-dir").help("Output directory for decompiled source modules");
             cOpts.addArgument("-t", "--target").help("Type of target accelerator hardware");
             cOpts.addArgument("-d", "--directive")
@@ -432,8 +433,6 @@ public class Options
                     .help("Force compiler to exit when transformation applied to PURE subroutine/function");
             cOpts.addArgument("--add-paren").action(Arguments.storeTrue())
                     .help("Add parenthesis to binary operation in generated code");
-            cOpts.addArgument("-r", "--report").action(Arguments.storeTrue())
-                    .help("Generate the transformation report");
             cOpts.addArgument("--debug").action(Arguments.storeTrue()).help("Display transformation debug information");
             cOpts.addArgument("--int-dir")
                     .help("Path to intermediate files directory (all existing contents will be removed)");
@@ -504,6 +503,7 @@ public class Options
         _xmodOutDir = getOptionalPath(parsedArgs, "mod_output_dir");
         _xastOutDir = getOptionalPath(parsedArgs, "xast_output_dir");
         _transXastOutDir = getOptionalPath(parsedArgs, "txast_output_dir");
+        _transReportOutDir = getOptionalPath(parsedArgs, "trans_report_output_dir");
         _transSrcOutDir = getOptionalPath(parsedArgs, "tsrc_output_dir");
         _targetPlatform = parsedArgs.getString("target");
         _ppIncDirs = getPathList(parsedArgs, "pp_include_dir");
@@ -541,7 +541,6 @@ public class Options
         _dumpCX2TArgs = parsedArgs.getBoolean("dump_cx2t_args");
         _exitOnPureFunction = parsedArgs.getBoolean("force_pure");
         _addParenToBinOpts = parsedArgs.getBoolean("add_paren");
-        _genTransReport = parsedArgs.getBoolean("report");
         _fCompilerType = parsedArgs.getString("fc_type");
         _fCompilerCmd = parsedArgs.getString("fc_cmd");
         _disableMP = parsedArgs.getBoolean("disable_mp");
@@ -571,6 +570,7 @@ public class Options
         res.append(sprintf("Output xmod directory: \"%s\"\n", xmodOutputDir()));
         res.append(sprintf("Output xast directory: \"%s\"\n", xastOutputDir()));
         res.append(sprintf("Output translated xast directory: \"%s\"\n", transXastOutputDir()));
+        res.append(sprintf("Output tranformation reports directory: \"%s\"\n", transReportOutputDir()));
         res.append(sprintf("Output translated src directory: \"%s\"\n", transSrcOutputDir()));
         res.append(sprintf("Output buildinfo directory: \"%s\"\n", buildInfoOutputDir()));
         res.append(sprintf("Preprocessed sources output directory: \"%s\"\n", preprocessedSourcesOutputDir()));
@@ -604,7 +604,6 @@ public class Options
         res.append(sprintf("Dump CX2T args: %s\n", dumpCX2TArgs()));
         res.append(sprintf("Exit on pure function: %s\n", exitOnPureFunction()));
         res.append(sprintf("Add parenthesis to binary opts: %s\n", addParenToBinaryOpts()));
-        res.append(sprintf("Generate transformation report: %s\n", genTransReport()));
         res.append(sprintf("Max Fortran line length: %s\n", maxFortranLineLength()));
         res.append(sprintf("Print install configuration: %s\n", printInstallCfg()));
         res.append(sprintf("Print configuration: %s\n", printCfg()));
