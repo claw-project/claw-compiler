@@ -7,16 +7,23 @@
  */
 grammar FortranDepStatementsRecognizer;
 
+block_data_open_stmt : (BLOCKDATA | (BLOCK DATA)) block_data_open_name? EOF;
+block_data_open_name : identifier;
+
+block_data_close_stmt : ((END (((BLOCK DATA) | BLOCKDATA) block_data_close_name?)?) |
+                        (ENDBLOCKDATA block_data_close_name?)) EOF;
+block_data_close_name : identifier;
+
 module_open_stmt : MODULE module_open_name EOF;
 module_open_name : identifier;
 
-module_close_stmt : END MODULE module_close_name EOF;
+module_close_stmt : ((END (MODULE module_close_name?)?) | (ENDMODULE module_close_name?)) EOF;
 module_close_name : identifier;
 
 program_open_stmt : PROGRAM program_open_name EOF;
 program_open_name : identifier;
 
-program_close_stmt : END PROGRAM program_close_name EOF;
+program_close_stmt : ((END (PROGRAM program_close_name?)?) | (ENDPROGRAM program_close_name?)) EOF;
 program_close_name : identifier;
 
 use_stmt : USE use_module_name (',' (rename_list_stmt | only_list_stmt))? EOF;
@@ -35,13 +42,30 @@ use_only_symbol_name : identifier;
 use_only_symbol_name_from : identifier;
 
 // Lexer cannot differentiate between ambiguous keywords and identifiers 
-identifier : IDENTIFIER | ONLY | USE | MODULE | PROGRAM | END ;
+identifier : IDENTIFIER |
+BLOCKDATA | BLOCK |
+DATA |
+ENDBLOCKDATA | ENDBLOCK |  ENDMODULE | ENDPROGRAM |
+END |
+FUNCTION  |
+MODULE  |
+ONLY  |
+PROGRAM  |
+USE;
 
-USE : U S E;
+BLOCKDATA : B L O C K D A T A;
+BLOCK : B L O C K;
+DATA : D A T A;
+ENDBLOCKDATA : E N D B L O C K D A T A;
+ENDBLOCK : E N D B L O C K;
+ENDMODULE : E N D M O D U L E;
+ENDPROGRAM : E N D P R O G R A M;
+END : E N D;
+FUNCTION : F U N C T I O N;
 MODULE : M O D U L E;
 ONLY : O N L Y;
 PROGRAM : P R O G R A M;
-END : E N D;
+USE : U S E;
 
 IDENTIFIER : LETTER (LETTER | DIGIT | '_')*;
 
@@ -77,5 +101,3 @@ fragment W : [wW];
 fragment X : [xX];
 fragment Y : [yY];
 fragment Z : [zZ];
-
-

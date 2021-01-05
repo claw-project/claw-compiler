@@ -441,6 +441,12 @@ public class FortranDepScannerTest extends TestCase
     public void testParsing() throws IOException, FortranException, Exception
     {
         verifyParse("", Arrays.asList(), (FortranModuleBasicInfo) null);
+        verifyParse("module x\n" + "end module\n",
+                Arrays.asList(new FortranModuleBasicInfo(BPos("x", 0, 19), Arrays.asList())),
+                (FortranModuleBasicInfo) null);
+        verifyParse("module x\n" + "end module \n",
+                Arrays.asList(new FortranModuleBasicInfo(BPos("x", 0, 19), Arrays.asList())),
+                (FortranModuleBasicInfo) null);
         verifyParse("module x\n" + "end module x\n",
                 Arrays.asList(new FortranModuleBasicInfo(BPos("x", 0, 21), Arrays.asList())),
                 (FortranModuleBasicInfo) null);
@@ -573,6 +579,14 @@ public class FortranDepScannerTest extends TestCase
     public void testScanning() throws IOException, FortranException, Exception
     {
         verifyScan("", Arrays.asList(), (FortranModuleInfo) null);
+        verifyScan("module x\n" + "end module\n",
+                Arrays.asList(new FortranModuleInfo(Pos("x", 0, 19, 0, 2), Arrays.asList(), false)),
+                (FortranModuleInfo) null);
+        verifyScan("program x\n" + "end program\n", Arrays.asList(),
+                new FortranModuleInfo(Pos("x", 0, 21, 0, 2), Arrays.asList(), false));
+        verifyScan("module x\n" + "end module \n",
+                Arrays.asList(new FortranModuleInfo(Pos("x", 0, 19, 0, 2), Arrays.asList(), false)),
+                (FortranModuleInfo) null);
         verifyScan("module x\n" + "end module x\n",
                 Arrays.asList(new FortranModuleInfo(Pos("x", 0, 21, 0, 2), Arrays.asList(), false)),
                 (FortranModuleInfo) null);

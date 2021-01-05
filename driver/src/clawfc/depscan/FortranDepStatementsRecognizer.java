@@ -8,12 +8,14 @@ import static clawfc.Utils.toCharStream;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ConsoleErrorListener;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
@@ -31,99 +33,246 @@ public class FortranDepStatementsRecognizer
             this.to = to;
         }
 
-        public String from;
-        public String to;
+        public final String from;
+        public final String to;
     }
 
-    public static class Data
+    public static class UseModuleData
     {
-        public String moduleOpenName;
-        public String moduleCloseName;
-        public String programOpenName;
-        public String programCloseName;
-        public String useModuleName;
-        public boolean useOnly = false;
-        public ArrayList<String> useSymbols = new ArrayList<String>();
-        public ArrayList<RenamedSymbol> useRenamedSymbols = new ArrayList<RenamedSymbol>();
+        public UseModuleData(String moduleName, boolean useOnly, List<String> useSymbols,
+                List<RenamedSymbol> useRenamedSymbols)
+        {
+            this.moduleName = moduleName;
+            this.useOnly = useOnly;
+            this.useSymbols = Collections.unmodifiableList(useSymbols);
+            this.useRenamedSymbols = Collections.unmodifiableList(useRenamedSymbols);
+        }
+
+        public final String moduleName;
+        public final boolean useOnly;
+        public final List<String> useSymbols;
+        public final List<RenamedSymbol> useRenamedSymbols;
     }
+
+    enum Type {
+        ModuleOpen, ModuleClose, ProgramOpen, ProgramClose, BlockDataOpen, BlockDataClose, UseModule
+    };
 
     static class Listener extends FortranDepStatementsRecognizerBaseListener
     {
-        public Data data = new Data();
+        final Type expectedType;
+        public String unitName;
+        public String moduleName;
+        public boolean useOnly = false;
+        public List<String> useSymbols = new ArrayList<String>();
+        public List<RenamedSymbol> useRenamedSymbols = new ArrayList<RenamedSymbol>();
 
         String useSymName;
         String useOnlySymName;
 
+        public Exception error()
+        {
+            return _error;
+        }
+
+        Exception _error;
+
+        public Listener(Type expectedType)
+        {
+            this.expectedType = expectedType;
+        }
+
+        void setUnitName(ParserRuleContext ctx, Type type)
+        {
+            try
+            {
+                if (expectedType == type)
+                {
+                    unitName = ctx.getText();
+                } else
+                {
+                    throw new Exception("Expected type mismatch");
+                }
+            } catch (Exception e)
+            {
+                _error = e;
+                throw new CancellationException();
+            }
+        }
+
         @Override
         public void exitModule_open_name(FortranDepStatementsRecognizerParser.Module_open_nameContext ctx)
         {
-            data.moduleOpenName = ctx.getText();
+            setUnitName(ctx, Type.ModuleOpen);
         }
 
         @Override
         public void exitModule_close_name(FortranDepStatementsRecognizerParser.Module_close_nameContext ctx)
         {
-            data.moduleCloseName = ctx.getText();
+            setUnitName(ctx, Type.ModuleClose);
         }
 
         @Override
         public void exitProgram_open_name(FortranDepStatementsRecognizerParser.Program_open_nameContext ctx)
         {
-            data.programOpenName = ctx.getText();
+            setUnitName(ctx, Type.ProgramOpen);
         }
 
         @Override
         public void exitProgram_close_name(FortranDepStatementsRecognizerParser.Program_close_nameContext ctx)
         {
-            data.programCloseName = ctx.getText();
+            setUnitName(ctx, Type.ProgramClose);
+        }
+
+        @Override
+        public void exitBlock_data_open_name(FortranDepStatementsRecognizerParser.Block_data_open_nameContext ctx)
+        {
+            setUnitName(ctx, Type.BlockDataOpen);
+        }
+
+        @Override
+        public void exitBlock_data_close_name(FortranDepStatementsRecognizerParser.Block_data_close_nameContext ctx)
+        {
+            setUnitName(ctx, Type.BlockDataClose);
         }
 
         @Override
         public void exitUse_module_name(FortranDepStatementsRecognizerParser.Use_module_nameContext ctx)
         {
-            data.useModuleName = ctx.getText();
+            try
+            {
+                if (expectedType == Type.UseModule)
+                {
+                    moduleName = ctx.getText();
+                } else
+                {
+                    throw new Exception("Expected type mismatch");
+                }
+            } catch (Exception e)
+            {
+                _error = e;
+                throw new CancellationException();
+            }
         }
 
         @Override
         public void enterOnly_list_stmt(FortranDepStatementsRecognizerParser.Only_list_stmtContext ctx)
         {
-            data.useOnly = true;
+            try
+            {
+                if (expectedType == Type.UseModule)
+                {
+                    useOnly = true;
+                } else
+                {
+                    throw new Exception("Expected type mismatch");
+                }
+            } catch (Exception e)
+            {
+                _error = e;
+                throw new CancellationException();
+            }
         }
 
         @Override
         public void exitUse_symbol_name(FortranDepStatementsRecognizerParser.Use_symbol_nameContext ctx)
         {
-            useSymName = ctx.getText();
+            try
+            {
+                if (expectedType == Type.UseModule)
+                {
+                    useSymName = ctx.getText();
+                } else
+                {
+                    throw new Exception("Expected type mismatch");
+                }
+            } catch (Exception e)
+            {
+                _error = e;
+                throw new CancellationException();
+            }
         }
 
         @Override
         public void exitUse_symbol_name_from(FortranDepStatementsRecognizerParser.Use_symbol_name_fromContext ctx)
         {
-            String from = ctx.getText();
-            data.useRenamedSymbols.add(new RenamedSymbol(from, useSymName));
+            try
+            {
+                if (expectedType == Type.UseModule)
+                {
+                    String from = ctx.getText();
+                    useRenamedSymbols.add(new RenamedSymbol(from, useSymName));
+                } else
+                {
+                    throw new Exception("Expected type mismatch");
+                }
+            } catch (Exception e)
+            {
+                _error = e;
+                throw new CancellationException();
+            }
         }
 
         @Override
         public void exitUse_only_symbol_name(FortranDepStatementsRecognizerParser.Use_only_symbol_nameContext ctx)
         {
-            useOnlySymName = ctx.getText();
+            try
+            {
+                if (expectedType == Type.UseModule)
+                {
+                    useOnlySymName = ctx.getText();
+                } else
+                {
+                    throw new Exception("Expected type mismatch");
+                }
+            } catch (Exception e)
+            {
+                _error = e;
+                throw new CancellationException();
+            }
         }
 
         @Override
         public void exitUse_only_symbol_name_from(
                 FortranDepStatementsRecognizerParser.Use_only_symbol_name_fromContext ctx)
         {
-            String from = ctx.getText();
-            data.useRenamedSymbols.add(new RenamedSymbol(from, useOnlySymName));
-            useOnlySymName = null;
+            try
+            {
+                if (expectedType == Type.UseModule)
+                {
+                    String from = ctx.getText();
+                    useRenamedSymbols.add(new RenamedSymbol(from, useOnlySymName));
+                    useOnlySymName = null;
+                } else
+                {
+                    throw new Exception("Expected type mismatch");
+                }
+            } catch (Exception e)
+            {
+                _error = e;
+                throw new CancellationException();
+            }
         }
 
         @Override
         public void exitOnly_stmt(FortranDepStatementsRecognizerParser.Only_stmtContext ctx)
         {
-            if (useOnlySymName != null)
+            try
             {
-                data.useSymbols.add(useOnlySymName);
+                if (expectedType == Type.UseModule)
+                {
+                    if (useOnlySymName != null)
+                    {
+                        useSymbols.add(useOnlySymName);
+                    }
+                } else
+                {
+                    throw new Exception("Expected type mismatch");
+                }
+            } catch (Exception e)
+            {
+                _error = e;
+                throw new CancellationException();
             }
         }
     }
@@ -146,7 +295,7 @@ public class FortranDepStatementsRecognizer
         parser.addErrorListener(parserErrorListener);
     }
 
-    Data run(String input, Callable<ParseTree> parseStatement) throws IOException, Exception
+    Listener run(Type type, String input) throws IOException, Exception
     {
         lexer.reset();
         parser.reset();
@@ -160,7 +309,30 @@ public class FortranDepStatementsRecognizer
         ParseTree tree = null;
         try
         {
-            tree = parseStatement.call();
+            switch (type)
+            {
+            case ModuleOpen:
+                tree = parser.module_open_stmt();
+                break;
+            case ModuleClose:
+                tree = parser.module_close_stmt();
+                break;
+            case ProgramOpen:
+                tree = parser.program_open_stmt();
+                break;
+            case ProgramClose:
+                tree = parser.program_close_stmt();
+                break;
+            case BlockDataOpen:
+                tree = parser.block_data_open_stmt();
+                break;
+            case BlockDataClose:
+                tree = parser.block_data_close_stmt();
+                break;
+            case UseModule:
+                tree = parser.use_stmt();
+                break;
+            }
         } catch (CancellationException e)
         {
         }
@@ -173,43 +345,48 @@ public class FortranDepStatementsRecognizer
             throw parserErrorListener.error();
         }
         ParseTreeWalker walker = new ParseTreeWalker();
-        Listener listener = new Listener();
+        Listener listener = new Listener(type);
         walker.walk(listener, tree);
-        return listener.data;
+        if (listener.error() != null)
+        {
+            throw listener.error();
+        }
+        return listener;
     }
 
-    public Data parseModuleOpen(String input) throws IOException, Exception
+    public String parseModuleOpen(String input) throws IOException, Exception
     {
-        return run(input, () -> {
-            return parser.module_open_stmt();
-        });
+        return run(Type.ModuleOpen, input).unitName;
     }
 
-    public Data parseModuleClose(String input) throws IOException, Exception
+    public String parseModuleClose(String input) throws IOException, Exception
     {
-        return run(input, () -> {
-            return parser.module_close_stmt();
-        });
+        return run(Type.ModuleClose, input).unitName;
     }
 
-    public Data parseProgramOpen(String input) throws IOException, Exception
+    public String parseProgramOpen(String input) throws IOException, Exception
     {
-        return run(input, () -> {
-            return parser.program_open_stmt();
-        });
+        return run(Type.ProgramOpen, input).unitName;
     }
 
-    public Data parseProgramClose(String input) throws IOException, Exception
+    public String parseProgramClose(String input) throws IOException, Exception
     {
-        return run(input, () -> {
-            return parser.program_close_stmt();
-        });
+        return run(Type.ProgramClose, input).unitName;
     }
 
-    public Data parseUse(String input) throws IOException, Exception
+    public String parseBlockDataOpen(String input) throws IOException, Exception
     {
-        return run(input, () -> {
-            return parser.use_stmt();
-        });
+        return run(Type.BlockDataOpen, input).unitName;
+    }
+
+    public String parseBlockDataClose(String input) throws IOException, Exception
+    {
+        return run(Type.BlockDataClose, input).unitName;
+    }
+
+    public UseModuleData parseUse(String input) throws IOException, Exception
+    {
+        Listener l = run(Type.UseModule, input);
+        return new UseModuleData(l.moduleName, l.useOnly, l.useSymbols, l.useRenamedSymbols);
     }
 }

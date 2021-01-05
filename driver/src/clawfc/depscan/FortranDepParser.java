@@ -117,7 +117,7 @@ public class FortranDepParser
             try
             {
                 String txt = ctx.getText();
-                currentModuleName = statementsParser.parseModuleOpen(txt).moduleOpenName;
+                currentModuleName = statementsParser.parseModuleOpen(txt);
                 int currentModuleStartChrIdx = Utils.getStartChrIdx(ctx) + numPrefWhitespaces(txt);
                 if (!moduleDependencies.containsKey(currentModuleName))
                 {
@@ -140,10 +140,10 @@ public class FortranDepParser
             try
             {
                 final String txt = ctx.getText();
-                final String moduleName = statementsParser.parseModuleClose(txt).moduleCloseName;
+                final String moduleName = statementsParser.parseModuleClose(txt);
                 final int exitModuleStartChrIdx = Utils.getStartChrIdx(ctx);
                 final int exitModuleEndChrIdx = exitModuleStartChrIdx + txt.length() - numSufWhitespaces(txt);
-                if (moduleName.equals(currentModuleName))
+                if (moduleName == null || moduleName.equals(currentModuleName))
                 {
                     moduleStmtEndChrIdx.put(currentModuleName, exitModuleEndChrIdx);
                     currentModuleName = null;
@@ -165,7 +165,7 @@ public class FortranDepParser
             try
             {
                 String txt = ctx.getText();
-                currentProgramName = statementsParser.parseProgramOpen(txt).programOpenName;
+                currentProgramName = statementsParser.parseProgramOpen(txt);
                 final int currentProgramStartIdx = Utils.getStartChrIdx(ctx) + numPrefWhitespaces(txt);
                 if (!programDependencies.containsKey(currentProgramName))
                 {
@@ -197,10 +197,10 @@ public class FortranDepParser
             try
             {
                 final String txt = ctx.getText();
-                final String programName = statementsParser.parseProgramClose(txt).programCloseName;
+                final String programName = statementsParser.parseProgramClose(txt);
                 final int exitProgramStartChrIdx = Utils.getStartChrIdx(ctx);
                 final int exitProgramEndChrIdx = exitProgramStartChrIdx + txt.length() - numSufWhitespaces(txt);
-                if (programName.equals(currentProgramName))
+                if (programName == null || programName.equals(currentProgramName))
                 {
                     programStmtEndChrIdx.put(currentProgramName, exitProgramEndChrIdx);
                     currentProgramName = null;
@@ -222,7 +222,7 @@ public class FortranDepParser
             try
             {
                 final String txt = ctx.getText();
-                String useModuleName = statementsParser.parseUse(txt).useModuleName;
+                String useModuleName = statementsParser.parseUse(txt).moduleName;
                 int numPrefWS = numPrefWhitespaces(txt);
                 int numSufWS = numSufWhitespaces(txt);
                 int startIdx = Utils.getStartChrIdx(ctx);
