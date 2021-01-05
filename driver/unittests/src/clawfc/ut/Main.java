@@ -12,10 +12,10 @@ public class Main
     {
         TestsRunner.main(args, UtilsTest.class, FortranCLAWScannerTest.class, FortranCLAWDetectorTest.class,
                 FortranCommentsFilterTest.class, FortranDepStatementsRecognizerTest.class,
-                FortranLineBreaksFilterTest.class, PreprocessorOutputScannerTest.class, PreprocessorTest.class,
-                FortranDepScannerTest.class, FortranBuildInfoTest.class, BuildTest.class, FortranIncludeTest.class,
-                FilterUtilsTest.class, FortranFrontEndTest.class, FortranFileBuildInfoDataTest.class,
-                PreprocessedFortranSourceDataTest.class, IgnoreDirectiveFilterTest.class,
-                VerbatimDirectiveFilterTest.class, ClawX2TCLITest.class);
+                FortranProcedureStatementsRecognizerTest.class, FortranLineBreaksFilterTest.class,
+                PreprocessorOutputScannerTest.class, PreprocessorTest.class, FortranDepScannerTest.class,
+                FortranBuildInfoTest.class, BuildTest.class, FortranIncludeTest.class, FilterUtilsTest.class,
+                FortranFrontEndTest.class, FortranFileBuildInfoDataTest.class, PreprocessedFortranSourceDataTest.class,
+                IgnoreDirectiveFilterTest.class, VerbatimDirectiveFilterTest.class, ClawX2TCLITest.class);
     }
 }
