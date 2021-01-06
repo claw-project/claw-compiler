@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.CancellationException;
 
 import org.antlr.v4.runtime.CharStream;
@@ -27,6 +29,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import clawfc.depscan.parser.FortranDepScannerBaseListener;
 import clawfc.depscan.parser.FortranDepScannerLexer;
 import clawfc.depscan.parser.FortranDepScannerParser;
+import clawfc.depscan.serial.FortranProgramUnitType;;
 
 public class FortranDepParser
 {
@@ -242,18 +245,18 @@ public class FortranDepParser
             }
         }
 
-        static List<FortranModuleBasicInfo> getModInfo(
-                LinkedHashMap<String, LinkedHashMap<String, StmtPos>> moduleDependencies,
-                Map<String, Integer> moduleStmtStartChrIdx, Map<String, Integer> moduleStmtEndChrIdx)
+        static List<FortranProgramUnitBasicInfo> getUnitInfo(final FortranProgramUnitType type,
+                LinkedHashMap<String, LinkedHashMap<String, StmtPos>> unitDependencies,
+                Map<String, Integer> unitStmtStartChrIdx, Map<String, Integer> unitStmtEndChrIdx)
         {
-            ArrayList<FortranModuleBasicInfo> modules = new ArrayList<FortranModuleBasicInfo>(
-                    moduleDependencies.size());
-            for (Map.Entry<String, LinkedHashMap<String, StmtPos>> entry : moduleDependencies.entrySet())
+            ArrayList<FortranProgramUnitBasicInfo> units = new ArrayList<FortranProgramUnitBasicInfo>(
+                    unitDependencies.size());
+            for (Map.Entry<String, LinkedHashMap<String, StmtPos>> entry : unitDependencies.entrySet())
             {
-                String moduleName = entry.getKey();
-                int startChrIdx = moduleStmtStartChrIdx.get(moduleName);
-                int endChrIdx = moduleStmtEndChrIdx.get(moduleName);
-                FortranStatementBasicPosition modPos = new FortranStatementBasicPosition(moduleName, startChrIdx,
+                String unitName = entry.getKey();
+                int startChrIdx = unitStmtStartChrIdx.get(unitName);
+                int endChrIdx = unitStmtEndChrIdx.get(unitName);
+                FortranStatementBasicPosition unitPos = new FortranStatementBasicPosition(unitName, startChrIdx,
                         endChrIdx);
                 List<FortranStatementBasicPosition> useModPositions = new ArrayList<FortranStatementBasicPosition>();
                 for (Map.Entry<String, StmtPos> useEntry : entry.getValue().entrySet())
@@ -265,19 +268,29 @@ public class FortranDepParser
                             .add(new FortranStatementBasicPosition(useModName, useModStartChrIdx, useModEndChrIdx));
                 }
                 useModPositions = Collections.unmodifiableList(useModPositions);
-                modules.add(new FortranModuleBasicInfo(modPos, Collections.unmodifiableList(useModPositions)));
+                units.add(
+                        new FortranProgramUnitBasicInfo(type, unitPos, Collections.unmodifiableList(useModPositions)));
             }
-            return Collections.unmodifiableList(modules);
+            return Collections.unmodifiableList(units);
         }
 
         public FortranFileBasicSummary getSummary()
         {
-            List<FortranModuleBasicInfo> modules = getModInfo(moduleDependencies, moduleStmtStartChrIdx,
-                    moduleStmtEndChrIdx);
-            List<FortranModuleBasicInfo> programs = getModInfo(programDependencies, programStmtStartChrIdx,
-                    programStmtEndChrIdx);
-            FortranFileBasicSummary summary = new FortranFileBasicSummary(modules,
-                    !programs.isEmpty() ? programs.get(0) : null);
+            List<FortranProgramUnitBasicInfo> modules = getUnitInfo(FortranProgramUnitType.MODULE, moduleDependencies,
+                    moduleStmtStartChrIdx, moduleStmtEndChrIdx);
+            List<FortranProgramUnitBasicInfo> programs = getUnitInfo(FortranProgramUnitType.PROGRAM,
+                    programDependencies, programStmtStartChrIdx, programStmtEndChrIdx);
+            SortedMap<Integer, FortranProgramUnitBasicInfo> units = new TreeMap<Integer, FortranProgramUnitBasicInfo>();
+            for (FortranProgramUnitBasicInfo info : modules)
+            {
+                units.put(info.getPosition().getStartCharIdx(), info);
+            }
+            for (FortranProgramUnitBasicInfo info : programs)
+            {
+                units.put(info.getPosition().getStartCharIdx(), info);
+            }
+            FortranFileBasicSummary summary = new FortranFileBasicSummary(
+                    new ArrayList<FortranProgramUnitBasicInfo>(units.values()));
             return summary;
         }
     }

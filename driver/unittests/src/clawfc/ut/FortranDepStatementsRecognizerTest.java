@@ -39,6 +39,7 @@ public class FortranDepStatementsRecognizerTest extends TestCase
         verifyModuleClose(" end", null);
         verifyModuleClose("end ", null);
         verifyModuleClose(" end ", null);
+        verifyModuleClose("endmodule x", "x");
         verifyModuleClose("end module x", "x");
         verifyModuleClose("end\tmodule \t\txyz_123  \t", "xyz_123");
         verifyModuleClose("end\tmodule", null);
@@ -66,6 +67,7 @@ public class FortranDepStatementsRecognizerTest extends TestCase
         verifyProgramClose("end ", null);
         verifyProgramClose(" end ", null);
         verifyProgramClose("end program x", "x");
+        verifyProgramClose("endprogram x", "x");
         verifyProgramClose("end\tprogram \t\txyz_123  \t", "xyz_123");
         verifyProgramClose("end\tprogram", null);
         verifyProgramClose("end\tprogram\t", null);
@@ -101,6 +103,8 @@ public class FortranDepStatementsRecognizerTest extends TestCase
         verifyBlockDataClose(" end", null);
         verifyBlockDataClose("end ", null);
         verifyBlockDataClose(" end ", null);
+        verifyBlockDataClose("endblockdata", null);
+        verifyBlockDataClose("endblockdata x", "x");
         verifyBlockDataClose("end blockdata x", "x");
         verifyBlockDataClose("end block data x", "x");
         verifyBlockDataClose("end\tblockdata \t\txyz_123  \t", "xyz_123");

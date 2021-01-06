@@ -10,15 +10,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import clawfc.depscan.serial.FortranProgramUnitType;
 import clawfc.depscan.serial.FortranStatementPosition;
 
-public class FortranModuleInfo
+public class FortranProgramUnitInfo
 {
-    clawfc.depscan.serial.FortranModuleInfo _data;
+    clawfc.depscan.serial.FortranProgramUnitInfo _data;
 
-    public clawfc.depscan.serial.FortranModuleInfo data()
+    public clawfc.depscan.serial.FortranProgramUnitInfo data()
     {
         return _data;
+    }
+
+    public FortranProgramUnitType getType()
+    {
+        return _data.getType();
     }
 
     public String getName()
@@ -61,17 +67,18 @@ public class FortranModuleInfo
         return data().isUsesClaw();
     }
 
-    public FortranModuleInfo(clawfc.depscan.serial.FortranModuleInfo data)
+    public FortranProgramUnitInfo(clawfc.depscan.serial.FortranProgramUnitInfo data)
     {
         _data = data;
     }
 
-    public FortranModuleInfo(clawfc.depscan.FortranStatementPosition pos,
+    public FortranProgramUnitInfo(FortranProgramUnitType type, clawfc.depscan.FortranStatementPosition pos,
             List<clawfc.depscan.FortranStatementPosition> useModules, boolean usesClaw)
     {
-        _data = new clawfc.depscan.serial.FortranModuleInfo();
+        _data = new clawfc.depscan.serial.FortranProgramUnitInfo();
+        _data.setType(type);
         _data.setInfo(pos.getData());
-        _data.setUsedModules(new clawfc.depscan.serial.FortranModuleInfo.UsedModules());
+        _data.setUsedModules(new clawfc.depscan.serial.FortranProgramUnitInfo.UsedModules());
         for (clawfc.depscan.FortranStatementPosition useModPos : useModules)
         {
             _data.getUsedModules().getUse().add(useModPos.getData());
@@ -94,7 +101,11 @@ public class FortranModuleInfo
         {
             return false;
         }
-        FortranModuleInfo other = (FortranModuleInfo) obj;
+        FortranProgramUnitInfo other = (FortranProgramUnitInfo) obj;
+        if (!_data.getType().equals(other._data.getType()))
+        {
+            return false;
+        }
         if (!clawfc.depscan.FortranStatementPosition.equals(_data.getInfo(), other._data.getInfo()))
         {
             return false;

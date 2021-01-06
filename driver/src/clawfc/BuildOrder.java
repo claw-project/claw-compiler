@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface BuildOrder
 {
-    public Map<String, ModuleInfo> getUsedModules();
+    public Map<String, ProgramUnitInfo> getUsedModules();
 
     public Set<String> getTargetModules();
 

@@ -21,18 +21,18 @@ import clawfc.depscan.FortranSemanticException;
 
 public class Build
 {
-    public static String moduleNameWithLocation(String name, Map<String, ModuleInfo> availModules)
+    public static String moduleNameWithLocation(String name, Map<String, ProgramUnitInfo> availModules)
     {
-        ModuleInfo info = availModules.get(name);
+        ProgramUnitInfo info = availModules.get(name);
         return moduleNameWithLocation(info);
     }
 
-    public static String moduleNameWithLocation(ModuleInfo info)
+    public static String moduleNameWithLocation(ProgramUnitInfo info)
     {
         if (info.hasSource())
         {
             Path srcFilePath = info.getSrcPath();
-            long lineNum = info.getModuleSrcInfo().getStartLineIdx() + 1;
+            long lineNum = info.getSrcInfo().getStartLineIdx() + 1;
             return String.format("%s (%s:%s)", info.getName(), srcFilePath, lineNum);
         } else if (info.getXMod() != null && info.getXMod().getFilePath() != null)
         {
@@ -46,13 +46,13 @@ public class Build
 
     static class SanityChecker
     {
-        final Map<String, ModuleInfo> availModules;
+        final Map<String, ProgramUnitInfo> availModules;
         final Set<String> targetModuleNames;
         final Set<String> visited;
         final Set<String> stackSet;
         final List<String> stack;
 
-        public SanityChecker(Map<String, ModuleInfo> availModules, Set<String> targetModuleNames)
+        public SanityChecker(Map<String, ProgramUnitInfo> availModules, Set<String> targetModuleNames)
         {
             this.availModules = availModules;
             this.targetModuleNames = targetModuleNames;
@@ -82,11 +82,11 @@ public class Build
 
         String moduleWithLocation(String name)
         {
-            ModuleInfo info = availModules.get(name);
+            ProgramUnitInfo info = availModules.get(name);
             Path srcFilePath = info.getSrcPath();
-            if (info.getModuleSrcInfo() != null)
+            if (info.getSrcInfo() != null)
             {
-                long lineNum = info.getModuleSrcInfo().getStartLineIdx() + 1;
+                long lineNum = info.getSrcInfo().getStartLineIdx() + 1;
                 return String.format("%s (%s:%s)", name, srcFilePath, lineNum);
             } else
             {
@@ -96,7 +96,7 @@ public class Build
 
         void dfs(String modName) throws FortranSemanticException
         {
-            ModuleInfo info = availModules.get(modName);
+            ProgramUnitInfo info = availModules.get(modName);
             if (info != null)
             {
                 if (stackSet.add(modName))
@@ -106,7 +106,7 @@ public class Build
                         stack.add(modName);
                         if (info.hasSource())
                         {
-                            for (String depModName : info.getModuleSrcInfo().getUsedModuleNames())
+                            for (String depModName : info.getSrcInfo().getUsedModuleNames())
                             {
                                 dfs(depModName);
                             }
@@ -159,19 +159,19 @@ public class Build
         }
     }
 
-    public static void sanityCheck(Map<String, ModuleInfo> availModules, Set<String> targetModuleNames)
+    public static void sanityCheck(Map<String, ProgramUnitInfo> availModules, Set<String> targetModuleNames)
             throws FortranSemanticException
     {
         SanityChecker checker = new SanityChecker(availModules, targetModuleNames);
         checker.run();
     }
 
-    public static Map<String, ModuleInfo> removeUnreferencedModules(Map<String, ModuleInfo> availModules,
+    public static Map<String, ProgramUnitInfo> removeUnreferencedModules(Map<String, ProgramUnitInfo> availModules,
             Set<String> targetModuleNames) throws FortranSemanticException
     {
         SanityChecker checker = new SanityChecker(availModules, targetModuleNames);
         Set<String> visited = checker.run();
-        Map<String, ModuleInfo> res = new LinkedHashMap<String, ModuleInfo>();
+        Map<String, ProgramUnitInfo> res = new LinkedHashMap<String, ProgramUnitInfo>();
         for (String modName : visited)
         {
             res.put(modName, availModules.get(modName));
@@ -181,7 +181,7 @@ public class Build
 
     static class ParallelOrder implements BuildOrder
     {
-        final Map<String, ModuleInfo> usedModules;
+        final Map<String, ProgramUnitInfo> usedModules;
         final Set<String> targetModuleNames;
         final Queue<String> waiting;
         final Set<String> currentSet;
@@ -190,7 +190,7 @@ public class Build
         final Set<String> processed;
 
         @Override
-        public Map<String, ModuleInfo> getUsedModules()
+        public Map<String, ProgramUnitInfo> getUsedModules()
         {
             return usedModules;
         }
@@ -213,7 +213,7 @@ public class Build
             return processed.size() == usedModules.size();
         }
 
-        public ParallelOrder(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames)
+        public ParallelOrder(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames)
         {
             this.usedModules = Collections.unmodifiableMap(usedModules);
             this.targetModuleNames = Collections.unmodifiableSet(targetModuleNames);
@@ -265,20 +265,20 @@ public class Build
             }
         }
 
-        static Set<String> getStartSet(Map<String, ModuleInfo> usedModules)
+        static Set<String> getStartSet(Map<String, ProgramUnitInfo> usedModules)
         {
             Set<String> startSet = new LinkedHashSet<String>();
             for (String modName : usedModules.keySet())
             {
                 startSet.add(modName);
             }
-            for (Map.Entry<String, ModuleInfo> entry : usedModules.entrySet())
+            for (Map.Entry<String, ProgramUnitInfo> entry : usedModules.entrySet())
             {
                 String modName = entry.getKey();
-                ModuleInfo info = entry.getValue();
+                ProgramUnitInfo info = entry.getValue();
                 if (info.hasSource())
                 {
-                    List<String> depModules = info.getModuleSrcInfo().getUsedModuleNames();
+                    List<String> depModules = info.getSrcInfo().getUsedModuleNames();
                     if (!depModules.isEmpty())
                     {
                         startSet.remove(modName);
@@ -288,17 +288,17 @@ public class Build
             return startSet;
         }
 
-        static Map<String, Set<String>> getDependencies(Map<String, ModuleInfo> usedModules)
+        static Map<String, Set<String>> getDependencies(Map<String, ProgramUnitInfo> usedModules)
         {
             Map<String, Set<String>> deps = new HashMap<String, Set<String>>();
-            for (Map.Entry<String, ModuleInfo> entry : usedModules.entrySet())
+            for (Map.Entry<String, ProgramUnitInfo> entry : usedModules.entrySet())
             {
                 String modName = entry.getKey();
-                ModuleInfo info = entry.getValue();
+                ProgramUnitInfo info = entry.getValue();
                 Set<String> modDeps = new LinkedHashSet<String>();
                 if (info.hasSource())
                 {
-                    List<String> depModules = info.getModuleSrcInfo().getUsedModuleNames();
+                    List<String> depModules = info.getSrcInfo().getUsedModuleNames();
                     modDeps.addAll(depModules);
                 }
                 deps.put(modName, modDeps);
@@ -306,20 +306,20 @@ public class Build
             return deps;
         }
 
-        static Map<String, Set<String>> reverseDependencies(Map<String, ModuleInfo> usedModules)
+        static Map<String, Set<String>> reverseDependencies(Map<String, ProgramUnitInfo> usedModules)
         {
             Map<String, Set<String>> revDeps = new HashMap<String, Set<String>>();
             for (String modName : usedModules.keySet())
             {
                 revDeps.put(modName, new LinkedHashSet<String>());
             }
-            for (Map.Entry<String, ModuleInfo> entry : usedModules.entrySet())
+            for (Map.Entry<String, ProgramUnitInfo> entry : usedModules.entrySet())
             {
                 String modName = entry.getKey();
-                ModuleInfo info = entry.getValue();
+                ProgramUnitInfo info = entry.getValue();
                 if (info.hasSource())
                 {
-                    List<String> depModules = info.getModuleSrcInfo().getUsedModuleNames();
+                    List<String> depModules = info.getSrcInfo().getUsedModuleNames();
                     for (String depModName : depModules)
                     {
                         revDeps.get(depModName).add(modName);
@@ -330,7 +330,7 @@ public class Build
         }
     }
 
-    public static BuildOrder getParallelOrder(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames)
+    public static BuildOrder getParallelOrder(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames)
     {
         return new ParallelOrder(usedModules, targetModuleNames);
     }

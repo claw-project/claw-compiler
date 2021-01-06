@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import clawfc.depscan.FortranFileBuildInfo;
+import clawfc.depscan.FortranFileProgramUnitInfo;
 import clawfc.utils.AsciiArrayIOStream;
 
 public class PreprocessedFortranSourceData
@@ -51,7 +51,8 @@ public class PreprocessedFortranSourceData
     }
 
     /* Load existing preprocessed source from path in info */
-    public static PreprocessedFortranSourceData load(Path srcFilePath, FortranFileBuildInfo info) throws IOException
+    public static PreprocessedFortranSourceData load(Path srcFilePath, FortranFileProgramUnitInfo info)
+            throws IOException
     {
         Path ppSrcFilePath = info.getPPSrcFilePath();
         PreprocessedFortranSourceData data = new PreprocessedFortranSourceData(srcFilePath, null, info.getIncludes(),

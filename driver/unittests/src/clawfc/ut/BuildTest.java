@@ -19,27 +19,28 @@ import java.util.stream.Stream;
 
 import clawfc.Build;
 import clawfc.BuildOrder;
-import clawfc.FortranFileBuildInfoData;
-import clawfc.ModuleInfo;
+import clawfc.FortranFileProgramUnitInfoData;
+import clawfc.ProgramUnitInfo;
 import clawfc.XmodData;
 import clawfc.depscan.FortranDepScanner;
-import clawfc.depscan.FortranFileBuildInfo;
-import clawfc.depscan.FortranModuleInfo;
+import clawfc.depscan.FortranFileProgramUnitInfo;
+import clawfc.depscan.FortranProgramUnitInfo;
 import clawfc.depscan.FortranSemanticException;
+import clawfc.depscan.serial.FortranProgramUnitType;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.FileInfo;
 import junit.framework.TestCase;
 
-class TestModuleInfo implements clawfc.ModuleInfo
+class TestModuleInfo implements clawfc.ProgramUnitInfo
 {
     final String name;
-    final FortranFileBuildInfo fileSrcInfo;
-    final FortranModuleInfo moduleInfo;
+    final FortranFileProgramUnitInfo fileSrcInfo;
+    final FortranProgramUnitInfo moduleInfo;
     final Path filePath;
     final FileInfo fileInfo;
 
-    public TestModuleInfo(String name, Path filePath, FortranFileBuildInfo fileInfo, FortranModuleInfo moduleInfo)
-            throws Exception
+    public TestModuleInfo(String name, Path filePath, FortranFileProgramUnitInfo fileInfo,
+            FortranProgramUnitInfo moduleInfo) throws Exception
     {
         this.name = name;
         this.fileSrcInfo = fileInfo;
@@ -52,12 +53,6 @@ class TestModuleInfo implements clawfc.ModuleInfo
     public String getName()
     {
         return name;
-    }
-
-    @Override
-    public boolean isProgram()
-    {
-        throw new RuntimeException("Not implemented");
     }
 
     @Override
@@ -91,7 +86,7 @@ class TestModuleInfo implements clawfc.ModuleInfo
     }
 
     @Override
-    public FortranModuleInfo getModuleSrcInfo()
+    public FortranProgramUnitInfo getSrcInfo()
     {
         return moduleInfo;
     }
@@ -109,7 +104,7 @@ class TestModuleInfo implements clawfc.ModuleInfo
     }
 
     @Override
-    public FortranFileBuildInfoData getSrcFileBinfoData()
+    public FortranFileProgramUnitInfoData getSrcFileBinfoData()
     {
         throw new RuntimeException("Not implemented");
     }
@@ -141,15 +136,19 @@ class TestModuleInfo implements clawfc.ModuleInfo
     @Override
     public AsciiArrayIOStream getTransSrc()
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
     public AsciiArrayIOStream getTransReport()
     {
-        // TODO Auto-generated method stub
-        return null;
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
+    public FortranProgramUnitType getType()
+    {
+        throw new RuntimeException("Not implemented");
     }
 
 }
@@ -158,19 +157,13 @@ public class BuildTest extends TestCase
 {
     protected final Path RES_DIR = clawfc.ut.Resources.DIR;
 
-    Map<String, ModuleInfo> getModulesInfo(Path filePath) throws Exception
+    Map<String, ProgramUnitInfo> getModulesInfo(Path filePath) throws Exception
     {
-        Map<String, ModuleInfo> res = new LinkedHashMap<String, ModuleInfo>();
+        Map<String, ProgramUnitInfo> res = new LinkedHashMap<String, ProgramUnitInfo>();
         FortranDepScanner depScanner = new FortranDepScanner();
-        FortranFileBuildInfo fileInfo = depScanner.scan(Files.newInputStream(filePath));
-        for (FortranModuleInfo moduleInfo : fileInfo.getModules())
+        FortranFileProgramUnitInfo fileInfo = depScanner.scan(Files.newInputStream(filePath));
+        for (FortranProgramUnitInfo moduleInfo : fileInfo.getUnits())
         {
-            String name = moduleInfo.getName();
-            res.put(name, new TestModuleInfo(name, filePath, fileInfo, moduleInfo));
-        }
-        if (fileInfo.getProgram() != null)
-        {
-            FortranModuleInfo moduleInfo = fileInfo.getProgram();
             String name = moduleInfo.getName();
             res.put(name, new TestModuleInfo(name, filePath, fileInfo, moduleInfo));
         }
@@ -185,15 +178,15 @@ public class BuildTest extends TestCase
         final Path UNDEFINED_MOD_FILEPATH = IN_DIR.resolve("undefined_module.f90");
         final Path CIRCLE_DEP_FILEPATH = IN_DIR.resolve("circle_dep.f90");
         {
-            Map<String, ModuleInfo> modules = getModulesInfo(NORMAL_FILEPATH);
+            Map<String, ProgramUnitInfo> modules = getModulesInfo(NORMAL_FILEPATH);
             Build.sanityCheck(modules, Stream.of("p1").collect(Collectors.toSet()));
         }
         {
-            Map<String, ModuleInfo> modules = getModulesInfo(MUL_TARGETS_FILEPATH);
+            Map<String, ProgramUnitInfo> modules = getModulesInfo(MUL_TARGETS_FILEPATH);
             Build.sanityCheck(modules, Stream.of("t1", "t2", "t3").collect(Collectors.toSet()));
         }
         {
-            Map<String, ModuleInfo> modules = getModulesInfo(UNDEFINED_MOD_FILEPATH);
+            Map<String, ProgramUnitInfo> modules = getModulesInfo(UNDEFINED_MOD_FILEPATH);
             boolean exCaught = false;
             try
             {
@@ -209,7 +202,7 @@ public class BuildTest extends TestCase
             assertTrue(exCaught);
         }
         {
-            Map<String, ModuleInfo> modules = getModulesInfo(CIRCLE_DEP_FILEPATH);
+            Map<String, ProgramUnitInfo> modules = getModulesInfo(CIRCLE_DEP_FILEPATH);
             boolean exCaught = false;
             try
             {
@@ -230,13 +223,13 @@ public class BuildTest extends TestCase
     {
         final Path IN_DIR = RES_DIR.resolve("build/remove_unref_modules/input");
         final Path FILEPATH = IN_DIR.resolve("unref_modules.f90");
-        Map<String, ModuleInfo> modules = getModulesInfo(FILEPATH);
-        Map<String, ModuleInfo> res = Build.removeUnreferencedModules(modules,
+        Map<String, ProgramUnitInfo> modules = getModulesInfo(FILEPATH);
+        Map<String, ProgramUnitInfo> res = Build.removeUnreferencedModules(modules,
                 Stream.of("t").collect(Collectors.toSet()));
         assertEquals(Stream.of("mod1", "t").collect(Collectors.toSet()), res.keySet());
     }
 
-    List<String> getBuildSeq(Map<String, ModuleInfo> modules, Set<String> targets)
+    List<String> getBuildSeq(Map<String, ProgramUnitInfo> modules, Set<String> targets)
     {
         List<String> res = new ArrayList<String>();
         BuildOrder order = Build.getParallelOrder(modules, targets);
@@ -254,7 +247,7 @@ public class BuildTest extends TestCase
 
     void verifyParallelBuildOrder(Path filePath, List<String> targets, List<String> expBuildSeq) throws Exception
     {
-        Map<String, ModuleInfo> modules = getModulesInfo(filePath);
+        Map<String, ProgramUnitInfo> modules = getModulesInfo(filePath);
         List<String> ordSeq = getBuildSeq(modules, Stream.of("t").collect(Collectors.toSet()));
         assertEquals(expBuildSeq, ordSeq);
     }

@@ -9,14 +9,11 @@ import java.util.List;
 
 public class FortranFileBasicSummary
 {
-    public final List<FortranModuleBasicInfo> modules;
-    public final FortranModuleBasicInfo program;
+    public final List<FortranProgramUnitBasicInfo> units;
 
-    public FortranFileBasicSummary(List<clawfc.depscan.FortranModuleBasicInfo> modules,
-            clawfc.depscan.FortranModuleBasicInfo program)
+    public FortranFileBasicSummary(List<FortranProgramUnitBasicInfo> units)
     {
-        this.modules = Collections.unmodifiableList(modules);
-        this.program = program;
+        this.units = Collections.unmodifiableList(units);
     }
 
     @Override
@@ -35,22 +32,9 @@ public class FortranFileBasicSummary
             return false;
         }
         FortranFileBasicSummary other = (FortranFileBasicSummary) obj;
-        if (!modules.equals(other.modules))
+        if (!units.equals(other.units))
         {
             return false;
-        }
-        if (program == null)
-        {
-            if (other.program != null)
-            {
-                return false;
-            }
-        } else
-        {
-            if (!program.equals(other.program))
-            {
-                return false;
-            }
         }
         return true;
     }

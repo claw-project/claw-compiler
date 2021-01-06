@@ -8,15 +8,17 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 
+import clawfc.depscan.FortranProgramUnitInfo;
 import clawfc.utils.AsciiArrayIOStream;
+import clawfc.depscan.serial.FortranProgramUnitType;
 
-public interface ModuleInfo
+public interface ProgramUnitInfo
 {
     public String getName();
 
-    public boolean isProgram();
-
     public boolean isModule();
+
+    public FortranProgramUnitType getType();
 
     public boolean isInput();
 
@@ -29,15 +31,15 @@ public interface ModuleInfo
 
     public Collection<String> getUsedModules();
 
-    public clawfc.depscan.FortranModuleInfo getModuleSrcInfo();
+    public FortranProgramUnitInfo getSrcInfo();
 
-    // public clawfc.depscan.FortranFileBuildInfo getSrcSummary();
+    // public clawfc.depscan.FortranFileProgramUnitInfo getSrcSummary();
 
     public Path getSrcPath();
 
     public Path getPPSrcPath();
 
-    FortranFileBuildInfoData getSrcFileBinfoData();
+    FortranFileProgramUnitInfoData getSrcFileBinfoData();
 
     public XmodData getXMod();
 

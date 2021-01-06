@@ -18,38 +18,39 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import clawfc.FortranFileBuildInfoData;
-import clawfc.depscan.FortranFileBuildInfo;
-import clawfc.depscan.FortranFileBuildInfoSerializer;
-import clawfc.depscan.FortranModuleInfo;
+import clawfc.FortranFileProgramUnitInfoData;
+import clawfc.depscan.FortranFileProgramUnitInfo;
+import clawfc.depscan.FortranFileProgramUnitInfoSerializer;
+import clawfc.depscan.FortranProgramUnitInfo;
+import clawfc.depscan.serial.FortranProgramUnitType;
 import junit.framework.TestCase;
 
-public class FortranFileBuildInfoDataTest extends TestCase
+public class FortranFileProgramUnitInfoDataTest extends TestCase
 {
-    static FortranFileBuildInfo createInfo(List<Path> incFiles)
+    static FortranFileProgramUnitInfo createInfo(List<Path> incFiles)
     {
-        return new FortranFileBuildInfo(
+        return new FortranFileProgramUnitInfo(
                 Arrays.asList(
-                        new FortranModuleInfo(Pos("x", 0, 37, 0, 5),
+                        new FortranProgramUnitInfo(FortranProgramUnitType.MODULE, Pos("x", 0, 37, 0, 5),
                                 Arrays.asList(Pos("y", 9, 14, 1, 2), Pos("z", 19, 24, 3, 4)), false),
-                        new FortranModuleInfo(Pos("x1", 38, 79, 5, 10),
-                                Arrays.asList(Pos("y1", 48, 54, 6, 7), Pos("z1", 59, 65, 8, 9)), false)),
-                new FortranModuleInfo(Pos("p1", 80, 123, 10, 15),
-                        Arrays.asList(Pos("y1", 91, 97, 11, 12), Pos("z1", 102, 108, 13, 14)), false),
+                        new FortranProgramUnitInfo(FortranProgramUnitType.MODULE, Pos("x1", 38, 79, 5, 10),
+                                Arrays.asList(Pos("y1", 48, 54, 6, 7), Pos("z1", 59, 65, 8, 9)), false),
+                        new FortranProgramUnitInfo(FortranProgramUnitType.PROGRAM, Pos("p1", 80, 123, 10, 15),
+                                Arrays.asList(Pos("y1", 91, 97, 11, 12), Pos("z1", 102, 108, 13, 14)), false)),
                 null, incFiles != null ? incFiles : Collections.emptyList());
     }
 
-    static FortranFileBuildInfo createInfo()
+    static FortranFileProgramUnitInfo createInfo()
     {
         return createInfo(null);
     }
 
-    void verifyCreateDataException(FortranFileBuildInfo info, String exceptionTxt)
+    void verifyCreateDataException(FortranFileProgramUnitInfo info, String exceptionTxt)
     {
         boolean exceptionCaught = false;
         try
         {
-            FortranFileBuildInfoData data = new FortranFileBuildInfoData(info);
+            FortranFileProgramUnitInfoData data = new FortranFileProgramUnitInfoData(info);
         } catch (Exception e)
         {
             exceptionCaught = true;
@@ -58,10 +59,10 @@ public class FortranFileBuildInfoDataTest extends TestCase
         assertTrue(exceptionCaught);
     }
 
-    void verifyCreateDataTS(FortranFileBuildInfo info, Path filePath) throws Exception
+    void verifyCreateDataTS(FortranFileProgramUnitInfo info, Path filePath) throws Exception
     {
         touch(filePath);
-        FortranFileBuildInfoData data = new FortranFileBuildInfoData(info);
+        FortranFileProgramUnitInfoData data = new FortranFileProgramUnitInfoData(info);
         assertEquals(Files.getLastModifiedTime(filePath), data.getTimestamp());
     }
 
@@ -72,7 +73,7 @@ public class FortranFileBuildInfoDataTest extends TestCase
         {
             Path incFilePath1 = tmpDir.resolve("1.inc");
             Path incFilePath2 = tmpDir.resolve("2.inc");
-            FortranFileBuildInfo info = createInfo(Arrays.asList(incFilePath1, incFilePath2));
+            FortranFileProgramUnitInfo info = createInfo(Arrays.asList(incFilePath1, incFilePath2));
             verifyCreateDataException(info, "source file not set");
             Path srcFilePath = tmpDir.resolve("src.f90");
             info.setSrcFilePath(srcFilePath);
@@ -87,7 +88,7 @@ public class FortranFileBuildInfoDataTest extends TestCase
             Files.write(incFilePath1, "inc1".getBytes());
             verifyCreateDataException(info, sprintf("Failed to stat include file \"%s\"", incFilePath2));
             Files.write(incFilePath2, "inc2".getBytes());
-            FortranFileBuildInfoData data = new FortranFileBuildInfoData(info);
+            FortranFileProgramUnitInfoData data = new FortranFileProgramUnitInfoData(info);
             assertEquals(info, data.getInfo());
             // -------------------------------------
             verifyCreateDataTS(info, srcFilePath);
@@ -116,10 +117,10 @@ public class FortranFileBuildInfoDataTest extends TestCase
             Files.write(incFilePath1, "inc1".getBytes());
             Path incFilePath2 = tmpDir.resolve("2.inc");
             Files.write(incFilePath2, "inc2".getBytes());
-            FortranFileBuildInfo info = createInfo(Arrays.asList(incFilePath1, incFilePath2));
+            FortranFileProgramUnitInfo info = createInfo(Arrays.asList(incFilePath1, incFilePath2));
             info.setSrcFilePath(srcFilePath);
             info.setPPSrcFilePath(ppSrcFilePath);
-            FortranFileBuildInfoData data = new FortranFileBuildInfoData(info);
+            FortranFileProgramUnitInfoData data = new FortranFileProgramUnitInfoData(info);
             Path filePath = data.save(tmpDir, "hash", null);
             assertEquals(filePath, tmpDir.resolve("hash_src.f90.fif"));
             assertTrue(fileExists(filePath));
@@ -138,16 +139,16 @@ public class FortranFileBuildInfoDataTest extends TestCase
         }
     }
 
-    void save(FortranFileBuildInfo info, Path path) throws Exception
+    void save(FortranFileProgramUnitInfo info, Path path) throws Exception
     {
-        FortranFileBuildInfoSerializer serializer = new FortranFileBuildInfoSerializer();
+        FortranFileProgramUnitInfoSerializer serializer = new FortranFileProgramUnitInfoSerializer();
         try (OutputStream out = Files.newOutputStream(path))
         {
             serializer.serialize(info, out);
         }
     }
 
-    void verifyLoadDataException(FortranFileBuildInfo info, Path filePath, String exceptionTxt) throws Exception
+    void verifyLoadDataException(FortranFileProgramUnitInfo info, Path filePath, String exceptionTxt) throws Exception
     {
         boolean exceptionCaught = false;
         try
@@ -156,8 +157,8 @@ public class FortranFileBuildInfoDataTest extends TestCase
             {
                 save(info, filePath);
             }
-            FortranFileBuildInfoData data = FortranFileBuildInfoData.load(filePath, null);
-        } catch (FortranFileBuildInfoData.LoadFailed e)
+            FortranFileProgramUnitInfoData data = FortranFileProgramUnitInfoData.load(filePath, null);
+        } catch (FortranFileProgramUnitInfoData.LoadFailed e)
         {
             exceptionCaught = true;
             assertTrue(e.getMessage().contains(exceptionTxt));
@@ -171,8 +172,8 @@ public class FortranFileBuildInfoDataTest extends TestCase
         boolean exceptionCaught = false;
         try
         {
-            FortranFileBuildInfoData data = FortranFileBuildInfoData.load(infoFilePath, null);
-        } catch (FortranFileBuildInfoData.LoadFailed e)
+            FortranFileProgramUnitInfoData data = FortranFileProgramUnitInfoData.load(infoFilePath, null);
+        } catch (FortranFileProgramUnitInfoData.LoadFailed e)
         {
             exceptionCaught = true;
             String errMsg = sprintf(
@@ -183,7 +184,7 @@ public class FortranFileBuildInfoDataTest extends TestCase
         }
         assertTrue(exceptionCaught);
         touch(infoFilePath);
-        FortranFileBuildInfoData data = FortranFileBuildInfoData.load(infoFilePath, null);
+        FortranFileProgramUnitInfoData data = FortranFileProgramUnitInfoData.load(infoFilePath, null);
         assertEquals(Files.getLastModifiedTime(filePath), data.getTimestamp());
     }
 
@@ -196,7 +197,7 @@ public class FortranFileBuildInfoDataTest extends TestCase
             Path ppSrcFilePath = tmpDir.resolve("pp.src.f90");
             Path incFilePath1 = tmpDir.resolve("1.inc");
             Path incFilePath2 = tmpDir.resolve("2.inc");
-            FortranFileBuildInfo info = createInfo(Arrays.asList(incFilePath1, incFilePath2));
+            FortranFileProgramUnitInfo info = createInfo(Arrays.asList(incFilePath1, incFilePath2));
             Path infoFilePath = tmpDir.resolve("info.fif");
             verifyLoadDataException(null, infoFilePath,
                     sprintf("Exception thrown while deserializing build information file \"%s\"", infoFilePath));
@@ -225,10 +226,10 @@ public class FortranFileBuildInfoDataTest extends TestCase
                             infoFilePath, incFilePath2));
             Files.write(incFilePath2, "inc2".getBytes());
             // ------------------
-            FortranFileBuildInfoData data = new FortranFileBuildInfoData(info);
+            FortranFileProgramUnitInfoData data = new FortranFileProgramUnitInfoData(info);
             infoFilePath = data.save(tmpDir, "hash", null);
             {
-                FortranFileBuildInfoData loadedData = FortranFileBuildInfoData.load(infoFilePath, null);
+                FortranFileProgramUnitInfoData loadedData = FortranFileProgramUnitInfoData.load(infoFilePath, null);
                 assertEquals(data.getInfo(), loadedData.getInfo());
                 data = loadedData;
             }

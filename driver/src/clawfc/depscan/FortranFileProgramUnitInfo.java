@@ -9,35 +9,27 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import clawfc.utils.FileInfo;
 import clawfc.utils.FileInfoImpl;
 
-public class FortranFileBuildInfo
+public class FortranFileProgramUnitInfo
 {
-    clawfc.depscan.serial.FortranFileBuildInfo data;
-    List<FortranModuleInfo> modules;
-    FortranModuleInfo program;
+    clawfc.depscan.serial.FortranFileProgramUnitInfo data;
+    List<FortranProgramUnitInfo> units;
     Path srcFilePath;
     Path ppSrcFilePath;
     List<Path> includes;
 
-    public clawfc.depscan.serial.FortranFileBuildInfo getData()
+    public clawfc.depscan.serial.FortranFileProgramUnitInfo getData()
     {
         return data;
     }
 
-    public FortranModuleInfo getProgram()
+    public List<FortranProgramUnitInfo> getUnits()
     {
-        return program;
-    }
-
-    public List<FortranModuleInfo> getModules()
-    {
-        return modules;
+        return units;
     }
 
     public List<Path> getIncludes()
@@ -89,17 +81,10 @@ public class FortranFileBuildInfo
         data.setPpSrcPath(strPath);
     }
 
-    public FortranFileBuildInfo(clawfc.depscan.serial.FortranFileBuildInfo data)
+    public FortranFileProgramUnitInfo(clawfc.depscan.serial.FortranFileProgramUnitInfo data)
     {
         this.data = data;
-        modules = data.getModule().stream().map(FortranModuleInfo::new).collect(Collectors.toList());
-        if (data.getProgram() != null)
-        {
-            program = new FortranModuleInfo(data.getProgram());
-        } else
-        {
-            program = null;
-        }
+        units = data.getUnit().stream().map(FortranProgramUnitInfo::new).collect(Collectors.toList());
         if (data.getSrcPath() != null)
         {
             srcFilePath = Paths.get(data.getSrcPath());
@@ -117,46 +102,39 @@ public class FortranFileBuildInfo
         includes = data.getInclude().stream().map(Paths::get).collect(Collectors.toList());
     }
 
-    public FortranFileBuildInfo(List<FortranModuleInfo> modules, FortranModuleInfo program)
+    public FortranFileProgramUnitInfo(List<FortranProgramUnitInfo> units)
     {
-        initialize(modules, program, null, null, Collections.emptyList());
+        initialize(units, null, null, Collections.emptyList());
     }
 
-    public FortranFileBuildInfo(List<FortranModuleInfo> modules, FortranModuleInfo program, Path srcPath)
+    public FortranFileProgramUnitInfo(List<FortranProgramUnitInfo> units, Path srcPath)
     {
-        initialize(modules, program, srcPath, null, Collections.emptyList());
+        initialize(units, srcPath, null, Collections.emptyList());
     }
 
-    public FortranFileBuildInfo(List<FortranModuleInfo> modules, FortranModuleInfo program, List<Path> includes)
+    public FortranFileProgramUnitInfo(List<FortranProgramUnitInfo> units, List<Path> includes)
     {
-        initialize(modules, program, null, null, includes);
+        initialize(units, null, null, includes);
     }
 
-    public FortranFileBuildInfo(List<FortranModuleInfo> modules, FortranModuleInfo program, Path srcPath,
+    public FortranFileProgramUnitInfo(List<FortranProgramUnitInfo> units, Path srcPath, List<Path> includes)
+    {
+        initialize(units, srcPath, null, includes);
+    }
+
+    public FortranFileProgramUnitInfo(List<FortranProgramUnitInfo> units, Path srcPath, Path ppSrcPath,
             List<Path> includes)
     {
-        initialize(modules, program, srcPath, null, includes);
+        initialize(units, srcPath, ppSrcPath, includes);
     }
 
-    public FortranFileBuildInfo(List<FortranModuleInfo> modules, FortranModuleInfo program, Path srcPath,
-            Path ppSrcPath, List<Path> includes)
+    void initialize(List<FortranProgramUnitInfo> units, Path srcPath, Path ppSrcPath, List<Path> includes)
     {
-        initialize(modules, program, srcPath, ppSrcPath, includes);
-    }
-
-    void initialize(List<FortranModuleInfo> modules, FortranModuleInfo program, Path srcPath, Path ppSrcPath,
-            List<Path> includes)
-    {
-        data = new clawfc.depscan.serial.FortranFileBuildInfo();
-        this.modules = modules;
-        this.program = program;
+        data = new clawfc.depscan.serial.FortranFileProgramUnitInfo();
+        this.units = units;
         this.includes = includes;
-        if (program != null)
-        {
-            data.setProgram(program._data);
-        }
-        modules.forEach(info -> {
-            data.getModule().add(info.data());
+        units.forEach(info -> {
+            data.getUnit().add(info.data());
         });
         includes.forEach(incPath -> {
             data.getInclude().add(incPath.toString());
@@ -191,23 +169,10 @@ public class FortranFileBuildInfo
         {
             return false;
         }
-        FortranFileBuildInfo other = (FortranFileBuildInfo) obj;
-        if (!getModules().equals(other.getModules()))
+        FortranFileProgramUnitInfo other = (FortranFileProgramUnitInfo) obj;
+        if (!getUnits().equals(other.getUnits()))
         {
             return false;
-        }
-        if (getProgram() == null)
-        {
-            if (other.getProgram() != null)
-            {
-                return false;
-            }
-        } else
-        {
-            if (!getProgram().equals(other.getProgram()))
-            {
-                return false;
-            }
         }
         if (getSrcFilePath() == null)
         {
@@ -242,17 +207,11 @@ public class FortranFileBuildInfo
         return true;
     }
 
-    public List<String> getModuleNames(boolean includeProgram)
+    public List<String> getModuleNames()
     {
-        SortedMap<Integer, String> nameByPos = new TreeMap<Integer, String>();
-        for (FortranModuleInfo modBInfo : getModules())
-        {
-            nameByPos.put(modBInfo.getStartCharIdx(), modBInfo.getName());
-        }
-        if (includeProgram && (getProgram() != null))
-        {
-            nameByPos.put(getProgram().getStartCharIdx(), getProgram().getName());
-        }
-        return Collections.unmodifiableList(new ArrayList<String>(nameByPos.values()));
+        List<String> names = getUnits().stream().map((FortranProgramUnitInfo modBInfo) -> modBInfo.getName())
+                .collect(Collectors.toList());
+        ;
+        return Collections.unmodifiableList(names);
     }
 }

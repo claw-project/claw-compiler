@@ -30,6 +30,7 @@ public class FortranProcedureStatementsRecognizerTest extends TestCase
         verifySubroutineOpen(" subroutine f", "f");
         verifySubroutineOpen("subroutine f", "f");
         verifySubroutineOpen("subroutine f()", "f");
+        verifySubroutineOpen("subroutine f ()", "f");
         verifySubroutineOpen("subroutine f(a)", "f");
         verifySubroutineOpen("subroutine f(a, b)", "f");
         verifySubroutineOpen("subroutine f(a, b)", "f");
@@ -66,6 +67,8 @@ public class FortranProcedureStatementsRecognizerTest extends TestCase
     public void testFunctionOpen() throws Exception
     {
         verifyFunctionOpen("function f()", "f");
+        verifyFunctionOpen("function f ()", "f");
+        verifyFunctionOpen("function f ( )", "f");
         verifyFunctionOpen("function function()", "function");
         verifyFunctionOpen("function f(a)", "f");
         verifyFunctionOpen("function f(a, b)", "f");

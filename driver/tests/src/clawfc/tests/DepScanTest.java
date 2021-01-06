@@ -4,12 +4,13 @@
  */
 package clawfc.tests;
 
-import static clawfc.FortranFileBuildInfoData.getOutputFilePath;
+import static clawfc.FortranFileProgramUnitInfoData.getOutputFilePath;
 import static clawfc.Utils.collectIntoString;
 import static clawfc.Utils.saveToFile;
 import static clawfc.Utils.sprintf;
 import static clawfc.Utils.toInputStream;
 import static clawfc.Utils.touch;
+import static java.util.Collections.emptyList;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,24 +25,27 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import clawfc.Utils;
-import clawfc.depscan.FortranFileBuildInfo;
-import clawfc.depscan.FortranFileBuildInfoDeserializer;
-import clawfc.depscan.FortranFileBuildInfoSerializer;
+import clawfc.depscan.FortranFileProgramUnitInfo;
+import clawfc.depscan.FortranFileProgramUnitInfoDeserializer;
+import clawfc.depscan.FortranFileProgramUnitInfoSerializer;
+import clawfc.depscan.FortranProgramUnitInfo;
+import clawfc.depscan.FortranStatementPosition;
+import clawfc.depscan.serial.FortranProgramUnitType;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.SimplePathHashGenerator;
 
 public class DepScanTest extends clawfc.tests.utils.DriverTestCase
 {
-    public static FortranFileBuildInfo loadInfo(Path path) throws Exception
+    public static FortranFileProgramUnitInfo loadInfo(Path path) throws Exception
     {
-        FortranFileBuildInfoDeserializer deserializer = new FortranFileBuildInfoDeserializer(true);
+        FortranFileProgramUnitInfoDeserializer deserializer = new FortranFileProgramUnitInfoDeserializer(true);
         try (InputStream inStrm = Files.newInputStream(path))
         {
             return deserializer.deserialize(inStrm);
         }
     }
 
-    public static FortranFileBuildInfo loadInfo(String txt) throws Exception
+    public static FortranFileProgramUnitInfo loadInfo(String txt) throws Exception
     {
         try (InputStream inStrm = toInputStream(txt))
         {
@@ -49,17 +53,17 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         }
     }
 
-    public static FortranFileBuildInfo loadInfo(InputStream inStrm) throws Exception
+    public static FortranFileProgramUnitInfo loadInfo(InputStream inStrm) throws Exception
     {
-        FortranFileBuildInfoDeserializer deserializer = new FortranFileBuildInfoDeserializer(true);
+        FortranFileProgramUnitInfoDeserializer deserializer = new FortranFileProgramUnitInfoDeserializer(true);
         return deserializer.deserialize(inStrm);
     }
 
     static void addPath(Path infoPath, Path src) throws Exception
     {
-        FortranFileBuildInfo info = loadInfo(infoPath);
+        FortranFileProgramUnitInfo info = loadInfo(infoPath);
         info.setSrcFilePath(src);
-        FortranFileBuildInfoSerializer serializer = new FortranFileBuildInfoSerializer();
+        FortranFileProgramUnitInfoSerializer serializer = new FortranFileProgramUnitInfoSerializer();
         try (OutputStream outStrm = Files.newOutputStream(infoPath))
         {
             serializer.serialize(info, outStrm);
@@ -89,61 +93,112 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
 
     void assertEqualsBuildInfo(String refStr, Path filePath) throws Exception
     {
-        FortranFileBuildInfo refInfo;
+        FortranFileProgramUnitInfo refInfo;
         try (AsciiArrayIOStream buf = new AsciiArrayIOStream(refStr))
         {
             refInfo = loadInfo(buf.getAsInputStreamUnsafe());
         }
-        FortranFileBuildInfo resInfo = loadInfo(filePath);
+        FortranFileProgramUnitInfo resInfo = loadInfo(filePath);
         assertEquals(refInfo, resInfo);
+    }
+
+    static FortranProgramUnitInfo ModInfo(clawfc.depscan.FortranStatementPosition pos,
+            List<clawfc.depscan.FortranStatementPosition> useModules, boolean usesClaw)
+    {
+        return new FortranProgramUnitInfo(FortranProgramUnitType.MODULE, pos, useModules, usesClaw);
+    }
+
+    static FortranProgramUnitInfo ProgInfo(clawfc.depscan.FortranStatementPosition pos,
+            List<clawfc.depscan.FortranStatementPosition> useModules, boolean usesClaw)
+    {
+        return new FortranProgramUnitInfo(FortranProgramUnitType.PROGRAM, pos, useModules, usesClaw);
+    }
+
+    public static FortranStatementPosition Pos(String name, int startCharIdx, int endCharIdx, int startLineIdx,
+            int endLineIdx)
+    {
+        return new FortranStatementPosition(name, startCharIdx, endCharIdx, startLineIdx, endLineIdx);
     }
 
     public void testInputScan() throws Exception
     {
         final Path INPUT_FILEPATH = RES_DIR.resolve("depscan/input_files/input/1.f90");
-        final Path REF_FILEPATH = RES_DIR.resolve("depscan/input_files/reference/1.f90.fif.template");
+        final FortranFileProgramUnitInfo REF_INFO;
+        {
+            final List<FortranProgramUnitInfo> units = Arrays
+                    .asList(ModInfo(Pos("mod11", 0, 36, 0, 3), emptyList(), true),
+                            ModInfo(Pos("mod12", 38, 67, 4, 6), emptyList(), false),
+                            ModInfo(Pos("mod13", 69, 112, 7, 10), Arrays.asList(Pos("mod12", 86, 95, 8, 9)), false),
+                            ProgInfo(Pos("p1", 114, 167, 11, 15),
+                                    Arrays.asList(Pos("mod12", 129, 138, 12, 13), Pos("mod13", 143, 152, 13, 14)),
+                                    false));
+            REF_INFO = new FortranFileProgramUnitInfo(units, INPUT_FILEPATH, INPUT_FILEPATH, emptyList());
+        }
         final Path OUT_DIR = TMP_DIR;
         String[] args = new String[] { "-BO", OUT_DIR.toString(), "--stop-depscan", "--skip-pp", "--disable-mp",
                 INPUT_FILEPATH.toString() };
         run(args);
         final Path resFilepath = outputPath(INPUT_FILEPATH, OUT_DIR);
-        assertEqualsBuildInfo(RES_DIR, REF_FILEPATH, resFilepath);
+        assertEquals(REF_INFO, loadInfo(resFilepath));
     }
 
     public void testInputWithIncludeScan() throws Exception
     {
         final Path INPUT_FILEPATH = RES_DIR.resolve("depscan/input_with_include/input/1.f90");
-        final Path REF_FILEPATH = RES_DIR.resolve("depscan/input_with_include/reference/1.f90.fif.template");
         final Path OUT_DIR = TMP_DIR;
+        final FortranFileProgramUnitInfo REF_INFO;
+        {
+            final List<FortranProgramUnitInfo> units = Arrays
+                    .asList(ModInfo(Pos("mod11", 1, 37, 1, 4), emptyList(), true),
+                            ModInfo(Pos("mod12", 39, 68, 5, 7), emptyList(), false),
+                            ModInfo(Pos("mod13", 70, 113, 8, 11), Arrays.asList(Pos("mod12", 87, 96, 9, 10)), false),
+                            ProgInfo(Pos("p1", 115, 168, 12, 16),
+                                    Arrays.asList(Pos("mod12", 130, 139, 13, 14), Pos("mod13", 144, 153, 14, 15)),
+                                    false));
+            SimplePathHashGenerator hashGen = new SimplePathHashGenerator();
+            final String srcDirHash = hashGen.generate(INPUT_FILEPATH.getParent());
+            final Path ppFilePath = OUT_DIR.resolve(srcDirHash + "_1.pp.f90");
+            final List<Path> incFiles = Arrays.asList(RES_DIR.resolve("depscan/input_with_include/input/1.inc"),
+                    RES_DIR.resolve("depscan/input_with_include/input/2.inc"));
+            REF_INFO = new FortranFileProgramUnitInfo(units, INPUT_FILEPATH, ppFilePath, incFiles);
+        }
         String[] args = new String[] { "-BO", OUT_DIR.toString(), "-PO", OUT_DIR.toString(), "--stop-depscan",
                 "--disable-mp", INPUT_FILEPATH.toString() };
         run(args);
         final Path resFilepath = outputPath(INPUT_FILEPATH, OUT_DIR);
-        SimplePathHashGenerator hashGen = new SimplePathHashGenerator();
-        final String srcDirHash = hashGen.generate(INPUT_FILEPATH.getParent());
-        final String refStr = collectIntoString(REF_FILEPATH).replace("{res_dir}", RES_DIR.toString())
-                .replace("{out_dir}", OUT_DIR.toString()).replace("{hash}", srcDirHash);
-        assertEqualsBuildInfo(refStr, resFilepath);
+        assertEquals(REF_INFO, loadInfo(resFilepath));
     }
 
     public void testIncludeScan() throws Exception
     {
         final Path INPUT_DIR = RES_DIR.resolve("depscan/include_dir/input");
         final Path INC_DIR = INPUT_DIR.resolve("inc");
-        final Path REF_DIR = RES_DIR.resolve("depscan/include_dir/reference");
         final Path[] INPUT_FILES = new Path[] { INPUT_DIR.resolve("blank.f90"), INC_DIR.resolve("1.f90"),
                 INC_DIR.resolve("2.f90") };
-        final Path[] REF_FILES = new Path[] { REF_DIR.resolve("blank.f90.fif.template"),
-                REF_DIR.resolve("1.f90.fif.template"), REF_DIR.resolve("2.f90.fif.template") };
+        final int N = INPUT_FILES.length;
+        final FortranFileProgramUnitInfo[] REF_INFO = new FortranFileProgramUnitInfo[] {
+                new FortranFileProgramUnitInfo(emptyList(), INPUT_FILES[0], INPUT_FILES[0], emptyList()),
+                new FortranFileProgramUnitInfo(Arrays.asList(ModInfo(Pos("mod11", 0, 36, 0, 3), emptyList(), true),
+                        ModInfo(Pos("mod12", 38, 67, 4, 6), emptyList(), false),
+                        ModInfo(Pos("mod13", 69, 112, 7, 10), Arrays.asList(Pos("mod12", 86, 95, 8, 9)), false),
+                        ProgInfo(Pos("p1", 114, 167, 11, 15),
+                                Arrays.asList(Pos("mod12", 129, 138, 12, 13), Pos("mod13", 143, 152, 13, 14)), false)),
+                        INPUT_FILES[1], INPUT_FILES[1], emptyList()),
+                new FortranFileProgramUnitInfo(Arrays.asList(
+                        ModInfo(Pos("mod21", 0, 50, 0, 4), Arrays.asList(Pos("mod13", 17, 26, 1, 2)), true),
+                        ModInfo(Pos("mod22", 52, 81, 5, 7), emptyList(), false),
+                        ModInfo(Pos("mod23", 83, 126, 8, 11), Arrays.asList(Pos("mod22", 100, 109, 9, 10)), false),
+                        ProgInfo(Pos("p2", 128, 181, 12, 16),
+                                Arrays.asList(Pos("mod22", 143, 152, 13, 14), Pos("mod23", 157, 166, 14, 15)), false)),
+                        INPUT_FILES[2], INPUT_FILES[2], emptyList()) };
         final Path OUT_DIR = TMP_DIR;
         String[] args = new String[] { "-BO", OUT_DIR.toString(), INPUT_FILES[0].toString(), "--stop-depscan",
                 "--skip-pp", "--disable-mp", "-SI", INC_DIR.toString() };
         run(args);
-        final int N = INPUT_FILES.length;
         for (int i = 0; i < N; ++i)
         {
             final Path resFilepath = outputPath(INPUT_FILES[i], OUT_DIR);
-            assertEqualsBuildInfo(RES_DIR, REF_FILES[i], resFilepath);
+            assertEquals(REF_INFO[i], loadInfo(resFilepath));
         }
     }
 
@@ -151,16 +206,28 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
     {
         final Path INPUT_FILEPATH1 = RES_DIR.resolve("depscan/output/input/1.f90");
         final Path INPUT_FILEPATH2 = RES_DIR.resolve("depscan/output/input/2.f90");
-        final Path REF_FILEPATH1 = RES_DIR.resolve("depscan/output/reference/1.f90.fif.template");
-        final Path REF_FILEPATH2 = RES_DIR.resolve("depscan/output/reference/2.f90.fif.template");
         final Path OUT_DIR = TMP_DIR.resolve("out"), INT_DIR = TMP_DIR.resolve("int");
+        final FortranFileProgramUnitInfo[] REF_INFO = new FortranFileProgramUnitInfo[] {
+                new FortranFileProgramUnitInfo(Arrays.asList(ModInfo(Pos("mod11", 0, 36, 0, 3), emptyList(), true),
+                        ModInfo(Pos("mod12", 38, 67, 4, 6), emptyList(), false),
+                        ModInfo(Pos("mod13", 69, 112, 7, 10), Arrays.asList(Pos("mod12", 86, 95, 8, 9)), false),
+                        ProgInfo(Pos("p1", 114, 167, 11, 15),
+                                Arrays.asList(Pos("mod12", 129, 138, 12, 13), Pos("mod13", 143, 152, 13, 14)), false)),
+                        INPUT_FILEPATH1, INPUT_FILEPATH1, emptyList()),
+                new FortranFileProgramUnitInfo(Arrays.asList(
+                        ModInfo(Pos("mod21", 0, 50, 0, 4), Arrays.asList(Pos("mod13", 17, 26, 1, 2)), true),
+                        ModInfo(Pos("mod22", 52, 81, 5, 7), emptyList(), false),
+                        ModInfo(Pos("mod23", 83, 126, 8, 11), Arrays.asList(Pos("mod22", 100, 109, 9, 10)), false),
+                        ProgInfo(Pos("p2", 128, 181, 12, 16),
+                                Arrays.asList(Pos("mod22", 143, 152, 13, 14), Pos("mod23", 157, 166, 14, 15)), false)),
+                        INPUT_FILEPATH2, INPUT_FILEPATH2, emptyList()) };
         String[] args = new String[] { "--gen-buildinfo-files", "--skip-pp", "--disable-mp", "-BO", OUT_DIR.toString(),
                 INPUT_FILEPATH1.toString(), INPUT_FILEPATH2.toString() };
         run(args);
         final Path resFilepath1 = outputPath(INPUT_FILEPATH1, OUT_DIR, false);
         final Path resFilepath2 = outputPath(INPUT_FILEPATH2, OUT_DIR, false);
-        assertEqualsBuildInfo(RES_DIR, REF_FILEPATH1, resFilepath1);
-        assertEqualsBuildInfo(RES_DIR, REF_FILEPATH2, resFilepath2);
+        assertEquals(REF_INFO[0], loadInfo(resFilepath1));
+        assertEquals(REF_INFO[1], loadInfo(resFilepath2));
     }
 
     public void testOutputNameClash() throws Exception
@@ -188,9 +255,9 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         final Path IN_DIR = TMP_DIR.resolve("in");
         final Path OUT_DIR = TMP_DIR.resolve("out");
         final Path INPUT_TEMPLATE_FILEPATH = RES_DIR.resolve("depscan/multiprocessing/input/i.f90.template");
-        final Path REF_TEMPLATE_FILEPATH = RES_DIR.resolve("depscan/multiprocessing/reference/i.f90.fif.template");
         final String INPUT_FILE_PATH_TEMPLATE = IN_DIR.toString() + "/%s.f90";
         final String inTemplate = Utils.collectIntoString(INPUT_TEMPLATE_FILEPATH);
+        final FortranFileProgramUnitInfo[] REF_INFO = new FortranFileProgramUnitInfo[N];
         List<String> argsLst = new ArrayList<String>(
                 Arrays.asList("--stop-depscan", "--skip-pp", "-BO", OUT_DIR.toString()));
         List<Path> inputFilePaths = new ArrayList<Path>(N);
@@ -204,18 +271,25 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
                 saveToFile(inFileTxt.getAsInputStreamUnsafe(), inFilePath);
             }
             argsLst.add(inFilePath.toString());
+            REF_INFO[i] = new FortranFileProgramUnitInfo(
+                    Arrays.asList(ModInfo(Pos(sprintf("mod%s1", i), 0, 36, 0, 3), emptyList(), true),
+                            ModInfo(Pos(sprintf("mod%s2", i), 38, 67, 4, 6), emptyList(), false),
+                            ModInfo(Pos(sprintf("mod%s3", i), 69, 112, 7, 10),
+                                    Arrays.asList(Pos(sprintf("mod%s2", i), 86, 95, 8, 9)), false),
+                            ProgInfo(Pos(sprintf("p%s", i), 114, 167, 11, 15),
+                                    Arrays.asList(Pos(sprintf("mod%s2", i), 129, 138, 12, 13),
+                                            Pos(sprintf("mod%s3", i), 143, 152, 13, 14)),
+                                    false)),
+                    inFilePath, inFilePath, emptyList());
         }
         String[] args = argsLst.stream().toArray(String[]::new);
         // ----------------------------
         run(args);
         // ----------------------------
-        final String refTemplate = Utils.collectIntoString(REF_TEMPLATE_FILEPATH);
-        final String IN_DIR_STRING = IN_DIR.toString();
         for (int i = 0; i < N; ++i)
         {
             Path resPath = outputPath(inputFilePaths.get(i), OUT_DIR);
-            final String refStr = refTemplate.replace("{i}", String.valueOf(i)).replace("{in_dir}", IN_DIR_STRING);
-            assertEqualsBuildInfo(refStr, resPath);
+            assertEquals(REF_INFO[i], loadInfo(resPath));
         }
     }
 
@@ -238,22 +312,21 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         final Path PP_INC_FILEPATH = RES_DIR.resolve("depscan/regeneration/input/f.inc");
         final Path FTN_INC_FILEPATH = RES_DIR.resolve("depscan/regeneration/input/pp.inc");
         final Path OUT_BINFO_DIR = TMP_DIR.resolve("binfo");
-        final Path REF_BINFO_PATH = RES_DIR.resolve("depscan/regeneration/reference/p.f90.fif.template");
         final Path REF_PP_FILEPATH = RES_DIR.resolve("depscan/regeneration/reference/p.pp.f90");
 
         SimplePathHashGenerator hashGen = new SimplePathHashGenerator();
         final String srcDirHash = hashGen.generate(INPUT_FILEPATH.getParent());
         final Path resPPFilepath = OUT_BINFO_DIR.resolve(srcDirHash + "_p.pp.f90");
         final Path resBinfoFilepath = OUT_BINFO_DIR.resolve("p.f90.fif");
-        final String refBinfoStr = collectIntoString(REF_BINFO_PATH).replace("{res_dir}", RES_DIR.toString())
-                .replace("{hash}", srcDirHash).replace("{out_dir}", OUT_BINFO_DIR.toString());
-
+        final FortranFileProgramUnitInfo REF_INFO = new FortranFileProgramUnitInfo(
+                Arrays.asList(ProgInfo(Pos("p", 0, 30, 0, 3), emptyList(), true)), INPUT_FILEPATH, resPPFilepath,
+                Arrays.asList(FTN_INC_FILEPATH, PP_INC_FILEPATH));
         Callable<Void> verifyOutput = new Callable<Void>()
         {
             public Void call() throws Exception
             {
                 assertEqualsTxtFiles(REF_PP_FILEPATH, resPPFilepath);
-                assertEqualsBuildInfo(refBinfoStr, resBinfoFilepath);
+                assertEquals(REF_INFO, loadInfo(resBinfoFilepath));
                 return null;
             }
         };
@@ -323,35 +396,36 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         final Path PP_INC_FILEPATH = RES_DIR.resolve("depscan/inc_regeneration/input/pp.inc");
         final Path FTN_INC_FILEPATH = RES_DIR.resolve("depscan/inc_regeneration/input/f.inc");
         final Path OUT_BINFO_DIR = TMP_DIR.resolve("binfo");
-        final Path REF_BINFO_PATH = RES_DIR.resolve("depscan/inc_regeneration/reference/p.f90.fif.template");
         final Path REF_PP_FILEPATH = RES_DIR.resolve("depscan/inc_regeneration/reference/p.pp.f90");
 
         final Path INC_INPUT_FILEPATH = RES_DIR.resolve("depscan/inc_regeneration/input/inc/m.f90");
         final Path INC_PP_INC_FILEPATH = RES_DIR.resolve("depscan/inc_regeneration/input/inc/pp2.inc");
         final Path INC_FTN_INC_FILEPATH = RES_DIR.resolve("depscan/inc_regeneration/input/inc/f2.inc");
         final Path INC_DIR = RES_DIR.resolve("depscan/inc_regeneration/input/inc");
-        final Path REF_INC_BINFO_PATH = RES_DIR.resolve("depscan/inc_regeneration/reference/m.f90.fif.template");
         final Path REF_INC_PP_FILEPATH = RES_DIR.resolve("depscan/inc_regeneration/reference/m.pp.f90");
 
         SimplePathHashGenerator hashGen = new SimplePathHashGenerator();
         final String srcDirHash = hashGen.generate(INPUT_FILEPATH.getParent());
         final Path resPPFilepath = OUT_BINFO_DIR.resolve(srcDirHash + "_p.pp.f90");
         final Path resBinfoFilepath = OUT_BINFO_DIR.resolve(srcDirHash + "_p.f90.fif");
-        final String refBinfoStr = collectIntoString(REF_BINFO_PATH).replace("{res_dir}", RES_DIR.toString())
-                .replace("{hash}", srcDirHash).replace("{out_dir}", OUT_BINFO_DIR.toString());
+
+        final FortranFileProgramUnitInfo PRG_REF_INFO = new FortranFileProgramUnitInfo(
+                Arrays.asList(ProgInfo(Pos("p", 0, 30, 0, 3), emptyList(), true)), INPUT_FILEPATH, resPPFilepath,
+                Arrays.asList(PP_INC_FILEPATH, FTN_INC_FILEPATH));
 
         final String incSrcDirHash = hashGen.generate(INC_DIR);
         final Path resIncPPFilepath = OUT_BINFO_DIR.resolve(incSrcDirHash + "_m.pp.f90");
         final Path resIncBinfoFilepath = OUT_BINFO_DIR.resolve(incSrcDirHash + "_m.f90.fif");
-        final String refIncBinfoStr = collectIntoString(REF_INC_BINFO_PATH).replace("{res_dir}", RES_DIR.toString())
-                .replace("{hash}", incSrcDirHash).replace("{out_dir}", OUT_BINFO_DIR.toString());
+        final FortranFileProgramUnitInfo MOD_REF_INFO = new FortranFileProgramUnitInfo(
+                Arrays.asList(ModInfo(Pos("m", 0, 28, 0, 3), emptyList(), true)), INC_INPUT_FILEPATH, resIncPPFilepath,
+                Arrays.asList(INC_FTN_INC_FILEPATH, INC_PP_INC_FILEPATH));
 
         Callable<Void> verifyOutput = new Callable<Void>()
         {
             public Void call() throws Exception
             {
                 assertEqualsTxtFiles(REF_PP_FILEPATH, resPPFilepath);
-                assertEqualsBuildInfo(refBinfoStr, resBinfoFilepath);
+                assertEquals(PRG_REF_INFO, loadInfo(resBinfoFilepath));
                 return null;
             }
         };
@@ -361,7 +435,7 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
             public Void call() throws Exception
             {
                 assertEqualsTxtFiles(REF_INC_PP_FILEPATH, resIncPPFilepath);
-                assertEqualsBuildInfo(refIncBinfoStr, resIncBinfoFilepath);
+                assertEquals(MOD_REF_INFO, loadInfo(resIncBinfoFilepath));
                 return null;
             }
         };

@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import clawfc.PreprocessedFortranSourceData;
-import clawfc.depscan.FortranFileBuildInfo;
+import clawfc.depscan.FortranFileProgramUnitInfo;
 import clawfc.utils.AsciiArrayIOStream;
 import junit.framework.TestCase;
 
@@ -58,7 +58,7 @@ public class PreprocessedFortranSourceDataTest extends TestCase
             Path srcFilePath = tmpDir.resolve("src.f90");
             Path ppSrcFilePath = tmpDir.resolve("pp.src.f90");
             saveToFile(data.getAsInputStreamUnsafe(), ppSrcFilePath);
-            FortranFileBuildInfo info = new FortranFileBuildInfo(Collections.emptyList(), null);
+            FortranFileProgramUnitInfo info = new FortranFileProgramUnitInfo(Collections.emptyList());
             info.setPPSrcFilePath(ppSrcFilePath);
             Path incFilePath1 = tmpDir.resolve("1.inc");
             Path incFilePath2 = tmpDir.resolve("2.inc");

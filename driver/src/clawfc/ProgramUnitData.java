@@ -13,24 +13,22 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
 
-import clawfc.depscan.FortranModuleInfo;
+import clawfc.depscan.FortranProgramUnitInfo;
+import clawfc.depscan.serial.FortranProgramUnitType;
 import clawfc.utils.AsciiArrayIOStream;
 
-public class ModuleData implements ModuleInfo
+public class ProgramUnitData implements ProgramUnitInfo
 {
-    public static enum ModuleType {
-        Module, Program
-    };
 
-    public static enum ModuleDesignation {
+    public static enum UnitDesignation {
         Input, Include
     };
 
     final String name;
-    final ModuleType type;
-    final ModuleDesignation designation;
-    final FortranModuleInfo info;
-    final FortranFileBuildInfoData srcFileBinfoData;
+    final FortranProgramUnitType type;
+    final UnitDesignation designation;
+    final FortranProgramUnitInfo info;
+    final FortranFileProgramUnitInfoData srcFileBinfoData;
     final PreprocessedFortranSourceData srcData;
     XmodData xmodData;
     AsciiArrayIOStream xast;
@@ -38,11 +36,11 @@ public class ModuleData implements ModuleInfo
     AsciiArrayIOStream transSrc;
     AsciiArrayIOStream transReport;
 
-    public ModuleData(ModuleType type, ModuleDesignation designation, FortranModuleInfo info,
-            FortranFileBuildInfoData srcFileBinfoData, PreprocessedFortranSourceData srcData)
+    public ProgramUnitData(UnitDesignation designation, FortranProgramUnitInfo info,
+            FortranFileProgramUnitInfoData srcFileBinfoData, PreprocessedFortranSourceData srcData)
     {
+        type = info.getType();
         name = info.getName();
-        this.type = type;
         this.designation = designation;
         this.info = info;
         this.srcFileBinfoData = srcFileBinfoData;
@@ -54,10 +52,10 @@ public class ModuleData implements ModuleInfo
         this.transReport = null;
     }
 
-    public ModuleData(String name, ModuleDesignation designation, XmodData xmodData)
+    public ProgramUnitData(String name, UnitDesignation designation, XmodData xmodData)
     {
         this.name = name;
-        this.type = ModuleType.Module;
+        this.type = FortranProgramUnitType.MODULE;
         this.designation = designation;
         this.info = null;
         this.srcFileBinfoData = null;
@@ -76,21 +74,15 @@ public class ModuleData implements ModuleInfo
     }
 
     @Override
-    public boolean isProgram()
-    {
-        return type == ModuleType.Program;
-    }
-
-    @Override
     public boolean isModule()
     {
-        return type == ModuleType.Module;
+        return type.equals(FortranProgramUnitType.MODULE);
     }
 
     @Override
     public boolean isInput()
     {
-        return designation == ModuleDesignation.Input;
+        return designation == UnitDesignation.Input;
     }
 
     @Override
@@ -118,7 +110,7 @@ public class ModuleData implements ModuleInfo
     }
 
     @Override
-    public clawfc.depscan.FortranModuleInfo getModuleSrcInfo()
+    public FortranProgramUnitInfo getSrcInfo()
     {
         return info;
     }
@@ -135,7 +127,7 @@ public class ModuleData implements ModuleInfo
     }
 
     @Override
-    public FortranFileBuildInfoData getSrcFileBinfoData()
+    public FortranFileProgramUnitInfoData getSrcFileBinfoData()
     {
         return this.srcFileBinfoData;
     }
@@ -144,7 +136,7 @@ public class ModuleData implements ModuleInfo
     public AsciiArrayIOStream getPreprocessedSrc(boolean preserveOffset) throws IOException
     {
         final AsciiArrayIOStream src = srcData.getPPSource();
-        FortranModuleInfo mInfo = getModuleSrcInfo();
+        FortranProgramUnitInfo mInfo = getSrcInfo();
         final int startChrIdx = mInfo.getStartCharIdx();
         final int endChrIDx = mInfo.getEndCharIdx();
         final int count = endChrIDx - startChrIdx;
@@ -233,5 +225,11 @@ public class ModuleData implements ModuleInfo
     public void setTransReport(AsciiArrayIOStream transReport)
     {
         this.transReport = transReport;
+    }
+
+    @Override
+    public FortranProgramUnitType getType()
+    {
+        return this.getSrcInfo().getType();
     }
 }

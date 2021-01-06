@@ -6,19 +6,27 @@ package clawfc.depscan;
 
 import java.util.List;
 
-public class FortranModuleBasicInfo
+import clawfc.depscan.serial.FortranProgramUnitType;
+
+public class FortranProgramUnitBasicInfo
 {
-    final FortranStatementBasicPosition _module;
+    final FortranProgramUnitType _type;
+    final FortranStatementBasicPosition _unit;
     final List<FortranStatementBasicPosition> _useModules;
+
+    public FortranProgramUnitType getType()
+    {
+        return _type;
+    }
 
     public String getName()
     {
-        return getModule().getName();
+        return getPosition().getName();
     }
 
-    public FortranStatementBasicPosition getModule()
+    public FortranStatementBasicPosition getPosition()
     {
-        return _module;
+        return _unit;
     }
 
     public List<FortranStatementBasicPosition> getUseModules()
@@ -26,9 +34,11 @@ public class FortranModuleBasicInfo
         return _useModules;
     }
 
-    public FortranModuleBasicInfo(FortranStatementBasicPosition module, List<FortranStatementBasicPosition> useModules)
+    public FortranProgramUnitBasicInfo(FortranProgramUnitType type, FortranStatementBasicPosition unit,
+            List<FortranStatementBasicPosition> useModules)
     {
-        _module = module;
+        _type = type;
+        _unit = unit;
         _useModules = useModules;
     }
 
@@ -47,8 +57,12 @@ public class FortranModuleBasicInfo
         {
             return false;
         }
-        FortranModuleBasicInfo other = (FortranModuleBasicInfo) obj;
-        if (!getModule().equals(other.getModule()))
+        FortranProgramUnitBasicInfo other = (FortranProgramUnitBasicInfo) obj;
+        if (!getType().equals(other.getType()))
+        {
+            return false;
+        }
+        if (!getPosition().equals(other.getPosition()))
         {
             return false;
         }

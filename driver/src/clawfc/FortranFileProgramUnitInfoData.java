@@ -16,19 +16,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 
-import clawfc.depscan.FortranFileBuildInfo;
-import clawfc.depscan.FortranFileBuildInfoDeserializer;
-import clawfc.depscan.FortranFileBuildInfoSerializer;
+import clawfc.depscan.FortranFileProgramUnitInfo;
+import clawfc.depscan.FortranFileProgramUnitInfoDeserializer;
+import clawfc.depscan.FortranFileProgramUnitInfoSerializer;
 import clawfc.utils.AsciiArrayIOStream;
 
-public class FortranFileBuildInfoData
+public class FortranFileProgramUnitInfoData
 {
 
-    final FortranFileBuildInfo info;
+    final FortranFileProgramUnitInfo info;
     final Path filePath;
     final FileTime ts;
 
-    public FortranFileBuildInfo getInfo()
+    public FortranFileProgramUnitInfo getInfo()
     {
         return info;
     }
@@ -51,20 +51,20 @@ public class FortranFileBuildInfoData
         }
     }
 
-    public static FortranFileBuildInfoData load(Path filePath, FortranFileBuildInfoDeserializer deserializer)
-            throws LoadFailed, Exception
+    public static FortranFileProgramUnitInfoData load(Path filePath,
+            FortranFileProgramUnitInfoDeserializer deserializer) throws LoadFailed, Exception
     {
         if (deserializer == null)
         {
             try
             {
-                deserializer = new FortranFileBuildInfoDeserializer(true);
+                deserializer = new FortranFileProgramUnitInfoDeserializer(true);
             } catch (Exception e)
             {
                 throw new LoadFailed(e.getMessage(), e);
             }
         }
-        FortranFileBuildInfo info;
+        FortranFileProgramUnitInfo info;
         try (InputStream inStrm = Files.newInputStream(filePath))
         {
             info = deserializer.deserialize(inStrm);
@@ -104,7 +104,7 @@ public class FortranFileBuildInfoData
             FileTime incFileTS = verifyReferencedFile(filePath, infoTS, "include", incFilePath);
             lastTS = max(lastTS, incFileTS);
         }
-        return new FortranFileBuildInfoData(filePath, info, lastTS);
+        return new FortranFileProgramUnitInfoData(filePath, info, lastTS);
     }
 
     static FileTime verifyReferencedFile(Path infoFilePath, FileTime infoTS, String refFileType, Path refFilePath)
@@ -149,7 +149,7 @@ public class FortranFileBuildInfoData
         }
     }
 
-    static FileTime getLastTimestamp(FortranFileBuildInfo info) throws Exception
+    static FileTime getLastTimestamp(FortranFileProgramUnitInfo info) throws Exception
     {
         FileTime lastTS;
         FileTime srcFileTS = getFileTimestamp(info.getSrcFilePath(), "source");
@@ -171,7 +171,8 @@ public class FortranFileBuildInfoData
      * @return Output file path
      * @throws Exception
      */
-    public Path save(Path outDirPath, String srcDirHash, FortranFileBuildInfoSerializer serializer) throws Exception
+    public Path save(Path outDirPath, String srcDirHash, FortranFileProgramUnitInfoSerializer serializer)
+            throws Exception
     {
         if (filePath != null)
         {
@@ -184,7 +185,7 @@ public class FortranFileBuildInfoData
         }
         if (serializer == null)
         {
-            serializer = new FortranFileBuildInfoSerializer();
+            serializer = new FortranFileProgramUnitInfoSerializer();
         }
         String srcFilename = getInfo().getSrcFilePath().getFileName().toString();
         Path outFilePath = getOutputFilePath(srcFilename, outDirPath, srcDirHash);
@@ -208,14 +209,14 @@ public class FortranFileBuildInfoData
         return outFilePath;
     }
 
-    public FortranFileBuildInfoData(FortranFileBuildInfo info) throws Exception
+    public FortranFileProgramUnitInfoData(FortranFileProgramUnitInfo info) throws Exception
     {
         this.filePath = null;
         this.info = info;
         this.ts = getLastTimestamp(info);
     }
 
-    private FortranFileBuildInfoData(Path filePath, FortranFileBuildInfo info, FileTime ts)
+    private FortranFileProgramUnitInfoData(Path filePath, FortranFileProgramUnitInfo info, FileTime ts)
     {
         this.filePath = filePath;
         this.info = info;

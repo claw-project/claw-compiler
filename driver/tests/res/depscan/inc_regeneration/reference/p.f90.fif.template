@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<fortran_file_build_info src_path="{res_dir}/depscan/inc_regeneration/input/p.f90" pp_src_path="{out_dir}/{hash}_p.pp.f90">
-    <program uses_claw="true">
-        <info start_line_idx="0" end_line_idx="3" name="p" start_char_idx="0" end_char_idx="30"/>
-        <used_modules/>
-    </program>
-    <include>{res_dir}/depscan/inc_regeneration/input/pp.inc</include>
-    <include>{res_dir}/depscan/inc_regeneration/input/f.inc</include>
-</fortran_file_build_info>

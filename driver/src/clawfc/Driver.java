@@ -37,14 +37,13 @@ import java.util.stream.Collectors;
 
 import claw.wani.ClawX2T;
 import claw.wani.ConfigurationOptions;
-import clawfc.ModuleData.ModuleDesignation;
-import clawfc.ModuleData.ModuleType;
+import clawfc.ProgramUnitData.UnitDesignation;
 import clawfc.Utils.ExecuteTasks;
 import clawfc.depscan.FortranDepScanner;
-import clawfc.depscan.FortranFileBuildInfo;
-import clawfc.depscan.FortranFileBuildInfoDeserializer;
-import clawfc.depscan.FortranFileBuildInfoSerializer;
-import clawfc.depscan.FortranModuleInfo;
+import clawfc.depscan.FortranFileProgramUnitInfo;
+import clawfc.depscan.FortranFileProgramUnitInfoDeserializer;
+import clawfc.depscan.FortranFileProgramUnitInfoSerializer;
+import clawfc.depscan.FortranProgramUnitInfo;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.ByteArrayIOStream;
 import clawfc.utils.FileInfo;
@@ -156,7 +155,7 @@ public class Driver
             try
             {
                 final boolean enableMultiprocessing = !opts.disableMultiprocessing();
-                Map<Path, FortranFileBuildInfoData> buildInfoBySrcPath;
+                Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath;
                 if (!opts.buildInfoIncludeDirs().isEmpty())
                 {
                     info("Loading input build information files...");
@@ -164,7 +163,7 @@ public class Driver
                             opts.sourceIncludeDirs(), enableMultiprocessing);
                 } else
                 {
-                    buildInfoBySrcPath = new HashMap<Path, FortranFileBuildInfoData>();
+                    buildInfoBySrcPath = new HashMap<Path, FortranFileProgramUnitInfoData>();
                 }
                 info("Creating temp files directory...");
                 tmpDir = createTempDir(opts);
@@ -239,11 +238,11 @@ public class Driver
                     inputXmods = Collections.emptyMap();
                 }
                 info("Verifying build set...");
-                final Map<String, ModuleInfo> availModules = getAvailableModulesInfo(buildInfoBySrcPath,
+                final Map<String, ProgramUnitInfo> availModules = getAvailableModulesInfo(buildInfoBySrcPath,
                         inputPPSrcFiles, incPPSrcFiles, inputXmods);
                 final boolean onlyCLAWTargets = !opts.forceTranslation();
                 final Set<String> targetModuleNames = getTargetModuleNames(availModules, false, onlyCLAWTargets);
-                final Map<String, ModuleInfo> usedModules = Build.removeUnreferencedModules(availModules,
+                final Map<String, ProgramUnitInfo> usedModules = Build.removeUnreferencedModules(availModules,
                         targetModuleNames);
                 info("Verifying input xmod files...");
                 setXmodData(usedModules, targetModuleNames, inputXmods);
@@ -337,8 +336,9 @@ public class Driver
     }
 
     static Map<Path, AsciiArrayIOStream> generateOutputSrc(final List<Path> inputFiles,
-            final Map<Path, FortranFileBuildInfoData> buildInfoBySrcPath, final Map<String, ModuleInfo> usedModules,
-            final Set<String> targetModuleNames, boolean enableMultiprocessing) throws Exception
+            final Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath,
+            final Map<String, ProgramUnitInfo> usedModules, final Set<String> targetModuleNames,
+            boolean enableMultiprocessing) throws Exception
     {
         final int n = inputFiles.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
@@ -351,11 +351,11 @@ public class Driver
             {
                 public Void call() throws Exception
                 {
-                    FortranFileBuildInfo bInfo = buildInfoBySrcPath.get(inputFilePath).getInfo();
-                    final List<String> modNames = bInfo.getModuleNames(true);
+                    FortranFileProgramUnitInfo bInfo = buildInfoBySrcPath.get(inputFilePath).getInfo();
+                    final List<String> modNames = bInfo.getModuleNames();
                     for (final String modName : modNames)
                     {
-                        final ModuleInfo modInfo = usedModules.get(modName);
+                        final ProgramUnitInfo modInfo = usedModules.get(modName);
                         final boolean isTargetMod = targetModuleNames.contains(modName);
                         final AsciiArrayIOStream modTransSrc = isTargetMod ? modInfo.getTransSrc()
                                 : modInfo.getPreprocessedSrc(false);
@@ -434,7 +434,7 @@ public class Driver
     static class GenerateXmods extends ExecuteTasks
     {
         final FortranFrontEnd ffront;
-        final Map<String, ModuleInfo> usedModules;
+        final Map<String, ProgramUnitInfo> usedModules;
         final Set<String> targetModuleNames;
         final boolean onlyForTargets;
         final boolean printDebugOutput;
@@ -443,8 +443,9 @@ public class Driver
         public final Set<String> successful;
         public final Set<String> failed;
 
-        public GenerateXmods(FortranFrontEnd ffront, Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames,
-                final boolean onlyForTargets, boolean enableMultiprocessing, boolean printDebugOutput)
+        public GenerateXmods(FortranFrontEnd ffront, Map<String, ProgramUnitInfo> usedModules,
+                Set<String> targetModuleNames, final boolean onlyForTargets, boolean enableMultiprocessing,
+                boolean printDebugOutput)
         {
             super(enableMultiprocessing);
             this.ffront = ffront;
@@ -462,7 +463,7 @@ public class Driver
             for (String modNameIt = buildOrder.next(); modNameIt != null; modNameIt = buildOrder.next())
             {
                 final String modName = modNameIt;
-                final ModuleInfo modInfo = usedModules.get(modName);
+                final ProgramUnitInfo modInfo = usedModules.get(modName);
                 submitTask(new Callable<Void>()
                 {
                     public Void call() throws Exception
@@ -488,13 +489,13 @@ public class Driver
             join();
         }
 
-        boolean generateXmod(ModuleInfo modInfo) throws Exception
+        boolean generateXmod(ProgramUnitInfo modInfo) throws Exception
         {
             final String modName = modInfo.getName();
-            if (modInfo.isProgram())
+            if (!modInfo.isModule())
             {
-                info(sprintf("Xmod generation: skipping %s, it is a program", modName,
-                        Build.moduleNameWithLocation(modInfo)));
+                info(sprintf("Xmod generation: skipping %s, it is a %s", modName, Build.moduleNameWithLocation(modInfo),
+                        modInfo.getType()));
                 return true;
             }
             if (modInfo.getXMod() != null)
@@ -535,12 +536,12 @@ public class Driver
             final Path xmodFilePath = XmodData.getOutputFilePath(ffront.getOutModDir(), modName);
             final FileInfo xmodFInfo = saveToFile(xmodDataStrm.getAsInputStreamUnsafe(), xmodFilePath);
             final XmodData xmodData = new XmodData(modName, xmodFInfo, xmodDataStrm);
-            ((ModuleData) modInfo).setXMod(xmodData);
+            ((ProgramUnitData) modInfo).setXMod(xmodData);
             return true;
         }
     };
 
-    static void generateXmods(FortranFrontEnd ffront, Map<String, ModuleInfo> usedModules,
+    static void generateXmods(FortranFrontEnd ffront, Map<String, ProgramUnitInfo> usedModules,
             Set<String> targetModuleNames, final boolean onlyForTargets, boolean enableMultiprocessing,
             boolean printDebugOutput) throws Exception
     {
@@ -556,7 +557,7 @@ public class Driver
         }
     }
 
-    static void saveXmods(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames,
+    static void saveXmods(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames,
             final boolean onlyForTargets, final Path outDirPath) throws Exception
     {// It is best to save xmods in order so that file modifications dates will be in
      // the right sequence
@@ -565,7 +566,7 @@ public class Driver
         {
             if (!(onlyForTargets && !targetModuleNames.contains(modName)))
             {
-                final ModuleInfo modInfo = usedModules.get(modName);
+                final ProgramUnitInfo modInfo = usedModules.get(modName);
                 if (modInfo.isModule())
                 {
                     final XmodData xmodData = modInfo.getXMod();
@@ -576,15 +577,16 @@ public class Driver
         }
     }
 
-    static void generateXast(FortranFrontEnd ffront, Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames,
-            boolean printFfrontDebugOutput, boolean enableMultiprocessing) throws Exception
+    static void generateXast(FortranFrontEnd ffront, Map<String, ProgramUnitInfo> usedModules,
+            Set<String> targetModuleNames, boolean printFfrontDebugOutput, boolean enableMultiprocessing)
+            throws Exception
     {
         final int n = targetModuleNames.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
         final ThreadLocal<AddIgnoreDirectiveFilter> addIgnoreFilter = new ThreadLocal<AddIgnoreDirectiveFilter>();
         for (final String modName : targetModuleNames)
         {
-            final ModuleInfo modInfo = usedModules.get(modName);
+            final ProgramUnitInfo modInfo = usedModules.get(modName);
             tasks.add(new Callable<Void>()
             {
                 public Void call() throws Exception
@@ -624,7 +626,7 @@ public class Driver
                         error(errMsg);
                         throw new Exception(errMsg, failed);
                     }
-                    ((ModuleData) modInfo).setXast(xastDataStrm);
+                    ((ProgramUnitData) modInfo).setXast(xastDataStrm);
                     return null;
                 }
             });
@@ -648,7 +650,7 @@ public class Driver
         print(cfg.toString());
     }
 
-    static void translate(final Map<String, ModuleInfo> usedModules, final Set<String> targetModuleNames,
+    static void translate(final Map<String, ProgramUnitInfo> usedModules, final Set<String> targetModuleNames,
             final Options opts, final Path outModDir, final boolean enableMultiprocessing) throws Exception
     {
         final ConfigurationOptions cfgOpts = toCX2TCfgOptions(opts);
@@ -696,7 +698,7 @@ public class Driver
         final ThreadLocal<ThreadLocalData> threadLocalData = new ThreadLocal<ThreadLocalData>();
         for (final String modName : targetModuleNames)
         {
-            final ModuleInfo modInfo = usedModules.get(modName);
+            final ProgramUnitInfo modInfo = usedModules.get(modName);
             tasks.add(new Callable<Void>()
             {
                 public Void call() throws Exception
@@ -732,11 +734,11 @@ public class Driver
                     }
                     if (saveTransXast)
                     {
-                        ((ModuleData) modInfo).setTransXast(transXast);
+                        ((ProgramUnitData) modInfo).setTransXast(transXast);
                     }
                     if (genTransReport)
                     {
-                        ((ModuleData) modInfo).setTransReport(transReport);
+                        ((ProgramUnitData) modInfo).setTransReport(transReport);
                     }
                     if (saveDecSrc)
                     {
@@ -763,7 +765,7 @@ public class Driver
                             error(errMsg);
                             throw new Exception(errMsg, e);
                         }
-                        ((ModuleData) modInfo).setTransSrc(decSrc);
+                        ((ProgramUnitData) modInfo).setTransSrc(decSrc);
                     }
                     return null;
                 }
@@ -773,7 +775,7 @@ public class Driver
     }
 
     static void saveModData(final String dataType, final String extension,
-            Function<ModuleInfo, AsciiArrayIOStream> getData, Map<String, ModuleInfo> usedModules,
+            Function<ProgramUnitInfo, AsciiArrayIOStream> getData, Map<String, ProgramUnitInfo> usedModules,
             Set<String> targetModuleNames, final Path outDirPath, boolean enableMultiprocessing) throws Exception
     {
         getOrCreateDir(outDirPath);
@@ -781,7 +783,7 @@ public class Driver
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
         for (final String modName : targetModuleNames)
         {
-            final ModuleInfo modInfo = usedModules.get(modName);
+            final ProgramUnitInfo modInfo = usedModules.get(modName);
             final AsciiArrayIOStream data = getData.apply(modInfo);
             final Path outFilePath = outDirPath.resolve(modName + extension);
             tasks.add(new Callable<Void>()
@@ -805,88 +807,75 @@ public class Driver
         executeTasksUntilFirstError(tasks, enableMultiprocessing);
     }
 
-    static void saveXast(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames, final Path outDirPath,
+    static void saveXast(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames, final Path outDirPath,
             boolean enableMultiprocessing) throws Exception
     {
-        saveModData("XCodeML-AST", ".xast", (ModuleInfo modInfo) -> modInfo.getXast(), usedModules, targetModuleNames,
-                outDirPath, enableMultiprocessing);
-    }
-
-    static void saveTransXast(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames, final Path outDirPath,
-            boolean enableMultiprocessing) throws Exception
-    {
-        saveModData("translated XCodeML-AST", ".xast", (ModuleInfo modInfo) -> modInfo.getTransXast(), usedModules,
+        saveModData("XCodeML-AST", ".xast", (ProgramUnitInfo modInfo) -> modInfo.getXast(), usedModules,
                 targetModuleNames, outDirPath, enableMultiprocessing);
     }
 
-    static void saveTransSrc(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames, final Path outDirPath,
-            boolean enableMultiprocessing) throws Exception
-    {
-        saveModData("translated source", ".f90", (ModuleInfo modInfo) -> modInfo.getTransSrc(), usedModules,
-                targetModuleNames, outDirPath, enableMultiprocessing);
-    }
-
-    static void saveTransReport(Map<String, ModuleInfo> usedModules, Set<String> targetModuleNames,
+    static void saveTransXast(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames,
             final Path outDirPath, boolean enableMultiprocessing) throws Exception
     {
-        saveModData("transformation report", ".lst", (ModuleInfo modInfo) -> modInfo.getTransReport(), usedModules,
+        saveModData("translated XCodeML-AST", ".xast", (ProgramUnitInfo modInfo) -> modInfo.getTransXast(), usedModules,
                 targetModuleNames, outDirPath, enableMultiprocessing);
     }
 
-    static Map<String, ModuleInfo> getAvailableModulesInfo(Map<Path, FortranFileBuildInfoData> buildInfoBySrcPath,
+    static void saveTransSrc(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames,
+            final Path outDirPath, boolean enableMultiprocessing) throws Exception
+    {
+        saveModData("translated source", ".f90", (ProgramUnitInfo modInfo) -> modInfo.getTransSrc(), usedModules,
+                targetModuleNames, outDirPath, enableMultiprocessing);
+    }
+
+    static void saveTransReport(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames,
+            final Path outDirPath, boolean enableMultiprocessing) throws Exception
+    {
+        saveModData("transformation report", ".lst", (ProgramUnitInfo modInfo) -> modInfo.getTransReport(), usedModules,
+                targetModuleNames, outDirPath, enableMultiprocessing);
+    }
+
+    static Map<String, ProgramUnitInfo> getAvailableModulesInfo(
+            Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath,
             Map<Path, PreprocessedFortranSourceData> inputPPSrcFiles,
             Map<Path, PreprocessedFortranSourceData> incPPSrcFiles, Map<String, XmodData> inputXmods) throws Exception
     {
-        Map<String, ModuleInfo> infoByName = new HashMap<String, ModuleInfo>();
+        Map<String, ProgramUnitInfo> infoByName = new HashMap<String, ProgramUnitInfo>();
         // Add all modules with infos
-        for (Map.Entry<Path, FortranFileBuildInfoData> entry : buildInfoBySrcPath.entrySet())
+        for (Map.Entry<Path, FortranFileProgramUnitInfoData> entry : buildInfoBySrcPath.entrySet())
         {
             final Path srcFilePath = entry.getKey();
-            final FortranFileBuildInfoData fileData = entry.getValue();
-            ModuleDesignation modDesignation;
+            final FortranFileProgramUnitInfoData fileData = entry.getValue();
+            UnitDesignation modDesignation;
             PreprocessedFortranSourceData srcData;
             srcData = inputPPSrcFiles.get(srcFilePath);
             if (srcData != null)
             {
-                modDesignation = ModuleDesignation.Input;
+                modDesignation = UnitDesignation.Input;
             } else
             {
                 srcData = incPPSrcFiles.get(srcFilePath);
                 if (srcData != null)
                 {
-                    modDesignation = ModuleDesignation.Include;
+                    modDesignation = UnitDesignation.Include;
                 } else
                 {// Should be unreachable
                     final String errStr = sprintf(
-                            "FortranFileBuildInfoData for %s does not have corresponding preprocessed source data",
+                            "FortranFileProgramUnitInfoData for %s does not have corresponding preprocessed source data",
                             srcFilePath);
                     throw new Exception(errStr);
                 }
             }
-            for (FortranModuleInfo modInfo : fileData.getInfo().getModules())
+            for (FortranProgramUnitInfo unitInfo : fileData.getInfo().getUnits())
             {
-                final String modName = modInfo.getName();
-                final ModuleData modData = new ModuleData(ModuleType.Module, modDesignation, modInfo, fileData,
-                        srcData);
-                ModuleInfo oldData = infoByName.put(modName, modData);
+                final String unitName = unitInfo.getName();
+                final ProgramUnitData unitData = new ProgramUnitData(modDesignation, unitInfo, fileData, srcData);
+                ProgramUnitInfo oldData = infoByName.put(unitName, unitData);
                 if (oldData != null)
                 {
-                    final String errStr = sprintf("Module %s is defined in 2 source files:\n\t%s\n\t%s", modName,
-                            oldData.getSrcPath(), modData.getSrcPath());
-                    throw new Exception(errStr);
-                }
-            }
-            if (fileData.getInfo().getProgram() != null)
-            {
-                final FortranModuleInfo modInfo = fileData.getInfo().getProgram();
-                final String modName = modInfo.getName();
-                final ModuleData modData = new ModuleData(ModuleType.Program, modDesignation, modInfo, fileData,
-                        srcData);
-                ModuleInfo oldData = infoByName.put(modName, modData);
-                if (oldData != null)
-                {
-                    final String errStr = sprintf("Program %s is defined in 2 source files:\n\t%s\n\t%s", modName,
-                            oldData.getSrcPath(), modData.getSrcPath());
+                    final String errStr = sprintf(
+                            "Program units with the same name %s are defined in 2 source files:\n\t%s\n\t%s", unitName,
+                            oldData.getSrcPath(), unitData.getSrcPath());
                     throw new Exception(errStr);
                 }
             }
@@ -895,17 +884,17 @@ public class Driver
         for (Map.Entry<String, XmodData> entry : inputXmods.entrySet())
         {
             final String modName = entry.getKey();
-            ModuleInfo modData = infoByName.get(modName);
+            ProgramUnitInfo modData = infoByName.get(modName);
             if (modData == null)
             {
-                modData = new ModuleData(modName, ModuleDesignation.Include, entry.getValue());
+                modData = new ProgramUnitData(modName, UnitDesignation.Include, entry.getValue());
                 infoByName.put(modName, modData);
             }
         }
         return Collections.unmodifiableMap(infoByName);
     }
 
-    static void setXmodData(Map<String, ModuleInfo> infoByName, Set<String> targetModuleNames,
+    static void setXmodData(Map<String, ProgramUnitInfo> infoByName, Set<String> targetModuleNames,
             Map<String, XmodData> inputXmods)
     {
         BuildOrder buildOrder = Build.getParallelOrder(infoByName, targetModuleNames);
@@ -913,7 +902,7 @@ public class Driver
         while (!buildOrder.done())
         {
             final String modName = buildOrder.next();
-            ModuleInfo modInfo = infoByName.get(modName);
+            ProgramUnitInfo modInfo = infoByName.get(modName);
             XmodData modXmodData = modInfo.getXMod();
             if (modXmodData == null)
             {
@@ -929,7 +918,7 @@ public class Driver
                     final FileTime inXmodTS = inXmod.getTimestamp();
                     if (inXmodTS.compareTo(modLastTS) >= 0)
                     {
-                        ((ModuleData) modInfo).setXMod(inXmod);
+                        ((ProgramUnitData) modInfo).setXMod(inXmod);
                         modLastTS = inXmodTS;
                     } else
                     {
@@ -945,13 +934,14 @@ public class Driver
         }
     }
 
-    static Set<String> getTargetModuleNames(Map<String, ModuleInfo> availModules, boolean onlyModules, boolean onlyCLAW)
+    static Set<String> getTargetModuleNames(Map<String, ProgramUnitInfo> availModules, boolean onlyModules,
+            boolean onlyCLAW)
     {
         Set<String> targetModules = new LinkedHashSet<String>();
-        for (Map.Entry<String, ModuleInfo> entry : availModules.entrySet())
+        for (Map.Entry<String, ProgramUnitInfo> entry : availModules.entrySet())
         {
             String modName = entry.getKey();
-            ModuleInfo data = entry.getValue();
+            ProgramUnitInfo data = entry.getValue();
             if (data.isInput())
             {
                 if (onlyModules && !data.isModule())
@@ -968,23 +958,19 @@ public class Driver
         return Collections.unmodifiableSet(targetModules);
     }
 
-    static void printCLAWFiles(List<Path> inputFiles, Map<Path, FortranFileBuildInfoData> binfoBySrcPath)
+    static void printCLAWFiles(List<Path> inputFiles, Map<Path, FortranFileProgramUnitInfoData> binfoBySrcPath)
     {
         for (Path inputFilePath : inputFiles)
         {
             boolean usesCLAW = false;
-            FortranFileBuildInfo binfo = binfoBySrcPath.get(inputFilePath).getInfo();
-            for (FortranModuleInfo mInfo : binfo.getModules())
+            FortranFileProgramUnitInfo binfo = binfoBySrcPath.get(inputFilePath).getInfo();
+            for (FortranProgramUnitInfo mInfo : binfo.getUnits())
             {
                 if (mInfo.getUsesClaw())
                 {
                     usesCLAW = true;
                     break;
                 }
-            }
-            if (binfo.getProgram() != null)
-            {
-                usesCLAW |= binfo.getProgram().getUsesClaw();
             }
             if (usesCLAW)
             {
@@ -1038,7 +1024,7 @@ public class Driver
     }
 
     static Map<Path, PreprocessedFortranSourceData> preprocessFiles(List<Path> inputSrcFiles,
-            final Map<Path, FortranFileBuildInfoData> buildInfoBySrcPath, final Preprocessor pp,
+            final Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath, final Preprocessor pp,
             final boolean skipPreprocessing, boolean enableMultiprocessing) throws Exception
     {
         final int n = inputSrcFiles.size();
@@ -1052,7 +1038,7 @@ public class Driver
             {
                 public Void call() throws Exception
                 {
-                    FortranFileBuildInfoData binfoData = buildInfoBySrcPath.get(inputSrcFilePath);
+                    FortranFileProgramUnitInfoData binfoData = buildInfoBySrcPath.get(inputSrcFilePath);
                     PreprocessedFortranSourceData ppSrcFileData = null;
                     if (binfoData != null)
                     {
@@ -1153,15 +1139,15 @@ public class Driver
         return Collections.unmodifiableList(binfoFiles);
     }
 
-    static Map<Path, FortranFileBuildInfoData> loadBuildInfoFromFiles(List<Path> binfoDirs, List<Path> inputFiles,
+    static Map<Path, FortranFileProgramUnitInfoData> loadBuildInfoFromFiles(List<Path> binfoDirs, List<Path> inputFiles,
             List<Path> includeDirs, boolean enableMultiprocessing) throws Exception
     {
         final List<Path> binfoFilePaths = createBuildInfoFilesList(binfoDirs);
         final int n = binfoFilePaths.size();
-        FortranFileBuildInfoData[] data = new FortranFileBuildInfoData[n];
+        FortranFileProgramUnitInfoData[] data = new FortranFileProgramUnitInfoData[n];
         // -----------------------------------------------
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
-        final ThreadLocal<FortranFileBuildInfoDeserializer> deserializer = new ThreadLocal<FortranFileBuildInfoDeserializer>();
+        final ThreadLocal<FortranFileProgramUnitInfoDeserializer> deserializer = new ThreadLocal<FortranFileProgramUnitInfoDeserializer>();
         // -----------------------------------------------
         final Set<Path> inputFilesSet = Collections.unmodifiableSet(new HashSet<Path>(inputFiles));
         final Set<Path> includeDirsSet = Collections.unmodifiableSet(new HashSet<Path>(includeDirs));
@@ -1173,15 +1159,15 @@ public class Driver
             {
                 public Void call() throws Exception
                 {
-                    FortranFileBuildInfoDeserializer localDeserializer = deserializer.get();
+                    FortranFileProgramUnitInfoDeserializer localDeserializer = deserializer.get();
                     if (localDeserializer == null)
                     {
-                        localDeserializer = new FortranFileBuildInfoDeserializer(true);
+                        localDeserializer = new FortranFileProgramUnitInfoDeserializer(true);
                         deserializer.set(localDeserializer);
                     }
                     try
                     {
-                        FortranFileBuildInfoData binfoData = FortranFileBuildInfoData.load(binfoPath,
+                        FortranFileProgramUnitInfoData binfoData = FortranFileProgramUnitInfoData.load(binfoPath,
                                 localDeserializer);
                         Path srcFilePath = binfoData.info.getSrcFilePath();
                         Path srcFileDirPath = srcFilePath.getParent();
@@ -1194,7 +1180,7 @@ public class Driver
                                     "Build information file \"%s\" was discarded. It refers to source file outside input and include directories.",
                                     binfoPath));
                         }
-                    } catch (FortranFileBuildInfoData.LoadFailed e)
+                    } catch (FortranFileProgramUnitInfoData.LoadFailed e)
                     {
                         Driver.warning(e.getMessage());
                     } catch (Exception e)
@@ -1208,13 +1194,13 @@ public class Driver
             });
         }
         executeTasksUntilFirstError(tasks, enableMultiprocessing);
-        Map<Path, FortranFileBuildInfoData> res = new HashMap<Path, FortranFileBuildInfoData>();
-        for (FortranFileBuildInfoData binfoData : data)
+        Map<Path, FortranFileProgramUnitInfoData> res = new HashMap<Path, FortranFileProgramUnitInfoData>();
+        for (FortranFileProgramUnitInfoData binfoData : data)
         {
             if (binfoData != null)
             {
                 final Path srcFilePath = binfoData.info.getSrcFilePath();
-                FortranFileBuildInfoData prevData = res.put(srcFilePath, binfoData);
+                FortranFileProgramUnitInfoData prevData = res.put(srcFilePath, binfoData);
                 if (prevData != null)
                 {
                     Path firstInfoFilePath = prevData.filePath;
@@ -1228,11 +1214,11 @@ public class Driver
         return res;
     }
 
-    static void saveBuildInfo(List<Path> srcPaths, Map<Path, FortranFileBuildInfoData> binfoBySrcPath,
+    static void saveBuildInfo(List<Path> srcPaths, Map<Path, FortranFileProgramUnitInfoData> binfoBySrcPath,
             final Path outBuildInfoDir, final PathHashGenerator pathHashGen, boolean enableMultiprocessing)
             throws Exception
     {
-        final ThreadLocal<FortranFileBuildInfoSerializer> serializer = new ThreadLocal<FortranFileBuildInfoSerializer>();
+        final ThreadLocal<FortranFileProgramUnitInfoSerializer> serializer = new ThreadLocal<FortranFileProgramUnitInfoSerializer>();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
         for (final Path srcPath : srcPaths)
         {
@@ -1240,13 +1226,13 @@ public class Driver
             {
                 public Void call() throws Exception
                 {
-                    FortranFileBuildInfoSerializer localSerializer = serializer.get();
+                    FortranFileProgramUnitInfoSerializer localSerializer = serializer.get();
                     if (localSerializer == null)
                     {
-                        localSerializer = new FortranFileBuildInfoSerializer();
+                        localSerializer = new FortranFileProgramUnitInfoSerializer();
                         serializer.set(localSerializer);
                     }
-                    FortranFileBuildInfoData data = binfoBySrcPath.get(srcPath);
+                    FortranFileProgramUnitInfoData data = binfoBySrcPath.get(srcPath);
                     final String dirHash = pathHashGen != null ? pathHashGen.generate(srcPath.getParent()) : null;
                     data.save(outBuildInfoDir, dirHash, localSerializer);
                     return null;
@@ -1256,13 +1242,13 @@ public class Driver
         executeTasksUntilFirstError(tasks, enableMultiprocessing);
     }
 
-    static void scanFiles(List<Path> inputFiles, Map<Path, FortranFileBuildInfoData> binfoBySrcPath,
+    static void scanFiles(List<Path> inputFiles, Map<Path, FortranFileProgramUnitInfoData> binfoBySrcPath,
             Map<Path, PreprocessedFortranSourceData> ppSrcBySrcPath, Map<Path, Path> ppSrcPathBySrcPath,
             boolean enableMultiprocessing) throws Exception
     {
         final int n = inputFiles.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
-        final FortranFileBuildInfoData[] binfoDataLst = new FortranFileBuildInfoData[n];
+        final FortranFileProgramUnitInfoData[] binfoDataLst = new FortranFileProgramUnitInfoData[n];
         final ThreadLocal<FortranDepScanner> scanner = new ThreadLocal<FortranDepScanner>();
         for (int i = 0; i < n; ++i)
         {
@@ -1285,7 +1271,7 @@ public class Driver
                     final PreprocessedFortranSourceData ppData = ppSrcBySrcPath.get(srcPath);
                     final AsciiArrayIOStream ppSrc = ppData.getPPSource();
                     final List<Path> includes = ppData.getIncludeFilePaths();
-                    FortranFileBuildInfo binfo;
+                    FortranFileProgramUnitInfo binfo;
                     try
                     {
                         binfo = localScanner.scan(ppSrc.getAsInputStreamUnsafe());
@@ -1310,7 +1296,7 @@ public class Driver
                         binfo.setPPSrcFilePath(ppSrcPath);
                     }
                     binfo.setIncludes(includes);
-                    FortranFileBuildInfoData binfoData = new FortranFileBuildInfoData(binfo);
+                    FortranFileProgramUnitInfoData binfoData = new FortranFileProgramUnitInfoData(binfo);
                     binfoBySrcPath.put(srcPath, binfoData);
                     binfoDataLst[taskIdx] = binfoData;
                     return null;
@@ -1320,7 +1306,7 @@ public class Driver
         executeTasksUntilFirstError(tasks, enableMultiprocessing);
         for (int i = 0; i < n; ++i)
         {
-            final FortranFileBuildInfoData binfoData = binfoDataLst[i];
+            final FortranFileProgramUnitInfoData binfoData = binfoDataLst[i];
             if (binfoData != null)
             {
                 final Path srcPath = inputFiles.get(i);

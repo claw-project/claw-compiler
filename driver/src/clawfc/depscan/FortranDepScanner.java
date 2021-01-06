@@ -82,13 +82,14 @@ public class FortranDepScanner
         return basicScan(input, null, null);
     }
 
-    public FortranFileBuildInfo scan(InputStream input) throws FortranException, IOException, Exception
+    public FortranFileProgramUnitInfo scan(InputStream input) throws FortranException, IOException, Exception
     {
         return scan(input, null, null, null);
     }
 
-    public FortranFileBuildInfo scan(InputStream input, Path inputFilePath, OutputStream inputWithResolvedIncludes,
-            List<Path> incSearchPath) throws FortranException, IOException, Exception
+    public FortranFileProgramUnitInfo scan(InputStream input, Path inputFilePath,
+            OutputStream inputWithResolvedIncludes, List<Path> incSearchPath)
+            throws FortranException, IOException, Exception
     {
         AsciiArrayIOStream inStrm = new AsciiArrayIOStream();
         clawfc.Utils.copy(input, inStrm);
@@ -117,7 +118,7 @@ public class FortranDepScanner
             basicRes = basicScan(inputWithResolvedIncludesBuf.getAsInputStreamUnsafe(), null, null);
             modUsesClaw = detectClaw(inputWithResolvedIncludesBuf, basicRes);
         }
-        FortranFileBuildInfo res = getSummary(basicRes, modUsesClaw, linesInfo, incPaths);
+        FortranFileProgramUnitInfo res = getSummary(basicRes, modUsesClaw, linesInfo, incPaths);
         return res;
     }
 
@@ -184,27 +185,22 @@ public class FortranDepScanner
         }
     }
 
-    FortranFileBuildInfo getSummary(FortranFileBasicSummary basicSummary, Set<String> modUsesClaw,
+    FortranFileProgramUnitInfo getSummary(FortranFileBasicSummary basicSummary, Set<String> modUsesClaw,
             AsciiArrayIOStream.LinesInfo linesInfo, List<Path> incPaths)
     {
-        List<FortranModuleInfo> modules = basicSummary.modules.stream()
+        List<FortranProgramUnitInfo> units = basicSummary.units.stream()
                 .map((x) -> createInfo(x, modUsesClaw, linesInfo)).collect(Collectors.toList());
-        FortranModuleInfo program = null;
-        if (basicSummary.program != null)
-        {
-            program = createInfo(basicSummary.program, modUsesClaw, linesInfo);
-        }
-        return new FortranFileBuildInfo(modules, program, incPaths);
+        return new FortranFileProgramUnitInfo(units, incPaths);
     }
 
-    FortranModuleInfo createInfo(FortranModuleBasicInfo basicInfo, final Set<String> modUsesClaw,
+    FortranProgramUnitInfo createInfo(FortranProgramUnitBasicInfo basicInfo, final Set<String> modUsesClaw,
             final AsciiArrayIOStream.LinesInfo linesInfo)
     {
         List<clawfc.depscan.FortranStatementPosition> useModules = basicInfo.getUseModules().stream()
                 .map((x) -> createPosition(x, linesInfo)).collect(Collectors.toList());
-        clawfc.depscan.FortranStatementPosition modPos = createPosition(basicInfo.getModule(), linesInfo);
-        boolean usesClaw = modUsesClaw.contains(basicInfo.getModule().getName());
-        return new FortranModuleInfo(modPos, useModules, usesClaw);
+        clawfc.depscan.FortranStatementPosition modPos = createPosition(basicInfo.getPosition(), linesInfo);
+        boolean usesClaw = modUsesClaw.contains(basicInfo.getPosition().getName());
+        return new FortranProgramUnitInfo(basicInfo.getType(), modPos, useModules, usesClaw);
     }
 
     Set<String> detectClaw(ByteArrayIOStream inStrm, FortranFileBasicSummary summary)
@@ -212,46 +208,41 @@ public class FortranDepScanner
     {
         FortranCLAWDetector detector = new FortranCLAWDetector();
         Set<String> res = new HashSet<String>();
-        for (FortranModuleBasicInfo info : summary.modules)
+        for (FortranProgramUnitBasicInfo info : summary.units)
         {
             if (usesClaw(detector, inStrm, info))
             {
                 res.add(info.getName());
             }
         }
-        if (summary.program != null && usesClaw(detector, inStrm, summary.program))
-        {
-            res.add(summary.program.getName());
-        }
         return Collections.unmodifiableSet(res);
     }
 
-    boolean usesClaw(FortranCLAWDetector detector, ByteArrayIOStream inStrm, FortranModuleBasicInfo info)
+    boolean usesClaw(FortranCLAWDetector detector, ByteArrayIOStream inStrm, FortranProgramUnitBasicInfo info)
             throws FortranSyntaxException, IOException
     {
         return detector
-                .run(inStrm.getAsInputStreamUnsafe(info.getModule().getStartCharIdx(), info.getModule().length()));
+                .run(inStrm.getAsInputStreamUnsafe(info.getPosition().getStartCharIdx(), info.getPosition().length()));
     }
 
-    static FortranModuleBasicInfo restoreOriginalCharPositions(final FilteredContentSequence fSeq,
-            FortranModuleBasicInfo info)
+    static FortranProgramUnitBasicInfo restoreOriginalCharPositions(final FilteredContentSequence fSeq,
+            FortranProgramUnitBasicInfo info)
     {
         if (info == null)
         {
             return null;
         }
-        FortranStatementBasicPosition newMod = fSeq.getOriginal(info.getModule());
+        FortranStatementBasicPosition newMod = fSeq.getOriginal(info.getPosition());
         List<FortranStatementBasicPosition> newUseModules = info.getUseModules().stream()
                 .map((x) -> fSeq.getOriginal(x)).collect(Collectors.toList());
-        return new FortranModuleBasicInfo(newMod, Collections.unmodifiableList(newUseModules));
+        return new FortranProgramUnitBasicInfo(info.getType(), newMod, Collections.unmodifiableList(newUseModules));
     }
 
     static FortranFileBasicSummary restoreOriginalCharPositions(FilteredContentSequence fSeq,
             FortranFileBasicSummary summary)
     {
-        List<FortranModuleBasicInfo> newModules = summary.modules.stream()
+        List<FortranProgramUnitBasicInfo> newUnits = summary.units.stream()
                 .map((x) -> restoreOriginalCharPositions(fSeq, x)).collect(Collectors.toList());
-        FortranModuleBasicInfo newProgram = restoreOriginalCharPositions(fSeq, summary.program);
-        return new FortranFileBasicSummary(Collections.unmodifiableList(newModules), newProgram);
+        return new FortranFileBasicSummary(Collections.unmodifiableList(newUnits));
     }
 }

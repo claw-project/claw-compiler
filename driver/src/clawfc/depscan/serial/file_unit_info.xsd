@@ -5,11 +5,10 @@ Copyright: 2020, MeteoSwiss
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-<xs:element name='fortran_file_build_info'>
+<xs:element name='fortran_file_program_unit_info'>
     <xs:complexType>
     <xs:sequence>
-       <xs:element name = 'module' type = 'FortranModuleInfo' minOccurs = '0' maxOccurs = 'unbounded' />
-       <xs:element name = 'program' type = 'FortranModuleInfo' minOccurs = '0' maxOccurs = '1' />
+       <xs:element name = 'unit' type = 'FortranProgramUnitInfo' minOccurs = '0' maxOccurs = 'unbounded' />
        <xs:element name = 'include' type = 'xs:anyURI' minOccurs = '0' maxOccurs = 'unbounded' />
     </xs:sequence>
     <xs:attribute name="src_path" type="xs:anyURI"/>
@@ -17,7 +16,7 @@ Copyright: 2020, MeteoSwiss
 </xs:complexType>
 </xs:element>
 
-<xs:complexType name = "FortranModuleInfo">
+<xs:complexType name = "FortranProgramUnitInfo">
   <xs:sequence>
     <xs:element name = 'info' type = 'FortranStatementPosition' minOccurs = '1' maxOccurs = '1' />
     <xs:element name="used_modules" minOccurs = '1' maxOccurs = '1'>
@@ -28,8 +27,19 @@ Copyright: 2020, MeteoSwiss
       </xs:complexType>
     </xs:element>
   </xs:sequence>
+  <xs:attribute name="type" type="FortranProgramUnitType" use="required"/>
   <xs:attribute name="uses_claw" type="xs:boolean" use="required"/>
 </xs:complexType>
+
+<xs:simpleType name="FortranProgramUnitType" final="restriction" >
+    <xs:restriction base="xs:string">
+        <xs:enumeration value="Program" />
+        <xs:enumeration value="Module" />
+        <xs:enumeration value="Function" />
+        <xs:enumeration value="Subroutine" />
+        <xs:enumeration value="BlockData" />
+    </xs:restriction>
+</xs:simpleType>
 
 <xs:complexType name = "FortranStatementPosition">
   <xs:complexContent>
