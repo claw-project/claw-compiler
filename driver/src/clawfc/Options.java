@@ -84,6 +84,12 @@ public class Options
     final boolean _addParenToBinOpts;
     final String _fCompilerType;
     final String _fCompilerCmd;
+    final List<Path> _transSetPaths;
+
+    public List<Path> transSetPaths()
+    {
+        return _transSetPaths;
+    }
 
     public boolean printInstallCfg()
     {
@@ -477,6 +483,8 @@ public class Options
             ArgumentGroup fcOpts = parser.addArgumentGroup("Fortran compiler options");
             fcOpts.addArgument("--fc-type").choices(FC_COMPILER_TYPES).help("Fortran compiler type");
             fcOpts.addArgument("--fc-cmd").help("Fortran compiler cmd");
+            cOpts.addArgument("-td", "--trans-path-dir").nargs("*").action(Arguments.append())
+                    .help("Search directory for external transformation set");
             parsedArgs = parser.parseArgs(args);
         } catch (HelpScreenException hse)
         {
@@ -578,6 +586,7 @@ public class Options
         _disableMP = parsedArgs.getBoolean("disable_mp");
         _genBuildInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");
         _genModFiles = parsedArgs.getBoolean("gen_mod_files");
+        _transSetPaths = getPathList(parsedArgs, "trans-path-dir");
     }
 
     String toString(List<Path> paths)

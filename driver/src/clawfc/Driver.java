@@ -639,7 +639,7 @@ public class Driver
         final ConfigurationOptions cfgOpts = new ConfigurationOptions(opts.targetPlatform(), opts.configFile(), null,
                 opts.acceleratorDirectiveLanguage(), opts.modelConfigFile(), opts.cfgKeysOverrides(),
                 opts.showDebugOutput(), opts.maxFortranLineLength(), !opts.addPreprocLineDirectives(),
-                opts.exitOnPureFunction(), opts.addParenToBinaryOpts());
+                opts.exitOnPureFunction(), opts.addParenToBinaryOpts(), opts.transSetPaths());
         return cfgOpts;
     }
 

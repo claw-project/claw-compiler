@@ -93,7 +93,7 @@ public class CLIOptions extends ConfigurationOptions
                 getOptionalPath(parsedArgs, "model_config"), getStringList(parsedArgs, "override_cfg_key"),
                 parsedArgs.getBoolean("debug"), parsedArgs.getInt("max_fortran_line_length"),
                 parsedArgs.getBoolean("suppress_pp_line_directives"), parsedArgs.getBoolean("force_pure"),
-                parsedArgs.getBoolean("add_paren"));
+                parsedArgs.getBoolean("add_paren"), getPathList(parsedArgs, "trans-path-dir"));
         _printVersion = parsedArgs.getBoolean("version");
         _printTargets = parsedArgs.getBoolean("target_list");
         _printDirectives = parsedArgs.getBoolean("directive_list");
@@ -145,6 +145,8 @@ public class CLIOptions extends ConfigurationOptions
                     .help("Override configuration option. Has higher priority than base and user configuration");
             cOpts.addArgument("-ap", "--add-paren").action(Arguments.storeTrue())
                     .help("Force backend to add parentheses around binary mathematical operations");
+            cOpts.addArgument("-td", "--trans-path-dir").nargs("*").action(Arguments.append())
+                    .help("Search directory for external transformation set");
             parsedArgs = parser.parseArgs(args);
         } catch (HelpScreenException hse)
         {
@@ -172,6 +174,7 @@ public class CLIOptions extends ConfigurationOptions
         res.append(format("Output XCodeML AST file: %s\n", outputTranslatedXastFilePath()));
         res.append(format("Output translation report file: %s\n", translationReportFilePath()));
         res.append("Module include directories: \n" + toString(moduleIncludeDirs()));
+        res.append("External transformation set search directories: \n" + toString(transSetPaths()));
         res.append(super.toString());
         return res.toString();
     }
@@ -187,7 +190,7 @@ public class CLIOptions extends ConfigurationOptions
         return path;
     }
 
-    List<Path> getPathList(Namespace parsedArgs, String name)
+    static List<Path> getPathList(Namespace parsedArgs, String name)
     {
         List<Path> res = new ArrayList<Path>();
         List<List<String>> strs = parsedArgs.<List<String>>getList(name);

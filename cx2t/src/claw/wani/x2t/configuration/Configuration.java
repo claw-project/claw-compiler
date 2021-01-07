@@ -37,7 +37,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import claw.wani.ClawVersion;
 import claw.shenron.transformation.BlockTransformation;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
@@ -46,6 +45,7 @@ import claw.tatsu.directive.configuration.AcceleratorConfiguration;
 import claw.tatsu.directive.configuration.OpenAccConfiguration;
 import claw.tatsu.directive.configuration.OpenMpConfiguration;
 import claw.tatsu.xcodeml.xnode.Xname;
+import claw.wani.ClawVersion;
 import claw.wani.transformation.ClawBlockTransformation;
 
 /**
@@ -114,7 +114,7 @@ public class Configuration
     private List<GroupConfiguration> _groups;
     private Map<String, GroupConfiguration> _availableGroups;
     private AcceleratorConfiguration _accelerator;
-    private final String[] _transSetPaths;
+    private final List<Path> _transSetPaths;
     private boolean _forcePure = false;
     private final ModelConfig _modelConfig;
     private final int _userMaxColumns;
@@ -179,14 +179,15 @@ public class Configuration
      * @param userDefinedTarget    Target platform
      * @param userDefinedDirective Accelerator directive language
      * @param userMaxColumns       Max columns per Fortran line
+     * @param transSetPaths        Paths to transformations set jars
      * @throws Exception
      */
     public static Configuration load(final Path cfgDirPath, final Path userConfigFilePath, Path modelConfigFilePath,
-            final String userDefinedTarget, final String userDefinedDirective, Integer userMaxColumns, Context context)
-            throws Exception
+            final String userDefinedTarget, final String userDefinedDirective, Integer userMaxColumns, Context context,
+            List<Path> transSetPaths) throws Exception
     {
         Configuration cfg = new Configuration(cfgDirPath, userConfigFilePath, modelConfigFilePath, userDefinedTarget,
-                userDefinedDirective, userMaxColumns, context);
+                userDefinedDirective, userMaxColumns, context, transSetPaths);
         return cfg;
     }
 
@@ -199,8 +200,8 @@ public class Configuration
     }
 
     private Configuration(final Path cfgDirPath, final Path userConfigFilePath, Path modelConfigFilePath,
-            final String userDefinedTarget, final String userDefinedDirective, Integer userMaxColumns, Context context)
-            throws Exception
+            final String userDefinedTarget, final String userDefinedDirective, Integer userMaxColumns, Context context,
+            List<Path> transSetPaths) throws Exception
     {
         _context = context;
         _modelConfig = new ModelConfig();
@@ -210,14 +211,7 @@ public class Configuration
         boolean readDefault = true;
         Document userConf = null;
 
-        // Read the environment variable for external transformation sets
-        if (System.getenv(CLAW_TRANS_SET_PATH) != null)
-        {
-            _transSetPaths = System.getenv(CLAW_TRANS_SET_PATH).split(";");
-        } else
-        {
-            _transSetPaths = new String[0];
-        }
+        _transSetPaths = transSetPaths;
 
         // Configuration has been given by the user. Read it first.
         if (userConfigFilePath != null)
@@ -544,15 +538,15 @@ public class Configuration
      */
     private URLClassLoader loadExternalJar(String jarFile) throws FileNotFoundException, MalformedURLException
     {
-        if (_transSetPaths.length == 0)
+        if (_transSetPaths.isEmpty())
         {
             throw new FileNotFoundException(
                     "No path defined in " + CLAW_TRANS_SET_PATH + ". Unable to load transformation set: " + jarFile);
         }
         URLClassLoader external;
-        for (String path : _transSetPaths)
+        for (Path path : _transSetPaths)
         {
-            Path jar = Paths.get(path, jarFile);
+            Path jar = path.resolve(jarFile);
             if (jar.toFile().exists())
             {
                 external = new URLClassLoader(new URL[] { new URL("file://" + jar.toString()) },

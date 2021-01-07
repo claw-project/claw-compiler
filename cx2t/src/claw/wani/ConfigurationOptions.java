@@ -23,10 +23,12 @@ public class ConfigurationOptions
     final boolean _suppressPPLineDirectives;
     final boolean _exitOnPureFunction;
     final boolean _addParenToBinOpts;
+    final List<Path> _transSetPaths;
 
     public ConfigurationOptions(String targetPlatform, Path configFile, Path configDir, String accDirLanguage,
             Path modelConfigFile, List<String> cfgKeyOverrides, boolean showDebugOutput, Integer maxFLineLength,
-            boolean suppressPPLineDirectives, boolean exitOnPureFunction, boolean addParenToBinOpts)
+            boolean suppressPPLineDirectives, boolean exitOnPureFunction, boolean addParenToBinOpts,
+            List<Path> transSetPaths)
     {
         this._targetPlatform = targetPlatform;
         this._configFile = configFile;
@@ -39,6 +41,12 @@ public class ConfigurationOptions
         this._suppressPPLineDirectives = suppressPPLineDirectives;
         this._exitOnPureFunction = exitOnPureFunction;
         this._addParenToBinOpts = addParenToBinOpts;
+        this._transSetPaths = transSetPaths;
+    }
+
+    public List<Path> transSetPaths()
+    {
+        return _transSetPaths;
     }
 
     public String targetPlatform()

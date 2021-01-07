@@ -355,7 +355,7 @@ public class ClawX2T
         final Context transContext = new Context(System.err, xmOption);
         final Configuration cfg = Configuration.load(opts.configDirPath(), opts.configFilePath(),
                 opts.modelConfigFilePath(), opts.targetPlatform(), opts.accDirectiveLanguage(),
-                opts.maxFortranLineLength(), transContext);
+                opts.maxFortranLineLength(), transContext, opts.transSetPaths());
         for (String keyValue : opts.cfgKeysOverrides())
         {
             String key = keyValue.substring(0, keyValue.indexOf(":"));
