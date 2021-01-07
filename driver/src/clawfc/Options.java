@@ -704,6 +704,7 @@ public class Options
         {
             path = Utils.STARTUP_DIR.resolve(path);
         }
+        path = path.normalize();
         return path;
     }
 }
