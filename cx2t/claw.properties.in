@@ -148,6 +148,17 @@ driver.tests.classes.dir=@CLAWFC_TESTS_CLASSES_DIR@
 driver.tests.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep}
 driver.tests.report.dir=@CLAWFC_TESTS_REPORT_DIR@
 
+# CLAW tests
+claw.tests.jar=@CLAW_TESTS_JAR@
+claw.tests.dist.dir=@CLAW_TESTS_BIN_DIR@
+claw.tests.dep=${claw.tests.dist.dir}/${claw.tests.jar}
+claw.tests.src.dir=@CLAW_TESTS_SRC_DIR@
+claw.tests.gen.src.dir=@CLAW_TESTS_GEN_SRC_DIR@
+claw.tests.res.dir=@CLAW_TESTS_RES_DIR@
+claw.tests.classes.dir=@CLAW_TESTS_CLASSES_DIR@
+claw.tests.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep}
+claw.tests.report.dir=@CLAW_TESTS_REPORT_DIR@
+
 # External transformation set
 external.jar=claw-external-set.jar
 
@@ -160,6 +171,7 @@ cx2t-unit-tests.proj=${root.dir}/cx2t/unittest/build.xml
 driver.proj=${root.dir}/driver/src/build.xml
 driver-ut.proj=${root.dir}/driver/unittests/build.xml
 driver-tests.proj=${root.dir}/driver/tests/build.xml
+claw-tests.proj=${root.dir}/tests_runner/build.xml
 
 # Install
 claw.install.dir=@CMAKE_INSTALL_PREFIX@

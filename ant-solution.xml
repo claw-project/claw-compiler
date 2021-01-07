@@ -46,6 +46,14 @@
         <ant antfile="${driver-tests.proj}" target="run" />
     </target>
 
+    <target name="build-claw-tests" depends="main">
+        <ant antfile="${claw-tests.proj}" target="main" />
+    </target>
+
+    <target name="run-claw-tests" depends="build-claw-tests">
+        <ant antfile="${claw-tests.proj}" target="run" />
+    </target>
+
     <!-- Default target -->
     <target name="main" depends="prepare-int-dir, fetch-deps, build-cx2t, build-cx2t-unit-tests, build-driver"/>
 

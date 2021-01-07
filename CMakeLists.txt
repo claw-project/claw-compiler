@@ -177,6 +177,8 @@ add_subdirectory(modules)
 # Build functional test
 add_subdirectory(test)
 
+add_subdirectory(tests_runner)
+
 # Build documentation
 add_subdirectory(documentation)
 
@@ -222,10 +224,21 @@ add_custom_command(
   COMMENT "Running CLAWFC tests"
 )
 
+add_custom_target(run-claw-tests)
+add_dependencies(run-claw-tests build-claw-solution)
+add_custom_command(
+  TARGET run-claw-tests
+  COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
+  ${ANT_FLAGS} ${OFFLINE}
+  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
+  run-claw-tests
+  COMMENT "Running CLAW tests"
+)
+
 option(GENERATE_ECLIPSE_IDE_PROJECTS "Generate Eclipse IDE projects" ON)
 if(GENERATE_ECLIPSE_IDE_PROJECTS)
   message(STATUS "Generating Eclipse projects")
-  foreach(PROJECT_NAME cx2t cx2t-ut clawfc clawfc-ut clawfc-tests)
+  foreach(PROJECT_NAME cx2t cx2t-ut clawfc clawfc-ut clawfc-tests claw-tests)
       file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/ide/eclipse/${PROJECT_NAME})
       configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/${PROJECT_NAME}.project.in
                      ${CMAKE_BINARY_DIR}/ide/eclipse/${PROJECT_NAME}/.project

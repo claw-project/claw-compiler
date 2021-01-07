@@ -70,6 +70,16 @@ set(CLAWFC_TESTS_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/tests/classes")
 set(CLAWFC_TESTS_BIN_DIR "${CMAKE_BINARY_DIR}/driver/tests/bin")
 set(CLAWFC_TESTS_REPORT_DIR "${CMAKE_BINARY_DIR}/driver/test-reports")
 
+# CLAW tests
+set(CLAW_TESTS_JAR "claw-tests.jar")
+set(CLAW_TESTS_SRC_DIR "${CMAKE_SOURCE_DIR}/tests_runner/src")
+set(CLAW_TESTS_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/claw/tests/build/generated-src")
+set(CLAW_TESTS_RES_DIR "${CMAKE_SOURCE_DIR}/test")
+set(CLAW_TESTS_CLASSES_DIR "${CMAKE_BINARY_DIR}/claw/tests/classes")
+set(CLAW_TESTS_BIN_DIR "${CMAKE_BINARY_DIR}/claw/tests/bin")
+set(CLAW_TESTS_REPORT_DIR "${CMAKE_BINARY_DIR}/claw/test-reports")
+set(CLAW_TESTS_DEFAULT_WORKING_DIR "${CMAKE_BINARY_DIR}/claw/tests/run_data")
+
 #
 # OMNI Compiler variables
 #
