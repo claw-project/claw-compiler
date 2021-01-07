@@ -133,11 +133,17 @@ public class FortranDepScannerTest extends TestCase
         verifyParse("function x();endfunction x;", Arrays.asList(BasicFInfo(BPos("x", 0, 26), Arrays.asList())));
         verifyParse("function x();endfunction;", Arrays.asList(BasicFInfo(BPos("x", 0, 24), Arrays.asList())));
         verifyParse("function x();end;", Arrays.asList(BasicFInfo(BPos("x", 0, 16), Arrays.asList())));
+        verifyParse("function x();function y();end;end;", Arrays.asList(BasicFInfo(BPos("x", 0, 33), Arrays.asList())));
+
+        verifyParse("module m;contains;function x();contains;function y();end;end;end;",
+                Arrays.asList(BasicModInfo(BPos("m", 0, 64), Arrays.asList())));
 
         verifyParse("subroutine x();end subroutine x;", Arrays.asList(BasicSubInfo(BPos("x", 0, 31), Arrays.asList())));
         verifyParse("subroutine x();endsubroutine x;", Arrays.asList(BasicSubInfo(BPos("x", 0, 30), Arrays.asList())));
         verifyParse("subroutine x();endsubroutine;", Arrays.asList(BasicSubInfo(BPos("x", 0, 28), Arrays.asList())));
         verifyParse("subroutine x();end;", Arrays.asList(BasicSubInfo(BPos("x", 0, 18), Arrays.asList())));
+        verifyParse("subroutine x();contains;subroutine y(); end;end;",
+                Arrays.asList(BasicSubInfo(BPos("x", 0, 47), Arrays.asList())));
 
         verifyParse("module m; function x();end function x; end;",
                 Arrays.asList(BasicModInfo(BPos("m", 0, 42), Arrays.asList())));

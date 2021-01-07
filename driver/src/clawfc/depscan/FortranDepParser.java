@@ -331,6 +331,28 @@ public class FortranDepParser
                 return type == FortranProgramUnitType.FUNCTION || type == FortranProgramUnitType.SUBROUTINE;
             }
 
+            boolean subprogramAllowed()
+            {
+                final int unitStackSize = unitOpenStack.size();
+                if (unitStackSize == 1)
+                {
+                    return true;
+                } else if (unitStackSize == 2)
+                {
+                    final FortranProgramUnitType topUnitType = unitOpenStack.getLast().type;
+                    if (topUnitType == FortranProgramUnitType.MODULE)
+                    {
+                        return true;
+                    } else
+                    {
+                        return false;
+                    }
+                } else
+                {
+                    return false;
+                }
+            }
+
             @Override
             public void visit(OpenStatementInfo info) throws FortranSemanticException
             {
@@ -341,11 +363,19 @@ public class FortranDepParser
                 {
                     final FortranProgramUnitType type = info.type;
                     final FortranProgramUnitType lastType = unitOpenStack.peek().type;
-                    if (lastType == FortranProgramUnitType.MODULE)
-                    {// Only module can contain subunits
-                        if (isProcedure(type))
-                        {// Only procedure can be inside module
-                            unitOpenStack.push(info);
+                    if (subprogramAllowed())
+                    {
+                        if (lastType != FortranProgramUnitType.BLOCK_DATA)
+                        {
+                            if (isProcedure(type))
+                            {// Only subprograms can be contained
+                                unitOpenStack.push(info);
+                            } else
+                            {
+                                throw new FortranSemanticException(
+                                        format("%s statement is not allowed inside %s", type, lastType),
+                                        info.startChrIdx);
+                            }
                         } else
                         {
                             throw new FortranSemanticException(
@@ -354,7 +384,8 @@ public class FortranDepParser
                     } else
                     {
                         throw new FortranSemanticException(
-                                format("%s statement is not allowed inside %s", type, lastType), info.startChrIdx);
+                                format("%s statement is not allowed inside subprogram %s", type, lastType),
+                                info.startChrIdx);
                     }
                 }
             }
@@ -438,9 +469,6 @@ public class FortranDepParser
                             if (unitOpenStack.isEmpty())
                             {// Only top level units are considered program units
                                 addUnit(openInfo, closeInfo);
-                            } else
-                            {
-                                closeInfo = closeInfo;
                             }
 
                         } else
