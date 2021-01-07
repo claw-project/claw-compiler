@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import clawfc.depscan.FortranDepParser.StatementInfo;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.ByteArrayIOStream;
 
@@ -169,7 +170,9 @@ public class FortranDepScanner
     {
         try
         {
-            return parser.parse(inputStrm.getAsInputStreamUnsafe());
+            final List<StatementInfo> statements = parser.parse(inputStrm.getAsInputStreamUnsafe());
+            final FortranFileBasicSummary summary = FortranDepParser.getSummary(statements);
+            return summary;
         } catch (FortranSyntaxException e)
         {
             throw setInFilePosition(e, inputStrm);

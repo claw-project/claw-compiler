@@ -7,6 +7,9 @@ package clawfc.depscan;
 import static clawfc.Utils.toCharStream;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 
 import org.antlr.v4.runtime.CharStream;
@@ -20,15 +23,15 @@ import clawfc.depscan.parser.FortranProcedureStatementsRecognizerBaseListener;
 import clawfc.depscan.parser.FortranProcedureStatementsRecognizerLexer;
 import clawfc.depscan.parser.FortranProcedureStatementsRecognizerParser;
 
-public class FortranProcedureStatementsRecognizer
+public class FortranProcedureStatementsRecognizer implements FortranProgramUnitStatementsRecognizer
 {
-    enum Type {
-        SubroutineOpen, SubroutineClose, FunctionOpen, FunctionClose
-    };
+    public static final Set<StatementType> SUPPORTED_TYPES = new HashSet<StatementType>(
+            Arrays.asList(StatementType.FunctionOpen, StatementType.FunctionClose, StatementType.SubroutineOpen,
+                    StatementType.SubroutineClose));
 
     static class Listener extends FortranProcedureStatementsRecognizerBaseListener
     {
-        final Type expectedType;
+        final StatementType expectedType;
         public String unitName;
 
         public Exception error()
@@ -38,12 +41,12 @@ public class FortranProcedureStatementsRecognizer
 
         Exception _error;
 
-        public Listener(Type expectedType)
+        public Listener(StatementType expectedType)
         {
             this.expectedType = expectedType;
         }
 
-        void setUnitName(ParserRuleContext ctx, Type type)
+        void setUnitName(ParserRuleContext ctx, StatementType type)
         {
             try
             {
@@ -64,26 +67,26 @@ public class FortranProcedureStatementsRecognizer
         @Override
         public void exitFunction_open_name(FortranProcedureStatementsRecognizerParser.Function_open_nameContext ctx)
         {
-            setUnitName(ctx, Type.FunctionOpen);
+            setUnitName(ctx, StatementType.FunctionOpen);
         }
 
         @Override
         public void exitFunction_close_name(FortranProcedureStatementsRecognizerParser.Function_close_nameContext ctx)
         {
-            setUnitName(ctx, Type.FunctionClose);
+            setUnitName(ctx, StatementType.FunctionClose);
         }
 
         @Override
         public void exitSubroutine_open_name(FortranProcedureStatementsRecognizerParser.Subroutine_open_nameContext ctx)
         {
-            setUnitName(ctx, Type.SubroutineOpen);
+            setUnitName(ctx, StatementType.SubroutineOpen);
         }
 
         @Override
         public void exitSubroutine_close_name(
                 FortranProcedureStatementsRecognizerParser.Subroutine_close_nameContext ctx)
         {
-            setUnitName(ctx, Type.SubroutineClose);
+            setUnitName(ctx, StatementType.SubroutineClose);
         }
     }
 
@@ -105,7 +108,7 @@ public class FortranProcedureStatementsRecognizer
         parser.addErrorListener(parserErrorListener);
     }
 
-    Listener run(Type type, String input) throws IOException, Exception
+    Listener run(StatementType type, String input) throws IOException, Exception
     {
         lexer.reset();
         parser.reset();
@@ -133,6 +136,8 @@ public class FortranProcedureStatementsRecognizer
             case SubroutineClose:
                 tree = parser.subroutine_close_stmt();
                 break;
+            default:
+                break;
             }
         } catch (CancellationException e)
         {
@@ -155,23 +160,10 @@ public class FortranProcedureStatementsRecognizer
         return listener;
     }
 
-    public String parseFunctionOpen(String input) throws IOException, Exception
+    @Override
+    public String parseUnitStatement(StatementType type, String input) throws IOException, Exception
     {
-        return run(Type.FunctionOpen, input).unitName;
-    }
-
-    public String parseFunctionClose(String input) throws IOException, Exception
-    {
-        return run(Type.FunctionClose, input).unitName;
-    }
-
-    public String parseSubroutineOpen(String input) throws IOException, Exception
-    {
-        return run(Type.SubroutineOpen, input).unitName;
-    }
-
-    public String parseSubroutineClose(String input) throws IOException, Exception
-    {
-        return run(Type.SubroutineClose, input).unitName;
+        final String unitName = run(type, input).unitName;
+        return unitName != null ? unitName.toLowerCase() : null;
     }
 }

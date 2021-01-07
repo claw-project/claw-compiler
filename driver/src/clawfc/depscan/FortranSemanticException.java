@@ -10,6 +10,10 @@ public class FortranSemanticException extends FortranException
     {
         super(msg, charIdxInFile, lineIdx, charIdxInLine);
     }
+    public FortranSemanticException(String msg, Integer charIdxInFile)
+    {
+        super(msg, charIdxInFile, null, null);
+    }
 
     public FortranSemanticException(String msg)
     {

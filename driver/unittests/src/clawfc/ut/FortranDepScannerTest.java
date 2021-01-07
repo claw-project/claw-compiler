@@ -6,10 +6,7 @@ package clawfc.ut;
 
 import static clawfc.Utils.toInputStream;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,14 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ConsoleErrorListener;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
 import clawfc.depscan.FortranDepParser;
+import clawfc.depscan.FortranDepParser.StatementInfo;
 import clawfc.depscan.FortranDepScanner;
 import clawfc.depscan.FortranException;
 import clawfc.depscan.FortranFileBasicSummary;
@@ -38,384 +29,28 @@ import clawfc.depscan.FortranProgramUnitInfo;
 import clawfc.depscan.FortranSemanticException;
 import clawfc.depscan.FortranStatementBasicPosition;
 import clawfc.depscan.FortranStatementPosition;
-import clawfc.depscan.FortranSyntaxException;
-import clawfc.depscan.parser.FortranDepScannerBaseListener;
-import clawfc.depscan.parser.FortranDepScannerLexer;
-import clawfc.depscan.parser.FortranDepScannerParser;
 import clawfc.depscan.serial.FortranProgramUnitType;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.ByteArrayIOStream;
 import junit.framework.TestCase;
 
-class FortranDepScannerListener extends FortranDepScannerBaseListener
-{
-    public ArrayList<String> programOpen = new ArrayList<String>();
-    public ArrayList<String> programClose = new ArrayList<String>();
-    public ArrayList<String> moduleOpen = new ArrayList<String>();
-    public ArrayList<String> moduleClose = new ArrayList<String>();
-    public ArrayList<String> use = new ArrayList<String>();
-    public ArrayList<String> other = new ArrayList<String>();
-
-    @Override
-    public void exitModule_open_stmt(FortranDepScannerParser.Module_open_stmtContext ctx)
-    {
-        moduleOpen.add(ctx.getText());
-    }
-
-    @Override
-    public void exitModule_close_stmt(FortranDepScannerParser.Module_close_stmtContext ctx)
-    {
-        moduleClose.add(ctx.getText());
-    }
-
-    @Override
-    public void exitProgram_open_stmt(FortranDepScannerParser.Program_open_stmtContext ctx)
-    {
-        programOpen.add(ctx.getText());
-    }
-
-    @Override
-    public void exitProgram_close_stmt(FortranDepScannerParser.Program_close_stmtContext ctx)
-    {
-        programClose.add(ctx.getText());
-    }
-
-    @Override
-    public void exitUse_stmt(FortranDepScannerParser.Use_stmtContext ctx)
-    {
-        use.add(ctx.getText());
-    }
-}
-
 public class FortranDepScannerTest extends TestCase
 {
-    FortranDepScannerParser parser;
-    FortranDepScannerLexer lexer;
-    FortranDepParser depParser;
+    FortranDepParser depStmtsScanner;
     FortranDepScanner depScanner;
 
     @Override
     protected void setUp() throws Exception
     {
-        lexer = new FortranDepScannerLexer(toCharStream(""));
-        lexer.removeErrorListener(ConsoleErrorListener.INSTANCE);
-        parser = new FortranDepScannerParser(toTokenStream(""));
-        parser.removeErrorListener(ConsoleErrorListener.INSTANCE);
-        depParser = new FortranDepParser();
+        depStmtsScanner = new FortranDepParser();
         depScanner = new FortranDepScanner();
-    }
-
-    private static CharStream toCharStream(String str) throws IOException
-    {
-        InputStream inStrm = new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));
-        CharStream chrStrm = CharStreams.fromStream(inStrm, StandardCharsets.UTF_8);
-        return chrStrm;
-    }
-
-    private CommonTokenStream toTokenStream(String str) throws IOException
-    {
-        CharStream chrStrm = toCharStream(str);
-        lexer.reset();
-        lexer.setInputStream(chrStrm);
-        CommonTokenStream tokStrm = new CommonTokenStream(lexer);
-        return tokStrm;
-    }
-
-    protected void acceptString(String str) throws IOException
-    {
-        parser.reset();
-        parser.setInputStream(toTokenStream(str));
-        parser.root();
-        assertTrue(String.format("Failed to accept string \"%s\"", str),
-                parser.isMatchedEOF() && parser.getNumberOfSyntaxErrors() == 0);
-    }
-
-    protected void rejectString(String str) throws IOException
-    {
-        parser.reset();
-        parser.setInputStream(toTokenStream(str));
-        parser.root();
-        assertTrue(String.format("Failed to reject string \"%s\"", str), parser.getNumberOfSyntaxErrors() > 0);
-    }
-
-    protected String flipChrCase(String str, int idx)
-    {
-        char c = str.charAt(idx);
-        if (c >= 'a' && c <= 'z')
-        {
-            Character.toUpperCase(c);
-        } else
-        {
-            Character.toLowerCase(c);
-        }
-        str = str.substring(0, idx) + c + str.substring(idx + 1);
-        return str;
-    }
-
-    void acceptIdentifierString(String str) throws IOException
-    {
-        acceptString("module " + str + "\n end module x\n");
-    }
-
-    void rejectIdentifierString(String str) throws IOException
-    {
-        rejectString("module " + str + "\n end module x\n");
-    }
-
-    public void testIdentifier() throws Exception
-    {
-
-        for (char l = 'a'; l < 'z'; ++l)
-        {
-            acceptIdentifierString("" + l);
-            acceptIdentifierString(l + "_");
-            for (char l2 = '0'; l2 < '9'; ++l2)
-            {
-                acceptIdentifierString(("" + l) + l2);
-            }
-        }
-        for (char l = 'A'; l < 'Z'; ++l)
-        {
-            acceptIdentifierString("" + l);
-            acceptIdentifierString(l + "_");
-            for (char l2 = '0'; l2 < '9'; ++l2)
-            {
-                acceptIdentifierString(("" + l) + l2);
-            }
-        }
-        rejectIdentifierString("_");
-        for (char l2 = '0'; l2 < '9'; ++l2)
-        {
-            rejectIdentifierString("" + l2);
-        }
-    }
-
-    void acceptModuleOpenString(String str) throws IOException
-    {
-        acceptString(str + "\n end module x\n");
-    }
-
-    void rejectModuleOpenString(String str) throws IOException
-    {
-        rejectString(str + "\n end module x\n");
-    }
-
-    public void testModuleOpenStatement() throws Exception
-    {
-        acceptModuleOpenString("module module");
-        acceptModuleOpenString("module x");
-        acceptModuleOpenString(" module x");
-        acceptModuleOpenString("\tmodule x");
-        acceptModuleOpenString("\tmodule x");
-        acceptModuleOpenString("module x ");
-        acceptModuleOpenString("module x\t");
-        acceptModuleOpenString("module x\t");
-        for (int i = 0, n = "module".length(); i < n; ++i)
-        {
-            String str = flipChrCase("module", i) + " x";
-            acceptModuleOpenString(str);
-        }
-        rejectModuleOpenString("module");
-        rejectModuleOpenString("modulex");
-        rejectModuleOpenString("module x !");
-        rejectModuleOpenString("module x y");
-    }
-
-    void acceptModuleCloseString(String str) throws IOException
-    {
-        acceptString("module x\n" + str);
-    }
-
-    void rejectModuleCloseString(String str) throws IOException
-    {
-        rejectString("module x\n" + str);
-    }
-
-    public void testModuleCloseStatement() throws Exception
-    {
-        acceptModuleCloseString("end module x");
-        acceptModuleCloseString(" end module x");
-        acceptModuleCloseString("\tend module x");
-        acceptModuleCloseString("\tend module x");
-        acceptModuleCloseString("\tend\t\tmodule  x ");
-        for (int i = 0, n = "end".length(); i < n; ++i)
-        {
-            String str = flipChrCase("end", i) + " module x";
-            acceptModuleCloseString(str);
-        }
-        for (int i = 0, n = "module".length(); i < n; ++i)
-        {
-            String str = "end " + flipChrCase("module", i) + " x";
-            acceptModuleCloseString(str);
-        }
-        rejectModuleCloseString("\tend\t\tmodule  x z");
-    }
-
-    void acceptProgramOpenString(String str) throws IOException
-    {
-        acceptString(str + "\n end program x\n");
-    }
-
-    void rejectProgramOpenString(String str) throws IOException
-    {
-        rejectString(str + "\n end program x\n");
-    }
-
-    public void testProgramOpenStatement() throws Exception
-    {
-        acceptProgramOpenString("program x");
-        acceptProgramOpenString(" program x");
-        acceptProgramOpenString("\tprogram x");
-        acceptProgramOpenString("\tprogram x");
-        acceptProgramOpenString("program x ");
-        acceptProgramOpenString("program x\t");
-        acceptProgramOpenString("program x\t");
-        for (int i = 0, n = "program".length(); i < n; ++i)
-        {
-            String str = flipChrCase("program", i) + " x";
-            acceptProgramOpenString(str);
-        }
-        rejectProgramOpenString("program");
-        rejectProgramOpenString("programx");
-        rejectProgramOpenString("program x !");
-        rejectProgramOpenString("program x y");
-    }
-
-    void acceptProgramCloseString(String str) throws IOException
-    {
-        acceptString("program x\n" + str);
-    }
-
-    void rejectProgramCloseString(String str) throws IOException
-    {
-        rejectString("program x\n" + str);
-    }
-
-    public void testProgramCloseStatement() throws Exception
-    {
-        acceptProgramCloseString("end Program x");
-        acceptProgramCloseString(" end Program x");
-        acceptProgramCloseString("\tend Program x");
-        acceptProgramCloseString("\tend Program x");
-        acceptProgramCloseString("\tend\t\tProgram  xy_23");
-        for (int i = 0, n = "end".length(); i < n; ++i)
-        {
-            String str = flipChrCase("end", i) + " Program x";
-            acceptProgramCloseString(str);
-        }
-        for (int i = 0, n = "Program".length(); i < n; ++i)
-        {
-            String str = "end " + flipChrCase("Program", i) + " x";
-            acceptProgramCloseString(str);
-        }
-        rejectProgramCloseString("\tend\t\tprogram x z");
-    }
-
-    void acceptUseString(String str) throws IOException
-    {
-        acceptString("program x\n" + str + "\nend program x\n");
-    }
-
-    void rejectUseString(String str) throws IOException
-    {
-        FortranDepScannerListener res = runParser("program x\n" + str + "\nend program x\n");
-        assertEquals(1, res.programOpen.size());
-        // "Unfit" use strings are classified as "other" and therefore skipped
-        assertEquals(0, res.use.size());
-        assertEquals(1, res.programClose.size());
-        assertEquals("program x", res.programOpen.get(0));
-        assertEquals("end program x", res.programClose.get(0));
-    }
-
-    public void testUseStatement() throws Exception
-    {
-        acceptUseString("use x");
-        for (int i = 0, n = "use".length(); i < n; ++i)
-        {
-            String str = flipChrCase("use", i) + " x";
-            acceptUseString(str);
-        }
-        acceptUseString(" use x");
-        acceptUseString(" use x ");
-        acceptUseString("use x,y1=>z1");
-        acceptUseString("use x,  y1=>z1");
-        acceptUseString("use x,  y1  =>z1");
-        acceptUseString("use x,  y1  =>  z1");
-        acceptUseString("use x,  y1  =>  z1  ");
-        acceptUseString("use x,  y1  =>  z1, y2 => z2 ");
-        acceptUseString("use x,  y1  =>  z1, y2 => z2, y3 => z3 ");
-        acceptUseString("use x,  ONLY: y1");
-        for (int i = 0, n = "only".length(); i < n; ++i)
-        {
-            String str = "use x,  " + flipChrCase("only", i) + ":x";
-            acceptUseString(str);
-        }
-        acceptUseString("use x ,  ONLY : y1");
-        acceptUseString("use x,  ONLY : y1");
-        acceptUseString("use x,  ONLY: y1,y2");
-        acceptUseString("use x,  ONLY: y1,y2,y3");
-        acceptUseString("use x,  ONLY:y1=>z1");
-        acceptUseString("use x,  ONLY: y1 =>z1");
-        acceptUseString("use x,  ONLY: y1  =>z1");
-        acceptUseString("use x,  ONLY: y1  =>  z1");
-        acceptUseString("use x,  ONLY: y1  =>  z1  ");
-        acceptUseString("use x,  ONLY: y1  =>  z1, y2 => z2, y3 => z3 ");
-        rejectUseString("usex");
-        rejectUseString("use x,");
-        rejectUseString("use x y ");
-        rejectUseString("use x, y,");
-        rejectUseString("use x, ONLY ");
-        rejectUseString("use x, ONLY: x y");
-    }
-
-    FortranDepScannerListener runParser(String inputStr) throws IOException
-    {
-        FortranDepScannerListener listener = new FortranDepScannerListener();
-        parser.reset();
-        parser.setInputStream(toTokenStream(inputStr));
-        parser.setBuildParseTree(true);
-        ParseTree tree = parser.root();
-        ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(listener, tree);
-        assertTrue(String.format("Failed to accept string \"%s\"", inputStr),
-                parser.isMatchedEOF() && parser.getNumberOfSyntaxErrors() == 0);
-        return listener;
-    }
-
-    void verifyProgramStatement(String s) throws Exception
-    {
-        FortranDepScannerListener res = runParser(s);
-        assertEquals(1, res.programOpen.size());
-        assertEquals(1, res.use.size());
-        assertEquals(1, res.programClose.size());
-        assertEquals("program x", res.programOpen.get(0));
-        assertEquals("use y", res.use.get(0));
-        assertEquals("end program x", res.programClose.get(0));
-    }
-
-    public void testProgramStatement() throws Exception
-    {
-        verifyProgramStatement("program x\n" + "use y\n" + "end program x\n");
-        verifyProgramStatement("program x;use y\n" + "end program x\n");
-        verifyProgramStatement("program x;use y;end program x;");
-        verifyProgramStatement("\"program y;\";program x;use y\n" + "end program x\n");
-        verifyProgramStatement("program x; \"program y;\"\nuse y\n" + "end program x\n");
-    }
-
-    public void testModuleStatement() throws Exception
-    {
-        FortranDepScannerListener res = runParser("module x\n" + "use y\n" + "end module x\n");
-        assertEquals(1, res.moduleOpen.size());
-        assertEquals(1, res.use.size());
-        assertEquals(1, res.moduleClose.size());
-        assertEquals("module x", res.moduleOpen.get(0));
-        assertEquals("use y", res.use.get(0));
-        assertEquals("end module x", res.moduleClose.get(0));
     }
 
     FortranFileBasicSummary parse(String s) throws IOException, FortranException, Exception
     {
-        return depParser.parse(toInputStream(s));
+        List<StatementInfo> statements = depStmtsScanner.parse(toInputStream(s));
+        FortranFileBasicSummary summary = FortranDepParser.getSummary(statements);
+        return summary;
     }
 
     void verifyParse(String s, List<FortranProgramUnitBasicInfo> expModules)
@@ -451,20 +86,72 @@ public class FortranDepScannerTest extends TestCase
         return new FortranProgramUnitBasicInfo(FortranProgramUnitType.PROGRAM, unit, useModules);
     }
 
+    static FortranProgramUnitBasicInfo BasicBDataInfo(FortranStatementBasicPosition unit,
+            List<FortranStatementBasicPosition> useModules)
+    {
+        return new FortranProgramUnitBasicInfo(FortranProgramUnitType.BLOCK_DATA, unit, useModules);
+    }
+
+    static FortranProgramUnitBasicInfo BasicFInfo(FortranStatementBasicPosition unit,
+            List<FortranStatementBasicPosition> useModules)
+    {
+        return new FortranProgramUnitBasicInfo(FortranProgramUnitType.FUNCTION, unit, useModules);
+    }
+
+    static FortranProgramUnitBasicInfo BasicSubInfo(FortranStatementBasicPosition unit,
+            List<FortranStatementBasicPosition> useModules)
+    {
+        return new FortranProgramUnitBasicInfo(FortranProgramUnitType.SUBROUTINE, unit, useModules);
+    }
+
     public void testParsing() throws IOException, FortranException, Exception
     {
         verifyParse("", Arrays.asList());
         verifyParse("module x\n" + "end module\n", Arrays.asList(BasicModInfo(BPos("x", 0, 19), Arrays.asList())));
         verifyParse("module x\n" + "end module \n", Arrays.asList(BasicModInfo(BPos("x", 0, 19), Arrays.asList())));
         verifyParse("module x\n" + "end module x\n", Arrays.asList(BasicModInfo(BPos("x", 0, 21), Arrays.asList())));
+        verifyParse("module x\n" + "endmodule x\n", Arrays.asList(BasicModInfo(BPos("x", 0, 20), Arrays.asList())));
+        verifyParse("module x\n" + "endmodule\n", Arrays.asList(BasicModInfo(BPos("x", 0, 18), Arrays.asList())));
+        verifyParse("module x\n" + "end\n", Arrays.asList(BasicModInfo(BPos("x", 0, 12), Arrays.asList())));
         verifyParse(" \t\tmodule x\n" + "end module x\n",
                 Arrays.asList(BasicModInfo(BPos("x", 3, 24), Arrays.asList())));
         verifyParse(" \t\tmodule x\n" + "end module x \t\t\n",
                 Arrays.asList(BasicModInfo(BPos("x", 3, 24), Arrays.asList())));
+
+        verifyParse("end\n", Arrays.asList(BasicProgInfo(BPos("_unnamed_program", 0, 3), Arrays.asList())));
         verifyParse(" \t\tprogram x\n" + "end program x\n",
                 Arrays.asList(BasicProgInfo(BPos("x", 3, 26), Arrays.asList())));
         verifyParse(" \t\tprogram x\n" + "end program x \t\t\n",
                 Arrays.asList(BasicProgInfo(BPos("x", 3, 26), Arrays.asList())));
+        verifyParse(" \t\tprogram x\n" + "endprogram x \t\t\n",
+                Arrays.asList(BasicProgInfo(BPos("x", 3, 25), Arrays.asList())));
+        verifyParse(" \t\tprogram x\n" + "endprogram \t\t\n",
+                Arrays.asList(BasicProgInfo(BPos("x", 3, 23), Arrays.asList())));
+        verifyParse(" \t\tprogram x\n" + "end \t\t\n", Arrays.asList(BasicProgInfo(BPos("x", 3, 16), Arrays.asList())));
+
+        verifyParse("function x();end function x;", Arrays.asList(BasicFInfo(BPos("x", 0, 27), Arrays.asList())));
+        verifyParse("function x();endfunction x;", Arrays.asList(BasicFInfo(BPos("x", 0, 26), Arrays.asList())));
+        verifyParse("function x();endfunction;", Arrays.asList(BasicFInfo(BPos("x", 0, 24), Arrays.asList())));
+        verifyParse("function x();end;", Arrays.asList(BasicFInfo(BPos("x", 0, 16), Arrays.asList())));
+
+        verifyParse("subroutine x();end subroutine x;", Arrays.asList(BasicSubInfo(BPos("x", 0, 31), Arrays.asList())));
+        verifyParse("subroutine x();endsubroutine x;", Arrays.asList(BasicSubInfo(BPos("x", 0, 30), Arrays.asList())));
+        verifyParse("subroutine x();endsubroutine;", Arrays.asList(BasicSubInfo(BPos("x", 0, 28), Arrays.asList())));
+        verifyParse("subroutine x();end;", Arrays.asList(BasicSubInfo(BPos("x", 0, 18), Arrays.asList())));
+
+        verifyParse("module m; function x();end function x; end;",
+                Arrays.asList(BasicModInfo(BPos("m", 0, 42), Arrays.asList())));
+        verifyParse("module m; subroutine x();end subroutine x; end;",
+                Arrays.asList(BasicModInfo(BPos("m", 0, 46), Arrays.asList())));
+
+        verifyParse("blockdata;end;",
+                Arrays.asList(BasicBDataInfo(BPos("_unnamed_blockdata", 0, 13), Arrays.asList())));
+        verifyParse("blockdata x;end;", Arrays.asList(BasicBDataInfo(BPos("x", 0, 15), Arrays.asList())));
+        verifyParse("blockdata x;endblockdata;", Arrays.asList(BasicBDataInfo(BPos("x", 0, 24), Arrays.asList())));
+        verifyParse("blockdata x;end blockdata;", Arrays.asList(BasicBDataInfo(BPos("x", 0, 25), Arrays.asList())));
+        verifyParse("blockdata x;end block data;", Arrays.asList(BasicBDataInfo(BPos("x", 0, 26), Arrays.asList())));
+        verifyParse("blockdata x;end block data x;", Arrays.asList(BasicBDataInfo(BPos("x", 0, 28), Arrays.asList())));
+
         verifyParse("module x\n" + "use y\n" + "end module x\n",
                 Arrays.asList(BasicModInfo(BPos("x", 0, 27), Arrays.asList(BPos("y", 9, 14)))));
         verifyParse("module x\n" + " \t\tuse y\n" + "end module x\n",
@@ -489,17 +176,17 @@ public class FortranDepScannerTest extends TestCase
 
     }
 
-    public void testSyntaxError() throws IOException, FortranException, Exception
+    public void testUnmatchedModuleEndError() throws IOException, FortranException, Exception
     {
         try
         {
             parse("end module x\n");
-        } catch (FortranSyntaxException e)
+        } catch (FortranSemanticException e)
         {
-            assertTrue(e.getMessage().contains("extraneous input 'end module x'"));
-            assertEquals(Integer.valueOf(0), e.getLineIndex());
-            assertEquals(Integer.valueOf(0), e.getCharIdxInLine());
-            assertEquals(null, e.getCharIdxInFile());
+            assertEquals("Unmatched END MODULE x", e.getMessage());
+            assertEquals(null, e.getLineIndex());
+            assertEquals(null, e.getCharIdxInLine());
+            assertEquals(Integer.valueOf(0), e.getCharIdxInFile());
             return;
         }
         assertTrue(false);
@@ -512,7 +199,7 @@ public class FortranDepScannerTest extends TestCase
             parse("module x\n" + "end module y\n");
         } catch (FortranSemanticException e)
         {
-            assertEquals("End module name \"y\" does not match current module name \"x\"", e.getMessage());
+            assertEquals("MODULE open name \"x\" does not match close name \"y\"", e.getMessage());
             assertEquals(null, e.getLineIndex());
             assertEquals(null, e.getCharIdxInLine());
             assertEquals(Integer.valueOf(9), e.getCharIdxInFile());
@@ -528,7 +215,7 @@ public class FortranDepScannerTest extends TestCase
             parse("module x\n" + "end module x\n" + "module x\n" + "end module x\n");
         } catch (FortranSemanticException e)
         {
-            assertEquals("Double definition of module \"x\"", e.getMessage());
+            assertEquals("MODULE \"x\" has the same name as prior MODULE", e.getMessage());
             assertEquals(null, e.getLineIndex());
             assertEquals(null, e.getCharIdxInLine());
             assertEquals(Integer.valueOf(22), e.getCharIdxInFile());

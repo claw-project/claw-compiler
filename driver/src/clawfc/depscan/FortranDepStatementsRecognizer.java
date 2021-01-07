@@ -8,8 +8,11 @@ import static clawfc.Utils.toCharStream;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 
 import org.antlr.v4.runtime.CharStream;
@@ -23,8 +26,12 @@ import clawfc.depscan.parser.FortranDepStatementsRecognizerBaseListener;
 import clawfc.depscan.parser.FortranDepStatementsRecognizerLexer;
 import clawfc.depscan.parser.FortranDepStatementsRecognizerParser;
 
-public class FortranDepStatementsRecognizer
+public class FortranDepStatementsRecognizer implements FortranProgramUnitStatementsRecognizer
 {
+    public static final Set<StatementType> SUPPORTED_TYPES = new HashSet<StatementType>(Arrays.asList(
+            StatementType.BlockDataOpen, StatementType.BlockDataClose, StatementType.ModuleOpen,
+            StatementType.ModuleClose, StatementType.ProgramOpen, StatementType.ProgramClose, StatementType.UseModule));
+
     public static class RenamedSymbol
     {
         public RenamedSymbol(String from, String to)
@@ -54,13 +61,9 @@ public class FortranDepStatementsRecognizer
         public final List<RenamedSymbol> useRenamedSymbols;
     }
 
-    enum Type {
-        ModuleOpen, ModuleClose, ProgramOpen, ProgramClose, BlockDataOpen, BlockDataClose, UseModule
-    };
-
     static class Listener extends FortranDepStatementsRecognizerBaseListener
     {
-        final Type expectedType;
+        final StatementType expectedType;
         public String unitName;
         public String moduleName;
         public boolean useOnly = false;
@@ -77,12 +80,12 @@ public class FortranDepStatementsRecognizer
 
         Exception _error;
 
-        public Listener(Type expectedType)
+        public Listener(StatementType expectedType)
         {
             this.expectedType = expectedType;
         }
 
-        void setUnitName(ParserRuleContext ctx, Type type)
+        void setUnitName(ParserRuleContext ctx, StatementType type)
         {
             try
             {
@@ -103,37 +106,37 @@ public class FortranDepStatementsRecognizer
         @Override
         public void exitModule_open_name(FortranDepStatementsRecognizerParser.Module_open_nameContext ctx)
         {
-            setUnitName(ctx, Type.ModuleOpen);
+            setUnitName(ctx, StatementType.ModuleOpen);
         }
 
         @Override
         public void exitModule_close_name(FortranDepStatementsRecognizerParser.Module_close_nameContext ctx)
         {
-            setUnitName(ctx, Type.ModuleClose);
+            setUnitName(ctx, StatementType.ModuleClose);
         }
 
         @Override
         public void exitProgram_open_name(FortranDepStatementsRecognizerParser.Program_open_nameContext ctx)
         {
-            setUnitName(ctx, Type.ProgramOpen);
+            setUnitName(ctx, StatementType.ProgramOpen);
         }
 
         @Override
         public void exitProgram_close_name(FortranDepStatementsRecognizerParser.Program_close_nameContext ctx)
         {
-            setUnitName(ctx, Type.ProgramClose);
+            setUnitName(ctx, StatementType.ProgramClose);
         }
 
         @Override
         public void exitBlock_data_open_name(FortranDepStatementsRecognizerParser.Block_data_open_nameContext ctx)
         {
-            setUnitName(ctx, Type.BlockDataOpen);
+            setUnitName(ctx, StatementType.BlockDataOpen);
         }
 
         @Override
         public void exitBlock_data_close_name(FortranDepStatementsRecognizerParser.Block_data_close_nameContext ctx)
         {
-            setUnitName(ctx, Type.BlockDataClose);
+            setUnitName(ctx, StatementType.BlockDataClose);
         }
 
         @Override
@@ -141,7 +144,7 @@ public class FortranDepStatementsRecognizer
         {
             try
             {
-                if (expectedType == Type.UseModule)
+                if (expectedType == StatementType.UseModule)
                 {
                     moduleName = ctx.getText();
                 } else
@@ -160,7 +163,7 @@ public class FortranDepStatementsRecognizer
         {
             try
             {
-                if (expectedType == Type.UseModule)
+                if (expectedType == StatementType.UseModule)
                 {
                     useOnly = true;
                 } else
@@ -179,7 +182,7 @@ public class FortranDepStatementsRecognizer
         {
             try
             {
-                if (expectedType == Type.UseModule)
+                if (expectedType == StatementType.UseModule)
                 {
                     useSymName = ctx.getText();
                 } else
@@ -198,7 +201,7 @@ public class FortranDepStatementsRecognizer
         {
             try
             {
-                if (expectedType == Type.UseModule)
+                if (expectedType == StatementType.UseModule)
                 {
                     String from = ctx.getText();
                     useRenamedSymbols.add(new RenamedSymbol(from, useSymName));
@@ -218,7 +221,7 @@ public class FortranDepStatementsRecognizer
         {
             try
             {
-                if (expectedType == Type.UseModule)
+                if (expectedType == StatementType.UseModule)
                 {
                     useOnlySymName = ctx.getText();
                 } else
@@ -238,7 +241,7 @@ public class FortranDepStatementsRecognizer
         {
             try
             {
-                if (expectedType == Type.UseModule)
+                if (expectedType == StatementType.UseModule)
                 {
                     String from = ctx.getText();
                     useRenamedSymbols.add(new RenamedSymbol(from, useOnlySymName));
@@ -259,7 +262,7 @@ public class FortranDepStatementsRecognizer
         {
             try
             {
-                if (expectedType == Type.UseModule)
+                if (expectedType == StatementType.UseModule)
                 {
                     if (useOnlySymName != null)
                     {
@@ -295,7 +298,7 @@ public class FortranDepStatementsRecognizer
         parser.addErrorListener(parserErrorListener);
     }
 
-    Listener run(Type type, String input) throws IOException, Exception
+    Listener run(StatementType type, String input) throws IOException, Exception
     {
         lexer.reset();
         parser.reset();
@@ -354,39 +357,15 @@ public class FortranDepStatementsRecognizer
         return listener;
     }
 
-    public String parseModuleOpen(String input) throws IOException, Exception
+    public String parseUnitStatement(StatementType type, String input) throws IOException, Exception
     {
-        return run(Type.ModuleOpen, input).unitName;
-    }
-
-    public String parseModuleClose(String input) throws IOException, Exception
-    {
-        return run(Type.ModuleClose, input).unitName;
-    }
-
-    public String parseProgramOpen(String input) throws IOException, Exception
-    {
-        return run(Type.ProgramOpen, input).unitName;
-    }
-
-    public String parseProgramClose(String input) throws IOException, Exception
-    {
-        return run(Type.ProgramClose, input).unitName;
-    }
-
-    public String parseBlockDataOpen(String input) throws IOException, Exception
-    {
-        return run(Type.BlockDataOpen, input).unitName;
-    }
-
-    public String parseBlockDataClose(String input) throws IOException, Exception
-    {
-        return run(Type.BlockDataClose, input).unitName;
+        final String unitName = run(type, input).unitName;
+        return unitName != null ? unitName.toLowerCase() : null;
     }
 
     public UseModuleData parseUse(String input) throws IOException, Exception
     {
-        Listener l = run(Type.UseModule, input);
-        return new UseModuleData(l.moduleName, l.useOnly, l.useSymbols, l.useRenamedSymbols);
+        Listener l = run(StatementType.UseModule, input);
+        return new UseModuleData(l.moduleName.toLowerCase(), l.useOnly, l.useSymbols, l.useRenamedSymbols);
     }
 }
