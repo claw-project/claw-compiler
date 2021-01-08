@@ -1,7 +1,7 @@
 PROGRAM claw_test
- INTEGER :: istart = 0
+ INTEGER :: istart = 1
  INTEGER :: iend = 10
- INTEGER :: jstart = 0
+ INTEGER :: jstart = 1
  INTEGER :: jend = 20
 
  CALL kcache ( istart , iend , jstart , jend )
@@ -15,14 +15,19 @@ SUBROUTINE kcache ( istart , iend , jstart , jend )
  INTEGER , INTENT(IN) :: jend
  INTEGER :: i
  INTEGER :: j
- REAL ( KIND= 8 ) :: array6 ( istart : iend , istart : iend )
- REAL ( KIND= 8 ) :: array7 ( istart : iend , istart : iend )
- REAL ( KIND= 8 ) :: array8 ( istart : iend , istart : iend )
- REAL ( KIND= 8 ) :: array9 ( istart : iend , istart : iend )
+ REAL ( KIND= 8 ) :: array6 ( istart : iend , jstart : jend )
+ REAL ( KIND= 8 ) :: array7 ( istart : iend , jstart : jend )
+ REAL ( KIND= 8 ) :: array8 ( istart : iend , jstart : jend )
+ REAL ( KIND= 8 ) :: array9 ( istart : iend , jstart : jend )
  REAL ( KIND= 8 ) :: array6_k_m1
  REAL ( KIND= 8 ) :: array7_k_m1
  REAL ( KIND= 8 ) :: array8_k_m1
  REAL ( KIND= 8 ) :: array9_k_m1
+
+  array6(:, :) = 0.0
+  array7(:, :) = 0.0
+  array8(:, :) = 0.0
+  array9(:, :) = 0.0
 
  DO i = istart , iend , 1
   array6 ( i , 1 ) = 1.0

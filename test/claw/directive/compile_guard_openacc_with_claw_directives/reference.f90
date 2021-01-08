@@ -1,7 +1,7 @@
 PROGRAM compile_guard_test
 
- CALL dummy_subroutine ( )
-END PROGRAM compile_guard_test
+ CALL dummy_subroutine
+END PROGRAM
 
 SUBROUTINE dummy_subroutine ( )
 
