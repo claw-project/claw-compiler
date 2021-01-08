@@ -65,12 +65,12 @@ public class Driver
         Driver driver = new Driver();
         Driver.verifyInstall();
         Options opts = Options.parseCmdlineArguments(args);
-        if (!opts.verbose())
-        {
-            Utils.log.setLevel(java.util.logging.Level.WARNING);
-        }
         if (opts != null)
         {
+            if (!opts.verbose())
+            {
+                Utils.log.setLevel(java.util.logging.Level.WARNING);
+            }
             verifyOptions(opts);
             driver.execute(opts);
         }
