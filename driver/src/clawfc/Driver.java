@@ -696,9 +696,9 @@ public class Driver
             public final AsciiArrayIOStream decSrcNoIgnore;
         }
         final ThreadLocal<ThreadLocalData> threadLocalData = new ThreadLocal<ThreadLocalData>();
-        for (final String modName : targetModuleNames)
+        for (final String unitName : targetModuleNames)
         {
-            final ProgramUnitInfo modInfo = usedModules.get(modName);
+            final ProgramUnitInfo unitInfo = usedModules.get(unitName);
             tasks.add(new Callable<Void>()
             {
                 public Void call() throws Exception
@@ -717,13 +717,13 @@ public class Driver
                     AsciiArrayIOStream errStrmBuf = new AsciiArrayIOStream();
                     try
                     {
-                        AsciiArrayIOStream xast = modInfo.getXast();
+                        AsciiArrayIOStream xast = unitInfo.getXast();
                         ClawX2T.run(cfg, modIncDirs, xast.getAsInputStreamUnsafe(), transReport, transXast,
                                 localData.decSrc, new PrintStream(errStrmBuf), null);
                     } catch (Exception e)
                     {
-                        String errMsg = sprintf("Call to CX2T translator for module %s failed",
-                                Build.moduleNameWithLocation(modInfo));
+                        String errMsg = sprintf("Call to CX2T translator for %s %s failed", unitInfo.getType(),
+                                Build.moduleNameWithLocation(unitInfo));
                         if (debugTransform)
                         {
                             errMsg += sprintf("\nstderr:\n\n%s",
@@ -734,11 +734,11 @@ public class Driver
                     }
                     if (saveTransXast)
                     {
-                        ((ProgramUnitData) modInfo).setTransXast(transXast);
+                        ((ProgramUnitData) unitInfo).setTransXast(transXast);
                     }
                     if (genTransReport)
                     {
-                        ((ProgramUnitData) modInfo).setTransReport(transReport);
+                        ((ProgramUnitData) unitInfo).setTransReport(transReport);
                     }
                     if (saveDecSrc)
                     {
@@ -749,7 +749,7 @@ public class Driver
                         } catch (Exception e)
                         {
                             String errMsg = sprintf("Removal of ignore directives failed for module %s",
-                                    Build.moduleNameWithLocation(modInfo));
+                                    Build.moduleNameWithLocation(unitInfo));
                             error(errMsg);
                             throw new Exception(errMsg, e);
                         }
@@ -761,11 +761,11 @@ public class Driver
                         } catch (Exception e)
                         {
                             String errMsg = sprintf("Removal of verbatim directives failed for module %s",
-                                    Build.moduleNameWithLocation(modInfo));
+                                    Build.moduleNameWithLocation(unitInfo));
                             error(errMsg);
                             throw new Exception(errMsg, e);
                         }
-                        ((ProgramUnitData) modInfo).setTransSrc(decSrc);
+                        ((ProgramUnitData) unitInfo).setTransSrc(decSrc);
                     }
                     return null;
                 }
