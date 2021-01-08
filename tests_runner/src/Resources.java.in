@@ -13,4 +13,5 @@ public class Resources
     public static final Path DEFAULT_WORKING_DIR = Paths.get("@CLAW_TESTS_DEFAULT_WORKING_DIR@");
     public static final Path INT_INSTALL_DIR = Paths.get("@INT_CLAW_HOME@");
     public static final Path DRIVER_PATH() { return INT_INSTALL_DIR.resolve("bin/@CLAWFC_JAR@"); }
+    public static final Path FC_PATH = Paths.get("@FPP@");
 };
