@@ -114,24 +114,25 @@ public class FortranCLAWScannerTest extends TestCase
         verifyDirective(" \t! \t$claw \t");
         verifyDirective(" \t! \t$claw \t bla bla bla");
         verifyDirective(" \t! \t$claw \t bla &");
-        verifyGuard("!$omp claw");
-        verifyGuard("!$oMp claw");
-        verifyGuard("!$OmP claw");
-        verifyGuard(" \t!$omp claw");
-        verifyGuard(" \t! \t$omp claw");
-        verifyGuard(" \t! \t$omp\t claw");
-        verifyGuard(" \t! \t$omp\t claw \t");
-        verifyGuard("!$acc claw");
-        verifyGuard("!$aCc claw");
-        verifyGuard("!$AcC claw");
-        verifyGuard(" \t!$acc claw");
-        verifyGuard(" \t! \t$acc claw");
-        verifyGuard(" \t! \t$acc\t claw");
-        verifyGuard(" \t! \t$acc\t claw \t");
+        verifyGuard("!$omp claw-guard");
+        verifyGuard("!$oMp claw-guard");
+        verifyGuard("!$OmP claw-guard");
+        verifyGuard(" \t!$omp claw-guard");
+        verifyGuard(" \t! \t$omp claw-guard");
+        verifyGuard(" \t! \t$omp\t claw-guard");
+        verifyGuard(" \t! \t$omp\t claw-guard \t");
+        verifyGuard("!$acc claw-guard");
+        verifyGuard("!$aCc claw-guard");
+        verifyGuard("!$AcC claw-guard");
+        verifyGuard(" \t!$acc claw-guard");
+        verifyGuard(" \t! \t$acc claw-guard");
+        verifyGuard(" \t! \t$acc\t claw-guard");
+        verifyGuard(" \t! \t$acc\t claw-guard \t");
         verifyRecognition("!$claw\n" + " \t! \t$claw\n", Arrays.asList("!$claw", " \t! \t$claw"), Arrays.asList());
-        verifyRecognition("!$claw\n" + "!$claw\r\n" + "!$omp claw\n" + " \t! \t$claw\n" + " \t! \t$omp\t claw \t\n",
+        verifyRecognition(
+                "!$claw\n" + "!$claw\r\n" + "!$omp claw-guard\n" + " \t! \t$claw\n" + " \t! \t$omp\t claw-guard \t\n",
                 Arrays.asList("!$claw", "!$claw", " \t! \t$claw"),
-                Arrays.asList("!$omp claw", " \t! \t$omp\t claw \t"));
+                Arrays.asList("!$omp claw-guard", " \t! \t$omp\t claw-guard \t"));
     }
 
     private void verifyLineNumbers(String str, List<Integer> directives, List<Integer> guards) throws Exception
@@ -145,10 +146,10 @@ public class FortranCLAWScannerTest extends TestCase
     public void testLineNumbersExtraction() throws Exception
     {
         verifyLineNumbers("!$claw", Arrays.asList(1), Arrays.asList());
-        verifyLineNumbers("!$omp claw", Arrays.asList(), Arrays.asList(1));
-        verifyLineNumbers("!$claw\n" + "!$omp claw", Arrays.asList(1), Arrays.asList(2));
-        verifyLineNumbers("1\n" + "2\n" + "!$claw\n" + "4\n" + "!$omp claw", Arrays.asList(3), Arrays.asList(5));
-        verifyLineNumbers("!$claw\n" + "2\n" + "!$claw\n" + "4\n" + "!$omp claw", Arrays.asList(1, 3),
+        verifyLineNumbers("!$omp claw-guard", Arrays.asList(), Arrays.asList(1));
+        verifyLineNumbers("!$claw\n" + "!$omp claw-guard", Arrays.asList(1), Arrays.asList(2));
+        verifyLineNumbers("1\n" + "2\n" + "!$claw\n" + "4\n" + "!$omp claw-guard", Arrays.asList(3), Arrays.asList(5));
+        verifyLineNumbers("!$claw\n" + "2\n" + "!$claw\n" + "4\n" + "!$omp claw-guard", Arrays.asList(1, 3),
                 Arrays.asList(5));
     }
 }

@@ -50,19 +50,19 @@ public class FortranCLAWDetectorTest extends TestCase
         verifyDetection(" \t! \t$claw \t");
         verifyDetection(" \t! \t$claw \t bla bla bla");
         verifyDetection(" \t! \t$claw \t bla &");
-        verifyDetection("!$omp claw");
-        verifyDetection("!$oMp claw");
-        verifyDetection("!$OmP claw");
-        verifyDetection(" \t!$omp claw");
-        verifyDetection(" \t! \t$omp claw");
-        verifyDetection(" \t! \t$omp\t claw");
-        verifyDetection(" \t! \t$omp\t claw \t");
-        verifyDetection("!$acc claw");
-        verifyDetection("!$aCc claw");
-        verifyDetection("!$AcC claw");
-        verifyDetection(" \t!$acc claw");
-        verifyDetection(" \t! \t$acc claw");
-        verifyDetection(" \t! \t$acc\t claw");
-        verifyDetection(" \t! \t$acc\t claw \t");
+        verifyDetection("!$omp claw-guard");
+        verifyDetection("!$oMp claw-guard");
+        verifyDetection("!$OmP claw-guard");
+        verifyDetection(" \t!$omp claw-guard");
+        verifyDetection(" \t! \t$omp claw-guard");
+        verifyDetection(" \t! \t$omp\t claw-guard");
+        verifyDetection(" \t! \t$omp\t claw-guard \t");
+        verifyDetection("!$acc claw-guard");
+        verifyDetection("!$aCc claw-guard");
+        verifyDetection("!$AcC claw-guard");
+        verifyDetection(" \t!$acc claw-guard");
+        verifyDetection(" \t! \t$acc claw-guard");
+        verifyDetection(" \t! \t$acc\t claw-guard");
+        verifyDetection(" \t! \t$acc\t claw-guard \t");
     }
 }
