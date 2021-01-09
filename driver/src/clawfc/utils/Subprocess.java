@@ -45,6 +45,7 @@ public class Subprocess
             this.dst = dst;
             this.error = null;
             this.stopSignaled = false;
+            setDaemon(true);
         }
 
         void readAllData() throws IOException
