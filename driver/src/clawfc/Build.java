@@ -150,7 +150,7 @@ public class Build
                 for (String sModName : stack)
                 {
                     stackStr.append(String.join("", Collections.nCopies(offset, " ")));
-                    stackStr.append(moduleWithLocation(sModName));
+                    stackStr.append(moduleWithLocation(sModName) + "\n");
                     offset += 1;
                 }
                 errMsg += stackStr.toString();
