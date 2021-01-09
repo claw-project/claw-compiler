@@ -333,6 +333,9 @@ public class FortranDepParser
 
             boolean subprogramAllowed()
             {
+                return true;
+                /*-Check disabled because of currently unsupported INTERFACE block, which
+                can contain procedure declarations
                 final int unitStackSize = unitOpenStack.size();
                 if (unitStackSize == 1)
                 {
@@ -350,7 +353,7 @@ public class FortranDepParser
                 } else
                 {
                     return false;
-                }
+                }*/
             }
 
             @Override
