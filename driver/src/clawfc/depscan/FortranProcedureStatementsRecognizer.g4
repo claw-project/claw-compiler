@@ -7,7 +7,7 @@
  */
 grammar FortranProcedureStatementsRecognizer;
 
-function_open_stmt : subroutine_specifier*  return_type? FUNCTION function_open_name PROCEDURE_ARGS FUNCTION_RESULT? EOF;
+function_open_stmt : subroutine_specifier*  return_type? subroutine_specifier* FUNCTION function_open_name PROCEDURE_ARGS FUNCTION_RESULT? EOF;
 function_open_name : identifier;
 
 function_close_stmt : ((END (FUNCTION function_close_name?)?) | (ENDFUNCTION function_close_name?)) EOF;
