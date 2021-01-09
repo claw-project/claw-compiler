@@ -405,8 +405,7 @@ public class Options
             ArgumentGroup cOpts = parser.addArgumentGroup("Compiler options");
             cOpts.addArgument("-I", "--pp-include-dir").nargs("*").action(Arguments.append()).help(
                     "Add the directory to the search path for include files reference in preprocessor directives");
-            outOpts.addArgument("-PO", "--pp-output-dir")
-                    .help("Output directory for preprocessed FORTRAN source files");
+            cOpts.addArgument("-PO", "--pp-output-dir").help("Output directory for preprocessed FORTRAN source files");
             cOpts.addArgument("-D", "--add-macro").nargs("*").action(Arguments.append()).help("Predefine macro");
             cOpts.addArgument("-SI", "--src-include-dir").nargs("*").action(Arguments.append())
                     .help("Add directory to the search path for the source of referenced Fortran modules");
