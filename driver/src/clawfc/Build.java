@@ -18,6 +18,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import clawfc.depscan.FortranSemanticException;
+import clawfc.depscan.serial.FortranProgramUnitType;
 
 public class Build
 {
@@ -80,17 +81,18 @@ public class Build
             dfs(root);
         }
 
-        String moduleWithLocation(String name)
+        String unitWithLocation(String name)
         {
             ProgramUnitInfo info = availModules.get(name);
             Path srcFilePath = info.getSrcPath();
+            final FortranProgramUnitType type = info.getType();
             if (info.getSrcInfo() != null)
             {
                 long lineNum = info.getSrcInfo().getStartLineIdx() + 1;
-                return String.format("%s (%s:%s)", name, srcFilePath, lineNum);
+                return String.format("%s %s (%s:%s)", type, name, srcFilePath, lineNum);
             } else
             {
-                return String.format("%s (%s)", name, srcFilePath);
+                return String.format("%s %s (%s)", type, name, srcFilePath);
             }
         }
 
@@ -117,8 +119,8 @@ public class Build
                 } else
                 {
                     String reqModName = stack.get(stack.size() - 1);
-                    String errMsg = String.format("Circle dependency between modules %s and %s",
-                            moduleWithLocation(reqModName), moduleWithLocation(modName));
+                    String errMsg = String.format("Circle dependency between %s and %s", unitWithLocation(reqModName),
+                            unitWithLocation(modName));
                     stack.add(modName);
                     StringBuilder stackStr = new StringBuilder();
                     stackStr.append("\nInclude stack:\n");
@@ -128,10 +130,10 @@ public class Build
                         stackStr.append(String.join("", Collections.nCopies(offset, " ")));
                         if (modName.equals(sModName))
                         {
-                            stackStr.append("[" + moduleWithLocation(sModName) + "]\n");
+                            stackStr.append("[" + unitWithLocation(sModName) + "]\n");
                         } else
                         {
-                            stackStr.append(moduleWithLocation(sModName) + "\n");
+                            stackStr.append(unitWithLocation(sModName) + "\n");
                         }
                         offset += 1;
                     }
@@ -142,15 +144,15 @@ public class Build
             {
                 String reqModName = stack.get(stack.size() - 1);
                 String errMsg = String.format(
-                        "Module \"%s\" used by module %s is not defined in any file under given search path", modName,
-                        moduleWithLocation(reqModName));
+                        "Module \"%s\" used by %s is not defined in any file under given search path", modName,
+                        unitWithLocation(reqModName));
                 StringBuilder stackStr = new StringBuilder();
                 stackStr.append("\nInclude stack:\n");
                 int offset = 0;
                 for (String sModName : stack)
                 {
                     stackStr.append(String.join("", Collections.nCopies(offset, " ")));
-                    stackStr.append(moduleWithLocation(sModName) + "\n");
+                    stackStr.append(unitWithLocation(sModName) + "\n");
                     offset += 1;
                 }
                 errMsg += stackStr.toString();

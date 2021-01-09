@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -230,14 +231,8 @@ public class Driver
                     return;
                 }
                 final Map<String, XmodData> inputXmods;
-                if (!opts.moduleIncludeDirs().isEmpty())
-                {
-                    info("Load input Xmod files...");
-                    inputXmods = loadXmodFiles(opts.moduleIncludeDirs());
-                } else
-                {
-                    inputXmods = Collections.emptyMap();
-                }
+                info("Load input Xmod files...");
+                inputXmods = loadXmodFiles(opts.moduleIncludeDirs(), true);
                 info("Verifying build set...");
                 final Map<String, ProgramUnitInfo> availModules = getAvailableModulesInfo(buildInfoBySrcPath,
                         inputPPSrcFiles, incPPSrcFiles, inputXmods);
@@ -264,7 +259,7 @@ public class Driver
                 }
                 if (opts.xmodOutputDir() != null)
                 {
-                    saveXmods(usedModules, targetModuleNames, !opts.resolveDependencies(), opts.xmodOutputDir());
+                    saveXmods(usedModules, targetModuleNames, !opts.resolveDependencies(), opts.xmodOutputDir(), true);
                 }
                 if (opts.generateModFiles())
                 {
@@ -559,7 +554,7 @@ public class Driver
     }
 
     static void saveXmods(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames,
-            final boolean onlyForTargets, final Path outDirPath) throws Exception
+            final boolean onlyForTargets, final Path outDirPath, final boolean ignoreStdCompilerLibs) throws Exception
     {// It is best to save xmods in order so that file modifications dates will be in
      // the right sequence
         BuildOrder buildOrder = Build.getParallelOrder(usedModules, targetModuleNames);
@@ -571,7 +566,10 @@ public class Driver
                 if (modInfo.isModule())
                 {
                     final XmodData xmodData = modInfo.getXMod();
-                    xmodData.save(outDirPath);
+                    if (!ignoreStdCompilerLibs || !xmodData.isStdCompilerMod())
+                    {
+                        xmodData.save(outDirPath);
+                    }
                 }
             }
             buildOrder.onProcessed(modName);
@@ -980,18 +978,26 @@ public class Driver
         }
     }
 
-    static Map<String, XmodData> loadXmodFiles(List<Path> includeDirs) throws Exception
+    static Map<String, XmodData> loadXmodFiles(List<Path> includeDirs, boolean addStdCompilerLibs) throws Exception
     {
         Map<String, XmodData> modByName = new LinkedHashMap<String, XmodData>();
+        final List<Path> stdCompilerLibsPaths = Arrays.asList(cfg().defaultStdXmodDir(), cfg().omniDefaultStdXmodDir());
+        if (addStdCompilerLibs)
+        {
+            includeDirs = new ArrayList<Path>(includeDirs);
+            includeDirs.addAll(stdCompilerLibsPaths);
+        }
         List<Path> uniqueDirs = BuildInfo.createDirListFromPaths(includeDirs);
         Map<Path, List<Path>> incDirFiles = BuildInfo.createModuleDirFileLists(uniqueDirs);
         for (Map.Entry<Path, List<Path>> dirFiles : incDirFiles.entrySet())
         {
+            final Path dirPath = dirFiles.getKey();
+            final boolean isStdMod = stdCompilerLibsPaths.contains(dirPath);
             for (Path modFilePath : dirFiles.getValue())
             {
                 final String modFileName = modFilePath.getFileName().toString();
                 final String modName = removeExtension(modFileName);
-                XmodData data = new XmodData(modName, new FileInfoImpl(modFilePath));
+                XmodData data = new XmodData(modName, new FileInfoImpl(modFilePath), isStdMod);
                 XmodData oldData = modByName.put(modName, data);
                 if (oldData != null)
                 {

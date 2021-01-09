@@ -4,6 +4,8 @@
  */
 package clawfc.tests;
 
+import static clawfc.BuildInfo.XMOD_FILE_SEARCH_PATTERN;
+import static clawfc.BuildInfo.createDirFileList;
 import static clawfc.Utils.collectIntoString;
 import static clawfc.Utils.fileExists;
 import static clawfc.Utils.recreateDir;
@@ -103,6 +105,25 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         {
             Path resFilePath = OUT_MOD_DIR.resolve(modName);
             Path refFilePath = REF_MOD_DIR.resolve(modName);
+            this.equalsTxtFiles(resFilePath, refFilePath);
+        }
+    }
+
+    public void testStdInclude() throws Exception
+    {
+        final Path INPUT_FILEPATH = RES_DIR.resolve("xmod_generation/std_includes/input/1.f90");
+        final Path REF_MOD_DIR = RES_DIR.resolve("xmod_generation/std_includes/reference");
+        final Path OUT_MOD_DIR = TMP_DIR.resolve("mods");
+        final String modName = "mod1.xmod";
+        String[] args = new String[] { "--stop-xmod-gen", "--skip-pp", "--disable-mp", "-MO", OUT_MOD_DIR.toString(),
+                INPUT_FILEPATH.toString() };
+        run(args);
+        final List<Path> outXmods = createDirFileList(OUT_MOD_DIR, XMOD_FILE_SEARCH_PATTERN);
+        assertEquals(1, outXmods.size());
+        final Path resFilePath = OUT_MOD_DIR.resolve(modName);
+        assertEquals(resFilePath, outXmods.get(0));
+        {
+            final Path refFilePath = REF_MOD_DIR.resolve(modName);
             this.equalsTxtFiles(resFilePath, refFilePath);
         }
     }

@@ -24,9 +24,9 @@ public class BuildInfo
 {
     public static final String[] BUILDINFO_FILE_EXTENSIONS = new String[] { "fif", "bif" };
     public static final String XMOD_EXTENSION = "xmod";
-    static final Pattern FORTRAN_FILE_SEARCH_PATTERN = generateExtensionPattern(Utils.FORTRAN_FILE_EXTENSIONS);
-    static final Pattern BUILDINFO_FILE_SEARCH_PATTERN = generateExtensionPattern(BUILDINFO_FILE_EXTENSIONS);
-    static final Pattern XMOD_FILE_SEARCH_PATTERN = generateExtensionPattern(new String[] { XMOD_EXTENSION });
+    public static final Pattern FORTRAN_FILE_SEARCH_PATTERN = generateExtensionPattern(Utils.FORTRAN_FILE_EXTENSIONS);
+    public static final Pattern BUILDINFO_FILE_SEARCH_PATTERN = generateExtensionPattern(BUILDINFO_FILE_EXTENSIONS);
+    public static final Pattern XMOD_FILE_SEARCH_PATTERN = generateExtensionPattern(new String[] { XMOD_EXTENSION });
 
     static Pattern generateExtensionPattern(String[] extensions)
     {
@@ -125,7 +125,7 @@ public class BuildInfo
         return createDirFileList(dir, FORTRAN_FILE_SEARCH_PATTERN);
     }
 
-    static List<Path> createDirFileList(Path dir, Pattern pattern) throws IOException
+    public static List<Path> createDirFileList(Path dir, Pattern pattern) throws IOException
     {
         ArrayList<Path> files = new ArrayList<Path>();
         Files.list(dir).filter(s -> pattern.matcher(s.toString()).matches()).forEach(files::add);

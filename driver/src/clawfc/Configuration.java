@@ -64,10 +64,10 @@ public class Configuration
     {
         if (OMNI_HOME_ENV != null)
         {
-            return Paths.get(OMNI_HOME_ENV);
+            return Paths.get(OMNI_HOME_ENV).normalize();
         } else
         {
-            return Paths.get(cfgProperties.getProperty("omni.home"));
+            return Paths.get(cfgProperties.getProperty("omni.home")).normalize();
         }
     }
 

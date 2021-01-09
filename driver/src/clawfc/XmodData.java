@@ -20,6 +20,15 @@ public class XmodData
     final String modName;
     final Path filePath;
     final FileTime ts;
+    final boolean stdCompilerMod;
+
+    /**
+     * @return Module is part of compiler standard library
+     */
+    public boolean isStdCompilerMod()
+    {
+        return stdCompilerMod;
+    }
 
     public Path getFilePath()
     {
@@ -40,12 +49,13 @@ public class XmodData
         return data;
     }
 
-    public XmodData(String modName, FileInfo xmodFileInfo)
+    public XmodData(String modName, FileInfo xmodFileInfo, boolean stdCompilerMod)
     {
         this.modName = modName;
         data = null;
         filePath = xmodFileInfo.getPath();
         ts = xmodFileInfo.getLastModifiedTS();
+        this.stdCompilerMod = stdCompilerMod;
     }
 
     public XmodData(String modName, FileInfo xmodFileInfo, ByteArrayIOStream data)
@@ -54,6 +64,7 @@ public class XmodData
         this.data = data;
         filePath = xmodFileInfo.getPath();
         ts = xmodFileInfo.getLastModifiedTS();
+        stdCompilerMod = false;
     }
 
     /**
