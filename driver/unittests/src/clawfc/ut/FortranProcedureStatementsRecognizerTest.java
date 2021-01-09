@@ -70,6 +70,11 @@ public class FortranProcedureStatementsRecognizerTest extends TestCase
         acceptSubroutineOpen("pure subroutine f(a, b)", "f");
         acceptSubroutineOpen("pure elemental subroutine f(a, b)", "f");
         acceptSubroutineOpen("pure elemental recursive subroutine f(a, b)", "f");
+        acceptSubroutineOpen(" subroutine f bind(C)", "f");
+        acceptSubroutineOpen(" subroutine f bind ( C ) ", "f");
+        acceptSubroutineOpen(" subroutine f bind(C,name=\"f\")", "f");
+        acceptSubroutineOpen(" subroutine f bind(C,name='f')", "f");
+        acceptSubroutineOpen(" subroutine f bind ( C , name = 'f' ) ", "f");
     }
 
     void acceptSubroutineClose(String line, String name) throws IOException, Exception
@@ -124,6 +129,13 @@ public class FortranProcedureStatementsRecognizerTest extends TestCase
         acceptFunctionOpen("integer(kind=(1+(1 + 1))) function f(a, b) result(r)", "f");
         acceptFunctionOpen("integer(kind=(1+2), len=(3+4)) function f(a, b) result(r)", "f");
         acceptFunctionOpen(" pure integer(kind=(1+2), len=(3+4)) function f(a, b) result(r)", "f");
+        acceptFunctionOpen(" function f() bind(C)", "f");
+        acceptFunctionOpen(" function f() bind ( C ) ", "f");
+        acceptFunctionOpen(" function f() bind(C,name=\"f\")", "f");
+        acceptFunctionOpen(" function f() bind(C,name='f')", "f");
+        acceptFunctionOpen(" function f() bind ( C , name = 'f' ) ", "f");
+        acceptFunctionOpen(" function f() bind(C) result(x)", "f");
+        acceptFunctionOpen(" function f() result(x) bind(C)", "f");
     }
 
     void verifyFunctionClose(String line, String name) throws IOException, Exception
