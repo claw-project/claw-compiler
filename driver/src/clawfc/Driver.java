@@ -40,6 +40,7 @@ import claw.wani.ConfigurationOptions;
 import clawfc.ProgramUnitData.UnitDesignation;
 import clawfc.Utils.ExecuteTasks;
 import clawfc.depscan.FortranDepScanner;
+import clawfc.depscan.FortranException;
 import clawfc.depscan.FortranFileProgramUnitInfo;
 import clawfc.depscan.FortranFileProgramUnitInfoDeserializer;
 import clawfc.depscan.FortranFileProgramUnitInfoSerializer;
@@ -1279,13 +1280,23 @@ public class Driver
                     {
                         Path ppSrcPath = ppSrcPathBySrcPath.get(srcPath);
                         String errMsg;
+                        String lineNumStr = "";
+                        if (e instanceof FortranException)
+                        {
+                            final Integer lineNum = ((FortranException) e).getLineIndex();
+                            if (lineNum != null)
+                            {
+                                lineNumStr = sprintf(":%s", lineNum);
+                            }
+                        }
                         if (ppSrcPath == null)
                         {
-                            errMsg = sprintf("Exception thrown while scanning (preprocessed) file \"%s\"", srcPath);
+                            errMsg = sprintf("Exception thrown while scanning (preprocessed) file \"%s%s\"", srcPath,
+                                    lineNumStr);
                         } else
                         {
-                            errMsg = sprintf("Exception thrown while scanning \"%s\" (preprocessed \"%s\")", ppSrcPath,
-                                    srcPath);
+                            errMsg = sprintf("Exception thrown while scanning \"%s%s\" (preprocessed \"%s\")",
+                                    ppSrcPath, lineNumStr, srcPath);
                         }
                         throw new Exception(errMsg, e);
                     }

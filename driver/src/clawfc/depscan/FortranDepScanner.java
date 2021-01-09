@@ -102,6 +102,13 @@ public class FortranDepScanner
         {
             basicRes = basicScan(inStrm.getAsInputStreamUnsafe(), null, null);
             modUsesClaw = detectClaw(inStrm, basicRes);
+        } catch (FortranException e)
+        {
+            if (e.getCharIdxInFile() != null)
+            {
+                e.setLineIndex(linesInfo.getLineIdx(e.getCharIdxInFile()));
+            }
+            throw e;
         } catch (ContainsIncludesException e)
         {
             AsciiArrayIOStream inputWithResolvedIncludesBuf = new AsciiArrayIOStream();
