@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import clawfc.utils.AsciiArrayIOStream;
+import clawfc.utils.Subprocess;
 import clawfc.utils.SubprocessFailed;
 
 public class FortranFrontEnd
@@ -106,11 +107,13 @@ public class FortranFrontEnd
     }
 
     /**
-     * @param args Output parameter, for error handling. Input contents ignored.
+     * @param args Output parameter, only for error handling. Input contents
+     *             ignored.
+     * @throws Exception
      */
     public static boolean run(Configuration cfg, InputStream inputSrc, OutputStream output, OutputStream outputErr,
             Collection<Path> inputModDirs, Path modOutDir, Path workingDir, Collection<String> options,
-            Path inputFilepath, List<String> args) throws IOException, InterruptedException
+            Path inputFilepath, List<String> args) throws Exception
     {
         final String inputFilepathStr = inputFilepath != null ? inputFilepath.toString() : null;
         if (args == null)
@@ -130,17 +133,12 @@ public class FortranFrontEnd
             args.add("-M" + modIncDir.toString());
         }
         args.addAll(options);
-        ProcessBuilder pb = new ProcessBuilder(args);
-        pb.directory(workingDir.toFile());
-        Process p = pb.start();
-        try (OutputStream ffrontStdin = p.getOutputStream())
-        {
-            copy(inputSrc, ffrontStdin);
-        }
-        final int retCode = p.waitFor();
+        final AsciiArrayIOStream ppStdout = new AsciiArrayIOStream();
+        final AsciiArrayIOStream ppStderr = new AsciiArrayIOStream();
+        final int retCode = Subprocess.call(args, workingDir, ppStdout, ppStderr, inputSrc);
         if (retCode == 0)
         {
-            try (InputStream pStdout = p.getInputStream())
+            try (InputStream pStdout = ppStdout.getAsInputStreamUnsafe())
             {
                 if (inputFilepathStr != null)
                 {
@@ -153,7 +151,7 @@ public class FortranFrontEnd
             return true;
         } else
         {
-            try (InputStream pStderr = p.getErrorStream())
+            try (InputStream pStderr = ppStderr.getAsInputStreamUnsafe())
             {
                 if (inputFilepathStr != null)
                 {
@@ -169,21 +167,19 @@ public class FortranFrontEnd
 
     public static boolean run(Configuration cfg, InputStream inputSrc, OutputStream outputSrc, OutputStream outputErr,
             Collection<Path> inputModDirs, Path modOutDir, Path workingDir, Collection<String> options,
-            Path inputFilepath) throws IOException, InterruptedException
+            Path inputFilepath) throws Exception
     {
         return run(cfg, inputSrc, outputSrc, outputErr, inputModDirs, modOutDir, workingDir, options, inputFilepath,
                 null);
     }
 
     public static boolean run(Configuration cfg, InputStream inputSrc, OutputStream outputSrc, OutputStream outputErr,
-            Collection<Path> inputModDirs, Path modOutDir, Path workingDir, Collection<String> options)
-            throws IOException, InterruptedException
+            Collection<Path> inputModDirs, Path modOutDir, Path workingDir, Collection<String> options) throws Exception
     {
         return run(cfg, inputSrc, outputSrc, outputErr, inputModDirs, modOutDir, workingDir, options, null, null);
     }
 
-    void run(Path inputFilepath, InputStream inputSrc, OutputStream output, Collection<String> options)
-            throws Failed, IOException, InterruptedException
+    void run(Path inputFilepath, InputStream inputSrc, OutputStream output, Collection<String> options) throws Exception
     {
         DirData localTmp = dirData.get();
         if (localTmp == null)
@@ -202,14 +198,12 @@ public class FortranFrontEnd
         }
     }
 
-    void generateXmod(Path inputFilepath, InputStream inputSrc, OutputStream output)
-            throws Failed, IOException, InterruptedException
+    void generateXmod(Path inputFilepath, InputStream inputSrc, OutputStream output) throws Exception
     {
         run(inputFilepath, inputSrc, output, xmodOpts);
     }
 
-    void generateAST(Path inputFilepath, InputStream inputSrc, OutputStream output)
-            throws Failed, IOException, InterruptedException
+    void generateAST(Path inputFilepath, InputStream inputSrc, OutputStream output) throws Exception
     {
         run(inputFilepath, inputSrc, output, astOpts);
     }

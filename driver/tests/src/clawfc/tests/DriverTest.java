@@ -10,4 +10,10 @@ public class DriverTest extends clawfc.tests.utils.DriverTestCase
     {
         run(new String[0]);
     }
+
+    public void testHelp() throws Exception
+    {
+        String[] args = new String[] { "--help" };
+        run(args);
+    }
 }

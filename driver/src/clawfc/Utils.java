@@ -34,8 +34,10 @@ import java.util.logging.Logger;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
+import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.FileInfo;
 import clawfc.utils.FileInfoImpl;
+import clawfc.utils.Subprocess;
 
 public class Utils
 {
@@ -50,16 +52,14 @@ public class Utils
 
     public static String getCmdOutput(String... args) throws Exception
     {
-        ProcessBuilder pb = new ProcessBuilder(args);
-        pb.redirectErrorStream(true);
-        Process p = pb.start();
-        final int retCode = p.waitFor();
+        AsciiArrayIOStream stdout = new AsciiArrayIOStream();
+        final int retCode = Subprocess.call(Arrays.asList(args), STARTUP_DIR, stdout, null, null, null, true);
         if (retCode != 0)
         {
             throw new RuntimeException(
                     String.format("Cmd \"%s\" failed with return code ", String.join(" ", args), retCode));
         }
-        String result = collectIntoString(p.getInputStream());
+        String result = collectIntoString(stdout.getAsInputStreamUnsafe());
         return result;
     }
 
@@ -114,6 +114,19 @@ public class Utils
             {
                 out.write(buffer, 0, len);
             } else
+            {
+                return;
+            }
+            numBytes -= len;
+        }
+    }
+
+    public static void skip(InputStream in, byte[] buffer, int numBytes) throws IOException
+    {
+        while (numBytes > 0)
+        {
+            int len = in.read(buffer, 0, Integer.min(buffer.length, numBytes));
+            if (len == -1)
             {
                 return;
             }

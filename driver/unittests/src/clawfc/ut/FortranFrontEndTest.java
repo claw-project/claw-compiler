@@ -6,7 +6,6 @@ package clawfc.ut;
 
 import static clawfc.Utils.collectIntoString;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,7 +52,7 @@ public class FortranFrontEndTest extends TestCase
     }
 
     RunResult run(InputStream inStrm, Path inFilename, List<Path> inModDirs, Path outModDir, List<String> opts)
-            throws IOException, InterruptedException
+            throws Exception
     {
         AsciiArrayIOStream stdout = new AsciiArrayIOStream();
         AsciiArrayIOStream stderr = new AsciiArrayIOStream();
@@ -81,8 +80,7 @@ public class FortranFrontEndTest extends TestCase
         }
     }
 
-    RunResult run(InputStream inStrm, Path inFilename, Path outModDir, List<Path> inModDirs)
-            throws IOException, InterruptedException
+    RunResult run(InputStream inStrm, Path inFilename, Path outModDir, List<Path> inModDirs) throws Exception
     {
         return run(inStrm, inFilename, inModDirs, outModDir, Collections.emptyList());
     }
@@ -92,7 +90,7 @@ public class FortranFrontEndTest extends TestCase
         return in.replaceFirst("time=\".*\"", "time=\"\"");
     }
 
-    public void testRun() throws IOException, InterruptedException
+    public void testRun() throws Exception
     {
         Path tmpModOutDirDir = Files.createTempDirectory(null);
         try
@@ -116,7 +114,7 @@ public class FortranFrontEndTest extends TestCase
         }
     }
 
-    public void testRunWithFilenameReplacement() throws IOException, InterruptedException
+    public void testRunWithFilenameReplacement() throws Exception
     {
         Path tmpModOutDirDir = Files.createTempDirectory(null);
         try
@@ -140,7 +138,7 @@ public class FortranFrontEndTest extends TestCase
         }
     }
 
-    public void testStdInclude() throws IOException, InterruptedException
+    public void testStdInclude() throws Exception
     {
         Path tmpModOutDirDir = Files.createTempDirectory(null);
         try
@@ -165,7 +163,7 @@ public class FortranFrontEndTest extends TestCase
         }
     }
 
-    public void testError() throws IOException, InterruptedException
+    public void testError() throws Exception
     {
         Path tmpModOutDirDir = Files.createTempDirectory(null);
         try
@@ -187,7 +185,7 @@ public class FortranFrontEndTest extends TestCase
         }
     }
 
-    public void testErrorWithFilenameReplacement() throws IOException, InterruptedException
+    public void testErrorWithFilenameReplacement() throws Exception
     {
         Path tmpModOutDirDir = Files.createTempDirectory(null);
         try
@@ -209,7 +207,7 @@ public class FortranFrontEndTest extends TestCase
         }
     }
 
-    public void testXmodOnlyGeneration() throws IOException, InterruptedException
+    public void testXmodOnlyGeneration() throws Exception
     {
         Path tmpModOutDirDir = Files.createTempDirectory(null);
         try

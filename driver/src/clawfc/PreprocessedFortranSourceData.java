@@ -61,7 +61,7 @@ public class PreprocessedFortranSourceData
     }
 
     /* Preprocess input source file */
-    public static PreprocessedFortranSourceData load(Path srcFilePath, Preprocessor preprocessor) throws Exception
+    public static PreprocessedFortranSourceData create(Path srcFilePath, Preprocessor preprocessor) throws Exception
     {
         Set<Path> incFilePaths = new HashSet<Path>();
         AsciiArrayIOStream ppSrc;

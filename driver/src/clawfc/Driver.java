@@ -1045,7 +1045,7 @@ public class Driver
                         ppSrcFileData = PreprocessedFortranSourceData.load(inputSrcFilePath, binfoData.getInfo());
                     } else if (!skipPreprocessing)
                     {
-                        ppSrcFileData = PreprocessedFortranSourceData.load(inputSrcFilePath, pp);
+                        ppSrcFileData = PreprocessedFortranSourceData.create(inputSrcFilePath, pp);
                     } else
                     {
                         ppSrcFileData = PreprocessedFortranSourceData.load(inputSrcFilePath);

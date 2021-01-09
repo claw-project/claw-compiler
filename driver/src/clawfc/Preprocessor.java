@@ -21,6 +21,7 @@ import java.util.Set;
 import clawfc.depscan.FortranIncludesResolver;
 import clawfc.depscan.PreprocessorOutputScanner;
 import clawfc.utils.AsciiArrayIOStream;
+import clawfc.utils.Subprocess;
 import clawfc.utils.SubprocessFailed;
 
 public class Preprocessor
@@ -236,20 +237,15 @@ public class Preprocessor
                     + sprintf(" \"%s\" does not satisfy the requirement", inputFilePath));
         }
         // ------------------------------------------
-        ProcessBuilder pb = new ProcessBuilder(args);
-        pb.directory(workingDir.toFile());
-        Process p = pb.start();
-        final int retCode = p.waitFor();
+        final AsciiArrayIOStream ppStdout = new AsciiArrayIOStream();
+        final AsciiArrayIOStream ppStderr = new AsciiArrayIOStream();
+        final int retCode = Subprocess.call(args, workingDir, ppStdout, ppStderr);
         if (retCode == 0)
         {
             AsciiArrayIOStream bufPP;
             if (info.supportsRedirection)
             {
-                bufPP = new AsciiArrayIOStream();
-                try (InputStream inStrm = p.getInputStream())
-                {
-                    Utils.copy(inStrm, bufPP);
-                }
+                bufPP = ppStdout;
             } else
             {
                 Path outFilePath = internalOutputFilePath(info, inputFilePath, workingDir);
@@ -275,9 +271,9 @@ public class Preprocessor
             return bufNoFtnInc;
         } else
         {
-            try (InputStream pStderr = p.getErrorStream())
+            try (InputStream pStderrStrm = ppStderr.getAsInputStreamUnsafe())
             {
-                throw new Failed(args, null, pStderr);
+                throw new Failed(args, null, pStderrStrm);
             }
         }
     }

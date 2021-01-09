@@ -10,8 +10,6 @@ import static clawfc.Utils.sprintf;
 
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +19,8 @@ import java.util.List;
 import claw.tests.Resources;
 import clawfc.Driver;
 import clawfc.utils.ByteArrayIOStream;
-import clawfc.utils.SubprocessFailed;
+import clawfc.utils.Subprocess;
+import clawfc.utils.Subprocess.CallResult;
 
 public abstract class Utils
 {
@@ -54,7 +53,7 @@ public abstract class Utils
                 System.setErr(new PrintStream(stdErr));
                 System.setOut(new PrintStream(stdOut));
                 Driver.run(args.stream().toArray(String[]::new));
-                res = new CallResult(collectIntoString(stdErr.getAsInputStreamUnsafe()),
+                res = new CallResult(0, collectIntoString(stdErr.getAsInputStreamUnsafe()),
                         collectIntoString(stdOut.getAsInputStreamUnsafe()));
             } catch (Exception e)
             {
@@ -81,46 +80,11 @@ public abstract class Utils
             List<String> execArgs = new ArrayList<String>(args.size() + 1);
             execArgs.add(exec.toString());
             execArgs.addAll(args);
-            return runSubProcess(execArgs, workingDir);
+            return Subprocess.callWithResult(execArgs, workingDir);
         } catch (Exception e)
         {
             throw new Exception(sprintf("%s call failed", name), e);
         }
 
-    }
-
-    public static class CallResult
-    {
-        public final String stderr;
-        public final String stdout;
-
-        public CallResult(String stderr, String stdout)
-        {
-            this.stderr = stderr;
-            this.stdout = stdout;
-        }
-    }
-
-    public static CallResult runSubProcess(final List<String> args, Path workingDir)
-            throws SubprocessFailed, IOException, InterruptedException
-    {
-        ProcessBuilder pb = new ProcessBuilder(args);
-        pb.directory(workingDir.toFile());
-        Process p = pb.start();
-        final int retCode = p.waitFor();
-        if (retCode == 0)
-        {
-            try (InputStream stdout = p.getInputStream(); InputStream stderr = p.getErrorStream())
-            {
-                CallResult res = new CallResult(collectIntoString(stderr), collectIntoString(stdout));
-                return res;
-            }
-        } else
-        {
-            try (InputStream stdout = p.getInputStream(); InputStream stderr = p.getErrorStream())
-            {
-                throw new SubprocessFailed(args, stderr, stdout);
-            }
-        }
     }
 }
