@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import clawfc.Configuration.FortranCompilerVendor;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.helper.HelpScreenException;
 import net.sourceforge.argparse4j.impl.Arguments;
@@ -25,8 +26,6 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 public class Options
 {
-    public static final List<String> FC_COMPILER_TYPES = Collections
-            .unmodifiableList(Arrays.asList("Cray", "Intel", "GNU", "PGI", "NAG"));
     final boolean _printInstallCfg;
     final boolean _printVersion;
     final boolean _printTargets;
@@ -82,7 +81,7 @@ public class Options
     final boolean _dumpCX2TArgs;
     final boolean _exitOnPureFunction;
     final boolean _addParenToBinOpts;
-    final String _fCompilerType;
+    final FortranCompilerVendor _fCompilerVendor;
     final String _fCompilerCmd;
     final List<Path> _transSetPaths;
 
@@ -366,9 +365,9 @@ public class Options
         return _addParenToBinOpts;
     }
 
-    public String fortranCompilerType()
+    public FortranCompilerVendor fortranCompilerType()
     {
-        return _fCompilerType;
+        return _fCompilerVendor;
     }
 
     public String fortranCompilerCmd()
@@ -480,7 +479,9 @@ public class Options
             pOpts.addArgument("--add-trans-opts", "--Wx").nargs("*").action(Arguments.append())
                     .help("Add Xcode translator option");
             ArgumentGroup fcOpts = parser.addArgumentGroup("Fortran compiler options");
-            fcOpts.addArgument("--fc-type").choices(FC_COMPILER_TYPES).help("Fortran compiler type");
+            final List<String> FC_COMPILER_VENDORS = Arrays.stream(FortranCompilerVendor.values())
+                    .map(val -> val.toString()).collect(Collectors.toList());
+            fcOpts.addArgument("--fc-vendor").choices(FC_COMPILER_VENDORS).help("Fortran compiler type");
             fcOpts.addArgument("--fc-cmd").help("Fortran compiler cmd");
             cOpts.addArgument("-td", "--trans-path-dir").nargs("*").action(Arguments.append())
                     .help("Search directory for external transformation set");
@@ -580,7 +581,8 @@ public class Options
         _dumpCX2TArgs = parsedArgs.getBoolean("dump_cx2t_args");
         _exitOnPureFunction = parsedArgs.getBoolean("force_pure");
         _addParenToBinOpts = parsedArgs.getBoolean("add_paren");
-        _fCompilerType = parsedArgs.getString("fc_type");
+        final String fcCompilerVendorStr = parsedArgs.getString("fc_vendor");
+        _fCompilerVendor = fcCompilerVendorStr != null ? FortranCompilerVendor.valueOf(fcCompilerVendorStr) : null;
         _fCompilerCmd = parsedArgs.getString("fc_cmd");
         _disableMP = parsedArgs.getBoolean("disable_mp");
         _genBuildInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");

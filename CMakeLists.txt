@@ -83,8 +83,13 @@ elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Intel")
   include(compiler/intel.cmake)
 elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "NAG")
   include(compiler/nag.cmake)
-else()
+elseif("${CMAKE_Fortran_COMPILER_ID}" MATCHES "GNU")
   include(compiler/gnu.cmake)
+else()
+message(
+  FATAL_ERROR
+  "Unsupported Fortran compiler ${CMAKE_Fortran_COMPILER_ID}"
+)
 endif()
 
 message(

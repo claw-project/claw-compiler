@@ -12,6 +12,10 @@ import java.util.logging.Logger;
 
 public class Configuration
 {
+    public static enum FortranCompilerVendor {
+        cray, intel, gnu, portland, nag
+    }
+
     public static final String PROPERTIES_FILENAME = "/config/clawfc.properties";
     private final static Logger LOGGER = Logger.getLogger(Configuration.class.getName());
 
@@ -30,9 +34,9 @@ public class Configuration
         return cfgProperties.getProperty("claw.commit");
     }
 
-    public String defaultFortranCompilerType()
+    public FortranCompilerVendor defaultFortranCompilerVendor()
     {
-        return cfgProperties.getProperty("claw.fc.default.type");
+        return FortranCompilerVendor.valueOf(cfgProperties.getProperty("claw.fc.default.vendor"));
     }
 
     public String defaultFortranCompilerCmd()
@@ -113,7 +117,7 @@ public class Configuration
         s.append(String.format("claw.name : %s\n", name()));
         s.append(String.format("claw.version : %s\n", version()));
         s.append(String.format("claw.commit : %s\n", commit()));
-        s.append(String.format("claw.defaultFortranCompilerType : %s\n", defaultFortranCompilerType()));
+        s.append(String.format("claw.defaultFortranCompilerType : %s\n", defaultFortranCompilerVendor()));
         s.append(String.format("claw.defaultFortranCompilerCmd : %s\n", defaultFortranCompilerCmd()));
         s.append(String.format("claw.installRoot : %s\n", installRoot()));
         s.append(String.format("claw.cfg.dir : %s [%s]\n", configDir(), cfgProperties.getProperty("claw.cfg.dir")));

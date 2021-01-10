@@ -19,9 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import clawfc.Configuration.FortranCompilerVendor;
 import clawfc.Driver;
 import clawfc.utils.AsciiArrayIOStream;
-import clawfc.utils.SimplePathHashGenerator;;
+import clawfc.utils.SimplePathHashGenerator;
 
 public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
 {
@@ -240,7 +241,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         assertTrue(eCaught != null);
         final String errMsg = eCaught.getMessage();
         assertTrue(errMsg.contains("Subprocess failed"));
-        if (Driver.cfg().defaultFortranCompilerType().equals("GNU"))
+        if (Driver.cfg().defaultFortranCompilerVendor() == FortranCompilerVendor.gnu)
         {
             assertTrue(errMsg.contains("Fatal Error: not_found.inc: No such file or directory"));
         }

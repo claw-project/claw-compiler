@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import clawfc.Configuration.FortranCompilerVendor;
 import clawfc.depscan.FortranIncludesResolver;
 import clawfc.depscan.PreprocessorOutputScanner;
 import clawfc.utils.AsciiArrayIOStream;
@@ -29,20 +30,20 @@ public class Preprocessor
     public static class PreprocessorInfo
     {
         final String cmd;
-        final String type;
+        final FortranCompilerVendor vendor;
         final String version;
         final List<String> flags;
         final String getVersionFlag;
         final String macro;
         final boolean supportsRedirection;
 
-        public PreprocessorInfo(String cmd, String type) throws Exception
+        public PreprocessorInfo(String cmd, FortranCompilerVendor vendor) throws Exception
         {
             this.cmd = cmd;
-            this.type = type;
-            switch (type)
+            this.vendor = vendor;
+            switch (vendor)
             {
-            case "Cray":
+            case cray:
             {
                 flags = Collections.unmodifiableList(Arrays.asList("-eP", "-hnoomp"));
                 macro = "_CRAYFTN";
@@ -50,7 +51,7 @@ public class Preprocessor
                 getVersionFlag = "--version";
                 break;
             }
-            case "Intel":
+            case intel:
             {
                 flags = Collections.unmodifiableList(Arrays.asList("-preprocess-only", "-E"));
                 macro = "__ICC";
@@ -58,7 +59,7 @@ public class Preprocessor
                 getVersionFlag = "--version";
                 break;
             }
-            case "GNU":
+            case gnu:
             {
                 flags = Collections.unmodifiableList(Arrays.asList("-E", "-cpp"));
                 macro = "_GNU";
@@ -66,7 +67,7 @@ public class Preprocessor
                 getVersionFlag = "--version";
                 break;
             }
-            case "NAG":
+            case nag:
             {
                 flags = Collections.unmodifiableList(Arrays.asList("-Wp,-w,-P", "-F", "-fpp"));
                 macro = "NAGFOR";
@@ -74,7 +75,7 @@ public class Preprocessor
                 getVersionFlag = "-V";
                 break;
             }
-            case "PGI":
+            case portland:
             {
                 flags = Collections.unmodifiableList(Arrays.asList("-E", "-cpp"));
                 macro = "_PGI";
@@ -119,10 +120,10 @@ public class Preprocessor
         {
             ppCmd = cfg.defaultFortranCompilerCmd();
         }
-        String ppType = opts.fortranCompilerType();
+        FortranCompilerVendor ppType = opts.fortranCompilerType();
         if (ppType == null)
         {
-            ppType = cfg.defaultFortranCompilerType();
+            ppType = cfg.defaultFortranCompilerVendor();
         }
         info = new PreprocessorInfo(ppCmd, ppType);
         cmdArgsTemplate = Collections.unmodifiableList(prepareArgs(info, opts.acceleratorDirectiveLanguage(),
@@ -160,9 +161,9 @@ public class Preprocessor
 
     static Path internalOutputFilePath(PreprocessorInfo info, Path inFilePath, Path workingDir) throws Exception
     {
-        switch (info.type)
+        switch (info.vendor)
         {
-        case "Cray":
+        case cray:
             return workingDir.resolve(inFilePath.getFileName() + ".i");
         default:
             throw new Exception("Not supported");

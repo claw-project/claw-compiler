@@ -13,15 +13,16 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Path;
+import java.util.Collections;
 
 import org.junit.Test;
 
-import claw.wani.ClawVersion;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.configuration.OpenAccConfiguration;
 import claw.tatsu.directive.generator.OpenAcc;
+import claw.wani.ClawVersion;
 import helper.TestConstant;
 import helper.Utils.TestConfiguration;
 import helper.Utils.TestContext;
@@ -47,7 +48,8 @@ public class ConfigurationTest
             assertNotNull(conf);
             Context context = new TestContext();
             assertNotNull(context);
-            conf = Configuration.load(cfgDirPath, null, null, null, null, Integer.valueOf(MAX_COLUMN), context);
+            conf = Configuration.load(cfgDirPath, null, null, null, null, Integer.valueOf(MAX_COLUMN), context,
+                    Collections.emptyList());
 
             assertNotNull(context.getGenerator());
             assertNotNull(conf.accelerator());
