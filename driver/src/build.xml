@@ -159,6 +159,7 @@
                 includes="${driver.runtime.conf.file}"
                 fullpath="config/${driver.conf.file}"/>
         </jar>
+        <chmod file="${claw.install.dir}/bin/${driver.jar}" perm="a+x"/>
     </target>
 
     <target name="clean" description="clean up">
