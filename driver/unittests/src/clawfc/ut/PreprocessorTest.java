@@ -84,7 +84,7 @@ public class PreprocessorTest extends TestCase
         try
         {
             PreprocessorInfo info = new PreprocessorInfo(DRIVER_CFG.defaultFortranCompilerCmd(),
-                    DRIVER_CFG.defaultFortranCompilerType());
+                    DRIVER_CFG.defaultFortranCompilerVendor());
             List<String> cmdArgsTemplate = Collections
                     .unmodifiableList(Preprocessor.prepareArgs(info, accDirLanguage, predefinedMacros, ppIncludeDirs));
             PreprocessorOutputScanner outputScanner = new PreprocessorOutputScanner();

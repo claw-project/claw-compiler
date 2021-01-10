@@ -148,7 +148,7 @@ class TestModuleInfo implements clawfc.ProgramUnitInfo
     @Override
     public FortranProgramUnitType getType()
     {
-        throw new RuntimeException("Not implemented");
+        return FortranProgramUnitType.MODULE;
     }
 
 }
@@ -194,7 +194,7 @@ public class BuildTest extends TestCase
             } catch (FortranSemanticException e)
             {
                 String errMsg = e.getMessage();
-                assertTrue(errMsg.contains("Module \"mod_undefined\" used by module p1"));
+                assertTrue(errMsg.contains("Module \"mod_undefined\" used by MODULE p1"));
                 assertTrue(
                         errMsg.contains("undefined_module.f90:12) is not defined in any file under given search path"));
                 exCaught = true;
@@ -210,8 +210,8 @@ public class BuildTest extends TestCase
             } catch (FortranSemanticException e)
             {
                 String errMsg = e.getMessage();
-                assertTrue(errMsg.contains("Circle dependency between modules mod1"));
-                assertTrue(errMsg.contains("circle_dep.f90:1) and t"));
+                assertTrue(errMsg.contains("Circle dependency between MODULE mod1"));
+                assertTrue(errMsg.contains("circle_dep.f90:1) and MODULE t"));
                 assertTrue(errMsg.contains("circle_dep.f90:13"));
                 exCaught = true;
             }
