@@ -30,7 +30,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import clawfc.depscan.FortranDepParser.Listener.FileStructureParser;
 import clawfc.depscan.FortranProgramUnitStatementsRecognizer.StatementType;
-import clawfc.depscan.parser.FortranDepScannerBaseListener;
 import clawfc.depscan.parser.FortranDepScannerLexer;
 import clawfc.depscan.parser.FortranDepScannerParser;
 import clawfc.depscan.serial.FortranProgramUnitType;
@@ -110,7 +109,7 @@ public class FortranDepParser
         }
     }
 
-    static class Listener extends FortranDepScannerBaseListener
+    static class Listener extends clawfc.depscan.parser.FortranDepScannerBaseListener
     {
         FortranDepStatementsRecognizer statementsParser;
         FortranProcedureStatementsRecognizer procStatementsParser;

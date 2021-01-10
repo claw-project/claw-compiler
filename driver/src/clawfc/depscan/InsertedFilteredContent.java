@@ -5,6 +5,7 @@
 package clawfc.depscan;
 
 import static clawfc.Utils.firstGreater;
+import static clawfc.depscan.Utils.readNBytes;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -137,11 +138,11 @@ public class InsertedFilteredContent implements FilteredContent
         for (Data fSeq : data)
         {
             int nBytes = fSeq.startChrIdxFiltered - chrIdxFiltered;
-            byte[] bytes = filteredText.readNBytes(nBytes);
+            byte[] bytes = readNBytes(filteredText, nBytes);
             unFilteredText.write(bytes);
             chrIdxFiltered += nBytes;
             int fSeqLen = fSeq.content.length();
-            filteredText.readNBytes(fSeqLen);
+            readNBytes(filteredText, fSeqLen);
             chrIdxFiltered += fSeqLen;
         }
         Utils.copy(filteredText, unFilteredText);

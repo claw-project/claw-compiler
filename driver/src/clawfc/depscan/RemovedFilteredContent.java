@@ -4,6 +4,9 @@
  */
 package clawfc.depscan;
 
+import static clawfc.Utils.firstGreater;
+import static clawfc.depscan.Utils.readNBytes;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import clawfc.Utils;
-import static clawfc.Utils.firstGreater;
 
 /**
  * Stores sequences removed by the Filter
@@ -119,7 +121,7 @@ public class RemovedFilteredContent implements FilteredContent
         for (Data fSeq : data)
         {
             int nBytes = fSeq.endChrIdxFiltered - chrIdxFiltered;
-            byte[] bytes = filteredText.readNBytes(nBytes);
+            byte[] bytes = readNBytes(filteredText, nBytes);
             unFilteredText.write(bytes);
             unFilteredText.write(fSeq.content.getBytes(StandardCharsets.US_ASCII));
         }

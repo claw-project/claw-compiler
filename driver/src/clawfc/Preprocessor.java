@@ -180,7 +180,7 @@ public class Preprocessor
         args.add("-D" + info.macro);
         if (accDirLanguage != null)
         {
-            accDirLanguage = accDirLanguage.toLowerCase().strip();
+            accDirLanguage = accDirLanguage.toLowerCase().trim();
             switch (accDirLanguage)
             {
             case "acc":

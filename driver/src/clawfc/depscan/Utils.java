@@ -7,6 +7,7 @@ package clawfc.depscan;
 import static clawfc.Utils.toCharStream;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
 
@@ -46,5 +47,15 @@ public class Utils
             }
         }
         return null;
+    }
+
+    public static byte[] readNBytes(InputStream strm, int nBytes) throws IOException
+    {
+        final byte[] bytes = new byte[nBytes];
+        if (strm.read(bytes, 0, nBytes) != nBytes)
+        {
+            throw new IOException("read failed");
+        }
+        return bytes;
     }
 }
