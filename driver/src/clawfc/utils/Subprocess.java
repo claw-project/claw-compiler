@@ -126,6 +126,8 @@ public class Subprocess
         pb.directory(workingDir.toFile());
         Process p = null;
         Path inputFilePath = null;
+        Path stdoutFilePath = null;
+        Path stderrFilePath = null;
         try
         {
             if (input != null)
@@ -139,9 +141,24 @@ public class Subprocess
                 }
                 pb.redirectInput(inputFile);
             }
+            stdoutFilePath = Files.createTempFile(Paths.get(DEFAULT_TOP_TEMP_DIR), "subprocess_stdout_", ".tmp");
+            {
+                final File stdoutFile = stdoutFilePath.toFile();
+                stdoutFile.deleteOnExit();
+                pb.redirectOutput(stdoutFile);
+            }
+            stderrFilePath = Files.createTempFile(Paths.get(DEFAULT_TOP_TEMP_DIR), "subprocess_stderr_", ".tmp");
+            {
+                final File stderrFile = stderrFilePath.toFile();
+                stderrFile.deleteOnExit();
+                pb.redirectError(stderrFile);
+            }
             p = pb.start();
-            try (final StreamGobbler stdoutReader = new StreamGobbler(p, p.getInputStream(), stdout);
-                    final StreamGobbler stderrReader = new StreamGobbler(p, p.getErrorStream(), stderr))
+            /*
+             * try (final StreamGobbler stdoutReader = new StreamGobbler(p,
+             * p.getInputStream(), stdout); final StreamGobbler stderrReader = new
+             * StreamGobbler(p, p.getErrorStream(), stderr))
+             */
             {
                 /*- TODO:  Find out why this causes broken pipe when using Omni on daint!
                 if (input != null)
@@ -163,6 +180,14 @@ public class Subprocess
                     throw new Exception("Subprocess call timed out");
                 }
                 final int retCode = p.exitValue();
+                try (InputStream stdoutFile = Files.newInputStream(stdoutFilePath))
+                {
+                    copy(stdoutFile, stdout);
+                }
+                try (InputStream stderrFile = Files.newInputStream(stderrFilePath))
+                {
+                    copy(stderrFile, stderr);
+                }
                 return retCode;
             }
         } catch (Exception e)
@@ -170,6 +195,14 @@ public class Subprocess
             if (inputFilePath != null)
             {
                 Files.delete(inputFilePath);
+            }
+            if (stdoutFilePath != null)
+            {
+                Files.delete(stdoutFilePath);
+            }
+            if (stderrFilePath != null)
+            {
+                Files.delete(stderrFilePath);
             }
             if (p != null && p.isAlive())
             {
