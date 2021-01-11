@@ -520,8 +520,11 @@ public class Driver
                 ffront.generateXmod(modInfo.getPPSrcPath(), modPPSrc.getAsInputStreamUnsafe(), xmodDataStrm);
             } catch (FortranFrontEnd.Failed failed)
             {
-                String errMsg = sprintf("Xmod generation: Error! Call to Omni frontend for %s failed",
-                        Build.moduleNameWithLocation(modInfo));
+                final List<String> modIncStack = Build.getModuleIncludeStack(modName, usedModules, targetModuleNames);
+                final String modIncStr = Build.getModuleIncludeStackString(modIncStack, usedModules);
+                String errMsg = sprintf(
+                        "Xmod generation: Error! Call to Omni frontend for %s failed\nInclude stack:\n%s\n",
+                        Build.moduleNameWithLocation(modInfo), modIncStr);
                 if (printDebugOutput)
                 {
                     errMsg += "\n" + failed.getMessage();

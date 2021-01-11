@@ -62,9 +62,9 @@ public abstract class DriverTestCase extends TestCase
         System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
     }
 
-    protected static Result run(String[] args) throws Exception
+    protected static Result run(String[] args, boolean rethrowException) throws Exception
     {
-        Result res;
+        Result res = null;
         ByteArrayIOStream stdErr = new ByteArrayIOStream();
         ByteArrayIOStream stdOut = new ByteArrayIOStream();
         try
@@ -72,18 +72,26 @@ public abstract class DriverTestCase extends TestCase
             System.setErr(new PrintStream(stdErr));
             System.setOut(new PrintStream(stdOut));
             Driver.run(args);
-            res = new Result(Utils.collectIntoString(stdErr.getAsInputStreamUnsafe()),
-                    Utils.collectIntoString(stdOut.getAsInputStreamUnsafe()));
         } catch (Exception e)
         {
-            copy(stdOut.getAsInputStreamUnsafe(), new FileOutputStream(FileDescriptor.out));
-            copy(stdErr.getAsInputStreamUnsafe(), new FileOutputStream(FileDescriptor.err));
-            throw e;
+            if (rethrowException)
+            {
+                copy(stdOut.getAsInputStreamUnsafe(), new FileOutputStream(FileDescriptor.out));
+                copy(stdErr.getAsInputStreamUnsafe(), new FileOutputStream(FileDescriptor.err));
+                throw e;
+            }
         } finally
         {
+            res = new Result(Utils.collectIntoString(stdErr.getAsInputStreamUnsafe()),
+                    Utils.collectIntoString(stdOut.getAsInputStreamUnsafe()));
             resetStdStreams();
         }
         return res;
+    }
+
+    protected static Result run(String[] args) throws Exception
+    {
+        return run(args, true);
     }
 
     public static String readTxt(Path path) throws Exception

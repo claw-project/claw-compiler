@@ -397,4 +397,20 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
                 OUT_BINFO_DIR.toString(), "-PO", OUT_PP_SRC_DIR.toString(), INPUT_FILEPATH.toString() };
         verifyRegeneration.call();
     }
+
+    public void testErrorMessage() throws Exception
+    {
+        final Path INPUT_FILEPATH = RES_DIR.resolve("xmod_generation/error_msg/input/p1.f90");
+        final Path OUT_MOD_DIR = TMP_DIR.resolve("mods");
+        String[] args = new String[] { "--stop-xmod-gen", "--skip-pp", "--disable-mp", "-MO", OUT_MOD_DIR.toString(),
+                INPUT_FILEPATH.toString() };
+        final List<String> REF_UNIT_NAMES = Arrays.asList("p1", "m1", "m2", "m3");
+        Result runRes = run(args, false);
+        assertTrue(runRes.stderr.contains("SEVERE: Xmod generation: Error! Call to Omni frontend for m3 "));
+        assertTrue(runRes.stderr.contains("Include stack:"));
+        for (String unitName : REF_UNIT_NAMES)
+        {
+            assertTrue(runRes.stderr.contains(unitName));
+        }
+    }
 }

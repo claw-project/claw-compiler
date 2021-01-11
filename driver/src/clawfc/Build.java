@@ -4,6 +4,8 @@
  */
 package clawfc;
 
+import static clawfc.Utils.sprintf;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +24,7 @@ import clawfc.depscan.serial.FortranProgramUnitType;
 
 public class Build
 {
-    public static String moduleNameWithLocation(String name, Map<String, ProgramUnitInfo> availModules)
+    public static String unitNameWithLocation(String name, Map<String, ProgramUnitInfo> availModules)
     {
         ProgramUnitInfo info = availModules.get(name);
         return moduleNameWithLocation(info);
@@ -335,5 +337,94 @@ public class Build
     public static BuildOrder getParallelOrder(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames)
     {
         return new ParallelOrder(usedModules, targetModuleNames);
+    }
+
+    static class IncludeStackBuilder
+    {
+        final String modName;
+        final Map<String, ProgramUnitInfo> availModules;
+        final Set<String> targetModuleNames;
+        final Set<String> visited;
+        final List<String> stack;
+
+        public IncludeStackBuilder(final String modName, Map<String, ProgramUnitInfo> availModules,
+                Set<String> targetModuleNames)
+        {
+            this.modName = modName;
+            this.availModules = availModules;
+            this.targetModuleNames = targetModuleNames;
+            visited = new HashSet<String>();
+            stack = new ArrayList<String>();
+        }
+
+        public List<String> run()
+        {
+            for (String target : targetModuleNames)
+            {
+                if (startDFS(target))
+                {
+                    return stack;
+                }
+            }
+            return null;
+        }
+
+        boolean startDFS(String root)
+        {
+            stack.clear();
+            return dfs(root);
+        }
+
+        boolean dfs(String modName)
+        {
+            ProgramUnitInfo info = availModules.get(modName);
+            if (visited.add(modName))
+            {
+                stack.add(modName);
+                if (modName.equals(this.modName))
+                {
+                    return true;
+                }
+                if (info.hasSource())
+                {
+                    for (String depModName : info.getSrcInfo().getUsedModuleNames())
+                    {
+                        if (dfs(depModName))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                stack.remove(stack.size() - 1);
+                return false;
+            } else
+            {
+                return false;
+            }
+        }
+    }
+
+    public static List<String> getModuleIncludeStack(final String modName, Map<String, ProgramUnitInfo> availModules,
+            Set<String> targetModuleNames)
+    {
+        return Collections.unmodifiableList((new IncludeStackBuilder(modName, availModules, targetModuleNames)).run());
+    }
+
+    public static String getModuleIncludeStackString(final List<String> modIncludeStack,
+            Map<String, ProgramUnitInfo> availModules)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0, n = modIncludeStack.size(); i < n; ++i)
+        {
+            final String sModName = modIncludeStack.get(i);
+            sb.append(String.join("", Collections.nCopies(i, " ")));
+            String nameWithLocation = unitNameWithLocation(sModName, availModules);
+            if (i == (n - 1))
+            {
+                nameWithLocation = sprintf("[ %s ]", nameWithLocation);
+            }
+            sb.append(nameWithLocation + "\n");
+        }
+        return sb.toString();
     }
 };
