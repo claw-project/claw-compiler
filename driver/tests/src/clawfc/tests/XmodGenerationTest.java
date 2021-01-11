@@ -147,6 +147,45 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         }
     }
 
+    public void testExistingModInclude() throws Exception
+    {
+        final Path INPUT_FILEPATH = RES_DIR.resolve("xmod_generation/xmod_include/input/p1.f90");
+        final Path INC_DIR = RES_DIR.resolve("xmod_generation/xmod_include/input/inc");
+        final Path MOD_INC_DIR = RES_DIR.resolve("xmod_generation/xmod_include/input/xmod_inc");
+        final Path REF_MOD_DIR = RES_DIR.resolve("xmod_generation/xmod_include/reference");
+        final Path OUT_MOD_DIR = TMP_DIR.resolve("mods");
+        List<String> modNames = Arrays.asList("mod1.xmod", "mod2.xmod");
+        String[] args = new String[] { "--stop-xmod-gen", "--disable-mp", "-MI", MOD_INC_DIR.toString(), "-MO",
+                OUT_MOD_DIR.toString(), INPUT_FILEPATH.toString() };
+        run(args);
+        for (String modName : modNames)
+        {
+            Path resFilePath = OUT_MOD_DIR.resolve(modName);
+            Path refFilePath = REF_MOD_DIR.resolve(modName);
+            this.equalsTxtFiles(resFilePath, refFilePath);
+        }
+    }
+
+    public void testCombinedInclude() throws Exception
+    {
+        final Path INPUT_FILEPATH = RES_DIR.resolve("xmod_generation/xmod_include/input/p1.f90");
+        final Path INC_DIR = RES_DIR.resolve("xmod_generation/xmod_include/input/inc");
+        final Path MOD_INC_DIR = RES_DIR.resolve("xmod_generation/xmod_include/input/xmod_inc");
+        final Path REF_MOD_DIR = RES_DIR.resolve("xmod_generation/xmod_include/reference");
+        final Path OUT_MOD_DIR = TMP_DIR.resolve("mods");
+        List<String> modNames = Arrays.asList("mod1.xmod", "mod2.xmod");
+        Files.createDirectory(OUT_MOD_DIR);
+        String[] args = new String[] { INPUT_FILEPATH.toString(), "--stop-xmod-gen", "--disable-mp", "-J",
+                OUT_MOD_DIR.toString(), "-J", MOD_INC_DIR.toString() };
+        run(args);
+        for (String modName : modNames)
+        {
+            Path resFilePath = OUT_MOD_DIR.resolve(modName);
+            Path refFilePath = REF_MOD_DIR.resolve(modName);
+            this.equalsTxtFiles(resFilePath, refFilePath);
+        }
+    }
+
     public void testForceTranslation() throws Exception
     {
         final Path INPUT_FILEPATH = RES_DIR.resolve("xmod_generation/input_files/input/1.f90");

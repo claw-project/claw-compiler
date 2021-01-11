@@ -73,6 +73,7 @@ public class FortranFrontEnd
         {
             modDirs.add(cfg.defaultStdXmodDir());
         }
+        modDirs.addAll(opts.moduleIncludeDirs());
         Path outModDir = null;
         if (opts.xmodOutputDir() != null)
         {
