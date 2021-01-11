@@ -4,15 +4,19 @@
  */
 package clawfc.utils;
 
+import static clawfc.Utils.DEFAULT_TOP_TEMP_DIR;
 import static clawfc.Utils.collectIntoString;
 import static clawfc.Utils.copy;
 import static clawfc.Utils.skip;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -121,15 +125,27 @@ public class Subprocess
         pb.redirectErrorStream(redirectErrStream);
         pb.directory(workingDir.toFile());
         Process p = null;
+        Path inputFilePath = null;
         try
         {
+            if (input != null)
+            {
+                inputFilePath = Files.createTempFile(Paths.get(DEFAULT_TOP_TEMP_DIR), "subprocess_input_", ".tmp");
+                final File inputFile = inputFilePath.toFile();
+                inputFile.deleteOnExit();
+                try (OutputStream pStdin = Files.newOutputStream(inputFilePath))
+                {
+                    copy(input, pStdin);
+                }
+                pb.redirectInput(inputFile);
+            }
             p = pb.start();
             try (final StreamGobbler stdoutReader = new StreamGobbler(p, p.getInputStream(), stdout);
                     final StreamGobbler stderrReader = new StreamGobbler(p, p.getErrorStream(), stderr))
             {
+                /*- TODO:  Find out why this causes broken pipe when using Omni on daint!
                 if (input != null)
-                {
-                    // For unknown reason this causes a broken pipe on daint
+                {                    
                     if (p.isAlive())
                     {
                         try (OutputStream pStdin = p.getOutputStream())
@@ -140,7 +156,7 @@ public class Subprocess
                     {
                         throw new Exception("Process exited before input could be written to it");
                     }
-                }
+                }*/
                 final boolean subProcCallRes = p.waitFor(timeoutInSeconds, TimeUnit.SECONDS);
                 if (!subProcCallRes)
                 {
@@ -151,6 +167,10 @@ public class Subprocess
             }
         } catch (Exception e)
         {
+            if (inputFilePath != null)
+            {
+                Files.delete(inputFilePath);
+            }
             if (p != null && p.isAlive())
             {
                 p.destroyForcibly();
