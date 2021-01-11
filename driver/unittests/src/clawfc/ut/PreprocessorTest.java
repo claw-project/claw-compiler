@@ -5,12 +5,14 @@
 package clawfc.ut;
 
 import static clawfc.Utils.collectIntoString;
+import static clawfc.Utils.copy;
 import static clawfc.ut.PreprocessorOutputScannerTest.readPathsFromFile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -70,12 +72,15 @@ public class PreprocessorTest extends TestCase
         return collectIntoString(buf.getAsInputStreamUnsafe());
     }
 
-    void verifyPP(String testName, List<String> relPPIncludeDirs, List<String> predefinedMacros, String accDirLanguage)
-            throws Exception
+    void verifyPP(String testName, List<String> relPPIncludeDirs, List<String> predefinedMacros, String accDirLanguage,
+            Path inputFilePath) throws Exception
     {
         Path IN_DIR = RES_DIR.resolve("preprocessor/" + testName + "/input");
         Path REF_DIR = RES_DIR.resolve("preprocessor/" + testName + "/reference");
-        Path inputFilePath = IN_DIR.resolve("in.f90");
+        if (inputFilePath == null)
+        {
+            inputFilePath = IN_DIR.resolve("in.f90");
+        }
         List<Path> ppIncludeDirs = relPPIncludeDirs.stream().map(p -> IN_DIR.resolve(p)).collect(Collectors.toList());
         Path refFilePath = REF_DIR.resolve("in.pp.f90");
         Path refIncFilesLstFilePath = REF_DIR.resolve("in.inc.lst");
@@ -106,6 +111,12 @@ public class PreprocessorTest extends TestCase
         }
     }
 
+    void verifyPP(String testName, List<String> relPPIncludeDirs, List<String> predefinedMacros, String accDirLanguage)
+            throws Exception
+    {
+        verifyPP(testName, relPPIncludeDirs, predefinedMacros, accDirLanguage, null);
+    }
+
     void verifyPP(String testName, List<String> relPPIncludeDirs, List<String> predefinedMacros) throws Exception
     {
         verifyPP(testName, relPPIncludeDirs, predefinedMacros, null);
@@ -114,6 +125,11 @@ public class PreprocessorTest extends TestCase
     void verifyPP(String testName, List<String> relPPIncludeDirs) throws Exception
     {
         verifyPP(testName, relPPIncludeDirs, Collections.emptyList(), null);
+    }
+
+    void verifyPP(String testName, List<String> relPPIncludeDirs, Path inPath) throws Exception
+    {
+        verifyPP(testName, relPPIncludeDirs, Collections.emptyList(), null, inPath);
     }
 
     public void testSameDir() throws Exception
@@ -149,6 +165,36 @@ public class PreprocessorTest extends TestCase
     public void testFortranIncludes() throws Exception
     {
         verifyPP("fortran_includes", Arrays.asList("inc"));
+    }
+
+    public void testBigInput() throws Exception
+    {
+        Path workingDir = Files.createTempDirectory(null);
+        workingDir.toFile().deleteOnExit();
+        try
+        {
+            final int N_KB = 100;
+            final String bigInput;
+            {
+                final String line = String.join("", Collections.nCopies(64, " ")) + "\n";
+                final String kbStr = String.join("", Collections.nCopies(16, line)) + "\n";
+                bigInput = "#ifdef bla\n" + String.join("", Collections.nCopies(N_KB, kbStr)) + "#endif\nend\n";
+            }
+
+            final Path inFilePath = workingDir.resolve("in.f90");
+            try (OutputStream out = Files.newOutputStream(inFilePath))
+            {
+                copy(Utils.toInputStream(bigInput), out);
+            }
+            verifyPP("big_input", Collections.emptyList(), inFilePath);
+            Files.delete(inFilePath);
+        } finally
+        {
+            if (workingDir != null)
+            {
+                Utils.removeDir(workingDir);
+            }
+        }
     }
 
 }

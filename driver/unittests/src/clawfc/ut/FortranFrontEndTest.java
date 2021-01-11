@@ -229,6 +229,34 @@ public class FortranFrontEndTest extends TestCase
         }
     }
 
+    public void testBigInput() throws Exception
+    {
+        final Path REF_XMOD = REF_DIR.resolve("m1.xmod");
+        final int N_KB = 100;
+        final String bigInput;
+        {
+            final String line = String.join("", Collections.nCopies(64, " ")) + "\n";
+            final String kbStr = String.join("", Collections.nCopies(16, line)) + "\n";
+            bigInput = String.join("", Collections.nCopies(N_KB, kbStr)) + "module m1;end;";
+        }
+        Path tmpModOutDirDir = Files.createTempDirectory(null);
+        try
+        {
+            RunResult rRes = run(Utils.toInputStream(bigInput), null, Collections.emptyList(), tmpModOutDirDir,
+                    Arrays.asList("-module-compile"));
+            assertTrue(rRes.res);
+            assertTrue(rRes.outModFiles.isEmpty());
+            assertEquals(collectIntoString(REF_XMOD), rRes.stdout);
+            assertEquals("", rRes.stderr);
+        } finally
+        {
+            if (tmpModOutDirDir != null)
+            {
+                Utils.removeDir(tmpModOutDirDir);
+            }
+        }
+    }
+
 //    Not supported by current OMNI
 //    public void testBlockXmodOutput() throws IOException, InterruptedException
 //    {

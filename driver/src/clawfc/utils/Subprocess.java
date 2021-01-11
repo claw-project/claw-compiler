@@ -8,6 +8,7 @@ import static clawfc.Utils.collectIntoString;
 import static clawfc.Utils.copy;
 import static clawfc.Utils.skip;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -19,10 +20,11 @@ public class Subprocess
 {
     final static int DEFAULT_TIMEOUT_S = 10;
 
-    static class StreamGobbler extends Thread
+    static class StreamGobbler extends Thread implements Closeable
     {
         final static int SLEEP_PERIOD_NS = 100000;
 
+        final Process process;
         final byte buf[] = new byte[4 * 1024];
         final InputStream src;
         final OutputStream dst;
@@ -39,13 +41,15 @@ public class Subprocess
             return error;
         }
 
-        public StreamGobbler(InputStream src, OutputStream dst)
+        public StreamGobbler(Process process, InputStream src, OutputStream dst)
         {
+            this.process = process;
             this.src = src;
             this.dst = dst;
             this.error = null;
             this.stopSignaled = false;
             setDaemon(true);
+            start();
         }
 
         void readAllData() throws IOException
@@ -71,7 +75,7 @@ public class Subprocess
                 try
                 {
                     readAllData();
-                    if (isStopSignaled())
+                    if (isStopSignaled() || !process.isAlive())
                     {
                         readAllData();
                         return;
@@ -92,6 +96,17 @@ public class Subprocess
             stopSignaled = true;
             join();
         }
+
+        @Override
+        public void close() throws IOException
+        {
+            try
+            {
+                shutdown();
+            } catch (InterruptedException e)
+            {
+            }
+        }
     }
 
     public static int call(final List<String> args, final Path workingDir, final OutputStream stdout,
@@ -105,33 +120,43 @@ public class Subprocess
         ProcessBuilder pb = new ProcessBuilder(args);
         pb.redirectErrorStream(redirectErrStream);
         pb.directory(workingDir.toFile());
-        Process p = pb.start();
-        final StreamGobbler stdoutReader = new StreamGobbler(p.getInputStream(), stdout);
-        final StreamGobbler stderrReader = new StreamGobbler(p.getErrorStream(), stderr);
-        stdoutReader.start();
-        stderrReader.start();
-        if (input != null)
-        {
-            try (OutputStream pStdin = p.getOutputStream())
-            {
-                copy(input, pStdin);
-            }
-        }
+        Process p = null;
         try
         {
-            final boolean subProcCallRes = p.waitFor(timeoutInSeconds, TimeUnit.SECONDS);
-            if (!subProcCallRes)
+            p = pb.start();
+            try (final StreamGobbler stdoutReader = new StreamGobbler(p, p.getInputStream(), stdout);
+                    final StreamGobbler stderrReader = new StreamGobbler(p, p.getErrorStream(), stderr))
             {
-                throw new Exception("Subprocess call timed out");
+                if (input != null)
+                {
+                    // For unknown reason this causes a broken pipe on daint
+                    if (p.isAlive())
+                    {
+                        try (OutputStream pStdin = p.getOutputStream())
+                        {
+                            copy(input, pStdin);
+                        }
+                    } else
+                    {
+                        throw new Exception("Process exited before input could be written to it");
+                    }
+                }
+                final boolean subProcCallRes = p.waitFor(timeoutInSeconds, TimeUnit.SECONDS);
+                if (!subProcCallRes)
+                {
+                    throw new Exception("Subprocess call timed out");
+                }
+                final int retCode = p.exitValue();
+                return retCode;
             }
-        } finally
+        } catch (Exception e)
         {
-            stdoutReader.shutdown();
-            stderrReader.shutdown();
-
+            if (p != null && p.isAlive())
+            {
+                p.destroyForcibly();
+            }
+            throw e;
         }
-        final int retCode = p.exitValue();
-        return retCode;
     }
 
     public static int call(final List<String> args, final Path workingDir, final OutputStream stdout,
