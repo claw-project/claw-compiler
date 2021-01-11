@@ -109,7 +109,7 @@ public class FortranIncludeTest extends TestCase
         String resTxt = Utils.collectIntoString(output.getAsInputStreamUnsafe());
         assertTxtEqualsTxtFile(resTxt, refFile);
         List<String> refIncFilenames = Files.readAllLines(refIncLstFile, StandardCharsets.US_ASCII);
-        refIncFilenames.removeIf(s -> s.strip().isEmpty());
+        refIncFilenames.removeIf(s -> s.trim().isEmpty());
         assertEquals(refIncFilenames.size(), includeFiles.size());
         for (String refIncFilename : refIncFilenames)
         {

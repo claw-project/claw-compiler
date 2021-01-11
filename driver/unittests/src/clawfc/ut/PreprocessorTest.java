@@ -61,7 +61,7 @@ public class PreprocessorTest extends TestCase
             while (reader.ready())
             {
                 String line = reader.readLine();
-                if (!line.strip().isEmpty())
+                if (!line.trim().isEmpty())
                 {
                     writer.println(line);
                 }

@@ -49,7 +49,7 @@ public class PreprocessorOutputScannerTest extends TestCase
             List<String> lines = Files.readAllLines(incFilesLstFilePath);
             for (String line : lines)
             {
-                line = line.strip();
+                line = line.trim();
                 if (!line.isEmpty())
                 {
                     refIncPaths.add(Paths.get(line));
