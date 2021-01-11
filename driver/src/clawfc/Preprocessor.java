@@ -99,12 +99,14 @@ public class Preprocessor
         public final Path workingDir;
         public final FortranIncludesResolver includesResolver;
         public final PreprocessorOutputScanner outputScanner;
+        public final AddIgnoreDirectiveFilter addIgnoreFilter;
 
         public ThreadLocalData(Path workingDir) throws Exception
         {
             this.workingDir = workingDir;
             includesResolver = new FortranIncludesResolver();
             outputScanner = new PreprocessorOutputScanner();
+            addIgnoreFilter = new AddIgnoreDirectiveFilter();
         }
     }
 
@@ -223,7 +225,8 @@ public class Preprocessor
 
     public static AsciiArrayIOStream run(Path inputFilePath, Set<Path> outIncFilePaths, Path workingDir,
             PreprocessorInfo info, List<String> cmdArgsTemplate, FortranIncludesResolver includesResolver,
-            List<Path> ppIncSearchPath, PreprocessorOutputScanner scanner) throws Exception, Failed
+            List<Path> ppIncSearchPath, PreprocessorOutputScanner scanner, AddIgnoreDirectiveFilter addIgnoreFilter)
+            throws Exception, Failed
     {
         if (outIncFilePaths != null)
         {
@@ -262,8 +265,12 @@ public class Preprocessor
             Set<Path> resIncFilePaths = scanner.run(bufPP.getAsInputStreamUnsafe(), bufNoMarkers);
             bufPP = null;
             resIncFilePaths.remove(inputFilePath);
+            AsciiArrayIOStream bufWithIgnore = new AsciiArrayIOStream();
+            addIgnoreFilter.run(bufNoMarkers.getAsInputStreamUnsafe(), bufWithIgnore);
+            bufNoMarkers = null;
             AsciiArrayIOStream bufNoFtnInc = new AsciiArrayIOStream();
-            Set<Path> ftnIncFilePaths = includesResolver.run(inputFilePath, bufNoMarkers, bufNoFtnInc, ppIncSearchPath);
+            Set<Path> ftnIncFilePaths = includesResolver.run(inputFilePath, bufWithIgnore, bufNoFtnInc,
+                    ppIncSearchPath);
             resIncFilePaths.addAll(ftnIncFilePaths);
             if (outIncFilePaths != null)
             {
@@ -288,6 +295,6 @@ public class Preprocessor
             threadLocalData.set(localData);
         }
         return run(inputFilePath, outIncFilePaths, localData.workingDir, info, cmdArgsTemplate,
-                localData.includesResolver, ppIncSearchPath, localData.outputScanner);
+                localData.includesResolver, ppIncSearchPath, localData.outputScanner, localData.addIgnoreFilter);
     }
 }

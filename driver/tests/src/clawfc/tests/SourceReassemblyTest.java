@@ -47,6 +47,18 @@ public class SourceReassemblyTest extends clawfc.tests.utils.DriverTestCase
         assertEqualsTxtFiles(REF_FILEPATH, OUT_FILEPATH);
     }
 
+    public void testIgnore() throws Exception
+    {
+        final Path INPUT_FILEPATH = RES_DIR.resolve("source_reassembly/input/ignore.f90");
+        final Path REF_FILEPATH = RES_DIR.resolve("source_reassembly/reference/ignore.f90");
+        final Path OUT_SRC_DIR = TMP_DIR.resolve("out-src");
+        final Path OUT_FILEPATH = OUT_SRC_DIR.resolve("ignore.f90");
+        String[] args = new String[] { "--debug", "--add-paren", "--disable-mp", "-o", OUT_FILEPATH.toString(),
+                INPUT_FILEPATH.toString() };
+        run(args);
+        assertEqualsTxtFiles(REF_FILEPATH, OUT_FILEPATH);
+    }
+
     public void testMultiprocessing() throws Exception
     {
         List<String> filenames = Arrays.asList("1.f90", "2.f90", "empty.f95");

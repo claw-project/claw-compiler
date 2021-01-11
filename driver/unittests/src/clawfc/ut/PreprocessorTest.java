@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import clawfc.AddIgnoreDirectiveFilter;
 import clawfc.Configuration;
 import clawfc.Preprocessor;
 import clawfc.Preprocessor.PreprocessorInfo;
@@ -95,8 +96,9 @@ public class PreprocessorTest extends TestCase
             PreprocessorOutputScanner outputScanner = new PreprocessorOutputScanner();
             Set<Path> resIncFilePaths = new LinkedHashSet<Path>();
             FortranIncludesResolver includesResolver = new FortranIncludesResolver();
+            AddIgnoreDirectiveFilter addIgnoreFilter = new AddIgnoreDirectiveFilter();
             AsciiArrayIOStream res = Preprocessor.run(inputFilePath, resIncFilePaths, workingDir, info, cmdArgsTemplate,
-                    includesResolver, ppIncludeDirs, outputScanner);
+                    includesResolver, ppIncludeDirs, outputScanner, addIgnoreFilter);
             String refStr = collectWithoutEmptyLines(Files.newInputStream(refFilePath));
             String resStr = collectWithoutEmptyLines(res.getAsInputStreamUnsafe());
             Set<Path> refIncPaths = readRelativePathsFromFile(IN_DIR, refIncFilesLstFilePath);

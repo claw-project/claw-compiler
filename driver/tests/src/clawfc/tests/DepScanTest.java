@@ -142,6 +142,29 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         assertEquals(REF_INFO, loadInfo(resFilepath));
     }
 
+    public void testInputScanWithIgnore() throws Exception
+    {
+        final Path INPUT_FILEPATH = RES_DIR.resolve("depscan/ignore/input/1.f90");
+        final FortranFileProgramUnitInfo REF_INFO;
+        {
+            final List<FortranProgramUnitInfo> units = Arrays.asList(
+                    ModInfo(Pos("mod11", 0, 29, 0, 2), emptyList(), false),
+                    ModInfo(Pos("mod12", 31, 74, 3, 6), Arrays.asList(Pos("mod11", 48, 57, 4, 5)), false),
+                    ModInfo(Pos("mod13", 76, 136, 7, 10), emptyList(), false),
+                    ProgInfo(Pos("p1", 138, 247, 11, 17), Arrays.asList(Pos("mod12", 153, 162, 12, 13)), true));
+            REF_INFO = new FortranFileProgramUnitInfo(units, INPUT_FILEPATH, null, emptyList());
+        }
+        final Path OUT_DIR = TMP_DIR;
+        final Path OUT_PP_DIR = TMP_DIR.resolve("pp");
+        String[] args = new String[] { "-BO", OUT_DIR.toString(), "-PO", OUT_PP_DIR.toString(), "--stop-depscan",
+                "--disable-mp", INPUT_FILEPATH.toString() };
+        run(args);
+        final Path resFilepath = outputPath(INPUT_FILEPATH, OUT_DIR);
+        final FortranFileProgramUnitInfo resInfo = loadInfo(resFilepath);
+        resInfo.setPPSrcFilePath(null);
+        assertEquals(REF_INFO, resInfo);
+    }
+
     public void testInputWithIncludeScan() throws Exception
     {
         final Path INPUT_FILEPATH = RES_DIR.resolve("depscan/input_with_include/input/1.f90");

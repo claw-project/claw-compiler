@@ -270,7 +270,8 @@ public class Driver
                     return;
                 }
                 info("Generating XCodeML-AST...");
-                generateXast(ffront, usedModules, targetModuleNames, opts.showDebugOutput(), enableMultiprocessing);
+                generateXast(ffront, usedModules, targetModuleNames, opts.showDebugOutput(), opts.skipPreprocessing(),
+                        enableMultiprocessing);
                 if (opts.xastOutputDir() != null)
                 {
                     saveXast(usedModules, targetModuleNames, opts.xastOutputDir(), enableMultiprocessing);
@@ -580,8 +581,8 @@ public class Driver
     }
 
     static void generateXast(FortranFrontEnd ffront, Map<String, ProgramUnitInfo> usedModules,
-            Set<String> targetModuleNames, boolean printFfrontDebugOutput, boolean enableMultiprocessing)
-            throws Exception
+            Set<String> targetModuleNames, boolean printFfrontDebugOutput, final boolean skipPP,
+            boolean enableMultiprocessing) throws Exception
     {
         final int n = targetModuleNames.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
@@ -602,15 +603,22 @@ public class Driver
                     AsciiArrayIOStream xastDataStrm = new AsciiArrayIOStream();
                     Path ppSrcPath = modInfo.getPPSrcPath();
                     AsciiArrayIOStream modPPSrc = modInfo.getPreprocessedSrc(ppSrcPath != null);
-                    AsciiArrayIOStream modPPSrcWithIgnore = new AsciiArrayIOStream();
-                    try
+                    final AsciiArrayIOStream modPPSrcWithIgnore;
+                    if (skipPP)
+                    {// Ignore is normaly performed at preprocessing stage
+                        try
+                        {
+                            modPPSrcWithIgnore = new AsciiArrayIOStream();
+                            localAddIgnoreFilter.run(modPPSrc.getAsInputStreamUnsafe(), modPPSrcWithIgnore);
+                        } catch (Exception e)
+                        {
+                            String errMsg = sprintf("Exception thrown while applying ignore directive to module %s",
+                                    Build.moduleNameWithLocation(modInfo));
+                            throw new Exception(errMsg, e);
+                        }
+                    } else
                     {
-                        localAddIgnoreFilter.run(modPPSrc.getAsInputStreamUnsafe(), modPPSrcWithIgnore);
-                    } catch (Exception e)
-                    {
-                        String errMsg = sprintf("Exception throws while applying ignore directive to module %s",
-                                Build.moduleNameWithLocation(modInfo));
-                        throw new Exception(errMsg, e);
+                        modPPSrcWithIgnore = modPPSrc;
                     }
                     modPPSrc = null;
                     try
