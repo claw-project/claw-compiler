@@ -53,9 +53,9 @@ public class FortranFrontEnd
 
     public static class Failed extends SubprocessFailed
     {
-        public Failed(List<String> args, InputStream stdin, InputStream stderr) throws IOException
+        public Failed(List<String> args, InputStream stdin, InputStream stderr, Exception cause) throws IOException
         {
-            super(args, stdin, stderr);
+            super(args, stdin, stderr, cause);
         }
     }
 
@@ -189,12 +189,18 @@ public class FortranFrontEnd
         }
         AsciiArrayIOStream stderr = new AsciiArrayIOStream();
         List<String> args = new ArrayList<String>();
-        boolean res = run(driverCfg, inputSrc, output, stderr, modDirs, localTmp.xmodOutDir, localTmp.workingDir,
-                options, inputFilepath, args);
-        if (!res)
+        try
+        {
+            boolean res = run(driverCfg, inputSrc, output, stderr, modDirs, localTmp.xmodOutDir, localTmp.workingDir,
+                    options, inputFilepath, args);
+            if (!res)
+            {
+                throw new Exception("Call to FortranFrontEnd failed");
+            }
+        } catch (Exception e)
         {
             inputSrc.reset();
-            throw new Failed(args, inputSrc, stderr.getAsInputStreamUnsafe());
+            throw new Failed(args, inputSrc, stderr.getAsInputStreamUnsafe(), e);
         }
     }
 

@@ -137,7 +137,7 @@ public class Preprocessor
     {
         public Failed(List<String> args, InputStream stdin, InputStream stderr) throws IOException
         {
-            super(args, stdin, stderr);
+            super(args, stdin, stderr, null);
         }
     }
 

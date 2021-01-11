@@ -12,9 +12,9 @@ import java.util.List;
 
 public class SubprocessFailed extends Exception
 {
-    public SubprocessFailed(List<String> args, InputStream stdin, InputStream stderr) throws IOException
+    public SubprocessFailed(List<String> args, InputStream stdin, InputStream stderr, Exception e) throws IOException
     {
-        super(toErrorString(args, stdin, stderr));
+        super(toErrorString(args, stdin, stderr), e);
     }
 
     static String toErrorString(List<String> args, InputStream stdin, InputStream stderr) throws IOException
