@@ -21,7 +21,8 @@ function(omni_generate_xmod)
     message(FATAL "Pre-processor flags not set for ${CMAKE_Fortran_COMPILER_ID}")
   endif()
 
-  add_custom_target(${omni_generate_xmod_TARGET} ALL)
+  add_custom_target(${omni_generate_xmod_TARGET})
+  add_dependencies(generate-xmods ${omni_generate_xmod_TARGET})
 
   add_dependencies(${omni_generate_xmod_TARGET} create_int_install_dir)
 

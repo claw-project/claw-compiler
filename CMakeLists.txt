@@ -176,6 +176,7 @@ add_subdirectory(cx2t)
 # compiler driver
 add_subdirectory(driver)
 
+add_custom_target(generate-xmods)
 # generate generic .xmod files
 add_subdirectory(modules)
 
@@ -198,7 +199,7 @@ else()
 endif()
 
 add_custom_target(build-claw-solution ALL)
-add_dependencies(build-claw-solution omni-compiler)
+add_dependencies(build-claw-solution omni-compiler generate-xmods)
 add_custom_command(
   TARGET build-claw-solution
   COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
