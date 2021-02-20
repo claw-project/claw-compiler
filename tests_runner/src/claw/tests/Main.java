@@ -10,6 +10,7 @@ public class Main
 {
     public static void main(String[] args)
     {
-        TestsRunner.main(args, CLAWDirectiveTest.class);
+        TestsRunner.main(args, CLAWDirectiveTest.class, CLAWSingleColumnAbstractionTest.class,
+                CLAWSCAFailureTest.class);
     }
 }
