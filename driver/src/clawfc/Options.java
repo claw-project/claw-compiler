@@ -419,9 +419,9 @@ public class Options
             cOpts.addArgument("-BO", "--buildinfo-output-dir").help("Output directory for BuildInfo files");
             cOpts.addArgument("-XO", "--xast-output-dir")
                     .help("Output directory for modules transformed into XCodeML-AST");
-            cOpts.addArgument("-TXO", "--txast-output-dir").help("Output directory for translated XCodeML-AST modules");
+            cOpts.addArgument("-TXO", "--txast-output-dir").help("Output directory for translated XCodeML-AST program units");
             cOpts.addArgument("-TRO", "--trans-report-output-dir").help("Output directory for transformation reports");
-            cOpts.addArgument("-TSO", "--tsrc-output-dir").help("Output directory for decompiled source modules");
+            cOpts.addArgument("-TSO", "--tsrc-output-dir").help("Output directory for decompiled source program units");
             cOpts.addArgument("-t", "--target").help("Type of target accelerator hardware");
             cOpts.addArgument("-d", "--directive")
                     .help("Specify accelerator directive language to be used for code generation");
