@@ -14,4 +14,21 @@ public class Resources
     public static final Path INT_INSTALL_DIR = Paths.get("@INT_CLAW_HOME@");
     public static final Path DRIVER_PATH() { return INT_INSTALL_DIR.resolve("bin/@CLAWFC_JAR@"); }
     public static final Path FC_PATH = Paths.get("@FPP@");
+
+    static String[] getFlagsFromString(String s)
+    {
+        s = s.trim();
+        if(s.isEmpty())
+        {
+            return new String[0];
+        }
+        else
+        {
+            return s.split("\\s+");
+        }
+    }
+
+    public static final String[] FC_TEST_BASE_FLAGS = getFlagsFromString("@TEST_BASE_FLAGS@");
+    public static final String[] FC_ACC_FLAGS = getFlagsFromString("@OPENACC_FLAGS@");
+    public static final String[] FC_OMP_FLAGS = getFlagsFromString("@OPENMP_FLAGS@");
 };

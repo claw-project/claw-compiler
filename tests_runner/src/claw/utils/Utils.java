@@ -80,7 +80,21 @@ public abstract class Utils
             List<String> execArgs = new ArrayList<String>(args.size() + 1);
             execArgs.add(exec.toString());
             execArgs.addAll(args);
-            return Subprocess.callWithResult(execArgs, workingDir);
+            CallResult res = Subprocess.callWithResult(execArgs, workingDir);
+            if (res.retCode != 0)
+            {
+                if (!res.stderr.isEmpty())
+                {
+                    throw new Exception("stderr:\n" + res.stderr);
+                } else if (!res.stdout.isEmpty())
+                {
+                    throw new Exception("stdout:\n" + res.stdout);
+                } else
+                {
+                    throw new Exception("return value not zero");
+                }
+            }
+            return res;
         } catch (Exception e)
         {
             throw new Exception(sprintf("%s call failed", name), e);
