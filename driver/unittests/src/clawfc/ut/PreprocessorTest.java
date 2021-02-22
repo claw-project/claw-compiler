@@ -27,6 +27,7 @@ import clawfc.AddIgnoreDirectiveFilter;
 import clawfc.Configuration;
 import clawfc.Preprocessor;
 import clawfc.Preprocessor.PreprocessorInfo;
+import clawfc.TrailingBackslashCommentsFilter;
 import clawfc.Utils;
 import clawfc.depscan.FortranIncludesResolver;
 import clawfc.depscan.PreprocessorOutputScanner;
@@ -92,13 +93,14 @@ public class PreprocessorTest extends TestCase
             PreprocessorInfo info = new PreprocessorInfo(DRIVER_CFG.defaultFortranCompilerCmd(),
                     DRIVER_CFG.defaultFortranCompilerVendor());
             List<String> cmdArgsTemplate = Collections
-                    .unmodifiableList(Preprocessor.prepareArgs(info, accDirLanguage, predefinedMacros, ppIncludeDirs));
+                    .unmodifiableList(Preprocessor.prepareArgs(info, accDirLanguage, predefinedMacros));
             PreprocessorOutputScanner outputScanner = new PreprocessorOutputScanner();
             Set<Path> resIncFilePaths = new LinkedHashSet<Path>();
             FortranIncludesResolver includesResolver = new FortranIncludesResolver();
             AddIgnoreDirectiveFilter addIgnoreFilter = new AddIgnoreDirectiveFilter();
+            TrailingBackslashCommentsFilter trailingBSFilter = new TrailingBackslashCommentsFilter();
             AsciiArrayIOStream res = Preprocessor.run(inputFilePath, resIncFilePaths, workingDir, info, cmdArgsTemplate,
-                    includesResolver, ppIncludeDirs, outputScanner, addIgnoreFilter);
+                    includesResolver, ppIncludeDirs, outputScanner, addIgnoreFilter, trailingBSFilter);
             String refStr = collectWithoutEmptyLines(Files.newInputStream(refFilePath));
             String resStr = collectWithoutEmptyLines(res.getAsInputStreamUnsafe());
             Set<Path> refIncPaths = readRelativePathsFromFile(IN_DIR, refIncFilesLstFilePath);
@@ -167,6 +169,11 @@ public class PreprocessorTest extends TestCase
     public void testFortranIncludes() throws Exception
     {
         verifyPP("fortran_includes", Arrays.asList("inc"));
+    }
+
+    public void testTrailingBackslashRemoval() throws Exception
+    {
+        verifyPP("trailing_backslash", Collections.emptyList());
     }
 
     public void testBigInput() throws Exception

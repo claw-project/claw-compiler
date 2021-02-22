@@ -5,10 +5,13 @@
 package clawfc;
 
 import static clawfc.Utils.ASCII_NEWLINE_VALUE;
+import static clawfc.Utils.copy;
+import static clawfc.Utils.recreateDir;
 import static clawfc.Utils.sprintf;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -100,13 +103,16 @@ public class Preprocessor
         public final FortranIncludesResolver includesResolver;
         public final PreprocessorOutputScanner outputScanner;
         public final AddIgnoreDirectiveFilter addIgnoreFilter;
+        public final TrailingBackslashCommentsFilter trailingBSFilter;
 
         public ThreadLocalData(Path workingDir) throws Exception
         {
-            this.workingDir = workingDir;
+            final long threadId = Thread.currentThread().getId();
+            this.workingDir = workingDir.resolve(sprintf("pp/%s", threadId));
             includesResolver = new FortranIncludesResolver();
             outputScanner = new PreprocessorOutputScanner();
             addIgnoreFilter = new AddIgnoreDirectiveFilter();
+            trailingBSFilter = new TrailingBackslashCommentsFilter();
         }
     }
 
@@ -128,8 +134,8 @@ public class Preprocessor
             ppType = cfg.defaultFortranCompilerVendor();
         }
         info = new PreprocessorInfo(ppCmd, ppType);
-        cmdArgsTemplate = Collections.unmodifiableList(prepareArgs(info, opts.acceleratorDirectiveLanguage(),
-                opts.predefinedMacros(), opts.preprocessorIncludeDirs()));
+        cmdArgsTemplate = Collections
+                .unmodifiableList(prepareArgs(info, opts.acceleratorDirectiveLanguage(), opts.predefinedMacros()));
         this.threadLocalData = new ThreadLocal<ThreadLocalData>();
         this.driverTempDir = driverTempDir;
         ppIncSearchPath = opts.preprocessorIncludeDirs();
@@ -172,8 +178,8 @@ public class Preprocessor
         }
     }
 
-    public static List<String> prepareArgs(PreprocessorInfo info, String accDirLanguage, List<String> predefinedMacros,
-            List<Path> ppIncludeDirs) throws Exception
+    public static List<String> prepareArgs(PreprocessorInfo info, String accDirLanguage, List<String> predefinedMacros)
+            throws Exception
     {
         List<String> args = new ArrayList<String>();
         args.add(info.cmd);
@@ -211,6 +217,14 @@ public class Preprocessor
         {
             args.add("-D" + macro);
         }
+        return args;
+    }
+
+    public static List<String> prepareIncDirsArgs(Path inFilepath, List<Path> ppIncludeDirs) throws Exception
+    {
+        List<String> args = new ArrayList<String>();
+        final Path inFilePathDir = inFilepath.getParent();
+        args.add("-I" + inFilePathDir.toString());
         for (Path dir : ppIncludeDirs)
         {
             if (!dir.isAbsolute())
@@ -223,23 +237,42 @@ public class Preprocessor
         return args;
     }
 
-    public static AsciiArrayIOStream run(Path inputFilePath, Set<Path> outIncFilePaths, Path workingDir,
+    public static AsciiArrayIOStream run(final Path inputFilePath, Set<Path> outIncFilePaths, Path workingDir,
             PreprocessorInfo info, List<String> cmdArgsTemplate, FortranIncludesResolver includesResolver,
-            List<Path> ppIncSearchPath, PreprocessorOutputScanner scanner, AddIgnoreDirectiveFilter addIgnoreFilter)
-            throws Exception, Failed
+            List<Path> ppIncSearchPath, PreprocessorOutputScanner scanner, AddIgnoreDirectiveFilter addIgnoreFilter,
+            TrailingBackslashCommentsFilter trailingBSFilter) throws Exception, Failed
     {
+
+        recreateDir(workingDir);
         if (outIncFilePaths != null)
         {
             outIncFilePaths.clear();
         }
-        List<String> args = new ArrayList<String>();
-        args.addAll(cmdArgsTemplate);
-        args.add(inputFilePath.toString());
         if (!inputFilePath.isAbsolute())
         {
             throw new Exception("Input source file should be given with absolute path. "
                     + sprintf(" \"%s\" does not satisfy the requirement", inputFilePath));
         }
+        final Path intInputFilePath;
+        if (trailingBSFilter != null)
+        {
+            final Path notrailingBSFilePath = workingDir.resolve(inputFilePath.getFileName());
+            try (InputStream in = Files.newInputStream(inputFilePath);
+                    AsciiArrayIOStream bufNoTrailingBS = new AsciiArrayIOStream();
+                    OutputStream outNoTrailingBS = Files.newOutputStream(notrailingBSFilePath))
+            {
+                trailingBSFilter.run(in, bufNoTrailingBS);
+                copy(bufNoTrailingBS.getAsInputStreamUnsafe(), outNoTrailingBS);
+            }
+            intInputFilePath = notrailingBSFilePath;
+        } else
+        {
+            intInputFilePath = inputFilePath;
+        }
+        List<String> args = new ArrayList<String>();
+        args.addAll(cmdArgsTemplate);
+        args.addAll(prepareIncDirsArgs(inputFilePath, ppIncSearchPath));
+        args.add(intInputFilePath.toString());
         // ------------------------------------------
         final AsciiArrayIOStream ppStdout = new AsciiArrayIOStream();
         final AsciiArrayIOStream ppStderr = new AsciiArrayIOStream();
@@ -264,7 +297,7 @@ public class Preprocessor
             AsciiArrayIOStream bufNoMarkers = new AsciiArrayIOStream();
             Set<Path> resIncFilePaths = scanner.run(bufPP.getAsInputStreamUnsafe(), bufNoMarkers);
             bufPP = null;
-            resIncFilePaths.remove(inputFilePath);
+            resIncFilePaths.remove(intInputFilePath);
             AsciiArrayIOStream bufWithIgnore = new AsciiArrayIOStream();
             addIgnoreFilter.run(bufNoMarkers.getAsInputStreamUnsafe(), bufWithIgnore);
             bufNoMarkers = null;
@@ -288,13 +321,13 @@ public class Preprocessor
 
     public AsciiArrayIOStream run(Path inputFilePath, Set<Path> outIncFilePaths) throws Failed, Exception
     {
-        ThreadLocalData localData = threadLocalData.get();
-        if (localData == null)
+        ThreadLocalData lData = threadLocalData.get();
+        if (lData == null)
         {
-            localData = new ThreadLocalData(Files.createTempDirectory(driverTempDir, "fpp"));
-            threadLocalData.set(localData);
+            lData = new ThreadLocalData(Files.createTempDirectory(driverTempDir, "fpp"));
+            threadLocalData.set(lData);
         }
-        return run(inputFilePath, outIncFilePaths, localData.workingDir, info, cmdArgsTemplate,
-                localData.includesResolver, ppIncSearchPath, localData.outputScanner, localData.addIgnoreFilter);
+        return run(inputFilePath, outIncFilePaths, lData.workingDir, info, cmdArgsTemplate, lData.includesResolver,
+                ppIncSearchPath, lData.outputScanner, lData.addIgnoreFilter, lData.trailingBSFilter);
     }
 }

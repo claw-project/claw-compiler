@@ -12,7 +12,9 @@ fortran_doc : (string | comment | other)*;
 
 string : STRING;
 comment : COMMENT;
-other : OTHER | EOL;
+other : other_token | eol;
+other_token : OTHER;
+eol : EOL;
 
 OTHER : (~[!"'\n])+;
 COMMENT : EM (~'\n')*;
