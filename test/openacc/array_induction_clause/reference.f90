@@ -1,7 +1,6 @@
-PROGRAM vector_loop
-
- CALL claw ( )
-END PROGRAM vector_loop
+PROGRAM VECTOR_LOOP
+  CALL claw
+END
 
 SUBROUTINE claw ( )
  INTEGER :: i = 10

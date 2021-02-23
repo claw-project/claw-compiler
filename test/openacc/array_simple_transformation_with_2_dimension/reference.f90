@@ -1,7 +1,6 @@
-PROGRAM vector_loop
-
- CALL claw ( )
-END PROGRAM vector_loop
+PROGRAM VECTOR_LOOP
+  CALL claw
+END
 
 SUBROUTINE claw ( )
  INTEGER :: i = 10
@@ -13,8 +12,6 @@ SUBROUTINE claw ( )
 
  vec1 ( 0 : i , 0 : i ) = 0
  vec2 ( 0 : i , 0 : i ) = 100
-!$claw expand target(cpu)
- vec1 ( 0 : i , 0 : i ) = vec2 ( 0 : i , 0 : i ) + 10
  DO claw_induction_0 = 0 , i
   DO claw_induction_1 = 0 , i
    vec1 ( claw_induction_0 , claw_induction_1 ) = vec2 ( claw_induction_0 ,&
@@ -24,3 +21,4 @@ SUBROUTINE claw ( )
  PRINT * , vec1
  PRINT * , vec2
 END SUBROUTINE claw
+

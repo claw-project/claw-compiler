@@ -11,6 +11,6 @@ public class Main
     public static void main(String[] args)
     {
         TestsRunner.main(args, CLAWDirectiveTest.class, CLAWSingleColumnAbstractionTest.class, CLAWSCAFailureTest.class,
-                DriverTest.class, LoopsTest.class, OMNITest.class);
+                DriverTest.class, LoopsTest.class, OMNITest.class, OpenACCTest.class);
     }
 }

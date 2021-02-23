@@ -1,7 +1,6 @@
 PROGRAM array4_test
-
- CALL claw_test ( )
-END PROGRAM array4_test
+  CALL claw_test
+END
 
 SUBROUTINE claw_test ( )
  INTEGER , ALLOCATABLE :: vec1 ( : , : )

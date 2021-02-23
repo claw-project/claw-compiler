@@ -8,7 +8,7 @@ if("${CMAKE_Fortran_COMPILER_ID}" MATCHES "Cray")
 endif()
 
 # Set up some common env variable for the transformation flow
-set(CLAWFC bash ${INT_CLAW_HOME}/bin/clawfc)
+set(CLAWFC ${INT_CLAW_HOME}/bin/clawfc.jar)
 set(BUILD_TEST_TARGET transformation)
 set(CLEAN_TEST_TARGET clean-transformation)
 
@@ -24,13 +24,12 @@ endforeach()
 include(claw_reference_test.cmake)
 
 # List of test directories
-add_subdirectory(claw)
-add_subdirectory(driver)
-add_subdirectory(loops)
-add_subdirectory(omni)
-add_subdirectory(openacc)
-add_subdirectory(openmp)
-add_subdirectory(utilities)
+#add_subdirectory(driver)
+#add_subdirectory(loops)
+#add_subdirectory(omni)
+#add_subdirectory(openacc)
+#add_subdirectory(openmp)
+#add_subdirectory(utilities)
 
 add_test(
   NAME library-test-claw_f_lib
