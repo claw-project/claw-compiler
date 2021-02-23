@@ -1,7 +1,6 @@
-PROGRAM loop_hoist6
-
- CALL clawloop ( )
-END PROGRAM loop_hoist6
+PROGRAM LOOP_FUSION
+  CALL clawloop
+END
 
 SUBROUTINE clawloop ( )
 
@@ -12,6 +11,7 @@ SUBROUTINE clawloop ( )
  INTEGER :: jend = 4
  INTEGER :: kend = 2
 
+!$ACC parallel
  DO i = 0 , iend , 1
   DO j = 0 , jend , 1
    DO k = 0 , kend , 1
@@ -23,8 +23,8 @@ SUBROUTINE clawloop ( )
      PRINT * ,"Second loop body:" , i ,"/" , j ,"/" , k
     END IF
    END DO
-   PRINT * ,"ALONE J LOOP"
   END DO
  END DO
+!$ACC end parallel
 END SUBROUTINE clawloop
 

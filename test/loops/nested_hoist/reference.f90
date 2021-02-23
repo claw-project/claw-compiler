@@ -1,7 +1,6 @@
-PROGRAM loop_fusion
-
- CALL clawloop ( )
-END PROGRAM loop_fusion
+PROGRAM LOOP_FUSION
+  CALL clawloop
+END
 
 SUBROUTINE clawloop ( )
 
@@ -12,22 +11,18 @@ SUBROUTINE clawloop ( )
  INTEGER :: jend = 4
  INTEGER :: kend = 2
 
-!$ACC parallel
  DO i = 0 , iend , 1
   DO j = 0 , jend , 1
    DO k = 0 , kend , 1
     IF ( i == 0 ) THEN
      PRINT * ,"First iteration of i" , i ,"/" , j ,"/" , k
     END IF
-!$ACC loop gang vector
     PRINT * ,"First loop body:" , i ,"/" , j ,"/" , k
-!$ACC loop gang vector
     IF ( j .ge. 2 ) THEN
      PRINT * ,"Second loop body:" , i ,"/" , j ,"/" , k
     END IF
    END DO
   END DO
  END DO
-!$ACC end parallel
 END SUBROUTINE clawloop
 

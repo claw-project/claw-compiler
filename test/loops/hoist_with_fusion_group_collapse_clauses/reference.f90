@@ -1,7 +1,6 @@
-PROGRAM loop_hoist7
-
- CALL clawloop ( )
-END PROGRAM loop_hoist7
+program loop_hoist7
+  call clawloop
+end program loop_hoist7
 
 SUBROUTINE clawloop ( )
 

@@ -1,7 +1,6 @@
-PROGRAM loop_fusion
-
- CALL clawloop ( )
-END PROGRAM loop_fusion
+PROGRAM LOOP_FUSION
+  CALL clawloop
+END
 
 SUBROUTINE clawloop ( )
 
@@ -19,7 +18,9 @@ SUBROUTINE clawloop ( )
     IF ( i == 0 ) THEN
      PRINT * ,"First iteration of i" , i ,"/" , j ,"/" , k
     END IF
+!$ACC loop gang vector
     PRINT * ,"First loop body:" , i ,"/" , j ,"/" , k
+!$ACC loop gang vector
     IF ( j .ge. 2 ) THEN
      PRINT * ,"Second loop body:" , i ,"/" , j ,"/" , k
     END IF

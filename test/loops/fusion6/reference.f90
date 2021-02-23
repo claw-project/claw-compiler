@@ -1,7 +1,6 @@
-PROGRAM loop_fusion
-
- CALL clawloop ( )
-END PROGRAM loop_fusion
+PROGRAM LOOP_FUSION
+  CALL clawloop
+END
 
 SUBROUTINE clawloop ( )
 

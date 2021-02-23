@@ -18,7 +18,7 @@ public class DriverTest extends BasicTestCase
         final String relpath = "driver/" + name;
         final Path resDir = RES_DIR.resolve(relpath);
         final Path workingDir = WORKING_DIR.resolve(relpath);
-        InputParams p = new InputParams("call1", resDir, workingDir);
+        InputParams p = new InputParams(name, resDir, workingDir);
         p.setInputDirName("");
         p.setRefDirName("");
         p.setOutputDirName("");
