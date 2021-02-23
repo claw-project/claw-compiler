@@ -71,7 +71,7 @@ public abstract class DriverTestCase extends TestCase
         {
             System.setErr(new PrintStream(stdErr));
             System.setOut(new PrintStream(stdOut));
-            Driver.run(args);
+            Driver.run(args, null);
         } catch (Exception e)
         {
             if (rethrowException)
