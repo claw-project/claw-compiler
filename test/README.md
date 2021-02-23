@@ -1,5 +1,5 @@
 # CLAW functional tests
-
+#<span style="color:red">OUTDATED!!! TODO: Update documentation</span>
 This directory contains a set of functional tests for the CLAW Compiler. Each
 test applies the CLAW Compiler on a set of input files and compare the output
 with references.
