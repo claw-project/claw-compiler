@@ -52,7 +52,7 @@ public abstract class Utils
             {
                 System.setErr(new PrintStream(stdErr));
                 System.setOut(new PrintStream(stdOut));
-                Driver.run(args.stream().toArray(String[]::new));
+                Driver.run(args.stream().toArray(String[]::new), workingDir);
                 res = new CallResult(0, collectIntoString(stdErr.getAsInputStreamUnsafe()),
                         collectIntoString(stdOut.getAsInputStreamUnsafe()));
             } catch (Exception e)

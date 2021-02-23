@@ -15,7 +15,7 @@ public class CLAWDirectiveTest extends BasicTestCase
     {
         final String relpath = "claw/directive/" + name;
         final Path resDir = RES_DIR.resolve(relpath);
-        final Path workingDir = WORKING_DIR.resolve(relpath);
+        final Path workingDir = WORKING_DIR;
         InputParams p = new InputParams("call1", resDir, workingDir);
         p.setInputDirName("");
         p.setRefDirName("");

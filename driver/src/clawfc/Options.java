@@ -26,6 +26,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 public class Options
 {
+    final Path workingDir;
     final boolean _printInstallCfg;
     final boolean _printVersion;
     final boolean _printTargets;
@@ -377,6 +378,11 @@ public class Options
 
     public static Options parseCmdlineArguments(String[] args) throws Exception
     {
+        return parseCmdlineArguments(args, Utils.STARTUP_DIR);
+    }
+
+    public static Options parseCmdlineArguments(String[] args, Path workingDir) throws Exception
+    {
         ArgumentParser parser = ArgumentParsers.newFor("clawfc").build().description("The CLAW Compiler is a "
                 + "source-to-source translator working on the XcodeML intermediate representation");
         Namespace parsedArgs = null;
@@ -419,7 +425,8 @@ public class Options
             cOpts.addArgument("-BO", "--buildinfo-output-dir").help("Output directory for BuildInfo files");
             cOpts.addArgument("-XO", "--xast-output-dir")
                     .help("Output directory for modules transformed into XCodeML-AST");
-            cOpts.addArgument("-TXO", "--txast-output-dir").help("Output directory for translated XCodeML-AST program units");
+            cOpts.addArgument("-TXO", "--txast-output-dir")
+                    .help("Output directory for translated XCodeML-AST program units");
             cOpts.addArgument("-TRO", "--trans-report-output-dir").help("Output directory for transformation reports");
             cOpts.addArgument("-TSO", "--tsrc-output-dir").help("Output directory for decompiled source program units");
             cOpts.addArgument("-t", "--target").help("Type of target accelerator hardware");
@@ -494,12 +501,13 @@ public class Options
             parser.handleError(ape);
             throw ape;
         }
-        Options opts = new Options(parsedArgs);
+        Options opts = new Options(parsedArgs, workingDir);
         return opts;
     }
 
-    Options(Namespace parsedArgs) throws Exception
+    Options(Namespace parsedArgs, Path workingDir) throws Exception
     {
+        this.workingDir = workingDir;
         _printInstallCfg = parsedArgs.getBoolean("print_install_cfg");
         _printVersion = parsedArgs.getBoolean("version");
         _printTargets = parsedArgs.getBoolean("list_targets");
@@ -587,7 +595,7 @@ public class Options
         _disableMP = parsedArgs.getBoolean("disable_mp");
         _genBuildInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");
         _genModFiles = parsedArgs.getBoolean("gen_mod_files");
-        _transSetPaths = getPathList(parsedArgs, "trans-path-dir");
+        _transSetPaths = getPathList(parsedArgs, "trans_path_dir");
     }
 
     String toString(List<Path> paths)
@@ -707,12 +715,12 @@ public class Options
         return Collections.unmodifiableList(res);
     }
 
-    static Path toAbsPath(String pathStr)
+    Path toAbsPath(String pathStr)
     {
         Path path = Paths.get(pathStr);
         if (!path.isAbsolute())
         {
-            path = Utils.STARTUP_DIR.resolve(path);
+            path = workingDir.resolve(path);
         }
         path = path.normalize();
         return path;

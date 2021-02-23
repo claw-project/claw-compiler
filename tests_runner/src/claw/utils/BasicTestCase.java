@@ -286,8 +286,14 @@ public abstract class BasicTestCase extends TestCase
                 args.add("--debug");
                 args.add("--debug-omni");
             }
-            runClawfc(args, p.getWorkingDir(), p.isDebugClawfc());
+            runClawfc(args, p.getResDir(), p.isDebugClawfc());
             assertTrue(fileExists(p.transformedFilePath()));
+        }
+        if (!p.isIgnore())
+        {
+            List<String> args = Arrays.asList("--ignore-all-space", "--ignore-blank-lines",
+                    p.transformedFilePath().toString(), p.referenceFilePath().toString());
+            runDiff(args, p.getWorkingDir());
         }
         if (p.isCompile())
         {
@@ -303,20 +309,14 @@ public abstract class BasicTestCase extends TestCase
                 runFC(args, p.getWorkingDir());
                 assertTrue(fileExists(p.transformedExecPath()));
             }
-        }
-        if (!p.isIgnore())
-        {
-            List<String> args = Arrays.asList("--ignore-all-space", "--ignore-blank-lines",
-                    p.transformedFilePath().toString(), p.referenceFilePath().toString());
-            runDiff(args, p.getWorkingDir());
-        }
-        if (p.isCompare())
-        {
-            final String originalOutput = runExecutable("original executable", p.originalExecPath(), emptyList(),
-                    p.getWorkingDir()).stdout;
-            final String transformedOutput = runExecutable("transformed executable", p.transformedExecPath(),
-                    emptyList(), p.getWorkingDir()).stdout;
-            assertEquals(originalOutput, transformedOutput);
+            if (p.isCompare())
+            {
+                final String originalOutput = runExecutable("original executable", p.originalExecPath(), emptyList(),
+                        p.getWorkingDir()).stdout;
+                final String transformedOutput = runExecutable("transformed executable", p.transformedExecPath(),
+                        emptyList(), p.getWorkingDir()).stdout;
+                assertEquals(originalOutput, transformedOutput);
+            }
         }
     }
 }

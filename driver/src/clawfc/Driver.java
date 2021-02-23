@@ -57,16 +57,23 @@ public class Driver
 {
     public static void main(String[] args) throws Exception
     {
-        run(args);
+        run(args, null);
         System.exit(0);
     }
 
-    public static void run(String[] args) throws Exception
+    public static void run(String[] args, Path workingDir) throws Exception
     {
         Utils.log.setLevel(java.util.logging.Level.INFO);
         Driver driver = new Driver();
         Driver.verifyInstall();
-        Options opts = Options.parseCmdlineArguments(args);
+        final Options opts;
+        if (workingDir != null)
+        {
+            opts = Options.parseCmdlineArguments(args, workingDir);
+        } else
+        {
+            opts = Options.parseCmdlineArguments(args);
+        }
         if (opts != null)
         {
             if (!opts.verbose())
