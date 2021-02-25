@@ -74,7 +74,7 @@ script:
 - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw ..
 - make -j
 - make install
-- make -j clean-transformation transformation test
+- make -j run-tests
 - cd -
 - "./scripts/check_license"
 - "./scripts/check_author"

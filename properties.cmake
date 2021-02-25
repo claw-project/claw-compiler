@@ -36,7 +36,6 @@ set(CLAW_X2T_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/${CLAW_CFG_DIR_NAME}")
 
 # Driver files
 set(CLAWFC_JAR "clawfc.jar")
-set(CLAW_CONF_FILE "claw_f.conf")
 set(CLAW_COMPILER_FILE "clawfc")
 set(CLAWFC_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/src")
 set(CLAWFC_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/driver/build/generated-src")
