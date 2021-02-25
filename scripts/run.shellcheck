@@ -22,10 +22,6 @@ if ! shellcheck check_license; then
   echo 'Script ./scripts/check_license failed!'
   exit 1
 fi
-if ! shellcheck update_omni; then
-  echo 'Script ./scripts/update_omni failed!'
-  exit 1
-fi
 
 # Git hooks
 if ! shellcheck ./git_hooks/pre-commit; then
@@ -33,21 +29,3 @@ if ! shellcheck ./git_hooks/pre-commit; then
   exit 1
 fi
 
-# Check driver scripts
-cd ../driver/bin || exit 1
-if ! shellcheck ../libexec/claw_f_lib.sh.in; then
-  echo 'Script ./libexec/claw_f_lib.sh.in failed!'
-  exit 1
-fi
-if ! shellcheck clawfc.in ../libexec/claw_f_lib.sh.in ; then
-  echo 'Script ./driver/bin/clawfc.in failed!'
-  exit 1
-fi
-cd - || exit 1
-
-# Check test driver scripts
-cd ../test/lib/ || exit 1
-if ! shellcheck  test.claw_f_lib ../../driver/libexec/claw_f_lib.sh.in; then
-  echo 'Script ./test/lib/test.claw_f_lib failed!'
-  exit 1
-fi
