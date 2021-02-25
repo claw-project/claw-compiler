@@ -37,10 +37,7 @@ set(CLAW_X2T_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/${CLAW_CFG_DIR_NAME}")
 # Driver files
 set(CLAWFC_JAR "clawfc.jar")
 set(CLAW_CONF_FILE "claw_f.conf")
-set(CLAW_PY_CONF_FILE "claw_conf.py")
 set(CLAW_COMPILER_FILE "clawfc")
-set(CLAW_LIB_SH "claw_f_lib.sh")
-set(CLAW_X2T_DRIVER_LIB_DIR "${CMAKE_INSTALL_PREFIX}/libexec/")
 set(CLAWFC_SRC_DIR "${CMAKE_SOURCE_DIR}/driver/src")
 set(CLAWFC_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/driver/build/generated-src")
 set(CLAWFC_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/classes")
@@ -168,11 +165,6 @@ set(BUILD_COMMON_CLI "${CX2T_3RDPARTY_DIST_DIR}/${COMMON_CLI_NAME}.jar")
 
 set(BUILD_ANTLR4 "${CX2T_3RDPARTY_DIST_DIR}/${ANTLR4_NAME}.jar")
 set( BUILD_ANTLR4_RUNTIME "${CX2T_3RDPARTY_DIST_DIR}/${ANTLR4_RUNTIME_NAME}.jar")
-
-set(ASM "asm.jar")
-set(ASM_COMMON "asm-commons.jar")
-set(ASM_TREE "asm-tree.jar")
-set(ASM_BUILD "${CX2T_3RDPARTY_DIST_DIR}/${ASM}:${CX2T_3RDPARTY_DIST_DIR}/${ASM_COMMON}:${CX2T_3RDPARTY_DIST_DIR}/${ASM_TREE}")
 
 set(TOML_NAME "cava-toml")
 set(TOML "${CLAW_X2T_JAR_INSTALL_PATH}/${TOML_NAME}.jar")

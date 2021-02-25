@@ -31,17 +31,6 @@ else()
 endif()
 
 find_package(Ant 1.8 REQUIRED)
-find_package(Python REQUIRED)
-
-if(Python_VERSION_MAJOR LESS 2)
-    message(FATAL_ERROR "Python ${Python_VERSION} is not supported")
-endif()
-
-if(Python_VERSION_MAJOR EQUAL 2)
-    if(Python_VERSION_MINOR LESS 6)
-        message(FATAL_ERROR "Python ${Python_VERSION} is not supported")
-    endif()
-endif()
 
 include(ExternalProject)
 include(cmake/git.cmake)
@@ -114,8 +103,6 @@ install(
     FILE_PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_EXECUTE GROUP_READ)
 install(CODE "execute_process(COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT_FLAGS} -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR} install-driver)"
 )
-install(CODE "execute_process(COMMAND ${Python_EXECUTABLE} ${CMAKE_INSTALL_PREFIX}/etc/${CLAW_PY_CONF_FILE})")
-install(CODE "execute_process(COMMAND rm -rf ${CMAKE_INSTALL_PREFIX}/etc/${CLAW_PY_CONF_FILE})")
 
 # Build OMNI compiler
 if(BUILD_OMNI_XCODEML_TOOLS)

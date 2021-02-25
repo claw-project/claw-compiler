@@ -14,8 +14,6 @@
     <target name="prepare-int-dir">
       <mkdir dir="${int.home.dir}"/>
       <mkdir dir="${int.home.dir}/bin"/>
-      <mkdir dir="${int.home.dir}/etc"/>
-      <mkdir dir="${int.home.dir}/libexec"/>
     </target>
 
     <target name="fetch-deps" depends="prepare-int-dir">
