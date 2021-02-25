@@ -64,27 +64,7 @@
     </target>
 
     <target name="run" depends="jar" description="Run unit tests">
-        <mkdir dir="${driver.ut.report.dir}"/>
-        <junit jvm="${java.exec}" printsummary="yes" haltonfailure="yes">
-            <classpath path="${driver.ut.classes.dir}" />
-            <classpath path="${driver.dep}" />
-            <classpath path="${omni.xcodeml-common.dep}" />
-            <classpath path="${junit.dep}" />
-            <classpath path="${hamcrest.dep}" />
-            <classpath path="${antlr4.runtime.dep}" />
-            <classpath path="${jaxb-runtime.dep}" />
-            <classpath path="${jaxb-core.dep}" />
-            <classpath path="${jakarta.xml.bind-api.dep}" />
-            <classpath path="${jakarta.activation.dep}" />
-            <classpath path="${istack-commons-runtime.dep}" />
-            <formatter type="plain"/>
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${driver.ut.report.dir}">
-                <fileset dir="${driver.ut.classes.dir}">
-                    <include name="clawfc/ut/*Test*.class"/>
-                </fileset>
-            </batchtest>
-        </junit>
+        <java jar="${driver.ut.dep}" jvm="${java.exec}" fork="true" failonerror="true" output="${driver.ut.report}"/>
     </target>
 
     <!-- Default target -->

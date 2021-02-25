@@ -25,6 +25,7 @@ cx2t.dir=@CX2T_DIR@
 int.home.dir=@INT_CLAW_HOME@
 root.dir=@CMAKE_SOURCE_DIR@
 
+test.reports.dir=@TEST_REPORTS_DIR@
 
 # Unit tests
 ut.src.dir=@CX2T_UT_SRC_DIR@
@@ -66,6 +67,8 @@ jacoco-agent.jar=org.jacoco.agent.jar
 jacoco-agent.dep=${3rdparty.dist.dir}/${jacoco-agent.jar}
 asm.jar=asm.jar
 asm.dep=${3rdparty.dist.dir}/${asm.jar}
+asm-commons.dep=${3rdparty.dist.dir}/asm-commons.jar
+asm-tree.dep=${3rdparty.dist.dir}/asm-tree.jar
 toml.jar=cava-toml.jar
 toml.dep=${3rdparty.dist.dir}/${toml.jar}
 argparse4j.jar=argparse4j.jar
@@ -135,7 +138,7 @@ driver.ut.runtime.classpath=${driver.dep} \
     ${omni.xcodeml-common.dep} ${omni.xcodeml-f-backend.dep} \
     ${junit.dep} ${hamcrest.dep} ${jaxb-runtime.dep} ${jaxb-core.dep} ${jakarta.xml.bind-api.dep} \
     ${jakarta.activation.dep} ${istack-commons-runtime.dep}
-driver.ut.report.dir=@CLAWFC_UT_REPORT_DIR@
+driver.ut.report=@CLAWFC_UT_REPORT@
 
 # CLAW driver tests
 driver.tests.jar=@CLAWFC_TESTS_JAR@
@@ -146,7 +149,7 @@ driver.tests.gen.src.dir=@CLAWFC_TESTS_GEN_SRC_DIR@
 driver.tests.res.dir=@CLAWFC_TESTS_RES_DIR@
 driver.tests.classes.dir=@CLAWFC_TESTS_CLASSES_DIR@
 driver.tests.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep}
-driver.tests.report.dir=@CLAWFC_TESTS_REPORT_DIR@
+driver.tests.report=@CLAWFC_TESTS_REPORT@
 
 # CLAW tests
 claw.tests.jar=@CLAW_TESTS_JAR@
@@ -157,7 +160,7 @@ claw.tests.gen.src.dir=@CLAW_TESTS_GEN_SRC_DIR@
 claw.tests.res.dir=@CLAW_TESTS_RES_DIR@
 claw.tests.classes.dir=@CLAW_TESTS_CLASSES_DIR@
 claw.tests.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep}
-claw.tests.report.dir=@CLAW_TESTS_REPORT_DIR@
+claw.tests.report=@CLAW_TESTS_REPORT@
 
 # External transformation set
 external.jar=claw-external-set.jar

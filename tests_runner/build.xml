@@ -47,7 +47,7 @@
         <mkdir dir="${claw.tests.dist.dir}"/>
         <!-- Driver -->
         <jar jarfile="${claw.tests.dep}" basedir="${claw.tests.classes.dir}"
-             includes="clawfc/**">
+             includes="claw/**,clawfc/**">
             <manifest>
                 <attribute name="Main-Class" value="claw.tests.Main"/>
                 <attribute name="Class-Path" value="${claw.tests.runtime.classpath}"/>
@@ -62,22 +62,7 @@
     </target>
 
     <target name="run" depends="jar" description="Run tests">
-        <mkdir dir="${claw.tests.report.dir}"/>
-        <junit jvm="${java.exec}" printsummary="yes" haltonfailure="yes">
-            <classpath path="${junit.dep}" />
-            <classpath path="${hamcrest.dep}" />
-            <classpath path="${driver.dep}" />
-            <classpath path="${claw.tests.classes.dir}" />
-            <classpath path="${antlr4.runtime.dep}"/>
-            <classpath path="${argparse4j.dep}"/>
-            <formatter type="plain"/>
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${claw.tests.report.dir}">
-                <fileset dir="${claw.tests.classes.dir}">
-                    <include name="clawfc/tests/*Test*.class"/>
-                </fileset>
-            </batchtest>
-        </junit>
+        <java jar="${claw.tests.dep}" jvm="${java.exec}" fork="true" failonerror="true" output="${claw.tests.report}"/>
     </target>
 
     <!-- Default target -->

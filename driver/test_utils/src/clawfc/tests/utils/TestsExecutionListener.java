@@ -97,16 +97,14 @@ public class TestsExecutionListener extends RunListener
 
     public void testStarted(Description description) throws Exception
     {
-        println("\n----------------------------");
-        println(description.getClassName() + "." + description.getMethodName() + ": STARTED");
+        println(description.getClassName() + "." + description.getMethodName() + ": STARTED\n");
     }
 
     public void testFinished(Description description) throws Exception
     {
         ++_numFinished;
         print(description.getClassName() + "." + description.getMethodName() + ": ");
-        printlnGreen("FINISHED");
-        println("----------------------------\n");
+        printlnGreen("FINISHED\n");
     }
 
     public void testFailure(Failure failure) throws Exception
@@ -120,8 +118,7 @@ public class TestsExecutionListener extends RunListener
         String stackTrace = sw.toString();
         printlnRed(stackTrace);
         print(description.getClassName() + "." + description.getMethodName() + ": ");
-        printlnRed("FAILED");
-        println("----------------------------\n");
+        printlnRed("FAILED\n");
     }
 
     public void testAssumptionFailure(Failure failure)
@@ -130,15 +127,12 @@ public class TestsExecutionListener extends RunListener
         Description description = failure.getDescription();
         printlnRed(failure.getException().toString());
         print(description.getClassName() + "." + description.getMethodName() + ": ");
-        printlnRed("FAILED");
-        println("----------------------------\n");
+        printlnRed("FAILED\n");
     }
 
     public void testIgnored(Description description) throws Exception
     {
         ++_numIgnored;
-        println("\n----------------------------");
-        println(description.getClassName() + "." + description.getMethodName() + ": IGNORED");
-        println("----------------------------]n");
+        println(description.getClassName() + "." + description.getMethodName() + ": IGNORED\n");
     }
 }

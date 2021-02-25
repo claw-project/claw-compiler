@@ -62,22 +62,7 @@
     </target>
 
     <target name="run" depends="jar" description="Run tests">
-        <mkdir dir="${driver.tests.report.dir}"/>
-        <junit jvm="${java.exec}" printsummary="yes" haltonfailure="yes">
-            <classpath path="${junit.dep}" />
-            <classpath path="${hamcrest.dep}" />
-            <classpath path="${driver.dep}" />
-            <classpath path="${driver.tests.classes.dir}" />
-            <classpath path="${antlr4.runtime.dep}"/>
-            <classpath path="${argparse4j.dep}"/>
-            <formatter type="plain"/>
-            <formatter type="xml"/>
-            <batchtest fork="yes" todir="${driver.tests.report.dir}">
-                <fileset dir="${driver.tests.classes.dir}">
-                    <include name="clawfc/tests/*Test*.class"/>
-                </fileset>
-            </batchtest>
-        </junit>
+        <java jar="${driver.tests.dep}" jvm="${java.exec}" fork="true" failonerror="true" output="${driver.tests.report}"/>
     </target>
 
     <!-- Default target -->

@@ -180,9 +180,6 @@ add_custom_target(generate-xmods)
 # generate generic .xmod files
 add_subdirectory(modules)
 
-# Build functional test
-add_subdirectory(test)
-
 add_subdirectory(tests_runner)
 
 # Build documentation
@@ -203,7 +200,7 @@ add_dependencies(build-claw-solution omni-compiler generate-xmods)
 add_custom_command(
   TARGET build-claw-solution
   COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
-  ${ANT_FLAGS} ${OFFLINE}
+  ${ANT_FLAGS}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   COMMENT "Building CLAW solution"
 )
@@ -213,9 +210,10 @@ add_dependencies(run-driver-unit-tests build-claw-solution)
 add_custom_command(
   TARGET run-driver-unit-tests
   COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
-  ${ANT_FLAGS} ${OFFLINE}
+  ${ANT_FLAGS}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   run-driver-unit-tests
+  COMMAND cat ${CLAWFC_UT_REPORT}
   COMMENT "Running CLAWFC unit-tests"
 )
 
@@ -224,10 +222,22 @@ add_dependencies(run-driver-tests build-claw-solution)
 add_custom_command(
   TARGET run-driver-tests
   COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
-  ${ANT_FLAGS} ${OFFLINE}
+  ${ANT_FLAGS}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   run-driver-tests
+  COMMAND cat ${CLAWFC_TESTS_REPORT}
   COMMENT "Running CLAWFC tests"
+)
+
+add_custom_target(run-cx2t-unit-tests)
+add_dependencies(run-cx2t-unit-tests build-claw-solution)
+add_custom_command(
+  TARGET run-cx2t-unit-tests
+  COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
+  ${ANT_FLAGS}
+  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
+  run-cx2t-unit-tests
+  COMMENT "Running CX2T unit tests"
 )
 
 add_custom_target(run-claw-tests)
@@ -235,11 +245,15 @@ add_dependencies(run-claw-tests build-claw-solution)
 add_custom_command(
   TARGET run-claw-tests
   COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
-  ${ANT_FLAGS} ${OFFLINE}
+  ${ANT_FLAGS}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
   run-claw-tests
+  COMMAND cat ${CLAW_TESTS_REPORT}
   COMMENT "Running CLAW tests"
 )
+
+add_custom_target(run-tests)
+add_dependencies(run-tests run-cx2t-unit-tests run-driver-unit-tests run-driver-tests run-claw-tests)
 
 option(GENERATE_ECLIPSE_IDE_PROJECTS "Generate Eclipse IDE projects" ON)
 if(GENERATE_ECLIPSE_IDE_PROJECTS)

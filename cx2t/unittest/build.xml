@@ -18,6 +18,9 @@
       <pathelement path="${jacoco-core.dep}"/>
       <pathelement path="${jacoco-report.dep}"/>
       <pathelement path="${jacoco-agent.dep}"/>
+      <pathelement path="${asm.dep}"/>
+      <pathelement path="${asm-commons.dep}"/>
+      <pathelement path="${asm-tree.dep}"/>
     </classpath>
   </taskdef>
 
@@ -227,4 +230,6 @@
 
   <!-- Default target -->
   <target name="main" depends="init, compile, jar" />
+
+  <target name="run" depends="junit-tatsu,junit-shenron,junit-wani" description="Run unit-tests"/>
 </project>

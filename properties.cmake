@@ -12,6 +12,8 @@ set(CLAW_JAVA_TARGET "1.8")
 
 # Intermediate target directory used during build
 set(INT_CLAW_HOME "${CMAKE_BINARY_DIR}/home")
+set(TEST_REPORTS_DIR "${CMAKE_BINARY_DIR}/test-reports")
+file(MAKE_DIRECTORY ${TEST_REPORTS_DIR})
 
 # Libraries names and paths
 set(CLAW_X2T_TATSU "claw-x2t-tatsu")
@@ -59,7 +61,7 @@ set(CLAWFC_UT_RES_DIR "${CMAKE_SOURCE_DIR}/driver/unittests/res")
 set(CLAWFC_UT_BIN_DIR "${CMAKE_BINARY_DIR}/driver/ut/bin")
 set(CLAWFC_UT_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/driver/ut/build/generated-src")
 set(CLAWFC_UT_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/ut/build/classes")
-set(CLAWFC_UT_REPORT_DIR "${CMAKE_BINARY_DIR}/driver/ut/reports")
+set(CLAWFC_UT_REPORT "${TEST_REPORTS_DIR}/clawfc-ut.txt")
 
 # Driver tests
 set(CLAWFC_TESTS_JAR "clawfc-tests.jar")
@@ -68,7 +70,7 @@ set(CLAWFC_TESTS_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/driver/tests/build/generated-s
 set(CLAWFC_TESTS_RES_DIR "${CMAKE_SOURCE_DIR}/driver/tests/res")
 set(CLAWFC_TESTS_CLASSES_DIR "${CMAKE_BINARY_DIR}/driver/tests/classes")
 set(CLAWFC_TESTS_BIN_DIR "${CMAKE_BINARY_DIR}/driver/tests/bin")
-set(CLAWFC_TESTS_REPORT_DIR "${CMAKE_BINARY_DIR}/driver/test-reports")
+set(CLAWFC_TESTS_REPORT "${TEST_REPORTS_DIR}/clawfc.txt")
 
 # CLAW tests
 set(CLAW_TESTS_JAR "claw-tests.jar")
@@ -77,8 +79,8 @@ set(CLAW_TESTS_GEN_SRC_DIR "${CMAKE_BINARY_DIR}/claw/tests/build/generated-src")
 set(CLAW_TESTS_RES_DIR "${CMAKE_SOURCE_DIR}/test")
 set(CLAW_TESTS_CLASSES_DIR "${CMAKE_BINARY_DIR}/claw/tests/classes")
 set(CLAW_TESTS_BIN_DIR "${CMAKE_BINARY_DIR}/claw/tests/bin")
-set(CLAW_TESTS_REPORT_DIR "${CMAKE_BINARY_DIR}/claw/test-reports")
 set(CLAW_TESTS_DEFAULT_WORKING_DIR "${CMAKE_BINARY_DIR}/claw/tests/run_data")
+set(CLAW_TESTS_REPORT "${TEST_REPORTS_DIR}/claw.txt")
 
 #
 # OMNI Compiler variables
