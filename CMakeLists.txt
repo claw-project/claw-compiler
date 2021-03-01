@@ -192,25 +192,23 @@ add_custom_command(
   COMMENT "Building CLAW solution"
 )
 
+set(RUN_TEST "${CMAKE_SOURCE_DIR}/scripts/run-test.sh")
+
 add_custom_target(run-driver-unit-tests)
 add_dependencies(run-driver-unit-tests build-claw-solution)
+set(RUN_DRIVER_UT_TESTS_CMD "${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT_FLAGS} -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR} run-driver-unit-tests")
 add_custom_command(
   TARGET run-driver-unit-tests
-  COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
-  ${ANT_FLAGS}
-  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  run-driver-unit-tests && (cat ${CLAWFC_UT_REPORT}; exit 0) || (cat ${CLAWFC_UT_REPORT}; exit 1)
+  COMMAND bash "${RUN_TEST}" "${RUN_DRIVER_UT_TESTS_CMD}" "${CLAWFC_UT_REPORT}"
   COMMENT "Running CLAWFC unit-tests"
 )
 
 add_custom_target(run-driver-tests)
 add_dependencies(run-driver-tests build-claw-solution)
+set(RUN_DRIVER_TESTS_CMD "${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT_FLAGS} -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR} run-driver-tests")
 add_custom_command(
   TARGET run-driver-tests
-  COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
-  ${ANT_FLAGS}
-  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  run-driver-tests && (cat ${CLAWFC_TESTS_REPORT}; exit 0) || (cat ${CLAWFC_TESTS_REPORT}; exit 1)
+  COMMAND bash "${RUN_TEST}" "${RUN_DRIVER_TESTS_CMD}" "${CLAWFC_TESTS_REPORT}"
   COMMENT "Running CLAWFC tests"
 )
 
@@ -227,12 +225,10 @@ add_custom_command(
 
 add_custom_target(run-claw-tests)
 add_dependencies(run-claw-tests build-claw-solution)
+set(RUN_CLAW_TESTS_CMD "${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT_FLAGS} -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR} run-claw-tests")
 add_custom_command(
   TARGET run-claw-tests
-  COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
-  ${ANT_FLAGS}
-  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  run-claw-tests && (cat ${CLAW_TESTS_REPORT}; exit 0) || (cat ${CLAW_TESTS_REPORT}; exit 1)
+  COMMAND bash "${RUN_TEST}" "${RUN_CLAW_TESTS_CMD}" "${CLAW_TESTS_REPORT}"
   COMMENT "Running CLAW tests"
 )
 
