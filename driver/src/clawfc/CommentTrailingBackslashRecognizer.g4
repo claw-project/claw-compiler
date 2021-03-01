@@ -1,8 +1,10 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ * @author Mikhail Zhigun
+*/
 /**
  * ANTLR 4 Grammar file for filtering out trailing backslashes at the end of Fortran comment.
- *
- * @author Mikhail Zhigun
- * @copyright 2021, MeteoSwiss
  */
 grammar CommentTrailingBackslashRecognizer;
 

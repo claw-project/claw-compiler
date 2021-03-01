@@ -1,9 +1,11 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ * @author Mikhail Zhigun
+*/
 /**
  * ANTLR 4 Grammar file for the Preprocessed output splitter. Splits output text added by the preprocessor. Recognizes
  * line markers.
- *
- * @author Mikhail Zhigun
- * @copyright 2020, MeteoSwiss
  */
 grammar PreprocessorOutputSplitter;
 

@@ -1,9 +1,11 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ * @author Mikhail Zhigun
+*/
 /**
  * ANTLR 4 Grammar file for the Fortran dependencies parser. It only covers individual statements 
  * relevant to the extraction of dependencies information.
- *
- * @author Mikhail Zhigun
- * @copyright 2020, MeteoSwiss
  */
 grammar FortranProcedureStatementsRecognizer;
 

@@ -1,6 +1,7 @@
 /*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
  * @author Mikhail Zhigun
- * @copyright Copyright 2021, MeteoSwiss
  */
 package clawfc.ut;
 

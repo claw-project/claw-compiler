@@ -1,8 +1,10 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ * @author Mikhail Zhigun
+*/
 /**
  * ANTLR 4 Grammar file for the Fortran File Info scanner. Extracts information about program units and dependencies.
- *
- * @author Mikhail Zhigun
- * @copyright 2020, MeteoSwiss
  */
 grammar FortranDepScanner;
 

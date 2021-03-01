@@ -1,8 +1,10 @@
+/*
+ * This file is released under terms of BSD license
+ * See LICENSE file for more information
+ * @author Mikhail Zhigun
+*/
 /**
  * ANTLR 4 Grammar file for parsing line with applied CLAW Verbatim directive.
- *
- * @author Mikhail Zhigun
- * @copyright 2020, MeteoSwiss
  */
 grammar CLAWVerbatimLineRecognizer;
 
