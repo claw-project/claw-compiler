@@ -199,8 +199,7 @@ add_custom_command(
   COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
   ${ANT_FLAGS}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  run-driver-unit-tests
-  COMMAND cat ${CLAWFC_UT_REPORT}
+  run-driver-unit-tests && (cat ${CLAWFC_UT_REPORT}; exit 0) || (cat ${CLAWFC_UT_REPORT}; exit 1)
   COMMENT "Running CLAWFC unit-tests"
 )
 
@@ -211,8 +210,7 @@ add_custom_command(
   COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
   ${ANT_FLAGS}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  run-driver-tests
-  COMMAND cat ${CLAWFC_TESTS_REPORT}
+  run-driver-tests && (cat ${CLAWFC_TESTS_REPORT}; exit 0) || (cat ${CLAWFC_TESTS_REPORT}; exit 1)
   COMMENT "Running CLAWFC tests"
 )
 
@@ -234,8 +232,7 @@ add_custom_command(
   COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
   ${ANT_FLAGS}
   -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  run-claw-tests
-  COMMAND cat ${CLAW_TESTS_REPORT}
+  run-claw-tests && (cat ${CLAW_TESTS_REPORT}; exit 0) || (cat ${CLAW_TESTS_REPORT}; exit 1)
   COMMENT "Running CLAW tests"
 )
 
