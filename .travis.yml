@@ -76,8 +76,7 @@ script:
 - make install
 - make run-tests
 - cd -
-- "./scripts/check_license"
-- "./scripts/check_author"
+- python "./scripts/check_author_license.py"
 - "./scripts/check_lib_split"
 - cd scripts
 - "./run.shellcheck"
