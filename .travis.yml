@@ -69,19 +69,18 @@ before_script:
 - export OMPI_FC
 script:
 - export CLAW_SRC=$(pwd)
+- python "./scripts/check_author_license.py"
+- cd -
+- "./scripts/check_lib_split"
+- cd scripts
+- "./run.shellcheck"
+- cd ..
 - mkdir build
 - cd build
 - cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw ..
 - make -j
 - make install
 - make run-tests
-- cd -
-- "./scripts/check_license"
-- "./scripts/check_author"
-- "./scripts/check_lib_split"
-- cd scripts
-- "./run.shellcheck"
-- cd ..
 - export CLAW_BUILD=${CLAW_SRC}/build
 - export OMNI_HOME=${CLAW_BUILD}/home
 - if [[ "${TRAVIS_PULL_REQUEST_SLUG}" == "claw-project/claw-compiler" ]]; then sonar-scanner -Dsonar.login=$SONAR_TOKEN; fi
