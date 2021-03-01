@@ -18,10 +18,6 @@ if ! shellcheck pack_release; then
   echo 'Script ./scripts/pack_release failed!'
   exit 1
 fi
-if ! shellcheck check_license; then
-  echo 'Script ./scripts/check_license failed!'
-  exit 1
-fi
 
 # Git hooks
 if ! shellcheck ./git_hooks/pre-commit; then
