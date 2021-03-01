@@ -56,9 +56,10 @@ matrix:
         - gfortran-7
         - ant
         - ant-optional
-addons:
-  sonarcloud
 before_install:
+- wget https://dl.bintray.com/sonarsource/SonarQube/org/sonarsource/scanner/cli/sonar-scanner-cli/4.6.0.2311/sonar-scanner-cli-4.6.0.2311-linux.zip
+- unzip sonar-scanner-cli-4.6.0.2311-linux.zip
+- export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-4.6.0.2311-linux/bin
 - sonar-scanner --help
 before_script:
 - export FC=$FC_COMPILER
