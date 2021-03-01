@@ -1,6 +1,7 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author clementval
  */
 package claw.wani.transformation.sca;
 
@@ -66,7 +67,6 @@ import claw.wani.x2t.translator.ClawTranslator;
  * be located in the same directory as the original XcodeML module file and has
  * the following naming structure: module_name.claw.xmod
  *
- * @author clementval
  */
 public class ScaForward extends ClawTransformation
 {

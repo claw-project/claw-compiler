@@ -1,6 +1,7 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author clementval
  */
 package claw.wani.x2t.configuration;
 
@@ -52,7 +53,6 @@ import claw.wani.transformation.ClawBlockTransformation;
  * Configuration class is used to read the configuration file and expose its
  * information to the translator.
  *
- * @author clementval
  */
 public class Configuration
 {

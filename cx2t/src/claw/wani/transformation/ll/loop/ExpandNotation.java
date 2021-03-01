@@ -1,6 +1,7 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author clementval
  */
 package claw.wani.transformation.ll.loop;
 
@@ -53,7 +54,6 @@ import claw.wani.x2t.translator.ClawTranslator;
  * END DO
  * </pre>
  *
- * @author clementval
  */
 public class ExpandNotation extends ClawBlockTransformation
 {

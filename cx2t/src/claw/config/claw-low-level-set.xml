@@ -1,4 +1,9 @@
 <!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: not specified
+-->
+<!--
 This file describe all low-level transformations included in the CLAW
 language specifications.
 

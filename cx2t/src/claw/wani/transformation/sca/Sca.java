@@ -1,6 +1,7 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author clementval
  */
 package claw.wani.transformation.sca;
 
@@ -51,7 +52,6 @@ import claw.wani.x2t.translator.ClawTranslator;
  * This class holds the basic common elements for all targets. Specific
  * transformations are detailed in the children classes:
  *
- * @author clementval
  * @see claw.wani.transformation.sca.ScaGPU
  * @see claw.wani.transformation.sca.ScaCPUvectorizeGroup
  */

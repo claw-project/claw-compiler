@@ -1,6 +1,7 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author clementval
  */
 package claw.wani.x2t.translator;
 
@@ -55,7 +56,6 @@ import claw.wani.x2t.configuration.GroupConfiguration;
  * ClawTranslator stores all transformation groups applied during the
  * translation.
  *
- * @author clementval
  */
 
 public class ClawTranslator implements Translator

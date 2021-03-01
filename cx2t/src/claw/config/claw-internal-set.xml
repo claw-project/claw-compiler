@@ -1,4 +1,9 @@
 <!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: not specified
+-->
+<!--
 This file describes CLAW internal transformation not triggered by the user.
 -->
 <transformations>
