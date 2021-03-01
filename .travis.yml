@@ -76,7 +76,7 @@ script:
 - cd ..
 - mkdir build
 - cd build
-- cmake -DCMAKE_INSTALL_PREFIX=$HOME/claw ..
+- cmake -S ${CLAW_SRC} -DCMAKE_INSTALL_PREFIX=$HOME/claw ..
 - make -j
 - make install
 - make run-tests
