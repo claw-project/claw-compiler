@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: auto-generated
+-->
 <profiles version="18">
     <profile kind="CodeFormatterProfile" name="CLAW Java Conventions" version="18">
         <setting id="org.eclipse.jdt.core.formatter.insert_space_after_ellipsis" value="insert"/>
