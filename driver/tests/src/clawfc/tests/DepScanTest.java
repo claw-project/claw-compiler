@@ -442,7 +442,7 @@ public class DepScanTest extends clawfc.tests.utils.DriverTestCase
         final Path resIncBinfoFilepath = OUT_BINFO_DIR.resolve(incSrcDirHash + "_m.f90.fif");
         final FortranFileProgramUnitInfo MOD_REF_INFO = new FortranFileProgramUnitInfo(
                 Arrays.asList(ModInfo(Pos("m", 0, 28, 0, 3), emptyList(), true)), INC_INPUT_FILEPATH, resIncPPFilepath,
-                Arrays.asList(INC_FTN_INC_FILEPATH, INC_PP_INC_FILEPATH));
+                Arrays.asList(INC_PP_INC_FILEPATH, INC_FTN_INC_FILEPATH));// Preprocessor include has higher priority
 
         Callable<Void> verifyOutput = new Callable<Void>()
         {
