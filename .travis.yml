@@ -56,10 +56,9 @@ matrix:
         - gfortran-7
         - ant
         - ant-optional
+addons:
+  sonarcloud
 before_install:
-- wget https://dl.bintray.com/sonarsource/SonarQube/org/sonarsource/scanner/cli/sonar-scanner-cli/3.2.0.1227/sonar-scanner-cli-3.2.0.1227-linux.zip
-- unzip sonar-scanner-cli-3.2.0.1227-linux.zip
-- export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-3.2.0.1227-linux/bin
 - sonar-scanner --help
 before_script:
 - export FC=$FC_COMPILER
@@ -70,7 +69,6 @@ before_script:
 script:
 - export CLAW_SRC=$(pwd)
 - python "./scripts/check_author_license.py"
-- cd -
 - "./scripts/check_lib_split"
 - cd scripts
 - "./run.shellcheck"
