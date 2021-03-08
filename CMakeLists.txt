@@ -238,7 +238,7 @@ add_dependencies(run-tests run-cx2t-unit-tests run-driver-unit-tests run-driver-
 option(GENERATE_ECLIPSE_IDE_PROJECTS "Generate Eclipse IDE projects" ON)
 if(GENERATE_ECLIPSE_IDE_PROJECTS)
   message(STATUS "Generating Eclipse projects")
-  foreach(PROJECT_NAME cx2t cx2t-ut clawfc clawfc-ut clawfc-tests claw-tests)
+  foreach(PROJECT_NAME cx2t cx2t-unit-tests clawfc clawfc-unit-tests clawfc-tests claw-tests)
       file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/ide/eclipse/${PROJECT_NAME})
       configure_file(${CMAKE_SOURCE_DIR}/resources/eclipse/${PROJECT_NAME}.project.in
                      ${CMAKE_BINARY_DIR}/ide/eclipse/${PROJECT_NAME}/.project
