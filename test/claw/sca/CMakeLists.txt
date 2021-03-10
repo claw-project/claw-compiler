@@ -51,6 +51,7 @@
 # sca46: simple RETURN transformation
 # sca47: Issue #578 regression
 # sca48: SCA with model config and separate size and iteration dimension variables
+# sca49: Loop insertion issue with --directive=none (Issue #598)
 
 foreach(loop_var RANGE 1 48)
   if(NOT ${loop_var} EQUAL 30)
@@ -89,7 +90,13 @@ set(
 claw_add_advanced_test_set(
   NAME claw-sca
   DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  EXCLUDE sca30 sca44
+  EXCLUDE sca30 sca44 sca49
+)
+
+claw_add_basic_test(
+  NAME claw-sca-sca49
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/sca49
+  CLAW_FLAGS --directive=none
 )
 
 # Specific "fail" test to check correct failure

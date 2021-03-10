@@ -502,9 +502,7 @@ public final class Directive {
                                               Xnode from)
   {
     DirectiveGenerator dg = Context.get().getGenerator();
-    if(dg.getDirectiveLanguage() == CompilerDirective.NONE
-        || !Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION))
-    {
+    if(!Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION)) {
       return null;
     }
     Xnode first = functionDefinition.body().firstChild();
@@ -572,9 +570,7 @@ public final class Directive {
   {
     DirectiveGenerator dg = Context.get().getGenerator();
 
-    if(dg.getDirectiveLanguage() == CompilerDirective.NONE
-        || !Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION))
-    {
+    if(!Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION)) {
       return null;
     }
     Xnode last = functionDefinition.body().lastChild();
