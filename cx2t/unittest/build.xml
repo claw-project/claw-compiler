@@ -4,7 +4,7 @@
  @author: not specified
 -->
 
-<project name="claw-test" default="main" basedir="."
+<project name="claw-unit-tests" default="main" basedir="."
          xmlns:jacoco="antlib:org.jacoco.ant">
   <description>Build CLAWX2T unit tests</description>
 
