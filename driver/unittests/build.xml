@@ -4,7 +4,7 @@
  @author: Mikhail Zhigun
 -->
 
-<project name="clawfc-ut" default="main" basedir=".">
+<project name="clawfc-unit-tests" default="main" basedir=".">
     <description>Build CLAWFC driver unit-tests</description>
 
     <!-- Value set externally-->

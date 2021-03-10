@@ -5,7 +5,7 @@
 -->
 
 <!-- CLAW X2T build process -->
-<project name="claw" default="main" basedir=".">
+<project name="cx2t" default="main" basedir=".">
     <description>Build CX2T libraries</description>
 
     <!-- Value set externally-->

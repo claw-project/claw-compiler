@@ -5,7 +5,7 @@
 -->
 
 <!-- CLAWFC build process -->
-<project name="clawfc_tests" default="main" basedir=".">
+<project name="clawfc-tests" default="main" basedir=".">
     <description>Run tests on CLAWFC driver</description>
 
     <!-- Value set externally-->
