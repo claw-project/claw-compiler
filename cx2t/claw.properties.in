@@ -154,6 +154,8 @@ driver.tests.res.dir=@CLAWFC_TESTS_RES_DIR@
 driver.tests.classes.dir=@CLAWFC_TESTS_CLASSES_DIR@
 driver.tests.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep}
 driver.tests.report=@CLAWFC_TESTS_REPORT@
+driver.tests.code.coverage.report.bin=${test.reports.dir}/clawfc-tests.jacoco.exec
+driver.tests.code.coverage.report.xml=${test.reports.dir}/clawfc-tests.jacoco.xml
 
 # CLAW tests
 claw.tests.jar=@CLAW_TESTS_JAR@
