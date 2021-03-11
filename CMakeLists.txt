@@ -160,6 +160,7 @@ endif(BUILD_OMNI_XCODEML_TOOLS)
 # translator library and xcodeml manipulation library
 add_subdirectory(cx2t)
 
+add_custom_target(build-claw-solution ALL)
 # compiler driver
 add_subdirectory(driver)
 
@@ -182,7 +183,6 @@ else()
   set(DISABLE_RESOLVE "-Doffline=false")
 endif()
 
-add_custom_target(build-claw-solution ALL)
 add_dependencies(build-claw-solution omni-compiler generate-xmods)
 add_custom_command(
   TARGET build-claw-solution
@@ -193,47 +193,77 @@ add_custom_command(
 )
 
 set(RUN_TEST "${CMAKE_SOURCE_DIR}/scripts/run-test.sh")
+set(RUN_ANT_CMD ${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT_FLAGS} -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR})
 
 add_custom_target(run-driver-unit-tests)
 add_dependencies(run-driver-unit-tests build-claw-solution)
-set(RUN_DRIVER_UT_TESTS_CMD "${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT_FLAGS} -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR} run-driver-unit-tests")
 add_custom_command(
   TARGET run-driver-unit-tests
-  COMMAND bash "${RUN_TEST}" "${RUN_DRIVER_UT_TESTS_CMD}" "${CLAWFC_UT_REPORT}"
+  COMMAND bash "${RUN_TEST}" \"${RUN_ANT_CMD} run-driver-unit-tests\" "${CLAWFC_UT_REPORT}"
   COMMENT "Running CLAWFC unit-tests"
+)
+
+add_custom_target(build-driver-unit-tests)
+add_dependencies(build-driver-unit-tests build-claw-solution)
+add_custom_command(
+  TARGET build-driver-unit-tests
+  COMMAND ${RUN_ANT_CMD} build-driver-unit-tests
+  COMMENT "Building CLAWFC unit-tests"
 )
 
 add_custom_target(run-driver-tests)
 add_dependencies(run-driver-tests build-claw-solution)
-set(RUN_DRIVER_TESTS_CMD "${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT_FLAGS} -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR} run-driver-tests")
 add_custom_command(
   TARGET run-driver-tests
-  COMMAND bash "${RUN_TEST}" "${RUN_DRIVER_TESTS_CMD}" "${CLAWFC_TESTS_REPORT}"
+  COMMAND bash "${RUN_TEST}" \"${RUN_ANT_CMD} run-driver-tests\" "${CLAWFC_TESTS_REPORT}"
   COMMENT "Running CLAWFC tests"
+)
+
+add_custom_target(build-driver-tests)
+add_dependencies(build-driver-tests build-claw-solution)
+add_custom_command(
+  TARGET build-driver-tests
+  COMMAND ${RUN_ANT_CMD} build-driver-tests
+  COMMENT "Building CLAWFC tests"
 )
 
 add_custom_target(run-cx2t-unit-tests)
 add_dependencies(run-cx2t-unit-tests build-claw-solution)
 add_custom_command(
   TARGET run-cx2t-unit-tests
-  COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION}
-  ${ANT_FLAGS}
-  -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR}
-  run-cx2t-unit-tests
+  COMMAND ${RUN_ANT_CMD} run-cx2t-unit-tests
   COMMENT "Running CX2T unit tests"
+)
+
+add_custom_target(build-cx2t-unit-tests)
+add_dependencies(build-cx2t-unit-tests build-claw-solution)
+add_custom_command(
+  TARGET build-cx2t-unit-tests
+  COMMAND ${RUN_ANT_CMD} build-cx2t-unit-tests
+  COMMENT "Building CX2T unit-tests"
 )
 
 add_custom_target(run-claw-tests)
 add_dependencies(run-claw-tests build-claw-solution)
-set(RUN_CLAW_TESTS_CMD "${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT_FLAGS} -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR} run-claw-tests")
 add_custom_command(
   TARGET run-claw-tests
-  COMMAND bash "${RUN_TEST}" "${RUN_CLAW_TESTS_CMD}" "${CLAW_TESTS_REPORT}"
+  COMMAND bash "${RUN_TEST}" \"${RUN_ANT_CMD} run-claw-tests\" "${CLAW_TESTS_REPORT}"
   COMMENT "Running CLAW tests"
+)
+
+add_custom_target(build-claw-tests)
+add_dependencies(build-claw-tests build-claw-solution)
+add_custom_command(
+  TARGET build-claw-tests
+  COMMAND ${RUN_ANT_CMD} build-claw-tests
+  COMMENT "Building CLAW tests"
 )
 
 add_custom_target(run-tests)
 add_dependencies(run-tests run-cx2t-unit-tests run-driver-unit-tests run-driver-tests run-claw-tests)
+
+add_custom_target(build-tests)
+add_dependencies(build-tests build-cx2t-unit-tests build-driver-unit-tests build-driver-tests build-claw-tests)
 
 option(GENERATE_ECLIPSE_IDE_PROJECTS "Generate Eclipse IDE projects" ON)
 if(GENERATE_ECLIPSE_IDE_PROJECTS)

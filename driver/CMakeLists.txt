@@ -26,6 +26,7 @@ add_custom_target(copy_driver_files_to_int_install ALL
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/bin/${CLAW_COMPILER_FILE} ${INT_CLAW_HOME}/bin
     )
 add_dependencies(copy_driver_files_to_int_install create_int_install_dir)
+add_dependencies(build-claw-solution copy_driver_files_to_int_install)
 
 add_subdirectory(tests)
 add_subdirectory(unittests)
