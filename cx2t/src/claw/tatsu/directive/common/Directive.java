@@ -377,6 +377,7 @@ public final class Directive
     {
         return insertPragmas(xcodeml, directives, ref, true);
     }
+<<<<<<< HEAD
 
     /**
      * Create and insert a pragma statement.
@@ -414,6 +415,28 @@ public final class Directive
             }
         }
         return retNode == null ? ref : retNode;
+=======
+    Xnode begin = addPragmasBefore(xcodeml, startDirective, hook.getStart());
+    Xnode end = addPragmaAfter(xcodeml, endDirective, hook.getEnd());
+    return new Xblock(begin, end);
+  }
+
+  /**
+   * Skip elements in preamble and find the first element that will be included
+   * in the parallel region.
+   *
+   * @param functionDefinition Function definition in which body checked.
+   * @param from               Optional element to start from. If null, starts
+   *                           from first element in function's body.
+   * @return First element for the parallel region.
+   */
+  public static Xnode findParallelRegionStart(Xnode functionDefinition,
+                                              Xnode from)
+  {
+    DirectiveGenerator dg = Context.get().getGenerator();
+    if(!Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION)) {
+      return null;
+>>>>>>> d7cea8b3... [sca] Fix issue #598 (#599)
     }
 
     /**
@@ -526,6 +549,7 @@ public final class Directive
         }
         return first;
     }
+<<<<<<< HEAD
 
     /**
      * Check if the node is a CLAW directive
@@ -537,6 +561,38 @@ public final class Directive
     {
         return Xnode.isOfCode(node, Xcode.F_PRAGMA_STATEMENT)
                 && node.value().toLowerCase().startsWith(TatsuConstant.DIRECTIVE_CLAW);
+=======
+    return first;
+  }
+
+  /**
+   * Check if the node is a CLAW directive
+   *
+   * @param node Node to check.
+   * @return True if the node is a CLAW directive. False otherwise.
+   */
+  private static boolean isClawDirective(Xnode node) {
+    return Xnode.isOfCode(node, Xcode.F_PRAGMA_STATEMENT)
+        && node.value().toLowerCase().startsWith(TatsuConstant.DIRECTIVE_CLAW);
+  }
+
+  /**
+   * Skip elements in epilogue and find the last element that will be included
+   * in the parallel region.
+   *
+   * @param functionDefinition Function definition in which body checked.
+   * @param from               Optional element to start from. If null, starts
+   *                           from last element in function's body.
+   * @return Last element for the parallel region.
+   */
+  public static Xnode findParallelRegionEnd(Xnode functionDefinition,
+                                            Xnode from)
+  {
+    DirectiveGenerator dg = Context.get().getGenerator();
+
+    if(!Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION)) {
+      return null;
+>>>>>>> d7cea8b3... [sca] Fix issue #598 (#599)
     }
 
     /**
