@@ -10,6 +10,7 @@ import static claw.wani.x2t.configuration.Configuration.DEFAULT_CONFIG_FILE;
 import static claw.wani.x2t.configuration.Configuration.SET_XSD;
 import static java.lang.String.format;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -70,12 +71,14 @@ public class ClawX2T
 
     public static boolean dirExists(Path path)
     {
-        return Files.exists(path) && Files.isDirectory(path);
+        final File f = path.toFile();
+        return f.exists() && f.isDirectory();
     }
 
     public static boolean fileExists(Path path)
     {
-        return Files.exists(path) && !Files.isDirectory(path);
+        final File f = path.toFile();
+        return f.exists() && !f.isDirectory();
     }
 
     public static void verifyConfigDir(final Path configDirPath) throws Exception

@@ -15,7 +15,7 @@ import java.util.Map;
 public class FilteredContentSequence
 {
     public enum OpType {
-        Add, Remove
+        ADD, REMOVE
     }
 
     public static class Op
@@ -70,14 +70,14 @@ public class FilteredContentSequence
         RemovedFilteredContent rem = new RemovedFilteredContent();
         for (Op op : ops)
         {
-            if (op.type == OpType.Add)
+            if (op.type == OpType.ADD)
             {
                 add.addSequence(op.pos, op.txt);
             }
         }
         for (Op op : ops)
         {
-            if (op.type == OpType.Remove)
+            if (op.type == OpType.REMOVE)
             {
                 int newPos = add.getChrIdxFiltered(op.pos);
                 rem.addSequence(newPos, op.txt);
@@ -93,7 +93,7 @@ public class FilteredContentSequence
         StringBuilder sb = new StringBuilder();
         for (Op op : ops)
         {
-            if (op.type == OpType.Add)
+            if (op.type == OpType.ADD)
             {
                 sb.append("add ");
             } else

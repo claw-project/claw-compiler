@@ -47,7 +47,7 @@ public class Preprocessor
             this.vendor = vendor;
             switch (vendor)
             {
-            case cray:
+            case CRAY:
             {
                 flags = Collections.unmodifiableList(Arrays.asList("-eP", "-hnoomp"));
                 macro = "_CRAYFTN";
@@ -55,7 +55,7 @@ public class Preprocessor
                 getVersionFlag = "--version";
                 break;
             }
-            case intel:
+            case INTEL:
             {
                 flags = Collections.unmodifiableList(Arrays.asList("-preprocess-only", "-E"));
                 macro = "__ICC";
@@ -63,7 +63,7 @@ public class Preprocessor
                 getVersionFlag = "--version";
                 break;
             }
-            case gnu:
+            case GNU:
             {
                 flags = Collections.unmodifiableList(Arrays.asList("-E", "-cpp"));
                 macro = "_GNU";
@@ -71,7 +71,7 @@ public class Preprocessor
                 getVersionFlag = "--version";
                 break;
             }
-            case nag:
+            case NAG:
             {
                 flags = Collections.unmodifiableList(Arrays.asList("-Wp,-w,-P", "-F", "-fpp"));
                 macro = "NAGFOR";
@@ -79,7 +79,7 @@ public class Preprocessor
                 getVersionFlag = "-V";
                 break;
             }
-            case portland:
+            case PORTLAND:
             {
                 flags = Collections.unmodifiableList(Arrays.asList("-E", "-cpp"));
                 macro = "_PGI";
@@ -172,7 +172,7 @@ public class Preprocessor
     {
         switch (info.vendor)
         {
-        case cray:
+        case CRAY:
             return workingDir.resolve(inFilePath.getFileName() + ".i");
         default:
             throw new Exception("Not supported");

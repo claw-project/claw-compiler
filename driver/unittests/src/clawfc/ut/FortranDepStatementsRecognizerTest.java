@@ -70,9 +70,9 @@ public class FortranDepStatementsRecognizerTest extends TestCase
 
     void acceptModuleOpen(String line, String name) throws IOException, Exception
     {
-        final String unitName = parser.parseUnitStatement(StatementType.ModuleOpen, line);
+        final String unitName = parser.parseUnitStatement(StatementType.MODULE_OPEN, line);
         assertEquals(name, unitName);
-        verifyProgramUnitStatementScan(StatementType.ModuleOpen, line, name);
+        verifyProgramUnitStatementScan(StatementType.MODULE_OPEN, line, name);
     }
 
     void rejectLine(String line) throws FortranException, IOException, Exception
@@ -106,9 +106,9 @@ public class FortranDepStatementsRecognizerTest extends TestCase
 
     void acceptModuleClose(String line, String name) throws IOException, Exception
     {
-        final String unitName = parser.parseUnitStatement(StatementType.ModuleClose, line);
+        final String unitName = parser.parseUnitStatement(StatementType.MODULE_CLOSE, line);
         assertEquals(name, unitName);
-        verifyProgramUnitStatementScan(StatementType.ModuleClose, line, name);
+        verifyProgramUnitStatementScan(StatementType.MODULE_CLOSE, line, name);
     }
 
     public void testModuleClose() throws Exception
@@ -132,9 +132,9 @@ public class FortranDepStatementsRecognizerTest extends TestCase
 
     void acceptProgramOpen(String line, String name) throws IOException, Exception
     {
-        final String unitName = parser.parseUnitStatement(StatementType.ProgramOpen, line);
+        final String unitName = parser.parseUnitStatement(StatementType.PROGRAM_OPEN, line);
         assertEquals(name, unitName);
-        verifyProgramUnitStatementScan(StatementType.ProgramOpen, line, name);
+        verifyProgramUnitStatementScan(StatementType.PROGRAM_OPEN, line, name);
     }
 
     public void testProgramOpen() throws Exception
@@ -161,9 +161,9 @@ public class FortranDepStatementsRecognizerTest extends TestCase
 
     void acceptProgramClose(String line, String name) throws IOException, Exception
     {
-        final String unitName = parser.parseUnitStatement(StatementType.ProgramClose, line);
+        final String unitName = parser.parseUnitStatement(StatementType.PROGRAM_CLOSE, line);
         assertEquals(name, unitName);
-        verifyProgramUnitStatementScan(StatementType.ProgramClose, line, name);
+        verifyProgramUnitStatementScan(StatementType.PROGRAM_CLOSE, line, name);
     }
 
     public void testProgramClose() throws Exception
@@ -193,9 +193,9 @@ public class FortranDepStatementsRecognizerTest extends TestCase
 
     void verifyBlockDataOpen(String line, String name) throws IOException, Exception
     {
-        final String unitName = parser.parseUnitStatement(StatementType.BlockDataOpen, line);
+        final String unitName = parser.parseUnitStatement(StatementType.BLOCK_DATA_OPEN, line);
         assertEquals(name, unitName);
-        verifyProgramUnitStatementScan(StatementType.BlockDataOpen, line, name);
+        verifyProgramUnitStatementScan(StatementType.BLOCK_DATA_OPEN, line, name);
     }
 
     public void testBlockDataOpen() throws Exception
@@ -212,9 +212,9 @@ public class FortranDepStatementsRecognizerTest extends TestCase
 
     void verifyBlockDataClose(String line, String name) throws IOException, Exception
     {
-        final String unitName = parser.parseUnitStatement(StatementType.BlockDataClose, line);
+        final String unitName = parser.parseUnitStatement(StatementType.BLOCK_DATA_CLOSE, line);
         assertEquals(name, unitName);
-        verifyProgramUnitStatementScan(StatementType.BlockDataClose, line, name);
+        verifyProgramUnitStatementScan(StatementType.BLOCK_DATA_CLOSE, line, name);
     }
 
     public void testBlockDataClose() throws Exception

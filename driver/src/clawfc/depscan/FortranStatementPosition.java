@@ -107,6 +107,12 @@ public class FortranStatementPosition
         return true;
     }
 
+    @Override
+    public int hashCode()
+    {// This is to silence the warning
+        return super.hashCode();
+    }
+
     public static clawfc.depscan.FortranStatementPosition createPosition(FortranStatementBasicPosition basicPos,
             AsciiArrayIOStream.LinesInfo linesInfo)
     {

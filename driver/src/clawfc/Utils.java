@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -160,12 +161,14 @@ public class Utils
 
     public static boolean dirExists(Path path)
     {
-        return Files.exists(path) && Files.isDirectory(path);
+        final File f = path.toFile();
+        return f.exists() && f.isDirectory();
     }
 
     public static boolean fileExists(Path path)
     {
-        return Files.exists(path) && !Files.isDirectory(path);
+        final File f = path.toFile();
+        return f.exists() && !f.isDirectory();
     }
 
     public static Path dirPath(Path filePath)
@@ -175,12 +178,18 @@ public class Utils
 
     public static void removeDir(Path path) throws IOException
     {
-        Files.walk(path).map(Path::toFile).sorted((o1, o2) -> -o1.compareTo(o2)).forEach(File::delete);
+        try (Stream<Path> files = Files.walk(path))
+        {
+            files.map(Path::toFile).sorted((o1, o2) -> -o1.compareTo(o2)).forEach(File::delete);
+        }
     }
 
     public static void cleanDir(Path dirPath) throws IOException
     {
-        Files.walk(dirPath).filter(Files::isRegularFile).map(Path::toFile).forEach(File::delete);
+        try (Stream<Path> files = Files.walk(dirPath))
+        {
+            files.filter(Files::isRegularFile).map(Path::toFile).forEach(File::delete);
+        }
     }
 
     public static void writeTextToFile(Path path, String text) throws IOException
@@ -188,14 +197,6 @@ public class Utils
         try (PrintWriter out = new PrintWriter(path.toString()))
         {
             out.println(text);
-        }
-    }
-
-    public static class NullOutputStream extends OutputStream
-    {
-        @Override
-        public void write(int b) throws IOException
-        {
         }
     }
 
@@ -238,7 +239,8 @@ public class Utils
                     {
                         taskFuture.get();
                     } catch (InterruptedException e)
-                    {
+                    {// Exception means that THIS thread was interrupted
+                        throw e;
                     } catch (ExecutionException e)
                     {
                         Throwable cause = e.getCause();

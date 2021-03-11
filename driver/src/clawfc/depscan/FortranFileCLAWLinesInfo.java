@@ -5,34 +5,50 @@
  */
 package clawfc.depscan;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 public class FortranFileCLAWLinesInfo
 {
     public final List<Integer> clawDirectives;
     public final List<Integer> clawGuards;
-    
-    public FortranFileCLAWLinesInfo(List<Integer> clawDirectives,
-                                    List<Integer> clawGuards)
+
+    public FortranFileCLAWLinesInfo(List<Integer> clawDirectives, List<Integer> clawGuards)
     {
         this.clawDirectives = Collections.unmodifiableList(clawDirectives);
-        this.clawGuards = Collections.unmodifiableList(clawGuards);        
+        this.clawGuards = Collections.unmodifiableList(clawGuards);
     }
-    
+
     @Override
-    public boolean equals(Object obj) 
+    public boolean equals(Object obj)
     {
-        if(this == obj)
-        { return true; }
-        if(obj == null)
-        { return false; }
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
         if (getClass() != obj.getClass())
-        { return false; }
+        {
+            return false;
+        }
         FortranFileCLAWLinesInfo other = (FortranFileCLAWLinesInfo) obj;
-        if(!clawDirectives.equals(other.clawDirectives))
-        { return false; }
-        if(!clawGuards.equals(other.clawGuards))
-        { return false; }
+        if (!clawDirectives.equals(other.clawDirectives))
+        {
+            return false;
+        }
+        if (!clawGuards.equals(other.clawGuards))
+        {
+            return false;
+        }
         return true;
+    }
+
+    @Override
+    public int hashCode()
+    {// This is to silence the warning
+        return super.hashCode();
     }
 }

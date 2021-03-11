@@ -242,7 +242,7 @@ public class PreprocessorTest extends clawfc.tests.utils.DriverTestCase
         assertTrue(eCaught != null);
         final String errMsg = eCaught.getMessage();
         assertTrue(errMsg.contains("Subprocess failed"));
-        if (Driver.cfg().defaultFortranCompilerVendor() == FortranCompilerVendor.gnu)
+        if (Driver.cfg().defaultFortranCompilerVendor() == FortranCompilerVendor.GNU)
         {
             assertTrue(errMsg.contains("Fatal Error: not_found.inc: No such file or directory"));
         }

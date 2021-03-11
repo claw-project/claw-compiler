@@ -70,6 +70,12 @@ public class FortranLineBreaksFinder
             }
             return true;
         }
+
+        @Override
+        public int hashCode()
+        {// This is to silence the warning
+            return super.hashCode();
+        }
     }
 
     static class Listener extends FortranLineBreaksFilterBaseListener

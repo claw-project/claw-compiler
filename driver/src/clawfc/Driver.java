@@ -32,6 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -100,12 +102,12 @@ public class Driver
 
     static void verifyInstall()
     {
-        if (!Files.isDirectory(cfg().installRoot()))
+        if (!Utils.dirExists(cfg().installRoot()))
         {
             throw new RuntimeException((sprintf("CLAW install directory \"%s\" does not exist or is not a directory",
                     cfg().installRoot())));
         }
-        if (!Files.isDirectory(cfg().omniInstallRoot()))
+        if (!Utils.dirExists(cfg().omniInstallRoot()))
         {
             throw new RuntimeException(
                     sprintf("OMNI XCodeML Tools install directory \"%s\" does not exist or is not a directory",
@@ -394,8 +396,15 @@ public class Driver
         getOrCreateDir(outDirPath);
         if (outFilePath != null)
         {
-            AsciiArrayIOStream outSrc = outSrcBySrcPath.entrySet().stream().findFirst().get().getValue();
-            saveToFile(outSrc.getAsInputStreamUnsafe(), outFilePath);
+            Optional<Entry<Path, AsciiArrayIOStream>> optOutStrm = outSrcBySrcPath.entrySet().stream().findFirst();
+            if (optOutStrm.isPresent())
+            {
+                AsciiArrayIOStream outSrc = optOutStrm.get().getValue();
+                saveToFile(outSrc.getAsInputStreamUnsafe(), outFilePath);
+            } else
+            {
+                throw new Exception("outSrcBySrcPath empty");
+            }
         } else
         {
             saveOutputSrc(outSrcBySrcPath, outDirPath, enableMultiprocessing);
@@ -869,13 +878,13 @@ public class Driver
             srcData = inputPPSrcFiles.get(srcFilePath);
             if (srcData != null)
             {
-                modDesignation = UnitDesignation.Input;
+                modDesignation = UnitDesignation.INPUT;
             } else
             {
                 srcData = incPPSrcFiles.get(srcFilePath);
                 if (srcData != null)
                 {
-                    modDesignation = UnitDesignation.Include;
+                    modDesignation = UnitDesignation.INCLUDE;
                 } else
                 {// Should be unreachable
                     final String errStr = sprintf(
@@ -905,7 +914,7 @@ public class Driver
             ProgramUnitInfo modData = infoByName.get(modName);
             if (modData == null)
             {
-                modData = new ProgramUnitData(modName, UnitDesignation.Include, entry.getValue());
+                modData = new ProgramUnitData(modName, UnitDesignation.INCLUDE, entry.getValue());
                 infoByName.put(modName, modData);
             }
         }

@@ -27,8 +27,8 @@ import clawfc.depscan.parser.FortranProcedureStatementsRecognizerParser;
 public class FortranProcedureStatementsRecognizer implements FortranProgramUnitStatementsRecognizer
 {
     public static final Set<StatementType> SUPPORTED_TYPES = new HashSet<StatementType>(
-            Arrays.asList(StatementType.FunctionOpen, StatementType.FunctionClose, StatementType.SubroutineOpen,
-                    StatementType.SubroutineClose));
+            Arrays.asList(StatementType.FUNCTION_OPEN, StatementType.FUNCTION_CLOSE, StatementType.SUBROUTINE_OPEN,
+                    StatementType.SUBROUTINE_CLOSE));
 
     static class Listener extends FortranProcedureStatementsRecognizerBaseListener
     {
@@ -68,26 +68,26 @@ public class FortranProcedureStatementsRecognizer implements FortranProgramUnitS
         @Override
         public void exitFunction_open_name(FortranProcedureStatementsRecognizerParser.Function_open_nameContext ctx)
         {
-            setUnitName(ctx, StatementType.FunctionOpen);
+            setUnitName(ctx, StatementType.FUNCTION_OPEN);
         }
 
         @Override
         public void exitFunction_close_name(FortranProcedureStatementsRecognizerParser.Function_close_nameContext ctx)
         {
-            setUnitName(ctx, StatementType.FunctionClose);
+            setUnitName(ctx, StatementType.FUNCTION_CLOSE);
         }
 
         @Override
         public void exitSubroutine_open_name(FortranProcedureStatementsRecognizerParser.Subroutine_open_nameContext ctx)
         {
-            setUnitName(ctx, StatementType.SubroutineOpen);
+            setUnitName(ctx, StatementType.SUBROUTINE_OPEN);
         }
 
         @Override
         public void exitSubroutine_close_name(
                 FortranProcedureStatementsRecognizerParser.Subroutine_close_nameContext ctx)
         {
-            setUnitName(ctx, StatementType.SubroutineClose);
+            setUnitName(ctx, StatementType.SUBROUTINE_CLOSE);
         }
     }
 
@@ -125,16 +125,16 @@ public class FortranProcedureStatementsRecognizer implements FortranProgramUnitS
         {
             switch (type)
             {
-            case FunctionOpen:
+            case FUNCTION_OPEN:
                 tree = parser.function_open_stmt();
                 break;
-            case FunctionClose:
+            case FUNCTION_CLOSE:
                 tree = parser.function_close_stmt();
                 break;
-            case SubroutineOpen:
+            case SUBROUTINE_OPEN:
                 tree = parser.subroutine_open_stmt();
                 break;
-            case SubroutineClose:
+            case SUBROUTINE_CLOSE:
                 tree = parser.subroutine_close_stmt();
                 break;
             default:

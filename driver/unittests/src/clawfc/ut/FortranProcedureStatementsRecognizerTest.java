@@ -54,9 +54,9 @@ public class FortranProcedureStatementsRecognizerTest extends TestCase
 
     void acceptSubroutineOpen(String line, String name) throws IOException, Exception
     {
-        final String unitName = parser.parseUnitStatement(StatementType.SubroutineOpen, line);
+        final String unitName = parser.parseUnitStatement(StatementType.SUBROUTINE_OPEN, line);
         assertEquals(name, unitName);
-        verifyProgramUnitStatementScan(StatementType.SubroutineOpen, line, name);
+        verifyProgramUnitStatementScan(StatementType.SUBROUTINE_OPEN, line, name);
     }
 
     public void testSubroutineOpen() throws Exception
@@ -80,9 +80,9 @@ public class FortranProcedureStatementsRecognizerTest extends TestCase
 
     void acceptSubroutineClose(String line, String name) throws IOException, Exception
     {
-        final String unitName = parser.parseUnitStatement(StatementType.SubroutineClose, line);
+        final String unitName = parser.parseUnitStatement(StatementType.SUBROUTINE_CLOSE, line);
         assertEquals(name, unitName);
-        verifyProgramUnitStatementScan(StatementType.SubroutineClose, line, name);
+        verifyProgramUnitStatementScan(StatementType.SUBROUTINE_CLOSE, line, name);
     }
 
     public void testSubroutineClose() throws Exception
@@ -96,9 +96,9 @@ public class FortranProcedureStatementsRecognizerTest extends TestCase
 
     void acceptFunctionOpen(String line, String name) throws IOException, Exception
     {
-        final String unitName = parser.parseUnitStatement(StatementType.FunctionOpen, line);
+        final String unitName = parser.parseUnitStatement(StatementType.FUNCTION_OPEN, line);
         assertEquals(name, unitName);
-        verifyProgramUnitStatementScan(StatementType.FunctionOpen, line, name);
+        verifyProgramUnitStatementScan(StatementType.FUNCTION_OPEN, line, name);
     }
 
     public void testFunctionOpen() throws Exception
@@ -141,9 +141,9 @@ public class FortranProcedureStatementsRecognizerTest extends TestCase
 
     void verifyFunctionClose(String line, String name) throws IOException, Exception
     {
-        final String unitName = parser.parseUnitStatement(StatementType.FunctionClose, line);
+        final String unitName = parser.parseUnitStatement(StatementType.FUNCTION_CLOSE, line);
         assertEquals(name, unitName);
-        verifyProgramUnitStatementScan(StatementType.FunctionClose, line, name);
+        verifyProgramUnitStatementScan(StatementType.FUNCTION_CLOSE, line, name);
     }
 
     public void testFunctionClose() throws Exception
