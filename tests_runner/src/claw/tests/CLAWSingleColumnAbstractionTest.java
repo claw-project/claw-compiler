@@ -242,6 +242,14 @@ public class CLAWSingleColumnAbstractionTest extends AdvancedTestCase
         run(inParams);
     }
 
+    public void test_sca_with_model_config_and_separate_size_and_iteration_dimension_variables() throws Exception
+    {
+        InputParams inParams = createParams(
+                "sca_with_model_config_and_separate_size_and_iteration_dimension_variables");
+        inParams.setModelConfigFilename("iteration_size_model.toml");
+        run(inParams);
+    }
+
     public void test_sca_on_elemental_function() throws Exception
     {
         InputParams inParams = createParams("sca_on_elemental_function");

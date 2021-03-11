@@ -60,14 +60,14 @@ public class DimensionTest
         assertEquals(InsertionPosition.AFTER, dimDef.getInsertionPosition());
         assertEquals("nproma(1:nend)", dimDef.toString());
 
-        Xnode indexRange = dimDef.generateIndexRange(xcodeml, false);
+    Xnode indexRange = dimDef.generateIndexRange(xcodeml, false, false);
         assertNotNull(indexRange);
         assertEquals(Xcode.INDEX_RANGE, indexRange.opcode());
         assertEquals(2, indexRange.children().size());
         assertEquals(Xcode.LOWER_BOUND, indexRange.firstChild().opcode());
         assertEquals(Xcode.UPPER_BOUND, indexRange.lastChild().opcode());
 
-        Xnode indexRangeStep = dimDef.generateIndexRange(xcodeml, true);
+    Xnode indexRangeStep = dimDef.generateIndexRange(xcodeml, true, false);
         assertNotNull(indexRangeStep);
         assertEquals(Xcode.INDEX_RANGE, indexRangeStep.opcode());
         assertEquals(3, indexRangeStep.children().size());

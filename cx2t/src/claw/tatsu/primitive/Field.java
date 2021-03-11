@@ -130,18 +130,18 @@ public final class Field {
         for(DimensionDefinition dim : fieldInfo.getDimensions()) {
           switch(dim.getInsertionPosition()) {
             case BEFORE:
-              newType.addDimension(dim.generateIndexRange(xcodeml, false),
+              newType.addDimension(dim.generateIndexRange(xcodeml, false, false),
                   beforePositionIndex);
               ++beforePositionIndex;
               ++inMiddlePositionIndex; // Update index to insert in middle
               break;
             case IN_MIDDLE:
-              newType.addDimension(dim.generateIndexRange(xcodeml, false),
+              newType.addDimension(dim.generateIndexRange(xcodeml, false, false),
                   inMiddlePositionIndex);
               ++inMiddlePositionIndex;
               break;
             case AFTER:
-              newType.addDimension(dim.generateIndexRange(xcodeml, false));
+              newType.addDimension(dim.generateIndexRange(xcodeml, false, false));
               break;
           }
         }
@@ -152,7 +152,7 @@ public final class Field {
         if(fieldInfo.isForcedAssumedShape()) {
           index = xcodeml.createEmptyAssumedShaped();
         } else {
-          index = dim.generateIndexRange(xcodeml, false);
+          index = dim.generateIndexRange(xcodeml, false, false);
         }
         newType.addDimension(index);
       }

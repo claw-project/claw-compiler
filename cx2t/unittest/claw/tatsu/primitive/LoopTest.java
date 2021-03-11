@@ -81,8 +81,10 @@ public class LoopTest
 
         Xnode inductionI = xcodeml.createVar(FortranType.INTEGER, "i", Xscope.LOCAL);
 
-        Xnode l1 = xcodeml.createDoStmt(inductionI, d1.generateIndexRange(xcodeml, true));
-        Xnode l2 = xcodeml.createDoStmt(inductionI, d1.generateIndexRange(xcodeml, true));
+    Xnode l1 = xcodeml.createDoStmt(inductionI,
+        d1.generateIndexRange(xcodeml, true, false));
+    Xnode l2 = xcodeml.createDoStmt(inductionI,
+        d1.generateIndexRange(xcodeml, true, false));
 
         List<FfunctionDefinition> fctDefs = xcodeml.getAllFctDef();
         assertFalse(fctDefs.isEmpty());

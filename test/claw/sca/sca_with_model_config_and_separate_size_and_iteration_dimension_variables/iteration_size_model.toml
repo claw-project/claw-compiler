@@ -1,0 +1,24 @@
+# SCA model configuration for regression tests with size and iteration
+# dimensions for the inserted "proma" dimension.
+
+[model] # Definition of global model information
+  name = "SCA"
+
+[[dimensions]] # Definition of dimensions that can be used in layouts
+  id = "p"
+  [dimensions.size]
+    lower = 1             # if not specified, 1 by default
+    upper = "nproma"      # mandatory information
+  [dimensions.iteration]
+    lower = "pstart"    # distinct start and
+    upper = "pend"      # end iteration variables
+
+[[dimensions]] # Add a new dimension in the hashtable
+  id = "k"
+  [dimensions.size]
+    upper = "nz"
+
+[[layouts]] # Definition of layouts and default layout for specific target
+  id = "default" # mandatory layout, used if no specific target layout
+                 # specified
+  position = [ "p", ":" ]
