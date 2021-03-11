@@ -5,12 +5,26 @@
 -->
 
 <!-- CLAWFC build process -->
-<project name="clawfc-tests" default="main" basedir=".">
+<project name="clawfc-tests" default="main" basedir="."
+         xmlns:jacoco="antlib:org.jacoco.ant">
     <description>Run tests on CLAWFC driver</description>
 
     <!-- Value set externally-->
     <property name="claw.properties.dir" value=""/>
     <property file="${claw.properties.dir}/claw.properties"/>
+
+    <!-- JaCoCo code coverage -->
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+      <classpath>
+        <pathelement path="${jacoco.dep}"/>
+        <pathelement path="${jacoco-core.dep}"/>
+        <pathelement path="${jacoco-report.dep}"/>
+        <pathelement path="${jacoco-agent.dep}"/>
+        <pathelement path="${asm.dep}"/>
+        <pathelement path="${asm-commons.dep}"/>
+        <pathelement path="${asm-tree.dep}"/>
+      </classpath>
+    </taskdef>
 
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${ant-contrib.dep}"/>
 
@@ -63,7 +77,20 @@
     </target>
 
     <target name="run" depends="jar" description="Run tests">
+      <jacoco:coverage destfile="${driver.tests.code.coverage.report.bin}">
         <java jar="${driver.tests.dep}" jvm="${java.exec}" fork="true" failonerror="true" output="${driver.tests.report}"/>
+      </jacoco:coverage>
+      <jacoco:report>
+        <executiondata>
+          <file file="${driver.tests.code.coverage.report.bin}"/>
+        </executiondata>
+        <structure name="clawfc">
+          <classfiles>
+            <fileset file="${driver.dep}"/>
+          </classfiles>
+        </structure>
+        <xml destfile="${driver.tests.code.coverage.report.xml}" encoding="UTF-8"/>
+      </jacoco:report>
     </target>
 
     <!-- Default target -->
