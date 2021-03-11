@@ -77,7 +77,7 @@
     </target>
 
     <target name="run" depends="jar" description="Run tests">
-      <jacoco:coverage destfile="${driver.tests.code.coverage.report.bin}">
+      <jacoco:coverage destfile="${driver.tests.code.coverage.report.bin}" append="false">
         <java jar="${driver.tests.dep}" jvm="${java.exec}" fork="true" failonerror="true" output="${driver.tests.report}"/>
       </jacoco:coverage>
       <jacoco:report>
