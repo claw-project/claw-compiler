@@ -82,7 +82,8 @@ script:
 - export CLAW_BUILD=${CLAW_SRC}/build
 - export CLAW_HOME=${CLAW_BUILD}/home
 - export OMNI_HOME=${CLAW_BUILD}/home
-- make build-tests
+- make run-cx2t-unit-tests
+- make run-driver-unit-tests
 - cd ${CLAW_SRC}
 - if [[ "${TRAVIS_PULL_REQUEST_SLUG}" == "claw-project/claw-compiler" ]]; then sonar-scanner -Dsonar.login=$SONAR_TOKEN; fi
 - if [[ "${TRAVIS_REPO_SLUG}" == "claw-project/claw-compiler" ]] && [[ "${TRAVIS_PULL_REQUEST_SLUG}" == "" ]]; then sonar-scanner -Dsonar.login=$SONAR_TOKEN; fi
