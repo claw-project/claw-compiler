@@ -33,6 +33,8 @@ ut.gen.src.dir=@CX2T_UT_GEN_SRC_DIR@
 ut.classes.dir=@CX2T_UT_CLASSES_DIR@
 ut.dist.dir=@CX2T_UT_DIST_DIR@
 ut.reports.dir=@CX2T_UT_REPORTS_DIR@
+ut.code.coverage.report.bin=${test.reports.dir}/cx2t-unit-tests.jacoco.exec
+ut.code.coverage.report.xml=${test.reports.dir}/cx2t-unit-tests.jacoco.xml
 
 # Driver
 driver.src.dir=@CLAWFC_SRC_DIR@
@@ -139,6 +141,8 @@ driver.ut.runtime.classpath=${driver.dep} \
     ${junit.dep} ${hamcrest.dep} ${jaxb-runtime.dep} ${jaxb-core.dep} ${jakarta.xml.bind-api.dep} \
     ${jakarta.activation.dep} ${istack-commons-runtime.dep}
 driver.ut.report=@CLAWFC_UT_REPORT@
+driver.ut.code.coverage.report.bin=${test.reports.dir}/clawfc-unit-tests.jacoco.exec
+driver.ut.code.coverage.report.xml=${test.reports.dir}/clawfc-unit-tests.jacoco.xml
 
 # CLAW driver tests
 driver.tests.jar=@CLAWFC_TESTS_JAR@

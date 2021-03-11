@@ -80,7 +80,7 @@
   <target name="junit-tatsu" depends="compile, jar">
     <mkdir dir="${ut.reports.dir}" />
 
-    <jacoco:coverage destfile="${ut.reports.dir}/${jacoco.file}">
+    <jacoco:coverage destfile="${ut.code.coverage.report.bin}">
       <junit jvm="${java.exec}" fork="yes" printsummary="no" haltonfailure="yes">
         <classpath path="${claw.tatsu.ut.dep}" />
         <classpath path="${claw.tatsu.dep}" />
@@ -103,22 +103,6 @@
       </junit>
     </jacoco:coverage>
 
-    <jacoco:report>
-      <executiondata>
-        <file file="${ut.reports.dir}/${jacoco.file}"/>
-      </executiondata>
-      <structure name="${ant.project.name}">
-        <classfiles>
-          <fileset dir="${ut.classes.dir}"/>
-        </classfiles>
-        <sourcefiles encoding="UTF-8">
-          <fileset dir="${ut.src.dir}"/>
-          <fileset dir="${ut.gen.src.dir}"/>
-        </sourcefiles>
-      </structure>
-      <html destdir="${ut.reports.dir}"/>
-    </jacoco:report>
-
     <junitreport todir="${ut.reports.dir}">
       <fileset dir="${ut.reports.dir}">
         <include name="TEST-*.xml" />
@@ -128,8 +112,8 @@
   </target>
 
   <target name="junit-shenron" depends="compile, jar">
-    <mkdir dir="${ut.reports.dir}" />
-    <jacoco:coverage destfile="${ut.reports.dir}/${jacoco.file}" >
+    <mkdir dir="${test.reports.dir}" />
+    <jacoco:coverage destfile="${ut.code.coverage.report.bin}">
     <junit jvm="${java.exec}" fork="yes" printsummary="no" haltonfailure="yes">
       <classpath path="${claw.shenron.ut.dep}" />
       <classpath path="${claw.tatsu.dep}" />
@@ -153,22 +137,6 @@
     </junit>
     </jacoco:coverage>
 
-    <jacoco:report>
-      <executiondata>
-        <file file="${ut.reports.dir}/${jacoco.file}"/>
-      </executiondata>
-      <structure name="${ant.project.name}">
-        <classfiles>
-          <fileset dir="${ut.classes.dir}"/>
-        </classfiles>
-        <sourcefiles encoding="UTF-8">
-          <fileset dir="${ut.src.dir}"/>
-          <fileset dir="${ut.gen.src.dir}"/>
-        </sourcefiles>
-      </structure>
-      <html destdir="${ut.reports.dir}"/>
-    </jacoco:report>
-
     <junitreport todir="${ut.reports.dir}">
       <fileset dir="${ut.reports.dir}">
         <include name="TEST-*.xml" />
@@ -179,7 +147,7 @@
 
   <target name="junit-wani" depends="compile, jar">
     <mkdir dir="${ut.reports.dir}" />
-    <jacoco:coverage destfile="${ut.reports.dir}/${jacoco.file}" >
+    <jacoco:coverage destfile="${ut.code.coverage.report.bin}">
     <junit jvm="${java.exec}" fork="yes" printsummary="no" haltonfailure="yes">
       <classpath path="${claw.wani.ut.dep}" />
       <classpath path="${claw.tatsu.dep}" />
@@ -205,22 +173,6 @@
     </junit>
     </jacoco:coverage>
 
-    <jacoco:report>
-      <executiondata>
-        <file file="${ut.reports.dir}/${jacoco.file}"/>
-      </executiondata>
-      <structure name="${ant.project.name}">
-        <classfiles>
-          <fileset dir="${ut.classes.dir}"/>
-        </classfiles>
-        <sourcefiles encoding="UTF-8">
-          <fileset dir="${ut.src.dir}"/>
-          <fileset dir="${ut.gen.src.dir}"/>
-        </sourcefiles>
-      </structure>
-      <html destdir="${ut.reports.dir}"/>
-    </jacoco:report>
-
     <junitreport todir="${ut.reports.dir}">
       <fileset dir="${ut.reports.dir}">
         <include name="TEST-*.xml" />
@@ -232,5 +184,27 @@
   <!-- Default target -->
   <target name="main" depends="init, compile, jar" />
 
-  <target name="run" depends="junit-tatsu,junit-shenron,junit-wani" description="Run unit-tests"/>
+  <target name="run" depends="junit-tatsu,junit-shenron,junit-wani" description="Run unit-tests">
+<!--    <jacoco:report>
+      <executiondata>
+        <file file="${ut.code.coverage.report.bin}"/>
+      </executiondata>
+      <structure name="tatsu">
+        <classfiles>
+          <fileset file="${claw.tatsu.dep}"/>
+        </classfiles>
+      </structure>
+      <structure name="shenron">
+        <classfiles>
+          <fileset file="${claw.shenron.dep}"/>
+        </classfiles>
+      </structure>
+      <structure name="wani">
+        <classfiles>
+          <fileset file="${claw.wani.dep}"/>
+        </classfiles>
+      </structure>
+      <xml destfile="${ut.code.coverage.report.xml}" encoding="UTF-8"/>
+    </jacoco:report>-->
+   </target>
 </project>
