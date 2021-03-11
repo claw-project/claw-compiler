@@ -79,7 +79,7 @@
     </target>
 
     <target name="run" depends="jar" description="Run unit tests">
-      <jacoco:coverage destfile="${driver.ut.code.coverage.report.bin}">
+      <jacoco:coverage destfile="${driver.ut.code.coverage.report.bin}" append="false">
         <java jar="${driver.ut.dep}" jvm="${java.exec}" fork="true" failonerror="true" output="${driver.ut.report}"/>
       </jacoco:coverage>
       <jacoco:report>

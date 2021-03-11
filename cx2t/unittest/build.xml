@@ -44,6 +44,7 @@
   <target name="init">
     <tstamp />
     <mkdir dir="${ut.classes.dir}" />
+    <delete file="${ut.code.coverage.report.bin}" quiet="true"/>
   </target>
 
   <!-- Compile java sources -->
@@ -185,7 +186,7 @@
   <target name="main" depends="init, compile, jar" />
 
   <target name="run" depends="junit-tatsu,junit-shenron,junit-wani" description="Run unit-tests">
-<!--    <jacoco:report>
+    <jacoco:report>
       <executiondata>
         <file file="${ut.code.coverage.report.bin}"/>
       </executiondata>
@@ -205,6 +206,6 @@
         </classfiles>
       </structure>
       <xml destfile="${ut.code.coverage.report.xml}" encoding="UTF-8"/>
-    </jacoco:report>-->
+    </jacoco:report>
    </target>
 </project>
