@@ -180,7 +180,7 @@ public class Utils
     {
         try (Stream<Path> files = Files.walk(path))
         {
-            files.map(Path::toFile).sorted((o1, o2) -> -o1.compareTo(o2)).forEach(File::delete);
+            files.map(Path::toFile).sorted(Collections.reverseOrder()).forEach(File::delete);
         }
     }
 
