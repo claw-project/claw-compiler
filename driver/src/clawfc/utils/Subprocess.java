@@ -110,6 +110,7 @@ public class Subprocess
                 shutdown();
             } catch (InterruptedException e)
             {
+                Thread.currentThread().interrupt();
             }
         }
     }

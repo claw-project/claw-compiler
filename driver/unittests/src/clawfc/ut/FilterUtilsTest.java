@@ -108,7 +108,7 @@ public class FilterUtilsTest extends TestCase
             }
         }
         {
-            List<Op> seq = Arrays.asList(new Op(OpType.Add, 0, "01"));
+            List<Op> seq = Arrays.asList(new Op(OpType.ADD, 0, "01"));
             FilteredContentSequence contents = FilteredContentSequence.decomposeIntoSeqs(seq);
             assertEquals(null, contents.getOriginalChrIdx(-1));
             for (int i = 0; i < 2; ++i)
@@ -121,7 +121,7 @@ public class FilterUtilsTest extends TestCase
             }
         }
         {
-            List<Op> seq = Arrays.asList(new Op(OpType.Remove, 0, "01"));
+            List<Op> seq = Arrays.asList(new Op(OpType.REMOVE, 0, "01"));
             FilteredContentSequence contents = FilteredContentSequence.decomposeIntoSeqs(seq);
             assertEquals(null, contents.getOriginalChrIdx(-1));
             for (int i = 0; i < 10; ++i)
@@ -136,7 +136,7 @@ public class FilterUtilsTest extends TestCase
 //          after removal:  aa2345 
 //          after reversal: __2345
 
-            List<Op> seq = Arrays.asList(new Op(OpType.Add, 0, "aa"), new Op(OpType.Remove, 0, "rr"));
+            List<Op> seq = Arrays.asList(new Op(OpType.ADD, 0, "aa"), new Op(OpType.REMOVE, 0, "rr"));
             FilteredContentSequence contents = FilteredContentSequence.decomposeIntoSeqs(seq);
             assertEquals(null, contents.getOriginalChrIdx(-1));
             for (int i = 0; i < 2; ++i)
@@ -154,8 +154,8 @@ public class FilterUtilsTest extends TestCase
 //          after addition: aarr23rr67aa
 //          after removal:  aa2367aa 
 //          after reversal: __2367__
-            List<Op> seq = Arrays.asList(new Op(OpType.Remove, 0, "rr"), new Op(OpType.Remove, 4, "rr"),
-                    new Op(OpType.Add, 0, "aa"), new Op(OpType.Add, 8, "aa"));
+            List<Op> seq = Arrays.asList(new Op(OpType.REMOVE, 0, "rr"), new Op(OpType.REMOVE, 4, "rr"),
+                    new Op(OpType.ADD, 0, "aa"), new Op(OpType.ADD, 8, "aa"));
             FilteredContentSequence contents = FilteredContentSequence.decomposeIntoSeqs(seq);
             assertEquals(null, contents.getOriginalChrIdx(-1));
             for (int i = 0; i < 2; ++i)

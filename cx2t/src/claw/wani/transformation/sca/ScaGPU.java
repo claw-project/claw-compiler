@@ -147,8 +147,15 @@ public class ScaGPU extends Sca
                         falsePositive.add(statement);
                     } else
                     {
-                        xcodeml.addError("Unsupported statement in parallel region: " + statement.opcode().fortran(),
-                                statement.lineNo());
+                        if (statement != null)
+                        {
+                            xcodeml.addError(
+                                    "Unsupported statement in parallel region: " + statement.opcode().fortran(),
+                                    statement.lineNo());
+                        } else
+                        {
+                            throw new NullPointerException("statement is null");
+                        }
                     }
                 }
                 // Only one return statement can be transformed at the moment.

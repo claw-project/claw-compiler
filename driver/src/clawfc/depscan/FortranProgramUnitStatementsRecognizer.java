@@ -12,32 +12,32 @@ import clawfc.depscan.serial.FortranProgramUnitType;
 public interface FortranProgramUnitStatementsRecognizer
 {
     public static enum StatementType {
-        ModuleOpen, ModuleClose, ProgramOpen, ProgramClose, BlockDataOpen, BlockDataClose, UseModule, SubroutineOpen,
-        SubroutineClose, FunctionOpen, FunctionClose;
+        MODULE_OPEN, MODULE_CLOSE, PROGRAM_OPEN, PROGRAM_CLOSE, BLOCK_DATA_OPEN, BLOCK_DATA_CLOSE, USE_MODULE, SUBROUTINE_OPEN,
+        SUBROUTINE_CLOSE, FUNCTION_OPEN, FUNCTION_CLOSE;
 
         public FortranProgramUnitType toUnitType()
         {
             switch (this)
             {
-            case BlockDataClose:
+            case BLOCK_DATA_CLOSE:
                 return FortranProgramUnitType.BLOCK_DATA;
-            case BlockDataOpen:
+            case BLOCK_DATA_OPEN:
                 return FortranProgramUnitType.BLOCK_DATA;
-            case FunctionClose:
+            case FUNCTION_CLOSE:
                 return FortranProgramUnitType.FUNCTION;
-            case FunctionOpen:
+            case FUNCTION_OPEN:
                 return FortranProgramUnitType.FUNCTION;
-            case ModuleClose:
+            case MODULE_CLOSE:
                 return FortranProgramUnitType.MODULE;
-            case ModuleOpen:
+            case MODULE_OPEN:
                 return FortranProgramUnitType.MODULE;
-            case ProgramClose:
+            case PROGRAM_CLOSE:
                 return FortranProgramUnitType.PROGRAM;
-            case ProgramOpen:
+            case PROGRAM_OPEN:
                 return FortranProgramUnitType.PROGRAM;
-            case SubroutineClose:
+            case SUBROUTINE_CLOSE:
                 return FortranProgramUnitType.SUBROUTINE;
-            case SubroutineOpen:
+            case SUBROUTINE_OPEN:
                 return FortranProgramUnitType.SUBROUTINE;
             default:
                 return null;
@@ -50,15 +50,15 @@ public interface FortranProgramUnitStatementsRecognizer
             switch (type)
             {
             case BLOCK_DATA:
-                return StatementType.BlockDataOpen;
+                return StatementType.BLOCK_DATA_OPEN;
             case MODULE:
-                return StatementType.ModuleOpen;
+                return StatementType.MODULE_OPEN;
             case PROGRAM:
-                return StatementType.ProgramOpen;
+                return StatementType.PROGRAM_OPEN;
             case SUBROUTINE:
-                return StatementType.SubroutineOpen;
+                return StatementType.SUBROUTINE_OPEN;
             case FUNCTION:
-                return StatementType.FunctionOpen;
+                return StatementType.FUNCTION_OPEN;
             default:
                 return null;
             }
@@ -69,15 +69,15 @@ public interface FortranProgramUnitStatementsRecognizer
             switch (type)
             {
             case BLOCK_DATA:
-                return StatementType.BlockDataClose;
+                return StatementType.BLOCK_DATA_CLOSE;
             case MODULE:
-                return StatementType.ModuleClose;
+                return StatementType.MODULE_CLOSE;
             case PROGRAM:
-                return StatementType.ProgramClose;
+                return StatementType.PROGRAM_CLOSE;
             case SUBROUTINE:
-                return StatementType.SubroutineClose;
+                return StatementType.SUBROUTINE_CLOSE;
             case FUNCTION:
-                return StatementType.FunctionClose;
+                return StatementType.FUNCTION_CLOSE;
             default:
                 return null;
             }

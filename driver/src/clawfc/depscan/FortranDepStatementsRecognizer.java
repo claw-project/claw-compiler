@@ -30,8 +30,8 @@ import clawfc.depscan.parser.FortranDepStatementsRecognizerParser;
 public class FortranDepStatementsRecognizer implements FortranProgramUnitStatementsRecognizer
 {
     public static final Set<StatementType> SUPPORTED_TYPES = new HashSet<StatementType>(Arrays.asList(
-            StatementType.BlockDataOpen, StatementType.BlockDataClose, StatementType.ModuleOpen,
-            StatementType.ModuleClose, StatementType.ProgramOpen, StatementType.ProgramClose, StatementType.UseModule));
+            StatementType.BLOCK_DATA_OPEN, StatementType.BLOCK_DATA_CLOSE, StatementType.MODULE_OPEN,
+            StatementType.MODULE_CLOSE, StatementType.PROGRAM_OPEN, StatementType.PROGRAM_CLOSE, StatementType.USE_MODULE));
 
     public static class RenamedSymbol
     {
@@ -95,7 +95,7 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
                     unitName = ctx.getText();
                 } else
                 {
-                    throw new Exception("Expected type mismatch");
+                    expectedTypeMismatchError();
                 }
             } catch (Exception e)
             {
@@ -107,37 +107,42 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         @Override
         public void exitModule_open_name(FortranDepStatementsRecognizerParser.Module_open_nameContext ctx)
         {
-            setUnitName(ctx, StatementType.ModuleOpen);
+            setUnitName(ctx, StatementType.MODULE_OPEN);
         }
 
         @Override
         public void exitModule_close_name(FortranDepStatementsRecognizerParser.Module_close_nameContext ctx)
         {
-            setUnitName(ctx, StatementType.ModuleClose);
+            setUnitName(ctx, StatementType.MODULE_CLOSE);
         }
 
         @Override
         public void exitProgram_open_name(FortranDepStatementsRecognizerParser.Program_open_nameContext ctx)
         {
-            setUnitName(ctx, StatementType.ProgramOpen);
+            setUnitName(ctx, StatementType.PROGRAM_OPEN);
         }
 
         @Override
         public void exitProgram_close_name(FortranDepStatementsRecognizerParser.Program_close_nameContext ctx)
         {
-            setUnitName(ctx, StatementType.ProgramClose);
+            setUnitName(ctx, StatementType.PROGRAM_CLOSE);
         }
 
         @Override
         public void exitBlock_data_open_name(FortranDepStatementsRecognizerParser.Block_data_open_nameContext ctx)
         {
-            setUnitName(ctx, StatementType.BlockDataOpen);
+            setUnitName(ctx, StatementType.BLOCK_DATA_OPEN);
         }
 
         @Override
         public void exitBlock_data_close_name(FortranDepStatementsRecognizerParser.Block_data_close_nameContext ctx)
         {
-            setUnitName(ctx, StatementType.BlockDataClose);
+            setUnitName(ctx, StatementType.BLOCK_DATA_CLOSE);
+        }
+
+        void expectedTypeMismatchError() throws Exception
+        {
+            expectedTypeMismatchError();
         }
 
         @Override
@@ -145,12 +150,12 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         {
             try
             {
-                if (expectedType == StatementType.UseModule)
+                if (expectedType == StatementType.USE_MODULE)
                 {
                     moduleName = ctx.getText();
                 } else
                 {
-                    throw new Exception("Expected type mismatch");
+                    expectedTypeMismatchError();
                 }
             } catch (Exception e)
             {
@@ -164,12 +169,12 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         {
             try
             {
-                if (expectedType == StatementType.UseModule)
+                if (expectedType == StatementType.USE_MODULE)
                 {
                     useOnly = true;
                 } else
                 {
-                    throw new Exception("Expected type mismatch");
+                    expectedTypeMismatchError();
                 }
             } catch (Exception e)
             {
@@ -183,12 +188,12 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         {
             try
             {
-                if (expectedType == StatementType.UseModule)
+                if (expectedType == StatementType.USE_MODULE)
                 {
                     useSymName = ctx.getText();
                 } else
                 {
-                    throw new Exception("Expected type mismatch");
+                    expectedTypeMismatchError();
                 }
             } catch (Exception e)
             {
@@ -202,13 +207,13 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         {
             try
             {
-                if (expectedType == StatementType.UseModule)
+                if (expectedType == StatementType.USE_MODULE)
                 {
                     String from = ctx.getText();
                     useRenamedSymbols.add(new RenamedSymbol(from, useSymName));
                 } else
                 {
-                    throw new Exception("Expected type mismatch");
+                    expectedTypeMismatchError();
                 }
             } catch (Exception e)
             {
@@ -222,12 +227,12 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         {
             try
             {
-                if (expectedType == StatementType.UseModule)
+                if (expectedType == StatementType.USE_MODULE)
                 {
                     useOnlySymName = ctx.getText();
                 } else
                 {
-                    throw new Exception("Expected type mismatch");
+                    expectedTypeMismatchError();
                 }
             } catch (Exception e)
             {
@@ -242,14 +247,14 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         {
             try
             {
-                if (expectedType == StatementType.UseModule)
+                if (expectedType == StatementType.USE_MODULE)
                 {
                     String from = ctx.getText();
                     useRenamedSymbols.add(new RenamedSymbol(from, useOnlySymName));
                     useOnlySymName = null;
                 } else
                 {
-                    throw new Exception("Expected type mismatch");
+                    expectedTypeMismatchError();
                 }
             } catch (Exception e)
             {
@@ -263,7 +268,7 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         {
             try
             {
-                if (expectedType == StatementType.UseModule)
+                if (expectedType == StatementType.USE_MODULE)
                 {
                     if (useOnlySymName != null)
                     {
@@ -271,7 +276,7 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
                     }
                 } else
                 {
-                    throw new Exception("Expected type mismatch");
+                    expectedTypeMismatchError();
                 }
             } catch (Exception e)
             {
@@ -315,27 +320,29 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         {
             switch (type)
             {
-            case ModuleOpen:
+            case MODULE_OPEN:
                 tree = parser.module_open_stmt();
                 break;
-            case ModuleClose:
+            case MODULE_CLOSE:
                 tree = parser.module_close_stmt();
                 break;
-            case ProgramOpen:
+            case PROGRAM_OPEN:
                 tree = parser.program_open_stmt();
                 break;
-            case ProgramClose:
+            case PROGRAM_CLOSE:
                 tree = parser.program_close_stmt();
                 break;
-            case BlockDataOpen:
+            case BLOCK_DATA_OPEN:
                 tree = parser.block_data_open_stmt();
                 break;
-            case BlockDataClose:
+            case BLOCK_DATA_CLOSE:
                 tree = parser.block_data_close_stmt();
                 break;
-            case UseModule:
+            case USE_MODULE:
                 tree = parser.use_stmt();
                 break;
+            default:
+                throw new Exception("Unexpected statement type");
             }
         } catch (CancellationException e)
         {
@@ -366,7 +373,7 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
 
     public UseModuleData parseUse(String input) throws IOException, Exception
     {
-        Listener l = run(StatementType.UseModule, input);
+        Listener l = run(StatementType.USE_MODULE, input);
         return new UseModuleData(l.moduleName.toLowerCase(), l.useOnly, l.useSymbols, l.useRenamedSymbols);
     }
 }

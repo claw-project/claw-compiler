@@ -36,7 +36,7 @@ public class Build
         if (info.hasSource())
         {
             Path srcFilePath = info.getSrcPath();
-            long lineNum = info.getSrcInfo().getStartLineIdx() + 1;
+            long lineNum = info.getSrcInfo().getStartLineIdx() + 1L;
             return String.format("%s (%s:%s)", info.getName(), srcFilePath, lineNum);
         } else if (info.getXMod() != null && info.getXMod().getFilePath() != null)
         {
@@ -91,7 +91,7 @@ public class Build
             final FortranProgramUnitType type = info.getType();
             if (info.getSrcInfo() != null)
             {
-                long lineNum = info.getSrcInfo().getStartLineIdx() + 1;
+                long lineNum = info.getSrcInfo().getStartLineIdx() + 1L;
                 return String.format("%s %s (%s:%s)", type, name, srcFilePath, lineNum);
             } else
             {

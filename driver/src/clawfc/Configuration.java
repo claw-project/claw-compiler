@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class Configuration
 {
     public static enum FortranCompilerVendor {
-        cray, intel, gnu, portland, nag
+        CRAY, INTEL, GNU, PORTLAND, NAG
     }
 
     public static final String PROPERTIES_FILENAME = "/config/clawfc.properties";
@@ -37,7 +37,7 @@ public class Configuration
 
     public FortranCompilerVendor defaultFortranCompilerVendor()
     {
-        return FortranCompilerVendor.valueOf(cfgProperties.getProperty("claw.fc.default.vendor"));
+        return FortranCompilerVendor.valueOf(cfgProperties.getProperty("claw.fc.default.vendor").toUpperCase());
     }
 
     public String defaultFortranCompilerCmd()

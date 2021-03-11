@@ -79,4 +79,10 @@ public class FortranStatementBasicPosition
         }
         return true;
     }
+
+    @Override
+    public int hashCode()
+    {// This is to silence the warning
+        return super.hashCode();
+    }
 }

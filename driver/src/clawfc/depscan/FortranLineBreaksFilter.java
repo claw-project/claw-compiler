@@ -68,6 +68,11 @@ public class FortranLineBreaksFilter
             outBufStartPos = null;
         }
 
+        void writeError() throws CancellationException
+        {
+            throw new CancellationException("Write error");
+        }
+
         protected void flushOutputBuf()
         {
             try
@@ -76,7 +81,7 @@ public class FortranLineBreaksFilter
             } catch (IOException e)
             {
                 _error = e;
-                throw new CancellationException("Write error");
+                writeError();
             }
             outBuf.reset();
             outBufStartPos = null;
@@ -91,7 +96,7 @@ public class FortranLineBreaksFilter
             } catch (IOException e)
             {
                 _error = e;
-                throw new CancellationException("Write error");
+                writeError();
             }
             if (outBufStartPos == null)
             {
@@ -113,7 +118,7 @@ public class FortranLineBreaksFilter
             } catch (IOException e)
             {
                 _error = e;
-                throw new CancellationException("Write error");
+                writeError();
             }
         }
     }
@@ -199,7 +204,7 @@ public class FortranLineBreaksFilter
                 String s = sB.toString();
                 output(s);
                 int idx = this.getOutBufStartPos() != null ? this.getOutBufStartPos() : linebreakEOLStartChrIdx;
-                ops.add(new Op(OpType.Add, idx, s));
+                ops.add(new Op(OpType.ADD, idx, s));
             }
             ops.addAll(opsBuf);
             opsBuf.clear();
@@ -216,9 +221,9 @@ public class FortranLineBreaksFilter
             {
                 bufferOutputLineBreakEOLs(text, startChrIdx);
             }
-            opsBuf.add(new Op(OpType.Remove, startChrIdx, text));
+            opsBuf.add(new Op(OpType.REMOVE, startChrIdx, text));
             addToOutputBuf(startChrIdx, lineBreakSep);
-            opsBuf.add(new Op(OpType.Add, startChrIdx, lineBreakSep));
+            opsBuf.add(new Op(OpType.ADD, startChrIdx, lineBreakSep));
         }
 
         @Override
@@ -230,7 +235,7 @@ public class FortranLineBreaksFilter
             {
                 bufferOutputLineBreakEOLs(text, startChrIdx);
             }
-            opsBuf.add(new Op(OpType.Remove, startChrIdx, text));
+            opsBuf.add(new Op(OpType.REMOVE, startChrIdx, text));
         }
     }
 

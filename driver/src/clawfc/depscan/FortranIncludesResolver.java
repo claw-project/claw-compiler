@@ -197,7 +197,10 @@ public class FortranIncludesResolver
             final int bytesToRead = incStmt.getStartCharIdx() - currentPos;
             currentPos += bytesToRead;
             copy(input, output, copyBuffer, bytesToRead);
-            input.skip(incStmt.length());
+            if (input.skip(incStmt.length()) != incStmt.length())
+            {
+                throw new IOException("Not enough bytes to skip");
+            }
             currentPos += incStmt.length();
             // ------------------------------------
             Path incFilePath = resolveIncludeStatement(inputFilePath, input, incStmt);

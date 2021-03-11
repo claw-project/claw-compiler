@@ -208,6 +208,12 @@ public class FortranFileProgramUnitInfo
         return true;
     }
 
+    @Override
+    public int hashCode()
+    {// This is to silence the warning
+        return super.hashCode();
+    }
+
     public List<String> getModuleNames()
     {
         List<String> names = getUnits().stream().map((FortranProgramUnitInfo modBInfo) -> modBInfo.getName())

@@ -223,61 +223,61 @@ public class FortranDepParser
         @Override
         public void exitModule_open_stmt(FortranDepScannerParser.Module_open_stmtContext ctx)
         {
-            parseOpenStatement(StatementType.ModuleOpen, ctx);
+            parseOpenStatement(StatementType.MODULE_OPEN, ctx);
         }
 
         @Override
         public void exitModule_close_stmt(FortranDepScannerParser.Module_close_stmtContext ctx)
         {
-            parseCloseStatement(StatementType.ModuleClose, ctx);
+            parseCloseStatement(StatementType.MODULE_CLOSE, ctx);
         }
 
         @Override
         public void exitProgram_open_stmt(FortranDepScannerParser.Program_open_stmtContext ctx)
         {
-            parseOpenStatement(StatementType.ProgramOpen, ctx);
+            parseOpenStatement(StatementType.PROGRAM_OPEN, ctx);
         }
 
         @Override
         public void exitProgram_close_stmt(FortranDepScannerParser.Program_close_stmtContext ctx)
         {
-            parseCloseStatement(StatementType.ProgramClose, ctx);
+            parseCloseStatement(StatementType.PROGRAM_CLOSE, ctx);
         }
 
         @Override
         public void exitBlock_data_open_stmt(FortranDepScannerParser.Block_data_open_stmtContext ctx)
         {
-            parseOpenStatement(StatementType.BlockDataOpen, ctx);
+            parseOpenStatement(StatementType.BLOCK_DATA_OPEN, ctx);
         }
 
         @Override
         public void exitBlock_data_close_stmt(FortranDepScannerParser.Block_data_close_stmtContext ctx)
         {
-            parseCloseStatement(StatementType.BlockDataClose, ctx);
+            parseCloseStatement(StatementType.BLOCK_DATA_CLOSE, ctx);
         }
 
         @Override
         public void exitFunction_open_stmt(FortranDepScannerParser.Function_open_stmtContext ctx)
         {
-            parseOpenStatement(StatementType.FunctionOpen, ctx);
+            parseOpenStatement(StatementType.FUNCTION_OPEN, ctx);
         }
 
         @Override
         public void exitFunction_close_stmt(FortranDepScannerParser.Function_close_stmtContext ctx)
         {
-            parseCloseStatement(StatementType.FunctionClose, ctx);
+            parseCloseStatement(StatementType.FUNCTION_CLOSE, ctx);
         }
 
         @Override
         public void exitSubroutine_open_stmt(FortranDepScannerParser.Subroutine_open_stmtContext ctx)
         {
-            parseOpenStatement(StatementType.SubroutineOpen, ctx);
+            parseOpenStatement(StatementType.SUBROUTINE_OPEN, ctx);
         }
 
         @Override
         public void exitSubroutine_close_stmt(FortranDepScannerParser.Subroutine_close_stmtContext ctx)
         {
-            parseCloseStatement(StatementType.SubroutineClose, ctx);
+            parseCloseStatement(StatementType.SUBROUTINE_CLOSE, ctx);
         }
 
         @Override

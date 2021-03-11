@@ -22,7 +22,7 @@ public class ProgramUnitData implements ProgramUnitInfo
 {
 
     public static enum UnitDesignation {
-        Input, Include
+        INPUT, INCLUDE
     };
 
     final String name;
@@ -83,7 +83,7 @@ public class ProgramUnitData implements ProgramUnitInfo
     @Override
     public boolean isInput()
     {
-        return designation == UnitDesignation.Input;
+        return designation == UnitDesignation.INPUT;
     }
 
     @Override
