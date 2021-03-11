@@ -475,8 +475,7 @@ public final class Directive
     public static Xnode findParallelRegionStart(Context context, Xnode functionDefinition, Xnode from)
     {
         DirectiveGenerator dg = context.getGenerator();
-        if (dg.getDirectiveLanguage() == CompilerDirective.NONE
-                || !Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION))
+        if (!Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION))
         {
             return null;
         }
@@ -552,8 +551,7 @@ public final class Directive
     {
         DirectiveGenerator dg = context.getGenerator();
 
-        if (dg.getDirectiveLanguage() == CompilerDirective.NONE
-                || !Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION))
+        if (!Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION))
         {
             return null;
         }
