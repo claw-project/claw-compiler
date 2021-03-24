@@ -89,10 +89,11 @@ public class OpenAccContinuation extends ClawTransformation
     public void transform(XcodeProgram xcodeml, Translator translator, Transformation transformation)
             throws IllegalTransformationException
     {
-        if (Pragma.fromClawPrimitive(getDirective().getPragma()))
+        final Context context = xcodeml.context();
+        if (Pragma.fromClawPrimitive(context, getDirective().getPragma()))
         {
             Pragma.splitByCont(getDirective().getPragma(), CompilerDirective.OPENACC.getPrefix(), xcodeml);
-        } else if (Context.get().getMaxColumns() > 0 && !getDirective().getPragma().isDeleted())
+        } else if (context.getMaxColumns() > 0 && !getDirective().getPragma().isDeleted())
         {
             Pragma.splitByLength(getDirective().getPragma(), xcodeml, CompilerDirective.OPENACC.getPrefix());
         }

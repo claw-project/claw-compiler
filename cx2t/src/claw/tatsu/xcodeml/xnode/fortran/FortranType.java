@@ -4,9 +4,10 @@
  */
 package claw.tatsu.xcodeml.xnode.fortran;
 
-import claw.tatsu.xcodeml.xnode.Xname;
-
+import java.security.SecureRandom;
 import java.util.Random;
+
+import claw.tatsu.xcodeml.xnode.Xname;
 
 /**
  * Enum representing the type coming from OMNI Compiler.
@@ -20,8 +21,7 @@ public enum FortranType {
     INTEGER('I', Xname.TYPE_F_INT), REAL('R', Xname.TYPE_F_REAL), LOGICAL('L', Xname.TYPE_F_LOGICAL), STRUCT('S', ""),
     VOID('V', Xname.TYPE_F_VOID), NONE('N', "");
 
-    // Java 1.8 should use SecureRandom
-    private final Random rand = new Random();
+    private final Random rand = new SecureRandom();
 
     private static final int HASH_LENGTH = 12;
     private final char _prefix;

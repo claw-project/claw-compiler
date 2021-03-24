@@ -4,14 +4,21 @@
  */
 package claw.tatsu.xcodeml.xnode.fortran;
 
-import claw.tatsu.primitive.Xmod;
-import claw.tatsu.xcodeml.abstraction.FunctionCall;
-import claw.tatsu.xcodeml.xnode.common.*;
-import org.w3c.dom.Document;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.w3c.dom.Document;
+
+import claw.tatsu.common.Context;
+import claw.tatsu.primitive.Xmod;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeML;
+import claw.tatsu.xcodeml.xnode.common.Xid;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.XsymbolTable;
 
 /**
  * The FortranModule represents the module information produced by the Fortran
@@ -69,9 +76,9 @@ public class FortranModule extends XcodeML
      *
      * @return Xmod file full path.
      */
-    public String getFullPath()
+    public String getFullPath(Context context)
     {
-        return _path + _name + Xmod.getSuffix();
+        return _path + _name + Xmod.getSuffix(context);
     }
 
     /**

@@ -4,31 +4,38 @@
  */
 package claw.wani.transformation.ll.loop;
 
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
+import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Loop;
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.XdeclTable;
+import claw.tatsu.xcodeml.xnode.common.Xid;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.Xscope;
+import claw.tatsu.xcodeml.xnode.common.XsymbolTable;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.wani.ClawConstant;
+import claw.wani.language.ClawClause;
 import claw.wani.language.ClawMapping;
 import claw.wani.language.ClawMappingVar;
 import claw.wani.language.ClawPragma;
-import claw.wani.language.ClawClause;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.translator.ClawTranslator;
-
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * A LoopExtraction transformation is an independent transformation. The
@@ -203,6 +210,7 @@ public class LoopExtraction extends ClawTransformation
     {
 
         ClawTranslator ct = (ClawTranslator) translator;
+        final Context context = ct.context();
 
         /*
          * DUPLICATE THE FUNCTION
@@ -244,8 +252,8 @@ public class LoopExtraction extends ClawTransformation
         // Find the loop that will be extracted
         Xnode loopInClonedFct = locateDoStatement(clonedFctDef);
 
-        Message.debug("loop-extract transformation: " + _claw.getPragma().value());
-        Message.debug("  created subroutine: " + clonedFctDef.getName());
+        Message.debug(context, "loop-extract transformation: " + _claw.getPragma().value());
+        Message.debug(context, "  created subroutine: " + clonedFctDef.getName());
 
         /*
          * REMOVE BODY FROM THE LOOP AND DELETE THE LOOP
@@ -263,8 +271,8 @@ public class LoopExtraction extends ClawTransformation
         // Wrap function call with loop
         Xnode extractedLoop = wrapCallWithLoop(xcodeml, _extractedLoop);
 
-        Message.debug("  call wrapped with loop: " + _fctCall.matchDirectDescendant(Xcode.NAME).value() + " --> "
-                + clonedFctDef.getName());
+        Message.debug(context, "  call wrapped with loop: " + _fctCall.matchDirectDescendant(Xcode.NAME).value()
+                + " --> " + clonedFctDef.getName());
 
         // Change called fct name
         _fctCall.matchDirectDescendant(Xcode.NAME).setValue(newFctName);
@@ -274,14 +282,14 @@ public class LoopExtraction extends ClawTransformation
         XdeclTable fctDeclarations = clonedFctDef.getDeclarationTable();
         XsymbolTable fctSymbols = clonedFctDef.getSymbolTable();
 
-        Message.debug("  Start to apply mapping: " + _claw.getMappings().size());
+        Message.debug(context, "  Start to apply mapping: " + _claw.getMappings().size());
 
         for (ClawMapping mapping : _claw.getMappings())
         {
-            Message.debug("Apply mapping (" + mapping.getMappedDimensions() + ") ");
+            Message.debug(context, "Apply mapping (" + mapping.getMappedDimensions() + ") ");
             for (ClawMappingVar var : mapping.getMappedVariables())
             {
-                Message.debug("  Var: " + var);
+                Message.debug(context, "  Var: " + var);
                 Optional<Xnode> argument = _fctCall.findArg(var.getArgMapping());
                 if (!argument.isPresent())
                 {

@@ -4,9 +4,16 @@
  */
 package claw.wani.transformation.sca;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.common.*;
+import claw.tatsu.common.Context;
+import claw.tatsu.common.Message;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Condition;
@@ -22,9 +29,8 @@ import claw.tatsu.xcodeml.xnode.common.Xid;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.wani.language.ClawPragma;
+import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
-
-import java.util.*;
 
 /**
  * Single Column Abstraction (SCA) CPU target transformation. This
@@ -77,7 +83,7 @@ public class ScaCPUvectorizeGroup extends Sca
         { // Only for non-elemental function/subroutine
             ClawTranslator trans = (ClawTranslator) translator;
             detectInductionVariables();
-            return analyzeDimension(xcodeml) && analyzeData(xcodeml, trans);
+            return analyzeDimension(trans.cfg(), xcodeml) && analyzeData(xcodeml, trans);
         }
         return true;
     }
@@ -96,8 +102,10 @@ public class ScaCPUvectorizeGroup extends Sca
         // Apply the common transformation
         super.transform(xcodeml, translator, other);
 
+        ClawTranslator trans = (ClawTranslator) translator;
+
         // Apply specific steps for CPU smart fusion
-        applySpecificTransformation(xcodeml);
+        applySpecificTransformation(trans.cfg(), xcodeml);
 
         // Finalize the common steps
         super.finalizeTransformation(xcodeml);
@@ -110,7 +118,8 @@ public class ScaCPUvectorizeGroup extends Sca
      * @param xcodeml Current translation unit.
      * @throws IllegalTransformationException If any transformation fails.
      */
-    private void applySpecificTransformation(XcodeProgram xcodeml) throws IllegalTransformationException
+    private void applySpecificTransformation(Configuration cfg, XcodeProgram xcodeml)
+            throws IllegalTransformationException
     {
         /*
          * Create a group of nested loop with the newly defined dimension and wrap every
@@ -127,7 +136,7 @@ public class ScaCPUvectorizeGroup extends Sca
         List<VectorBlock> mergedBlocks = (_applyFusion) ? VectorBlock.mergeAdjacent(naiveBlocks)
                 : new ArrayList<>(naiveBlocks);
 
-        checkMissingPromotion(mergedBlocks);
+        checkMissingPromotion(xcodeml.context(), mergedBlocks);
         if (_applyFusion)
         {
             removeUselessPromotion(mergedBlocks);
@@ -135,11 +144,11 @@ public class ScaCPUvectorizeGroup extends Sca
 
         for (String temporary : _temporaryFieldsToPromote)
         {
-            promote(xcodeml, temporary);
+            promote(cfg, xcodeml, temporary);
         }
 
         // Generate loops around statements flagged in previous stage
-        generateDoStatements(xcodeml, mergedBlocks);
+        generateDoStatements(cfg, xcodeml, mergedBlocks);
 
         // Generate the parallel region
         Directive.generateParallelRegion(xcodeml, _fctDef.body().firstChild(), _fctDef.body().lastChild());
@@ -181,7 +190,7 @@ public class ScaCPUvectorizeGroup extends Sca
      *
      * @param blocks List of blocks.
      */
-    private void checkMissingPromotion(List<VectorBlock> blocks)
+    private void checkMissingPromotion(Context context, List<VectorBlock> blocks)
     {
 
         for (String var : _scalarFields)
@@ -191,7 +200,7 @@ public class ScaCPUvectorizeGroup extends Sca
                     && isVarWrittenInBlocks(blocks, var) && !_arrayFieldsInOut.contains(var)
                     && !_inductionVariables.contains(var) && !_noPromotion.contains(var))
             {
-                Message.debug(String.format("%s Promotion might be missing for: %s", SCA_DEBUG_PREFIX, var));
+                Message.debug(context, String.format("%s Promotion might be missing for: %s", SCA_DEBUG_PREFIX, var));
                 _temporaryFieldsToPromote.add(var);
 
                 for (AssignStatement as : _fctDef.gatherAssignStatementsByLhsName(var))
@@ -430,14 +439,14 @@ public class ScaCPUvectorizeGroup extends Sca
      * @param var     Variable name to be promoted.
      * @throws IllegalTransformationException If promotion cannot be done.
      */
-    private void promote(XcodeProgram xcodeml, String var) throws IllegalTransformationException
+    private void promote(Configuration cfg, XcodeProgram xcodeml, String var) throws IllegalTransformationException
     {
         PromotionInfo promotionInfo;
         // Do the promotion if needed
         if (!_promotions.containsKey(var))
         {
-            Message.debug(String.format("%s promote variable %s", SCA_DEBUG_PREFIX, var));
-            promotionInfo = new PromotionInfo(var, _claw.getLayoutForData(var));
+            Message.debug(xcodeml.context(), String.format("%s promote variable %s", SCA_DEBUG_PREFIX, var));
+            promotionInfo = new PromotionInfo(var, _claw.getLayoutForData(cfg, var));
             Field.promote(promotionInfo, _fctDef, xcodeml);
             _promotions.put(var, promotionInfo);
         } else
@@ -449,7 +458,7 @@ public class ScaCPUvectorizeGroup extends Sca
         FbasicType bType = xcodeml.getTypeTable().getBasicType(id);
         if (!bType.isArray())
         {
-            Field.adaptScalarRefToArrayRef(_promotions.get(var), _fctDef, _claw.getDefaultLayout(), xcodeml);
+            Field.adaptScalarRefToArrayRef(_promotions.get(var), _fctDef, _claw.getDefaultLayout(cfg), xcodeml);
         } else
         {
             Field.adaptArrayRef(_promotions.get(var), _fctDef.body(), false, xcodeml);
@@ -464,12 +473,12 @@ public class ScaCPUvectorizeGroup extends Sca
      * @param xcodeml Current translation unit.
      * @param blocks  List of vectorization friendly blocks.
      */
-    private void generateDoStatements(XcodeProgram xcodeml, List<VectorBlock> blocks)
+    private void generateDoStatements(Configuration cfg, XcodeProgram xcodeml, List<VectorBlock> blocks)
             throws IllegalTransformationException
     {
         for (VectorBlock block : blocks)
         {
-            NestedDoStatement loops = new NestedDoStatement(_claw.getDefaultLayoutReversed(), xcodeml);
+            NestedDoStatement loops = new NestedDoStatement(_claw.getDefaultLayoutReversed(cfg), xcodeml);
 
             if (block.isSingleStatement())
             {

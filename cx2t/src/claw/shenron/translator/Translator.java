@@ -4,14 +4,14 @@
  */
 package claw.shenron.translator;
 
+import java.util.Map;
+
 import claw.shenron.transformation.Transformation;
 import claw.shenron.transformation.TransformationGroup;
 import claw.tatsu.xcodeml.exception.IllegalDirectiveException;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-
-import java.util.Map;
 
 /**
  * Translator interface
@@ -66,7 +66,7 @@ public interface Translator
      *
      * @return A list of all transformation groups.
      */
-    Map<Class, TransformationGroup> getGroups();
+    Map<Class<?>, TransformationGroup> getGroups();
 
     /**
      * Get the next transformation counter value.

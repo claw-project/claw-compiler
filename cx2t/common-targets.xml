@@ -1,34 +1,54 @@
 <!--
  This file is released under terms of BSD license
  See LICENSE file for more information
+ @author: not specified
 -->
 
 <!-- common target for Java build in CX2X project -->
-<project name="common" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="fetch-3rdparty-dependencies" default="main" xmlns:ivy="antlib:org.apache.ivy.ant">
   <!-- Check whether ivy is present already -->
   <target name="check-ivy">
-    <available file="../lib/ivy.jar" property="ivy.present"/>
+    <available file="${3rdparty.dist.dir}/ivy.jar" property="ivy.present"/>
   </target>
 
   <!-- Get the ivy jar to be able to resolve dependencies -->
   <target name="bootstrap" depends="check-ivy" unless="ivy.present"
           description="Install ivy jar if not present">
-      <mkdir dir="../lib"/>
-      <get dest="../lib/ivy.jar"
+      <mkdir dir="${3rdparty.dist.dir}"/>
+      <get dest="${3rdparty.dist.dir}/ivy.jar"
            src="https://repo1.maven.org/maven2/org/apache/ivy/ivy/2.5.0/ivy-2.5.0.jar"/>
   </target>
 
   <!-- Resolve the dependencies described in ivy.xml -->
   <target name="resolve" depends="check-ivy"
-          description="--> retrieve dependencies with ivy" if="ivy.present"
+          description="--> retrieve dependencies with ivy"
           unless="offline">
     <!-- Needed for older version of ANT -->
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
       <classpath>
-        <pathelement location="../lib/ivy.jar"/>
+        <pathelement location="${3rdparty.dist.dir}/ivy.jar"/>
       </classpath>
     </taskdef>
-    <ivy:retrieve log="quiet" file="../ivy.xml"
-                  pattern="../lib/[artifact](-[classifier]).[ext]"/>
+    <ivy:retrieve log="quiet" file="${common.dir}/ivy.xml"
+                  pattern="${3rdparty.dist.dir}/[artifact](-[classifier]).[ext]"/>
+    <!-- Copy dependencies used at runtime -->
+    <copy todir="${dist.dir}" overwrite="false">
+      <fileset dir="${3rdparty.dist.dir}" casesensitive="yes">
+        <include name="${antlr.jar}"/>
+        <include name="${antlr4.jar}"/>
+        <include name="${antlr4.runtime.jar}"/>
+        <include name="${commoncli.jar}"/>
+        <include name="${toml.jar}"/>
+        <include name="${argparse4j.jar}"/>
+        <include name="${jaxb-runtime.jar}"/>
+        <include name="${jaxb-core.jar}"/>
+        <include name="${jakarta.xml.bind-api.jar}"/>
+        <include name="${jakarta.activation.jar}"/>
+        <include name="${istack-commons-runtime.jar}"/>
+      </fileset>
+    </copy>
   </target>
+
+  <!-- Default target -->
+  <target name="main" depends="bootstrap, check-ivy, resolve"/>
 </project>

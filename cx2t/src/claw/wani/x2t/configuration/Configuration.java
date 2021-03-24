@@ -1,40 +1,19 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author clementval
  */
 package claw.wani.x2t.configuration;
 
-import claw.ClawVersion;
-import claw.shenron.transformation.BlockTransformation;
-import claw.tatsu.common.CompilerDirective;
-import claw.tatsu.common.Context;
-import claw.tatsu.common.Target;
-import claw.tatsu.directive.configuration.AcceleratorConfiguration;
-import claw.tatsu.directive.configuration.OpenAccConfiguration;
-import claw.tatsu.directive.configuration.OpenMpConfiguration;
-import claw.tatsu.xcodeml.xnode.Xname;
-import claw.wani.transformation.ClawBlockTransformation;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import static java.lang.String.format;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -44,23 +23,48 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import claw.shenron.transformation.BlockTransformation;
+import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
+import claw.tatsu.common.Target;
+import claw.tatsu.directive.configuration.AcceleratorConfiguration;
+import claw.tatsu.directive.configuration.OpenAccConfiguration;
+import claw.tatsu.directive.configuration.OpenMpConfiguration;
+import claw.tatsu.xcodeml.xnode.Xname;
+import claw.wani.ClawVersion;
+import claw.wani.transformation.ClawBlockTransformation;
+
 /**
  * Configuration class is used to read the configuration file and expose its
  * information to the translator.
  *
- * @author clementval
  */
 public class Configuration
 {
-
+    private static final Path DEFAULT_CONFIG_DIR_IN_JAR_PATH = Paths.get("/claw/config");
     public static final String TRANSLATOR = "translator";
     // Specific keys
     private static final String DEFAULT_TARGET = "default_target";
     private static final String DEFAULT_DIRECTIVE = "default_directive";
-    private static final String DEFAULT_CONFIG_FILE = "claw-default.xml";
+    public static final String DEFAULT_CONFIG_FILE = "claw-default.xml";
     private static final String XML_EXT = ".xml";
-    private static final String CONFIG_XSD = "claw_config.xsd";
-    private static final String SET_XSD = "claw_transformation_set.xsd";
+    public static final String CONFIG_XSD = "claw_config.xsd";
+    public static final String SET_XSD = "claw_transformation_set.xsd";
     // Element and attribute names
     private static final String GLOBAL_ELEMENT = "global";
     private static final String GROUPS_ELEMENT = "groups";
@@ -106,40 +110,24 @@ public class Configuration
     private static final String CLAW_TRANS_SET_PATH = "CLAW_TRANS_SET_PATH";
 
     // Local objects
-    private String _configuration_path;
     private Map<String, String> _parameters;
     private List<GroupConfiguration> _groups;
     private Map<String, GroupConfiguration> _availableGroups;
     private AcceleratorConfiguration _accelerator;
-    private String[] _transSetPaths;
+    private final List<Path> _transSetPaths;
     private boolean _forcePure = false;
     private final ModelConfig _modelConfig;
+    private final int _userMaxColumns;
+    final Context _context;
 
-    /**
-     * Lazy holder pattern.
-     */
-    private static class LazyHolder
+    public int getUserMaxColumns()
     {
-
-        static final Configuration INSTANCE = new Configuration();
+        return _userMaxColumns;
     }
 
-    /**
-     * Private ctor to avoid external instantiation.
-     */
-    private Configuration()
+    public Context context()
     {
-        _modelConfig = new ModelConfig();
-    }
-
-    /**
-     * Get the unique instance.
-     *
-     * @return Unique Configuration instance.
-     */
-    public static Configuration get()
-    {
-        return LazyHolder.INSTANCE;
+        return _context;
     }
 
     /**
@@ -179,61 +167,77 @@ public class Configuration
 
         _groups = new ArrayList<>();
         _availableGroups = new HashMap<>();
-        _configuration_path = null;
     }
 
     /**
      * Constructs a new configuration object from the give configuration file.
      *
-     * @param configPath           Path to the configuration files and XSD schemas.
-     * @param userConfigFile       Path to the alternative configuration.
-     * @param modelConfig          SCA specific model configuration.
-     * @param userDefinedTarget    Target option passed by user. Can be null.
-     * @param userDefinedDirective Directive option passed by user. Can be null.
-     * @param userMaxColumns       Max column option passed by user. Can be 0.
-     * @throws Exception If configuration cannot be loaded properly.
+     * @param cfgDirPath           Path to the directory with configuration files
+     *                             and XSD schemas
+     * @param userConfigFilePath   Path to non-default configuration file
+     * @param modelConfigFilePath  Path to SCA specific model configuration file
+     * @param userDefinedTarget    Target platform
+     * @param userDefinedDirective Accelerator directive language
+     * @param userMaxColumns       Max columns per Fortran line
+     * @param transSetPaths        Paths to transformations set jars
+     * @throws Exception
      */
-    public void load(String configPath, String userConfigFile, String modelConfig, String userDefinedTarget,
-            String userDefinedDirective, int userMaxColumns) throws Exception
+    public static Configuration load(final Path cfgDirPath, final Path userConfigFilePath, Path modelConfigFilePath,
+            final String userDefinedTarget, final String userDefinedDirective, Integer userMaxColumns, Context context,
+            List<Path> transSetPaths) throws Exception
     {
-        _configuration_path = configPath;
+        Configuration cfg = new Configuration(cfgDirPath, userConfigFilePath, modelConfigFilePath, userDefinedTarget,
+                userDefinedDirective, userMaxColumns, context, transSetPaths);
+        return cfg;
+    }
+
+    protected Configuration()
+    {
+        _context = null;
+        _modelConfig = new ModelConfig();
+        _userMaxColumns = 0;
+        _transSetPaths = null;
+    }
+
+    private Configuration(final Path cfgDirPath, final Path userConfigFilePath, Path modelConfigFilePath,
+            final String userDefinedTarget, final String userDefinedDirective, Integer userMaxColumns, Context context,
+            List<Path> transSetPaths) throws Exception
+    {
+        _context = context;
+        _modelConfig = new ModelConfig();
         _parameters = new HashMap<>();
         _groups = new ArrayList<>();
         _availableGroups = new HashMap<>();
         boolean readDefault = true;
         Document userConf = null;
 
-        // Read the environment variable for external transformation sets
-        _transSetPaths = new String[0];
-
-        if (System.getenv(CLAW_TRANS_SET_PATH) != null)
-        {
-            _transSetPaths = System.getenv(CLAW_TRANS_SET_PATH).split(";");
-        }
+        _transSetPaths = transSetPaths;
 
         // Configuration has been given by the user. Read it first.
-        if (userConfigFile != null)
+        if (userConfigFilePath != null)
         {
-            File userConfiguration = Paths.get(userConfigFile).toFile();
-            userConf = validateConfiguration(userConfiguration);
+            try (InputStream userCfgFile = Files.newInputStream(userConfigFilePath))
+            {
+                userConf = validateConfiguration(cfgDirPath, userCfgFile);
+            }
             readDefault = isExtension(userConf);
         }
-
         if (readDefault)
-        {
-            // There is no user defined configuration or it is just an extension.
-            File defaultConfigFile = Paths.get(_configuration_path, DEFAULT_CONFIG_FILE).toFile();
-            Document defaultConf = validateConfiguration(defaultConfigFile);
-            readConfiguration(defaultConf, false);
+        { // There is no user defined configuration or it is just an extension.
+            Document defaultConf;
+            try (InputStream defaultConfigFile = this.getCfgFileAsInputStream(cfgDirPath, DEFAULT_CONFIG_FILE))
+            {
+                defaultConf = validateConfiguration(cfgDirPath, defaultConfigFile);
+            }
+            readConfiguration(cfgDirPath, defaultConf, false);
             if (userConf != null)
             { // Read extension
-                readConfiguration(userConf, true);
+                readConfiguration(cfgDirPath, userConf, true);
             }
         } else
-        {
-            // User defined configuration is a full configuration.
-            // Then the default one is not read.
-            readConfiguration(userConf, false);
+        { // User defined configuration is a full configuration.
+          // Then the default one is not read.
+            readConfiguration(cfgDirPath, userConf, false);
         }
 
         setUserDefinedTarget(userDefinedTarget);
@@ -251,11 +255,19 @@ public class Configuration
             _accelerator = new AcceleratorConfiguration(_parameters);
         }
 
-        Context.get().init(getCurrentDirective(), getCurrentTarget(), _accelerator, userMaxColumns);
-
-        if (modelConfig != null)
+        if (userMaxColumns != null)
         {
-            getModelConfig().load(modelConfig);
+            _userMaxColumns = userMaxColumns;
+        } else
+        {
+            _userMaxColumns = 0;
+        }
+
+        context().init(getCurrentDirective(), getCurrentTarget(), accelerator(), getUserMaxColumns());
+
+        if (modelConfigFilePath != null)
+        {
+            getModelConfig().load(modelConfigFilePath);
         }
     }
 
@@ -277,15 +289,15 @@ public class Configuration
     /**
      * Validate configuration file against its XSD schema.
      *
-     * @param configurationFile File object representing the configuration file.
+     * @param configurationFile Configuration file.
      * @return XML Document of the configuration file.
      * @throws Exception If the configuration file cannot be validated.
      */
-    private Document validateConfiguration(File configurationFile) throws Exception
+    private Document validateConfiguration(final Path cfgDirPath, InputStream configurationFile) throws Exception
     {
-        File configurationSchema = Paths.get(_configuration_path, CONFIG_XSD).toFile();
+        final Schema cfgSchema = loadSchema(cfgDirPath, CONFIG_XSD);
 
-        Document doc = parseAndValidate(configurationFile, configurationSchema);
+        Document doc = parseAndValidate(configurationFile, cfgSchema);
         Element root = doc.getDocumentElement();
         checkVersion(root.getAttribute(VERSION_ATTR));
         return doc;
@@ -300,7 +312,8 @@ public class Configuration
      *                              extension.
      * @throws Exception If the configuration has errors.
      */
-    private void readConfiguration(Document configurationDocument, boolean isExtension) throws Exception
+    private void readConfiguration(final Path cfgDirPath, Document configurationDocument, boolean isExtension)
+            throws Exception
     {
         Element root = configurationDocument.getDocumentElement();
         // Read the global parameters
@@ -314,7 +327,7 @@ public class Configuration
             if (sets != null)
             {
                 _availableGroups.clear();
-                readSets(sets);
+                readSets(cfgDirPath, sets);
             }
         } else
         {
@@ -323,7 +336,7 @@ public class Configuration
             {
                 throw new Exception("Root configuration must have sets element!");
             }
-            readSets(sets);
+            readSets(cfgDirPath, sets);
         }
 
         // Read the transformation groups definition and order
@@ -351,24 +364,22 @@ public class Configuration
      * Parse the configuration file as an XML document and validate it against its
      * XSD schema.
      *
-     * @param xmlFile   File object pointing to the configuration file.
-     * @param xsdSchema File object pointing to the XSD schema.
+     * @param inputFileStrm Configuration file.
+     * @param xsdSchema     XSD schema.
      * @return XML document representing the configuration file.
      * @throws Exception If the configuration file does not validate.
      */
-    private Document parseAndValidate(File xmlFile, File xsdSchema) throws Exception
+    private Document parseAndValidate(InputStream inputFileStrm, Schema xsdSchema) throws Exception
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(xmlFile);
-
+        Document document = builder.parse(inputFileStrm);
         try
         {
             validate(document, xsdSchema);
         } catch (Exception e)
         {
-            throw new Exception(
-                    "Error: Configuration file " + xmlFile.getName() + " is not well formatted: " + e.getMessage());
+            throw new Exception(format("Error: Configuration file is not well formatted: %s", e.getMessage()), e);
         }
         return document;
     }
@@ -377,17 +388,38 @@ public class Configuration
      * Validate the configuration file with the XSD schema.
      *
      * @param document XML Document.
-     * @param xsd      File representing the XSD schema.
+     * @param schema   XSD schema.
      * @throws SAXException If configuration file is not valid.
      * @throws IOException  If schema is not found.
      */
-    private void validate(Document document, File xsd) throws SAXException, IOException
+    private void validate(Document document, Schema schema) throws SAXException, IOException
     {
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Source schemaFile = new StreamSource(xsd);
-        Schema schema = factory.newSchema(schemaFile);
         Validator validator = schema.newValidator();
         validator.validate(new DOMSource(document));
+    }
+
+    private InputStream getCfgFileAsInputStream(Path cfgDirPath, String fileName) throws IOException
+    {
+        if (cfgDirPath != null)
+        {
+            final Path cfgFilePath = cfgDirPath.resolve(fileName);
+            return Files.newInputStream(cfgFilePath);
+        } else
+        {
+            final Path cfgFilePath = DEFAULT_CONFIG_DIR_IN_JAR_PATH.resolve(fileName);
+            return Configuration.class.getResourceAsStream(cfgFilePath.toString());
+        }
+    }
+
+    private Schema loadSchema(final Path cfgDirPath, final String name) throws SAXException, IOException
+    {
+        Schema schema;
+        try (InputStream schemaStream = getCfgFileAsInputStream(cfgDirPath, name))
+        {
+            SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            schema = sf.newSchema(new StreamSource(schemaStream));
+        }
+        return schema;
     }
 
     /**
@@ -461,22 +493,24 @@ public class Configuration
      * @throws Exception If transformation set file does not exist or not well
      *                   formatted.
      */
-    private void readSets(Element sets) throws Exception
+    private void readSets(final Path cfgDirPath, Element sets) throws Exception
     {
-        File xsdSchema = Paths.get(_configuration_path, SET_XSD).toFile();
+        final Schema xsdSchema = loadSchema(cfgDirPath, SET_XSD);
 
         NodeList transformationSets = sets.getElementsByTagName(SET_ELEMENT);
         for (int i = 0; i < transformationSets.getLength(); ++i)
         {
             Element e = (Element) transformationSets.item(i);
-            String setName = e.getAttribute(NAME_ATTR);
-            File setFile = Paths.get(_configuration_path, setName + XML_EXT).toFile();
-            if (!setFile.exists())
+            final String setName = e.getAttribute(NAME_ATTR);
+            Document setDocument;
+            try (InputStream setFile = getCfgFileAsInputStream(cfgDirPath, setName + XML_EXT))
             {
-                throw new Exception("Transformation set " + setName + " cannot be found!");
+                setDocument = parseAndValidate(setFile, xsdSchema);
+            } catch (Exception ex)
+            {
+                String errMsg = format("Failed to load transformation set \"%s\"", setName);
+                throw new Exception(errMsg, ex);
             }
-
-            Document setDocument = parseAndValidate(setFile, xsdSchema);
             Element root = setDocument.getDocumentElement();
             boolean isExternal = root.hasAttribute(JAR_ATTR);
 
@@ -504,15 +538,15 @@ public class Configuration
      */
     private URLClassLoader loadExternalJar(String jarFile) throws FileNotFoundException, MalformedURLException
     {
-        if (_transSetPaths.length == 0)
+        if (_transSetPaths.isEmpty())
         {
             throw new FileNotFoundException(
                     "No path defined in " + CLAW_TRANS_SET_PATH + ". Unable to load transformation set: " + jarFile);
         }
         URLClassLoader external;
-        for (String path : _transSetPaths)
+        for (Path path : _transSetPaths)
         {
-            Path jar = Paths.get(path, jarFile);
+            Path jar = path.resolve(jarFile);
             if (jar.toFile().exists())
             {
                 external = new URLClassLoader(new URL[] { new URL("file://" + jar.toString()) },
@@ -605,7 +639,7 @@ public class Configuration
                     }
                 }
                 // Find actual class
-                Class transClass;
+                Class<?> transClass;
                 try
                 {
                     // Check if class is there
@@ -804,28 +838,29 @@ public class Configuration
         return new int[] { major, minor };
     }
 
-    /**
-     * Display the loaded configuration.
-     */
-    public void displayConfig()
+    @Override
+    public String toString()
     {
-        System.out.println(String.format("- CLAW Compiler configuration -%n"));
-        System.out.println(String.format("Default directive directive: %s%n", getCurrentDirective()));
-        System.out.println(String.format("Default target: %s%n", getCurrentTarget()));
-        System.out.println("Current transformation order:");
+        StringBuilder sb = new StringBuilder();
+        sb.append(format("- CLAW Compiler configuration -%n\n"));
+        sb.append(format("Default directive: %s%n\n", getCurrentDirective()));
+        sb.append(format("Default target: %s%n\n", getCurrentTarget()));
+        sb.append("Current transformation order:\n");
         int i = 0;
-        System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s%n", "Id", "set", "name", "type", "trigger",
-                "directive", "class");
-        System.out.printf("  %3s %-20s %-20s %-15s %-20s %-10s %-60s%n", "--", "---", "----", "----", "-------",
-                "---------", "-----");
+        sb.append(format("  %3s %-20s %-20s %-15s %-20s %-10s %-60s%n\n", "Id", "set", "name", "type", "trigger",
+                "directive", "class"));
+        sb.append(format("  %3s %-20s %-20s %-15s %-20s %-10s %-60s%n\n", "--", "---", "----", "----", "-------",
+                "---------", "-----"));
         for (GroupConfiguration g : getGroups())
         {
-            System.out.printf("  %2d) %-20s %-20s %-15s %-20s %-10s %-60s%n", i, g.getSetName(), g.getName(),
+            sb.append(format("  %2d) %-20s %-20s %-15s %-20s %-10s %-60s%n\n", i, g.getSetName(), g.getName(),
                     g.getType(), g.getTriggerType(),
                     g.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE ? g.getDirective() : "-",
-                    g.getTransformationClassName());
+                    g.getTransformationClassName()));
             ++i;
         }
+        final String s = sb.toString();
+        return s;
     }
 
     /**

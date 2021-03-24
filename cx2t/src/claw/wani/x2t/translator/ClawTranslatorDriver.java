@@ -4,6 +4,14 @@
  */
 package claw.wani.x2t.translator;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.util.Map;
+
 import claw.shenron.transformation.TransformationGroup;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
@@ -20,12 +28,6 @@ import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.GroupConfiguration;
-import xcodeml.util.XmOption;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.util.Map;
 
 /**
  * ClawTranslatorDriver is the class driving the translation. It creates the
@@ -37,26 +39,31 @@ import java.util.Map;
 public class ClawTranslatorDriver
 {
 
-    private final String _xcodemlInputFile;
-    private final String _xcodemlOutputFile;
     private boolean _canTransform = false;
     private ClawTranslator _translator;
     private XcodeProgram _translationUnit = null;
+    private final Configuration _cfg;
+
+    public Configuration cfg()
+    {
+        return _cfg;
+    }
+
+    public Context context()
+    {
+        return _cfg.context();
+    }
 
     /**
      * ClawTranslatorDriver ctor.
      *
-     * @param xcodemlInputFile  The XcodeML input file path.
-     * @param xcodemlOutputFile The XcodeML output file path.
      * @throws Exception If translator cannot be created.
      */
-    public ClawTranslatorDriver(String xcodemlInputFile, String xcodemlOutputFile) throws Exception
+    public ClawTranslatorDriver(Configuration cfg) throws Exception
     {
-        _xcodemlInputFile = xcodemlInputFile;
-        _xcodemlOutputFile = xcodemlOutputFile;
-
+        _cfg = cfg;
         // Create translator
-        String translatorClassPath = Configuration.get().getParameter(Configuration.TRANSLATOR);
+        String translatorClassPath = cfg.getParameter(Configuration.TRANSLATOR);
         if (translatorClassPath == null || translatorClassPath.equals(""))
         {
             throw new Exception("Translator not set in configuration");
@@ -66,30 +73,31 @@ public class ClawTranslatorDriver
         {
             // Check if class is there
             Class<?> translatorClass = Class.forName(translatorClassPath);
-            Constructor<?> ctor = translatorClass.getConstructor();
-            _translator = (ClawTranslator) ctor.newInstance();
+            Constructor<?> ctor = translatorClass.getConstructor(Configuration.class);
+            _translator = (ClawTranslator) ctor.newInstance(cfg);
         } catch (ClassNotFoundException e)
         {
-            throw new Exception("Cannot create translator");
+            throw new Exception("Cannot create translator", e);
         }
     }
 
     /**
      * Analysis the XcodeML/F directives and categorized them in corresponding
      * transformation with the help of the translator.
+     * 
+     * @throws Exception
      */
-    public void analyze()
+    public void analyze(InputStream inStrm) throws Exception
     {
-        _translationUnit = (_xcodemlInputFile == null) ? XcodeProgram.createFromStdInput()
-                : XcodeProgram.createFromFile(_xcodemlInputFile);
+        _translationUnit = XcodeProgram.createFromStream(inStrm, context());
 
         if (_translationUnit.hasErrors())
         {
-            abort();
+            flushErrors();
+            throw new Exception("Translation unit has errors");
         }
 
-        if (Configuration.get().getCurrentDirective() == CompilerDirective.OPENMP
-                && Configuration.get().getCurrentTarget() == Target.CPU)
+        if (cfg().getCurrentDirective() == CompilerDirective.OPENMP && cfg().getCurrentTarget() == Target.CPU)
         {
             _translationUnit.addWarning("Fine grain OpenMP directive generation " + "is not advised for CPU target.",
                     0);
@@ -116,13 +124,13 @@ public class ClawTranslatorDriver
                 } else
                 {
                     // Check if the pragma is a compile guard
-                    if (Context.get().getGenerator().isCompileGuard(pragma.value()))
+                    if (context().getGenerator().isCompileGuard(pragma.value()))
                     {
                         pragma.delete();
                     } else
                     {
                         // Handle special transformation of OpenACC line continuation
-                        for (GroupConfiguration gc : Configuration.get().getGroups())
+                        for (GroupConfiguration gc : cfg().getGroups())
                         {
                             if (gc.getTriggerType() == GroupConfiguration.TriggerType.DIRECTIVE
                                     && Pragma.getPrefix(pragma).equals(gc.getDirective()))
@@ -139,15 +147,17 @@ public class ClawTranslatorDriver
         } catch (IllegalDirectiveException e)
         {
             _translationUnit.addError(e.getMessage(), e.getDirectiveLine());
-            abort();
+            flushErrors();
+            throw e;
         } catch (IllegalTransformationException e)
         {
             _translationUnit.addError(e.getMessage(), e.getStartLine());
-            abort();
+            flushErrors();
+            throw e;
         }
 
         // Generate transformation for translation_unit trigger type
-        for (GroupConfiguration gc : Configuration.get().getGroups())
+        for (GroupConfiguration gc : cfg().getGroups())
         {
             if (gc.getTriggerType() == GroupConfiguration.TriggerType.TRANSLATION_UNIT)
             {
@@ -164,8 +174,9 @@ public class ClawTranslatorDriver
      *
      * @param gc     Group configuration for the
      * @param pragma Pragma associated with the transformation.
+     * @throws Exception
      */
-    private void generateTransformation(GroupConfiguration gc, ClawPragma pragma)
+    private void generateTransformation(GroupConfiguration gc, ClawPragma pragma) throws Exception
     {
         try
         {
@@ -183,79 +194,79 @@ public class ClawTranslatorDriver
             _translator.addTransformation(_translationUnit, transformation);
         } catch (Exception ex)
         {
-            System.err.println("Cannot generate transformation " + gc.getName());
-            System.err.println(ex.getMessage());
-            abort();
+            PrintStream err = context().getErrorStream();
+            err.println("Cannot generate transformation " + gc.getName());
+            err.println(ex.getMessage());
+            flushErrors();
+            throw ex;
         }
     }
 
     /**
      * Apply all the transformation in the pipeline.
+     * 
+     * @throws Exception
      */
-    public void transform()
+    public void transform() throws Exception
     {
         try
         {
             if (!_canTransform)
             {
-                _translationUnit.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
                 return;
             }
 
-            for (Map.Entry<Class, TransformationGroup> entry : _translator.getGroups().entrySet())
+            for (Map.Entry<Class<?>, TransformationGroup> entry : _translator.getGroups().entrySet())
             {
-                Message.debug("Apply transformation: " + entry.getValue().transformationName() + " - "
+                Message.debug(context(), "Apply transformation: " + entry.getValue().transformationName() + " - "
                         + entry.getValue().count());
 
                 try
                 {
                     entry.getValue().applyTransformations(_translationUnit, _translator);
-                    Message.warnings(_translationUnit);
+                    Message.warnings(context(), _translationUnit);
                 } catch (IllegalTransformationException itex)
                 {
                     _translationUnit.addError(itex.getMessage(), itex.getStartLine());
-                    abort();
+                    flushErrors();
+                    throw itex;
                 } catch (Exception ex)
                 {
                     _translationUnit.addError("Unexpected error: " + ex.getMessage(), 0);
-                    if (XmOption.isDebugOutput())
+                    if (context().getXmOption().isDebugOutput())
                     {
                         StringWriter errors = new StringWriter();
                         ex.printStackTrace(new PrintWriter(errors));
                         _translationUnit.addError(errors.toString(), 0);
                     }
-                    abort();
+                    flushErrors();
+                    throw ex;
                 }
-            }
-
-            if (_xcodemlOutputFile != null)
-            {
-                // Write transformed IR to file
-                _translationUnit.write(_xcodemlOutputFile, ClawConstant.INDENT_OUTPUT);
             }
         } catch (Exception ex)
         {
-            System.err.println("Transformation exception: " + ex.getMessage());
+            context().getErrorStream().println("Transformation exception: " + ex.getMessage());
+            throw ex;
         }
     }
 
     /**
      * Print all the errors stored in the XcodeML object and abort the program.
      */
-    private void abort()
+    private void flushErrors()
     {
-        Message.errors(_translationUnit);
-        System.exit(1);
+        Message.errors(context(), _translationUnit);
     }
 
     /**
      * Flush all information stored in the translator.
      *
      * @throws IllegalTransformationException If module cache cannot be written.
+     * @throws IOException
      */
-    public void flush() throws IllegalTransformationException
+    public void flush() throws IllegalTransformationException, IOException
     {
-        Context.get().getModuleCache().write(ClawConstant.INDENT_OUTPUT);
+        context().getModuleCache().write(context(), ClawConstant.INDENT_OUTPUT);
     }
 
     /**

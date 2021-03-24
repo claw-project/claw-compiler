@@ -4,19 +4,19 @@
  */
 package claw.wani.transformation.sca;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.Utility;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
-import claw.wani.language.ClawPragma;
 import claw.wani.language.ClawClause;
+import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawBlockTransformation;
-import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
-
-import java.util.*;
 
 /**
  * Model data directive analysis for the SCA transformation.
@@ -39,12 +39,12 @@ public class ModelData extends ClawBlockTransformation
          * them
          */
 
-        if (!Configuration.get().getModelConfig().isLoaded())
+        ClawTranslator trans = (ClawTranslator) translator;
+
+        if (!trans.cfg().getModelConfig().isLoaded())
         {
             xcodeml.addError("SCA model-data directive requires model configuration!", _clawStart.getPragma());
         }
-
-        ClawTranslator trans = (ClawTranslator) translator;
 
         // Locate the subroutine/function in which the directive is defined
         FfunctionDefinition sub = getDirective().getPragma().findParentFunction();

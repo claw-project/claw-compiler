@@ -4,15 +4,21 @@
  */
 package claw.wani.x2t.configuration;
 
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import net.consensys.cava.toml.Toml;
 import net.consensys.cava.toml.TomlArray;
 import net.consensys.cava.toml.TomlParseResult;
 import net.consensys.cava.toml.TomlTable;
-
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.*;
 
 /**
  * SCA Specific model configuration. This class reads and holds all information
@@ -74,11 +80,14 @@ public class ModelConfig
      * @param configPath Path to the model configuration file.
      * @throws Exception If the configuration does not conform to the specification.
      */
-    void load(String configPath) throws Exception
+    void load(Path configPath) throws Exception
     {
         _dimensions.clear();
         _layouts.clear();
-        load(new FileInputStream(configPath));
+        try (InputStream modelCfgStrm = Files.newInputStream(configPath))
+        {
+            load(modelCfgStrm);
+        }
     }
 
     void load(InputStream is) throws Exception

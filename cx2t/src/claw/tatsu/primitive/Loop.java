@@ -4,8 +4,11 @@
  */
 package claw.tatsu.primitive;
 
+import java.util.List;
+
 import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
@@ -19,8 +22,6 @@ import claw.tatsu.xcodeml.xnode.common.Xscope;
 import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
-
-import java.util.List;
 
 /**
  * Primitive transformation and test applied on FdoStatement. This included: -
@@ -99,18 +100,18 @@ public final class Loop
      * @param newInductionVarOrder New order of the induction variables. E.g. k,j,i.
      * @throws IllegalTransformationException If reordering acton is not supported.
      */
-    public static void reorder(NestedDoStatement nestedGroup, List<String> newInductionVarOrder)
+    public static void reorder(Context context, NestedDoStatement nestedGroup, List<String> newInductionVarOrder)
             throws IllegalTransformationException
     {
         // Check that new order is possible
         if (nestedGroup.size() == 2)
         { // simple swap
             swapIterationRange(nestedGroup.getOuterStatement(), nestedGroup.getInnerStatement());
-            Message.debug("Loop reordering: single swap operation");
+            Message.debug(context, "Loop reordering: single swap operation");
         } else if (nestedGroup.size() == 3)
         {
             int newPosition = nestedGroup.computeSwappingIndices(newInductionVarOrder);
-            Message.debug("Loop reordering: potential double swap operation " + newPosition);
+            Message.debug(context, "Loop reordering: potential double swap operation " + newPosition);
             switch (newPosition)
             {
             case 201: // Double swap: i,j,k -> j,k,i
