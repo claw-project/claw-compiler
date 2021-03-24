@@ -2,7 +2,7 @@
  * This file is released under terms of BSD license
  * See LICENSE file for more information
  */
-package claw;
+package claw.wani;
 
 /**
  * Class holding version number for configuration checking. File edited

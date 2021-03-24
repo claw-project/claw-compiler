@@ -1,8 +1,17 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author clementval
  */
 package claw.wani.transformation.sca;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
@@ -12,21 +21,41 @@ import claw.tatsu.common.Target;
 import claw.tatsu.common.Utility;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.directive.common.Directive;
-import claw.tatsu.primitive.*;
-import claw.tatsu.xcodeml.abstraction.*;
+import claw.tatsu.primitive.Field;
+import claw.tatsu.primitive.Function;
+import claw.tatsu.primitive.Loop;
+import claw.tatsu.primitive.Type;
+import claw.tatsu.primitive.Xmod;
+import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
+import claw.tatsu.xcodeml.abstraction.InsertionPosition;
+import claw.tatsu.xcodeml.abstraction.NestedDoStatement;
+import claw.tatsu.xcodeml.abstraction.PromotionInfo;
+import claw.tatsu.xcodeml.abstraction.Xblock;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.*;
-import claw.wani.language.ClawPragma;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xid;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.Xscope;
+import claw.tatsu.xcodeml.xnode.common.XstorageClass;
+import claw.tatsu.xcodeml.xnode.fortran.DeclarationPosition;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FortranModule;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import claw.wani.language.ClawClause;
+import claw.wani.language.ClawPragma;
 import claw.wani.serialization.Serialization;
 import claw.wani.serialization.SerializationStep;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
-
-import java.util.*;
 
 /**
  * The Single Column Abstraction (SCA) forward transformation applies the
@@ -38,7 +67,6 @@ import java.util.*;
  * be located in the same directory as the original XcodeML module file and has
  * the following naming structure: module_name.claw.xmod
  *
- * @author clementval
  */
 public class ScaForward extends ClawTransformation
 {
@@ -171,13 +199,14 @@ public class ScaForward extends ClawTransformation
      */
     private boolean analyzeForward(XcodeProgram xcodeml)
     {
+        final Context context = xcodeml.context();
         if (_fCall == null)
         {
             xcodeml.addError("Directive is not followed by a fct call.", _claw.getPragma());
             return false;
         }
 
-        detectParameterMapping(_fCall);
+        detectParameterMapping(context, _fCall);
 
         _calledFctName = _fCall.getFctName();
 
@@ -203,7 +232,7 @@ public class ScaForward extends ClawTransformation
             {
                 List<Xnode> uses = parentFctDef.getDeclarationTable().uses();
                 uses.addAll(parentModule.getDeclarationTable().uses());
-                if (!findInModule(uses))
+                if (!findInModule(context, uses))
                 {
                     xcodeml.addError("Function definition not found in module ", _claw.getPragma());
                     return false;
@@ -251,7 +280,7 @@ public class ScaForward extends ClawTransformation
                 {
                     uses.addAll(parentModule.getDeclarationTable().uses());
                 }
-                if (!findInModule(uses))
+                if (!findInModule(context, uses))
                 {
                     xcodeml.addError(String.format("Function definition %s not found in module.", _calledFctName),
                             _claw.getPragma());
@@ -290,7 +319,7 @@ public class ScaForward extends ClawTransformation
             }
 
             // Try to locate the fct in the modules defined in use statements
-            if (findInModule(uses))
+            if (findInModule(context, uses))
             {
                 return true;
             }
@@ -308,7 +337,7 @@ public class ScaForward extends ClawTransformation
      *
      * @param fctCall Function call to be analyzed.
      */
-    private void detectParameterMapping(FunctionCall fctCall)
+    private void detectParameterMapping(Context context, FunctionCall fctCall)
     {
         if (!Xnode.isOfCode(fctCall, Xcode.FUNCTION_CALL))
         {
@@ -324,7 +353,7 @@ public class ScaForward extends ClawTransformation
                 {
                     _fctCallMapping.put(originalName, targetVar.value());
 
-                    Message.debug("Fct parameter mapping: original_name=" + originalName + " target_name="
+                    Message.debug(context, "Fct parameter mapping: original_name=" + originalName + " target_name="
                             + targetVar.value());
                 }
             }
@@ -337,16 +366,16 @@ public class ScaForward extends ClawTransformation
      * @param useDecls List of all USE statement declarations available for search.
      * @return True if the function was found. False otherwise.
      */
-    private boolean findInModule(List<Xnode> useDecls)
+    private boolean findInModule(Context context, List<Xnode> useDecls)
     {
         // TODO handle rename
         for (Xnode d : useDecls)
         {
             // Check whether a CLAW module file is available.
-            _mod = Xmod.findClaw(d.getAttribute(Xattr.NAME));
+            _mod = Xmod.findClaw(context, d.getAttribute(Xattr.NAME));
             if (_mod != null)
             {
-                Message.debug("Reading CLAW module file: " + _mod.getFullPath());
+                Message.debug(context, "Reading CLAW module file: " + _mod.getFullPath(context));
                 if (_mod.getIdentifiers().contains(_calledFctName))
                 {
                     _fctType = _mod.findFunctionTypeFromCall(_fCall);
@@ -401,6 +430,10 @@ public class ScaForward extends ClawTransformation
      */
     private void transformStd(XcodeProgram xcodeml, Translator translator) throws Exception
     {
+        ClawTranslator trans = (ClawTranslator) translator;
+
+        final Context context = trans.context();
+        final Configuration cfg = trans.cfg();
         FfunctionDefinition fDef = _claw.getPragma().findParentFunction();
         if (fDef == null)
         {
@@ -626,7 +659,7 @@ public class ScaForward extends ClawTransformation
             fctCallAncestor = _fCall.matchAncestor(Xcode.F_ASSIGN_STATEMENT);
         }
 
-        if (_claw.hasClause(ClawClause.CREATE) && Context.isTarget(Target.GPU))
+        if (_claw.hasClause(ClawClause.CREATE) && context.isTarget(Target.GPU))
         {
             List<String> creates = _fCall.gatherArguments(xcodeml, _fctType, _mod, Intent.INOUT, true, false);
 
@@ -648,27 +681,26 @@ public class ScaForward extends ClawTransformation
         {
             List<String> inFields = _fCall.gatherArguments(xcodeml, _fctType, _mod != null ? _mod : xcodeml, Intent.IN,
                     true, false);
-            Serialization.insertImports(xcodeml, _fCall.findParentFunction());
-            if (Context.isTarget(Target.CPU))
+            Serialization.insertImports(cfg, xcodeml, _fCall.findParentFunction());
+            if (context.isTarget(Target.CPU))
             {
-                Serialization.generateWriteSavepoint(xcodeml, fctCallAncestor, _claw.getMetadataMap(), inFields,
+                Serialization.generateWriteSavepoint(cfg, xcodeml, fctCallAncestor, _claw.getMetadataMap(), inFields,
                         _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
             } else
             {
-                Serialization.generateReadSavepoint(xcodeml, fctCallAncestor, _claw.getMetadataMap(), inFields,
+                Serialization.generateReadSavepoint(cfg, xcodeml, fctCallAncestor, _claw.getMetadataMap(), inFields,
                         _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
             }
         }
 
         Xnode postHook = fctCallAncestor;
 
-        if (_claw.hasClause(ClawClause.UPDATE) && Context.isTarget(Target.GPU)
-                && Configuration.get().getBooleanParameter(Configuration.SCA_FORWARD_UPDATE_ENABLED))
+        if (_claw.hasClause(ClawClause.UPDATE) && context.isTarget(Target.GPU)
+                && cfg.getBooleanParameter(Configuration.SCA_FORWARD_UPDATE_ENABLED))
         {
             // Generate update from HOST TO DEVICE
             if ((_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
-                    || _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
-                    && Configuration.get().updateAtInput())
+                    || _claw.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE) && cfg.updateAtInput())
             {
                 List<String> in = _fCall.gatherArguments(xcodeml, _fctType, _mod != null ? _mod : xcodeml, Intent.IN,
                         true, false);
@@ -678,8 +710,7 @@ public class ScaForward extends ClawTransformation
 
             // Generate update from DEVICE to HOST
             if ((_claw.getUpdateClauseValue() == DataMovement.TWO_WAY
-                    || _claw.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
-                    && Configuration.get().updateAtOutput())
+                    || _claw.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST) && cfg.updateAtOutput())
             {
                 List<String> out = _fCall.gatherArguments(xcodeml, _fctType, _mod != null ? _mod : xcodeml, Intent.OUT,
                         true, false);
@@ -697,7 +728,7 @@ public class ScaForward extends ClawTransformation
             }
         }
 
-        if (_claw.hasClause(ClawClause.PARALLEL) && Context.isTarget(Target.GPU))
+        if (_claw.hasClause(ClawClause.PARALLEL) && context.isTarget(Target.GPU))
         {
             Directive.generateParallelRegion(xcodeml, fctCallAncestor, fctCallAncestor);
         }
@@ -707,8 +738,8 @@ public class ScaForward extends ClawTransformation
         {
             List<String> outFields = _fCall.gatherArguments(xcodeml, _fctType, _mod != null ? _mod : xcodeml,
                     Intent.OUT, true, false);
-            Serialization.insertImports(xcodeml, _fCall.findParentFunction());
-            Serialization.generateWriteSavepoint(xcodeml, postHook, _claw.getMetadataMap(), outFields,
+            Serialization.insertImports(cfg, xcodeml, _fCall.findParentFunction());
+            Serialization.generateWriteSavepoint(cfg, xcodeml, postHook, _claw.getMetadataMap(), outFields,
                     _claw.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
         }
     }

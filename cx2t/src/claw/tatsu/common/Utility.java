@@ -4,7 +4,10 @@
  */
 package claw.tatsu.common;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class contains utilities methods that are useful in the whole project.
@@ -30,10 +33,10 @@ public final class Utility
      */
     public static List<String> convertToList(Object rawObject)
     {
-        List<String> strList = new ArrayList<>();
+        List<String> strList = new ArrayList<String>();
         if (rawObject instanceof ArrayList)
         {
-            List rawList = (ArrayList) rawObject;
+            List<?> rawList = (List<?>) rawObject;
             for (Object object : rawList)
             {
                 strList.add((String) object);
@@ -54,7 +57,7 @@ public final class Utility
         Map<String, String> map = new HashMap<>();
         if (rawObject instanceof HashMap)
         {
-            Map rawMap = (HashMap) rawObject;
+            Map<?, ?> rawMap = (HashMap<?, ?>) rawObject;
             for (Object object : rawMap.keySet())
             {
                 String key = (String) object;

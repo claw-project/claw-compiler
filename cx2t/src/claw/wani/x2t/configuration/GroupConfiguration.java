@@ -18,7 +18,7 @@ public class GroupConfiguration
     private final GroupType _type;
     private final TriggerType _trigger;
     private final String _directivePrefix;
-    private final Class _transformationClass;
+    private final Class<?> _transformationClass;
 
     /**
      * Constructs a new GroupConfiguration element with all mandatory information.
@@ -32,7 +32,7 @@ public class GroupConfiguration
      * @param c         Actual class of the transformation.
      */
     public GroupConfiguration(String setName, String name, GroupType type, TriggerType trigger, String cPath,
-            String directive, Class c)
+            String directive, Class<?> c)
     {
         _setName = setName;
         _name = name;
@@ -108,7 +108,7 @@ public class GroupConfiguration
      *
      * @return Transformation class value.
      */
-    public Class getTransformationClass()
+    public Class<?> getTransformationClass()
     {
         return _transformationClass;
     }

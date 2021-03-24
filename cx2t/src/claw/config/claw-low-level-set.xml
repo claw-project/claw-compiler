@@ -1,0 +1,56 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: not specified
+-->
+<!--
+This file describe all low-level transformations included in the CLAW
+language specifications.
+
+More information: https://github.com/C2SM-RCM/claw-language-specification
+-->
+<transformations>
+  <!-- Directive -->
+  <transformation name="directive-primitive"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.directive.DirectivePrimitive" />
+
+  <!-- Loop -->
+  <transformation name="expand"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.loop.ExpandNotation" />
+
+  <transformation name="loop-extract"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.loop.LoopExtraction" />
+
+  <transformation name="loop-hoist"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.loop.LoopHoist" />
+
+  <transformation name="loop-fusion"
+    type="dependent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.loop.LoopFusion" />
+
+  <transformation name="loop-interchange"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.loop.LoopInterchange" />
+
+  <transformation name="if-extract"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.loop.IfExtract" />
+
+  <!-- Utility -->
+  <transformation name="on-the-fly"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.utility.ArrayToFctCall" />
+
+  <transformation name="remove"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.utility.UtilityRemove" />
+
+  <!-- Caching -->
+  <transformation name="kcache"
+    type="independent" trigger="directive" directive="claw"
+    class="claw.wani.transformation.ll.caching.Kcaching" />
+</transformations>

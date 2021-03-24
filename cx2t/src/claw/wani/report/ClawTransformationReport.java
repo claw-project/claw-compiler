@@ -5,6 +5,9 @@
 package claw.wani.report;
 
 import java.io.FileWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ public class ClawTransformationReport
 {
 
     private static final int MAX_COL = 80;
-    private FileWriter _report;
+    private OutputStreamWriter _report;
 
     /**
      * Constructs a transformation report object.
@@ -37,9 +40,14 @@ public class ClawTransformationReport
      * @param reportPath Path of the report file.
      * @throws Exception If file cannot be created or cannot be written.
      */
-    public ClawTransformationReport(String reportPath) throws Exception
+    public ClawTransformationReport(Path reportPath) throws Exception
     {
-        _report = new FileWriter(reportPath);
+        _report = new FileWriter(reportPath.toString());
+    }
+
+    public ClawTransformationReport(OutputStream outStrm) throws Exception
+    {
+        _report = new OutputStreamWriter(outStrm);
     }
 
     /**
@@ -49,10 +57,10 @@ public class ClawTransformationReport
      * @param translator Current translator used during the transformation.
      * @throws Exception If file cannot be created or cannot be written.
      */
-    public void generate(String[] args, ClawTranslatorDriver translator) throws Exception
+    public void generate(String[] args, ClawTranslatorDriver translator, Configuration cfg) throws Exception
     {
         printHeader("CLAW Transformation Report");
-        printMainInfo(translator, args);
+        printMainInfo(translator, args, cfg);
         printTransformationOrderInfo(translator.getTranslator());
         printTransformationInfo();
         _report.flush();
@@ -79,7 +87,7 @@ public class ClawTransformationReport
      * @param args       Arguments passed to the translator.
      * @throws Exception If file cannot be created or cannot be written.
      */
-    private void printMainInfo(ClawTranslatorDriver translator, String[] args) throws Exception
+    private void printMainInfo(ClawTranslatorDriver translator, String[] args, Configuration cfg) throws Exception
     {
         printTitle("Information");
 
@@ -94,10 +102,10 @@ public class ClawTransformationReport
         infos.add(new String[] { "OMNI Front-end", translator.getTranslationUnit().getCompilerInfo() });
         infos.add(new String[] { "XcodeML/F", translator.getTranslationUnit().getVersion() });
         infos.add(new String[] { "CLAW Compiler", ClawVersion.VERSION });
-        infos.add(new String[] { "Target", Configuration.get().getCurrentTarget().toString() });
-        infos.add(new String[] { "Directive", Configuration.get().getCurrentDirective().toString() });
+        infos.add(new String[] { "Target", cfg.getCurrentTarget().toString() });
+        infos.add(new String[] { "Directive", cfg.getCurrentDirective().toString() });
         infos.add(new String[] { "Driver command", "" }); // TODO
-        infos.add(new String[] { "Translator command", String.join(" ", args) });
+        infos.add(new String[] { "Translator command", args != null ? String.join(" ", args) : "<non-CLI call>" });
 
         int indentCol = 0;
         for (String[] info : infos)
@@ -130,7 +138,7 @@ public class ClawTransformationReport
         printLine(String.format(format, "Order", "Transformation name", "Nb trans.", "Nb applied"));
         printLine(String.format(format, "-----", "-------------------", "---------", "----------"));
         int index = 1;
-        for (Map.Entry<Class, TransformationGroup> entry : translator.getGroups().entrySet())
+        for (Map.Entry<Class<?>, TransformationGroup> entry : translator.getGroups().entrySet())
         {
             printLine(String.format(format, index++, entry.getValue().transformationName(), entry.getValue().count(),
                     entry.getValue().getAppliedTransformationCount()));

@@ -1,8 +1,20 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author clementval
  */
 package claw.wani.x2t.translator;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.w3c.dom.Element;
 
 import claw.shenron.transformation.DependentTransformationGroup;
 import claw.shenron.transformation.IndependentTransformationGroup;
@@ -19,50 +31,67 @@ import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.wani.language.ClawPragma;
 import claw.wani.language.ClawClause;
+import claw.wani.language.ClawPragma;
 import claw.wani.transformation.internal.OpenAccContinuation;
 import claw.wani.transformation.ll.caching.Kcaching;
 import claw.wani.transformation.ll.directive.DirectivePrimitive;
-import claw.wani.transformation.ll.loop.*;
+import claw.wani.transformation.ll.loop.ExpandNotation;
+import claw.wani.transformation.ll.loop.IfExtract;
+import claw.wani.transformation.ll.loop.LoopExtraction;
+import claw.wani.transformation.ll.loop.LoopFusion;
+import claw.wani.transformation.ll.loop.LoopHoist;
+import claw.wani.transformation.ll.loop.LoopInterchange;
 import claw.wani.transformation.ll.utility.ArrayToFctCall;
 import claw.wani.transformation.ll.utility.UtilityRemove;
-import claw.wani.transformation.sca.*;
+import claw.wani.transformation.sca.ModelData;
+import claw.wani.transformation.sca.ScaCPUvectorizeGroup;
+import claw.wani.transformation.sca.ScaForward;
+import claw.wani.transformation.sca.ScaGPU;
+import claw.wani.transformation.sca.ScaRoutine;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.GroupConfiguration;
-import org.w3c.dom.Element;
-
-import java.util.*;
 
 /**
  * ClawTranslator stores all transformation groups applied during the
  * translation.
  *
- * @author clementval
  */
 
 public class ClawTranslator implements Translator
 {
 
     // Hold all transformation groups
-    private final Map<Class, TransformationGroup> _tGroups;
+    private final Map<Class<?>, TransformationGroup> _tGroups;
     // Hold cross-transformation elements
     private final Map<Element, Object> _crossTransformationTable;
     private final Map<ClawDirectiveKey, Deque<ClawPragma>> _blockDirectives;
     private int _transformationCounter = 0;
+    private final Configuration _cfg;
+
+    public Configuration cfg()
+    {
+        return _cfg;
+    }
+
+    public Context context()
+    {
+        return _cfg.context();
+    }
 
     /**
      * ClawTranslator ctor. Creates the transformation groups needed for the CLAW
      * transformation and order the accordingly to their interpretation order.
      */
-    public ClawTranslator()
+    public ClawTranslator(Configuration cfg)
     {
+        _cfg = cfg;
         /*
          * Use LinkedHashMap to be able to iterate through the map entries with the
          * insertion order.
          */
         _tGroups = new LinkedHashMap<>();
-        for (GroupConfiguration g : Configuration.get().getGroups())
+        for (GroupConfiguration g : cfg().getGroups())
         {
             if (g.getType() == GroupConfiguration.GroupType.DEPENDENT)
             {
@@ -158,13 +187,12 @@ public class ClawTranslator implements Translator
             addTransformation(xcodeml, new ScaRoutine(analyzedPragma));
         } else
         {
-            if (Context.get().getTarget() == Target.GPU)
+            if (context().getTarget() == Target.GPU)
             {
                 addTransformation(xcodeml, new ScaGPU(analyzedPragma));
             } else
             {
-                if (Configuration.get().getParameter(Configuration.CPU_STRATEGY)
-                        .equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
+                if (cfg().getParameter(Configuration.CPU_STRATEGY).equalsIgnoreCase(Configuration.CPU_STRATEGY_FUSION))
                 {
                     addTransformation(xcodeml, new ScaCPUvectorizeGroup(analyzedPragma, true));
                 } else
@@ -273,7 +301,7 @@ public class ClawTranslator implements Translator
     private void createBlockDirectiveTransformation(XcodeProgram xcodeml, ClawPragma begin, ClawPragma end)
             throws IllegalTransformationException
     {
-        if (begin == null || !begin.isApplicableToCurrentTarget())
+        if (begin == null || !begin.isApplicableToCurrentTarget(context()))
         {
             return;
         }
@@ -304,7 +332,8 @@ public class ClawTranslator implements Translator
      */
     public void addTransformation(XcodeProgram xcodeml, Transformation t) throws IllegalTransformationException
     {
-        if (t.getDirective() instanceof ClawPragma && !((ClawPragma) t.getDirective()).isApplicableToCurrentTarget())
+        if (t.getDirective() instanceof ClawPragma
+                && !((ClawPragma) t.getDirective()).isApplicableToCurrentTarget(context()))
         {
             return;
         }
@@ -421,7 +450,7 @@ public class ClawTranslator implements Translator
             ClawPragma l = ClawPragma.createLoopInterchangeLanguage(claw, p);
             LoopInterchange interchange = new LoopInterchange(l);
             addTransformation(xcodeml, interchange);
-            Message.debug("Loop interchange added: " + claw.values(ClawClause.INTERCHANGE_INDEXES));
+            Message.debug(context(), "Loop interchange added: " + claw.values(ClawClause.INTERCHANGE_INDEXES));
         }
     }
 
@@ -442,14 +471,14 @@ public class ClawTranslator implements Translator
         {
             ClawPragma l = ClawPragma.createLoopFusionLanguage(claw);
             addTransformation(xcodeml, new LoopFusion(stmt, l));
-            Message.debug("Loop fusion added: " + claw.value(ClawClause.GROUP));
+            Message.debug(context(), "Loop fusion added: " + claw.value(ClawClause.GROUP));
         }
     }
 
     /**
      * @see Translator#getGroups()
      */
-    public Map<Class, TransformationGroup> getGroups()
+    public Map<Class<?>, TransformationGroup> getGroups()
     {
         return _tGroups;
     }

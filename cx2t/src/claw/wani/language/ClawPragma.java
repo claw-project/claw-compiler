@@ -4,6 +4,23 @@
  */
 package claw.wani.language;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.antlr.v4.runtime.BailErrorStrategy;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.InputMismatchException;
+import org.antlr.v4.runtime.NoViableAltException;
+import org.antlr.v4.runtime.misc.IntervalSet;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+
 import claw.shenron.translator.AnalyzedPragma;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
@@ -18,12 +35,6 @@ import claw.wani.language.parser.ClawLexer;
 import claw.wani.language.parser.ClawParser;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.ModelConfig;
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.InputMismatchException;
-import org.antlr.v4.runtime.misc.IntervalSet;
-import org.antlr.v4.runtime.misc.ParseCancellationException;
-
-import java.util.*;
 
 /**
  * ClawPragma class represent an analyzed pragma statement.
@@ -585,7 +596,7 @@ public class ClawPragma extends AnalyzedPragma
      * @param dataId Data identifier.
      * @return Layout for the given field id.
      */
-    public List<DimensionDefinition> getLayoutForData(String dataId)
+    public List<DimensionDefinition> getLayoutForData(Configuration cfg, String dataId)
     {
         if (_scaModelConfig)
         {
@@ -593,7 +604,7 @@ public class ClawPragma extends AnalyzedPragma
             {
                 return getLocalModelConfig().getLayout(dataId);
             }
-            return Configuration.get().getModelConfig().getDefaultLayout();
+            return cfg.getModelConfig().getDefaultLayout();
         } else
         {
             if (_localModelConfig.hasLayout(dataId))
@@ -609,9 +620,9 @@ public class ClawPragma extends AnalyzedPragma
      *
      * @return Reversed list of dimensions from the default layout.
      */
-    public List<DimensionDefinition> getDefaultLayoutReversed()
+    public List<DimensionDefinition> getDefaultLayoutReversed(Configuration cfg)
     {
-        List<DimensionDefinition> tmp = new ArrayList<>(getDefaultLayout());
+        List<DimensionDefinition> tmp = new ArrayList<>(getDefaultLayout(cfg));
         Collections.reverse(tmp);
         return tmp;
     }
@@ -621,11 +632,11 @@ public class ClawPragma extends AnalyzedPragma
      *
      * @return List of dimensions from the default layout.
      */
-    public List<DimensionDefinition> getDefaultLayout()
+    public List<DimensionDefinition> getDefaultLayout(Configuration cfg)
     {
         if (_scaModelConfig)
         {
-            return Configuration.get().getModelConfig().getDefaultLayout();
+            return cfg.getModelConfig().getDefaultLayout();
         } else
         {
             return _localModelConfig.getDefaultLayout();
@@ -777,10 +788,10 @@ public class ClawPragma extends AnalyzedPragma
      *
      * @return True if the targets matches.
      */
-    public boolean isApplicableToCurrentTarget()
+    public boolean isApplicableToCurrentTarget(Context context)
     {
         return _targetClauseValues == null || _targetClauseValues.isEmpty()
-                || _targetClauseValues.contains(Context.get().getTarget());
+                || _targetClauseValues.contains(context.getTarget());
     }
 
     /**

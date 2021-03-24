@@ -4,6 +4,9 @@
  */
 package helper;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  * Stores constant for JUnit tests
  *
@@ -11,32 +14,32 @@ package helper;
  */
 public class TestConstant {
   // Path is relative to the test directory
-  public static final String TEST_DATA =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/basic.xml";
-  public static final String TEST_PROGRAM =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/program.xml";
-  public static final String TEST_DEPENDENCE =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/loop_dependence.xml";
-  public static final String TEST_DEPENDENCE_3D =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/loop_dependence3d.xml";
-  public static final String TEST_PERFECTLY_NESTED_NO_DEP =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/perfectly_nested.xml";
-  public static final String TEST_DECLARATIONS =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/declarations.xml";
-  public static final String TEST_ARGUMENTS =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/arguments.xml";
-  public static final String TEST_PROMOTION =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/promotion.xml";
-  public static final String TEST_ASSIGN_STMT =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/assignStatement.xml";
-  public static final String TEST_ASSIGN_STMT2 =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/assignStatement2.xml";
-  public static final String TEST_MODEL_CONFIG =
-      "@CMAKE_CURRENT_SOURCE_DIR@/data/model.toml";
-  public static final String TEST_MODEL_CONFIG_MALFORMATTED =
-      "@CMAKE_CURRENT_SOURCE_DIR@/data/model_malformatted.toml";
-  public static final String TEST_MODEL_DATA1 =
-    "@CMAKE_CURRENT_SOURCE_DIR@/data/modeldata1.xml";
-  public static final String TEST_CONFIG_PATH =
-    "@CMAKE_SOURCE_DIR@/driver/etc/";
+  public static final Path TEST_DATA =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/basic.xml");
+  public static final Path TEST_PROGRAM =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/program.xml");
+  public static final Path TEST_DEPENDENCE =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/loop_dependence.xml");
+  public static final Path TEST_DEPENDENCE_3D =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/loop_dependence3d.xml");
+  public static final Path TEST_PERFECTLY_NESTED_NO_DEP =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/perfectly_nested.xml");
+  public static final Path TEST_DECLARATIONS =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/declarations.xml");
+  public static final Path TEST_ARGUMENTS =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/arguments.xml");
+  public static final Path TEST_PROMOTION =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/promotion.xml");
+  public static final Path TEST_ASSIGN_STMT =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/assignStatement.xml");
+  public static final Path TEST_ASSIGN_STMT2 =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/assignStatement2.xml");
+  public static final Path TEST_MODEL_CONFIG =
+      Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/model.toml");
+  public static final Path TEST_MODEL_CONFIG_MALFORMATTED =
+      Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/model_malformatted.toml");
+  public static final Path TEST_MODEL_DATA1 =
+    Paths.get("@CMAKE_CURRENT_SOURCE_DIR@/data/modeldata1.xml");
+  public static final Path TEST_CONFIG_PATH =
+    Paths.get("@CMAKE_SOURCE_DIR@/cx2t/src/claw/config");
 }
