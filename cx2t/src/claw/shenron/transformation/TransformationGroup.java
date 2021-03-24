@@ -19,95 +19,103 @@ import java.util.List;
  * @author clementval
  */
 
-public abstract class TransformationGroup {
+public abstract class TransformationGroup
+{
 
-  private final String _name;
-  private List<Transformation> _transformations;
-  private int _appliedTransformation;
+    private final String _name;
+    private List<Transformation> _transformations;
+    private int _appliedTransformation;
 
-  /**
-   * TransformationGroup ctor.
-   *
-   * @param name A friendly name to describe the transformation group.
-   */
-  public TransformationGroup(String name) {
-    _name = name;
-    _transformations = new ArrayList<>();
-  }
-
-  /**
-   * Get the number of transformation stored in the group.
-   *
-   * @return The number of transformation in the group.
-   */
-  public int count() {
-    return _transformations.size();
-  }
-
-  /**
-   * Add a new transformation in the group.
-   *
-   * @param transformation The transformation to be added.
-   */
-  public void add(Transformation transformation) {
-    if(transformation != null) {
-      _transformations.add(transformation);
+    /**
+     * TransformationGroup ctor.
+     *
+     * @param name A friendly name to describe the transformation group.
+     */
+    public TransformationGroup(String name)
+    {
+        _name = name;
+        _transformations = new ArrayList<>();
     }
-  }
 
-  /**
-   * Return the list of all transformations in this group.
-   *
-   * @return A list of Transformation object.
-   */
-  public List<Transformation> getTransformations() {
-    return _transformations;
-  }
+    /**
+     * Get the number of transformation stored in the group.
+     *
+     * @return The number of transformation in the group.
+     */
+    public int count()
+    {
+        return _transformations.size();
+    }
 
-  /**
-   * Set the list of transformations.
-   *
-   * @param transformations New list of transformations.
-   */
-  public void setTransformations(List<Transformation> transformations) {
-    _transformations = transformations;
-  }
+    /**
+     * Add a new transformation in the group.
+     *
+     * @param transformation The transformation to be added.
+     */
+    public void add(Transformation transformation)
+    {
+        if (transformation != null)
+        {
+            _transformations.add(transformation);
+        }
+    }
 
-  /**
-   * Get the name of transformation stored in this group.
-   *
-   * @return A string representing the name of the transformations.
-   */
-  public String transformationName() {
-    return _name;
-  }
+    /**
+     * Return the list of all transformations in this group.
+     *
+     * @return A list of Transformation object.
+     */
+    public List<Transformation> getTransformations()
+    {
+        return _transformations;
+    }
 
-  /**
-   * Return the number of transformation actually applied in the group.
-   *
-   * @return Number of applied transformation.
-   */
-  public int getAppliedTransformationCount() {
-    return _appliedTransformation;
-  }
+    /**
+     * Set the list of transformations.
+     *
+     * @param transformations New list of transformations.
+     */
+    public void setTransformations(List<Transformation> transformations)
+    {
+        _transformations = transformations;
+    }
 
-  /**
-   * Increment the applied transformation counter.
-   */
-  public void incrementAppliedTransformation() {
-    ++_appliedTransformation;
-  }
+    /**
+     * Get the name of transformation stored in this group.
+     *
+     * @return A string representing the name of the transformations.
+     */
+    public String transformationName()
+    {
+        return _name;
+    }
 
-  /**
-   * Apply all transformation stored in this group. Method transform from each
-   * transformation is called.
-   *
-   * @param xcodeml    The XcodeML on which the transformations are applied.
-   * @param translator The translator used to applied the transformations.
-   * @throws IllegalTransformationException if transformation cannot be applied.
-   * @see Transformation#transform(XcodeProgram, Translator, Transformation)
-   */
-  public abstract void applyTransformations(XcodeProgram xcodeml,
-                                            Translator translator)
-      throws Exception;
+    /**
+     * Return the number of transformation actually applied in the group.
+     *
+     * @return Number of applied transformation.
+     */
+    public int getAppliedTransformationCount()
+    {
+        return _appliedTransformation;
+    }
+
+    /**
+     * Increment the applied transformation counter.
+     */
+    public void incrementAppliedTransformation()
+    {
+        ++_appliedTransformation;
+    }
+
+    /**
+     * Apply all transformation stored in this group. Method transform from each
+     * transformation is called.
+     *
+     * @param xcodeml    The XcodeML on which the transformations are applied.
+     * @param translator The translator used to applied the transformations.
+     * @throws IllegalTransformationException if transformation cannot be applied.
+     * @see Transformation#transform(XcodeProgram, Translator, Transformation)
+     */
+    public abstract void applyTransformations(XcodeProgram xcodeml, Translator translator) throws Exception;
 }

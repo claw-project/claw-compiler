@@ -10,7 +10,5 @@ package claw.tatsu.analysis.dependency;
  * @author clementval
  */
 public enum DependenceDirection {
-  FORWARD,
-  BACKWARD,
-  NONE
+    FORWARD, BACKWARD, NONE
 }

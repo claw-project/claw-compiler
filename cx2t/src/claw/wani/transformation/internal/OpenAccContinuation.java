@@ -39,70 +39,68 @@ import claw.wani.transformation.ClawTransformation;
  *
  * @author clementval
  */
-public class OpenAccContinuation extends ClawTransformation {
+public class OpenAccContinuation extends ClawTransformation
+{
 
-  /**
-   * Constructs a new OpenACC continuation triggered from a specific pragma.
-   *
-   * @param directive The directive that triggered the OpenACC continuation
-   *                  transformation.
-   */
-  public OpenAccContinuation(ClawPragma directive) {
-    super(directive);
-  }
-
-  /**
-   * Check if the directive starts with the OpenACC prefix.
-   *
-   * @param xcodeml    The XcodeML on which the transformations are applied.
-   * @param translator The translator used to applied the transformations.
-   * @return True the directive starts with the OpenACC prefix.
-   */
-  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    return getDirective().getPragma().value().
-        startsWith(CompilerDirective.OPENACC.getPrefix());
-  }
-
-  /**
-   * @return Always false as independent transformation are applied one by one.
-   * @see Transformation#canBeTransformedWith(XcodeProgram, Transformation)
-   */
-  @Override
-  public boolean canBeTransformedWith(XcodeProgram xcodeml,
-                                      Transformation other)
-  {
-    // independent transformation
-    return false;
-  }
-
-  /**
-   * Apply the OpenACC continuation transformation.
-   *
-   * @param xcodeml        The XcodeML on which the transformations are
-   *                       applied.
-   * @param translator     The translator used to applied the transformations.
-   * @param transformation Not used in this transformation
-   * @throws IllegalTransformationException if the transformation cannot be
-   *                                        applied.
-   */
-  @Override
-  public void transform(XcodeProgram xcodeml, Translator translator,
-                        Transformation transformation)
-      throws IllegalTransformationException
-  {
-    if(Pragma.fromClawPrimitive(getDirective().getPragma())) {
-      Pragma.splitByCont(getDirective().getPragma(),
-          CompilerDirective.OPENACC.getPrefix(), xcodeml);
-    } else if(Context.get().getMaxColumns() > 0
-        && !getDirective().getPragma().isDeleted())
+    /**
+     * Constructs a new OpenACC continuation triggered from a specific pragma.
+     *
+     * @param directive The directive that triggered the OpenACC continuation
+     *                  transformation.
+     */
+    public OpenAccContinuation(ClawPragma directive)
     {
-      Pragma.splitByLength(getDirective().getPragma(), xcodeml,
-          CompilerDirective.OPENACC.getPrefix());
+        super(directive);
     }
-  }
 
-  @Override
-  public boolean abortOnFailedAnalysis() {
-    return false;
-  }
+    /**
+     * Check if the directive starts with the OpenACC prefix.
+     *
+     * @param xcodeml    The XcodeML on which the transformations are applied.
+     * @param translator The translator used to applied the transformations.
+     * @return True the directive starts with the OpenACC prefix.
+     */
+    public boolean analyze(XcodeProgram xcodeml, Translator translator)
+    {
+        return getDirective().getPragma().value().startsWith(CompilerDirective.OPENACC.getPrefix());
+    }
+
+    /**
+     * @return Always false as independent transformation are applied one by one.
+     * @see Transformation#canBeTransformedWith(XcodeProgram, Transformation)
+     */
+    @Override
+    public boolean canBeTransformedWith(XcodeProgram xcodeml, Transformation other)
+    {
+        // independent transformation
+        return false;
+    }
+
+    /**
+     * Apply the OpenACC continuation transformation.
+     *
+     * @param xcodeml        The XcodeML on which the transformations are applied.
+     * @param translator     The translator used to applied the transformations.
+     * @param transformation Not used in this transformation
+     * @throws IllegalTransformationException if the transformation cannot be
+     *                                        applied.
+     */
+    @Override
+    public void transform(XcodeProgram xcodeml, Translator translator, Transformation transformation)
+            throws IllegalTransformationException
+    {
+        if (Pragma.fromClawPrimitive(getDirective().getPragma()))
+        {
+            Pragma.splitByCont(getDirective().getPragma(), CompilerDirective.OPENACC.getPrefix(), xcodeml);
+        } else if (Context.get().getMaxColumns() > 0 && !getDirective().getPragma().isDeleted())
+        {
+            Pragma.splitByLength(getDirective().getPragma(), xcodeml, CompilerDirective.OPENACC.getPrefix());
+        }
+    }
+
+    @Override
+    public boolean abortOnFailedAnalysis()
+    {
+        return false;
+    }
 }

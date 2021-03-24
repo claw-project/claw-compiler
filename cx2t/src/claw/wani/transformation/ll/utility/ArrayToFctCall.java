@@ -26,94 +26,92 @@ import java.util.Optional;
  *
  * @author clementval
  */
-public class ArrayToFctCall extends ClawTransformation {
+public class ArrayToFctCall extends ClawTransformation
+{
 
-  private FfunctionDefinition _replaceFct;
+    private FfunctionDefinition _replaceFct;
 
-  /**
-   * ArrayToFctCall ctor.
-   *
-   * @param directive The directive that triggered the transformation.
-   */
-  public ArrayToFctCall(ClawPragma directive) {
-    super(directive);
-  }
-
-  @Override
-  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    FfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
-    if(fctDef == null) {
-      xcodeml.addError("Cannot locate function definition.",
-          _claw.getPragma().lineNo());
-      return false;
-    }
-
-    if(!fctDef.getDeclarationTable().
-        contains(_claw.value(ClawClause.ARRAY_NAME)))
+    /**
+     * ArrayToFctCall ctor.
+     *
+     * @param directive The directive that triggered the transformation.
+     */
+    public ArrayToFctCall(ClawPragma directive)
     {
-      xcodeml.addError(_claw.value(ClawClause.ARRAY_NAME) +
-              " is not declared in current function/subroutine.",
-          _claw.getPragma().lineNo());
-      return false;
+        super(directive);
     }
 
-    _replaceFct = xcodeml.getGlobalDeclarationsTable().
-        getFunctionDefinition(_claw.value(ClawClause.FCT_NAME));
-    if(_replaceFct == null) {
-      FmoduleDefinition parentModule = _claw.getPragma().findParentModule();
+    @Override
+    public boolean analyze(XcodeProgram xcodeml, Translator translator)
+    {
+        FfunctionDefinition fctDef = _claw.getPragma().findParentFunction();
+        if (fctDef == null)
+        {
+            xcodeml.addError("Cannot locate function definition.", _claw.getPragma().lineNo());
+            return false;
+        }
 
-      Optional<FfunctionDefinition> replaceFct =
-          parentModule.getFunctionDefinition(_claw.value(ClawClause.FCT_NAME));
+        if (!fctDef.getDeclarationTable().contains(_claw.value(ClawClause.ARRAY_NAME)))
+        {
+            xcodeml.addError(_claw.value(ClawClause.ARRAY_NAME) + " is not declared in current function/subroutine.",
+                    _claw.getPragma().lineNo());
+            return false;
+        }
 
-      if(!replaceFct.isPresent()) {
-        xcodeml.addError("Function " +
-                _claw.value(ClawClause.FCT_NAME) +
-                " not found in current file.",
-            _claw.getPragma().lineNo());
-        return false;
-      }
-      _replaceFct = replaceFct.get();
+        _replaceFct = xcodeml.getGlobalDeclarationsTable().getFunctionDefinition(_claw.value(ClawClause.FCT_NAME));
+        if (_replaceFct == null)
+        {
+            FmoduleDefinition parentModule = _claw.getPragma().findParentModule();
+
+            Optional<FfunctionDefinition> replaceFct = parentModule
+                    .getFunctionDefinition(_claw.value(ClawClause.FCT_NAME));
+
+            if (!replaceFct.isPresent())
+            {
+                xcodeml.addError("Function " + _claw.value(ClawClause.FCT_NAME) + " not found in current file.",
+                        _claw.getPragma().lineNo());
+                return false;
+            }
+            _replaceFct = replaceFct.get();
+        }
+
+        return true; // skeleton
     }
 
-    return true; // skeleton
-  }
-
-  /**
-   * @return Always false as independent transformation are applied one by one.
-   * @see Transformation#canBeTransformedWith(XcodeProgram, Transformation)
-   */
-  @Override
-  public boolean canBeTransformedWith(XcodeProgram xcodeml,
-                                      Transformation other)
-  {
-    return false; // independent transformation
-  }
-
-  @Override
-  public void transform(XcodeProgram xcodeml, Translator translator,
-                        Transformation other)
-  {
-    FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(_replaceFct);
-
-    // Prepare the function call
-    FunctionCall fctCall = xcodeml.createFctCall(fctType.getReturnType(),
-        _claw.value(ClawClause.FCT_NAME), _replaceFct.getType());
-    for(String arg : _claw.values(ClawClause.FCT_PARAMETERS)) {
-      fctCall.addArguments(
-          xcodeml.createVar(FortranType.INTEGER, arg, Xscope.LOCAL));
+    /**
+     * @return Always false as independent transformation are applied one by one.
+     * @see Transformation#canBeTransformedWith(XcodeProgram, Transformation)
+     */
+    @Override
+    public boolean canBeTransformedWith(XcodeProgram xcodeml, Transformation other)
+    {
+        return false; // independent transformation
     }
 
-    List<Xnode> refs =
-        XnodeUtil.getAllArrayReferencesInSiblings(_claw.getPragma(),
-            _claw.value(ClawClause.ARRAY_NAME));
+    @Override
+    public void transform(XcodeProgram xcodeml, Translator translator, Transformation other)
+    {
+        FfunctionType fctType = xcodeml.getTypeTable().getFunctionType(_replaceFct);
 
-    for(Xnode ref : refs) {
-      ref.insertAfter(fctCall.cloneNode());
-      ref.delete();
+        // Prepare the function call
+        FunctionCall fctCall = xcodeml.createFctCall(fctType.getReturnType(), _claw.value(ClawClause.FCT_NAME),
+                _replaceFct.getType());
+        for (String arg : _claw.values(ClawClause.FCT_PARAMETERS))
+        {
+            fctCall.addArguments(xcodeml.createVar(FortranType.INTEGER, arg, Xscope.LOCAL));
+        }
+
+        List<Xnode> refs = XnodeUtil.getAllArrayReferencesInSiblings(_claw.getPragma(),
+                _claw.value(ClawClause.ARRAY_NAME));
+
+        for (Xnode ref : refs)
+        {
+            ref.insertAfter(fctCall.cloneNode());
+            ref.delete();
+        }
+
+        fctCall.delete();
+        removePragma();
+        transformed();
     }
-
-    fctCall.delete();
-    removePragma();
-    transformed();
-  }
 }

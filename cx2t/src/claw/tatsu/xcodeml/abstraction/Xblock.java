@@ -12,33 +12,40 @@ import claw.tatsu.xcodeml.xnode.common.Xnode;
  *
  * @author clementval
  */
-public class Xblock {
+public class Xblock
+{
 
-  private final Xnode _startNode;
-  private Xnode _endNode;
+    private final Xnode _startNode;
+    private Xnode _endNode;
 
-  public Xblock(Xnode start) {
-    _startNode = start;
-    _endNode = null;
-  }
-
-  public Xblock(Xnode start, Xnode end) {
-    _startNode = start;
-    _endNode = end;
-  }
-
-  public Xnode getStart() {
-    return _startNode;
-  }
-
-  public Xnode getEnd() {
-    return _endNode != null ? _endNode : _startNode;
-  }
-
-  public void setEnd(Xnode end) {
-    if(end != null) {
-      _endNode = end;
+    public Xblock(Xnode start)
+    {
+        _startNode = start;
+        _endNode = null;
     }
-  }
+
+    public Xblock(Xnode start, Xnode end)
+    {
+        _startNode = start;
+        _endNode = end;
+    }
+
+    public Xnode getStart()
+    {
+        return _startNode;
+    }
+
+    public Xnode getEnd()
+    {
+        return _endNode != null ? _endNode : _startNode;
+    }
+
+    public void setEnd(Xnode end)
+    {
+        if (end != null)
+        {
+            _endNode = end;
+        }
+    }
 
 }

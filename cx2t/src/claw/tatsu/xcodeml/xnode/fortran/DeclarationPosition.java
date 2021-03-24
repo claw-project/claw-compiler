@@ -10,7 +10,5 @@ package claw.tatsu.xcodeml.xnode.fortran;
  * @author clementval
  */
 public enum DeclarationPosition {
-  FIRST,
-  AFTER_DUMMY,
-  LAST
+    FIRST, AFTER_DUMMY, LAST
 }

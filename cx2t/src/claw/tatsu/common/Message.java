@@ -15,69 +15,76 @@ import java.util.List;
  *
  * @author clementval
  */
-public final class Message {
+public final class Message
+{
 
-  private static final String ERROR_PREFIX = "error:";
-  private static final String WARNING_PREFIX = "warning:";
+    private static final String ERROR_PREFIX = "error:";
+    private static final String WARNING_PREFIX = "warning:";
 
-  // Avoid potential instantiation of this class
-  private Message() {
-  }
-
-  /**
-   * Display debug message if debugging is activated.
-   *
-   * @param message Message to display.
-   */
-  public static void debug(String message) {
-    if(XmOption.isDebugOutput()) {
-      System.err.println(message);
+    // Avoid potential instantiation of this class
+    private Message()
+    {
     }
-  }
 
-  /**
-   * Print all messages in the given list with the prefix.
-   *
-   * @param originalFile Original file name.
-   * @param prefix       Prefix for the message.
-   * @param messages     List of messages to display.
-   */
-  private static void printMessages(String originalFile, String prefix,
-                                    List<XanalysisError> messages)
-  {
-    for(XanalysisError message : messages) {
-      if(message.getLine() == 0) {
-        System.err.println(String.format("%s:-:- %s %s", originalFile, prefix,
-            message.getMessage()));
-      } else {
-        System.err.println(String.format("%s:%s:- %s %s", originalFile,
-            message.getConcatLines(), prefix, message.getMessage()));
-      }
+    /**
+     * Display debug message if debugging is activated.
+     *
+     * @param message Message to display.
+     */
+    public static void debug(String message)
+    {
+        if (XmOption.isDebugOutput())
+        {
+            System.err.println(message);
+        }
     }
-    messages.clear();
-  }
 
-  /**
-   * Display all warnings stored in translation unit.
-   *
-   * @param translationUnit Current translation unit.
-   */
-  public static void warnings(XcodeProgram translationUnit) {
-    if(translationUnit != null) {
-      printMessages(translationUnit.getSourceFileOnly(), WARNING_PREFIX,
-          translationUnit.getWarnings());
+    /**
+     * Print all messages in the given list with the prefix.
+     *
+     * @param originalFile Original file name.
+     * @param prefix       Prefix for the message.
+     * @param messages     List of messages to display.
+     */
+    private static void printMessages(String originalFile, String prefix, List<XanalysisError> messages)
+    {
+        for (XanalysisError message : messages)
+        {
+            if (message.getLine() == 0)
+            {
+                System.err.println(String.format("%s:-:- %s %s", originalFile, prefix, message.getMessage()));
+            } else
+            {
+                System.err.println(String.format("%s:%s:- %s %s", originalFile, message.getConcatLines(), prefix,
+                        message.getMessage()));
+            }
+        }
+        messages.clear();
     }
-  }
 
-  /**
-   * Display all errors stored in translation unit.
-   *
-   * @param translationUnit Current translation unit.
-   */
-  public static void errors(XcodeProgram translationUnit) {
-    if(translationUnit != null) {
-      printMessages(translationUnit.getSourceFileOnly(),
-          ERROR_PREFIX, translationUnit.getErrors());
+    /**
+     * Display all warnings stored in translation unit.
+     *
+     * @param translationUnit Current translation unit.
+     */
+    public static void warnings(XcodeProgram translationUnit)
+    {
+        if (translationUnit != null)
+        {
+            printMessages(translationUnit.getSourceFileOnly(), WARNING_PREFIX, translationUnit.getWarnings());
+        }
     }
-  }
+
+    /**
+     * Display all errors stored in translation unit.
+     *
+     * @param translationUnit Current translation unit.
+     */
+    public static void errors(XcodeProgram translationUnit)
+    {
+        if (translationUnit != null)
+        {
+            printMessages(translationUnit.getSourceFileOnly(), ERROR_PREFIX, translationUnit.getErrors());
+        }
+    }
 }
