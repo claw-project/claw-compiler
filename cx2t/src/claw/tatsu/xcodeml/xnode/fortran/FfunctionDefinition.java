@@ -4,18 +4,25 @@
  */
 package claw.tatsu.xcodeml.xnode.fortran;
 
-import claw.tatsu.primitive.Body;
-import claw.tatsu.primitive.Loop;
-import claw.tatsu.primitive.Xmod;
-import claw.tatsu.xcodeml.abstraction.AssignStatement;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.common.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import claw.tatsu.common.Context;
+import claw.tatsu.primitive.Body;
+import claw.tatsu.primitive.Loop;
+import claw.tatsu.primitive.Xmod;
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.XdeclTable;
+import claw.tatsu.xcodeml.xnode.common.Xid;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.XsymbolTable;
 
 /**
  * The FfunctionDefinition represents the FfunctionDefinition (5.3) element in
@@ -115,14 +122,14 @@ public class FfunctionDefinition extends Xnode
      * @return FortranModule object if the module has been found and read. Null
      *         otherwise.
      */
-    public FortranModule findContainingXmod()
+    public FortranModule findContainingXmod(Context context)
     {
         FmoduleDefinition mod = findParentModule();
         if (mod == null)
         {
             return null;
         }
-        return Xmod.find(mod.getAttribute(Xattr.NAME));
+        return Xmod.find(context, mod.getAttribute(Xattr.NAME));
     }
 
     /**

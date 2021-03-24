@@ -4,14 +4,19 @@
  */
 package claw.tatsu.xcodeml.module;
 
-import claw.tatsu.primitive.Xmod;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.fortran.FortranModule;
-
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import claw.tatsu.common.Context;
+import claw.tatsu.primitive.Xmod;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.fortran.FortranModule;
 
 /**
  * Translator interface
@@ -75,15 +80,19 @@ public class ModuleCache
      *
      * @param ident Number of spaces used to indent the XML file.
      * @throws IllegalTransformationException If module cannot be written.
+     * @throws IOException
      */
-    public void write(int ident) throws IllegalTransformationException
+    public void write(Context context, int ident) throws IllegalTransformationException, IOException
     {
-        String suffix = Xmod.getSuffix();
+        String suffix = Xmod.getSuffix(context);
         for (Map.Entry<String, FortranModule> pair : _moduleCache.entrySet())
         {
             FortranModule module = pair.getValue();
             String newModuleName = module.getPath() + module.getName() + suffix;
-            module.write(newModuleName, ident);
+            try (OutputStream out = Files.newOutputStream(Paths.get(newModuleName)))
+            {
+                module.write(out, ident);
+            }
         }
     }
 

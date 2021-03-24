@@ -4,14 +4,18 @@
  */
 package claw.tatsu.common;
 
+import java.io.PrintStream;
+
+import claw.tatsu.directive.configuration.AcceleratorConfiguration;
+import claw.tatsu.directive.configuration.OpenAccConfiguration;
+import claw.tatsu.directive.configuration.OpenMpConfiguration;
 import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.tatsu.directive.generator.DirectiveNone;
 import claw.tatsu.directive.generator.OpenAcc;
 import claw.tatsu.directive.generator.OpenMp;
 import claw.tatsu.xcodeml.module.ModuleCache;
-import claw.tatsu.directive.configuration.AcceleratorConfiguration;
-import claw.tatsu.directive.configuration.OpenAccConfiguration;
-import claw.tatsu.directive.configuration.OpenMpConfiguration;
+import xcodeml.util.IXmOption;
+import xcodeml.util.XmOptionLocal;
 
 /**
  * Class holding all information needed during a translation.
@@ -27,35 +31,27 @@ public class Context
     private CompilerDirective _compilerDirective;
     private Target _target;
     private ModuleCache _moduleCache;
+    private PrintStream _errorStream;
+    private final IXmOption _xmOption;
 
-    /**
-     * Lazy holder pattern.
-     */
-    private static class LazyHolder
+    protected Context()
     {
+        _errorStream = System.err;
+        _xmOption = new XmOptionLocal();
+    }
 
-        static final Context INSTANCE = new Context();
+    public Context(PrintStream errorStream, IXmOption xmOption)
+    {
+        _errorStream = errorStream;
+        _xmOption = xmOption;
+    }
+
+    public void setErrorStream(PrintStream errorStream)
+    {
+        _errorStream = errorStream;
     }
 
     /**
-     * Private ctor to avoid external instantiation.
-     */
-    private Context()
-    {
-    }
-
-    /**
-     * Get the unique context instance.
-     *
-     * @return Current context instance.
-     */
-    public static Context get()
-    {
-        return LazyHolder.INSTANCE;
-    }
-
-    /**
-     * Create a new context.
      *
      * @param compilerDirective        Compiler directive to used.
      * @param target                   Target for the current translation.
@@ -63,6 +59,15 @@ public class Context
      *                                 translation.
      * @param maxColumns               Max columns.
      */
+    public Context(CompilerDirective compilerDirective, Target target,
+            AcceleratorConfiguration acceleratorConfiguration, int maxColumns, PrintStream errorStream,
+            IXmOption xmOption)
+    {
+        _errorStream = errorStream;
+        _xmOption = xmOption;
+        init(compilerDirective, target, acceleratorConfiguration, maxColumns);
+    }
+
     public void init(CompilerDirective compilerDirective, Target target,
             AcceleratorConfiguration acceleratorConfiguration, int maxColumns)
     {
@@ -71,7 +76,7 @@ public class Context
             _compilerDirective = compilerDirective;
             if (compilerDirective == CompilerDirective.OPENACC)
             {
-                OpenAcc gen = new OpenAcc();
+                OpenAcc gen = new OpenAcc(this);
                 _directiveGenerator = gen;
                 if (acceleratorConfiguration != null)
                 {
@@ -79,7 +84,7 @@ public class Context
                 }
             } else if (compilerDirective == CompilerDirective.OPENMP)
             {
-                OpenMp gen = new OpenMp();
+                OpenMp gen = new OpenMp(this);
                 _directiveGenerator = gen;
                 if (acceleratorConfiguration != null)
                 {
@@ -106,6 +111,16 @@ public class Context
 
         _maxColumns = maxColumns;
         _moduleCache = new ModuleCache();
+    }
+
+    public PrintStream getErrorStream()
+    {
+        return _errorStream;
+    }
+
+    public IXmOption getXmOption()
+    {
+        return _xmOption;
     }
 
     public int getMaxColumns()
@@ -144,8 +159,8 @@ public class Context
      * @param value Target value to check against.
      * @return True if the target is identical to the given one. False otherwise.
      */
-    public static boolean isTarget(Target value)
+    public boolean isTarget(Target value)
     {
-        return (get().getTarget() == value);
+        return getTarget() == value;
     }
 }

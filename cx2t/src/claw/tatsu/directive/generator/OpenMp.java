@@ -4,13 +4,16 @@
  */
 package claw.tatsu.directive.generator;
 
-import claw.tatsu.common.*;
-import claw.tatsu.directive.common.DataMovement;
-import claw.tatsu.xcodeml.xnode.common.Xcode;
-import claw.tatsu.directive.configuration.OpenMpConfiguration;
-
 import java.util.Arrays;
 import java.util.List;
+
+import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
+import claw.tatsu.common.Message;
+import claw.tatsu.common.Target;
+import claw.tatsu.directive.common.DataMovement;
+import claw.tatsu.directive.configuration.OpenMpConfiguration;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
 
 /**
  * OpenMP base directive directive generator. Implements everything that is
@@ -49,12 +52,20 @@ public class OpenMp extends DirectiveGenerator
 
     private OpenMpExecutionMode _mode;
 
+    private final Context _context;
+
+    public Context context()
+    {
+        return _context;
+    }
+
     /**
      * Constructs a new object with the given target.
      */
-    public OpenMp()
+    public OpenMp(Context context)
     {
         super();
+        _context = context;
     }
 
     /**
@@ -93,7 +104,7 @@ public class OpenMp extends DirectiveGenerator
     public String[] getStartParallelDirective(String clauses)
     {
         // TODO handle possible clauses
-        if (Context.isTarget(Target.GPU))
+        if (context().isTarget(Target.GPU))
         {
             // !$omp target
             // !$omp teams [num_teams(#)] [thread_limit(#)]
@@ -105,7 +116,7 @@ public class OpenMp extends DirectiveGenerator
                 clauses = clauses.trim();
             }
 
-            OpenMpConfiguration ompConfig = (OpenMpConfiguration) Context.get().getAcceleratorConfig();
+            OpenMpConfiguration ompConfig = (OpenMpConfiguration) context().getAcceleratorConfig();
 
             int numThreads = ompConfig.getNumThreads();
             int numTeams = ompConfig.getNumTeams();
@@ -137,7 +148,7 @@ public class OpenMp extends DirectiveGenerator
     @Override
     public String[] getEndParallelDirective()
     {
-        if (Context.isTarget(Target.GPU))
+        if (context().isTarget(Target.GPU))
         {
             // !$omp end teams
             // !$omp end target
@@ -160,7 +171,7 @@ public class OpenMp extends DirectiveGenerator
     @Override
     public String getParallelKeyword()
     {
-        if (Context.isTarget(Target.GPU))
+        if (context().isTarget(Target.GPU))
         {
             return OPENMP_TEAMS;
         } else
@@ -182,7 +193,7 @@ public class OpenMp extends DirectiveGenerator
         {
             return DirectiveGenerator.EMPTY;
         }
-        Message.debug(String.format("%s generate private clause for (%d variables): %s", OPENMP_DEBUG_PREFIX,
+        Message.debug(context(), String.format("%s generate private clause for (%d variables): %s", OPENMP_DEBUG_PREFIX,
                 vars.size(), String.join(",", vars)));
         return String.format(FORMATPAR, OPENMP_PRIVATE, String.join(",", vars));
     }
@@ -200,8 +211,8 @@ public class OpenMp extends DirectiveGenerator
         {
             return DirectiveGenerator.EMPTY;
         }
-        Message.debug(String.format("%s generate map(alloc:x) clause for (%d variables): %s", OPENMP_DEBUG_PREFIX,
-                vars.size(), String.join(",", vars)));
+        Message.debug(context(), String.format("%s generate map(alloc:x) clause for (%d variables): %s",
+                OPENMP_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
         return String.format(FORMATPAR, OPENMP_MAP, String.format("%s:%s", OPENMP_ALLOC, String.join(",", vars)));
     }
 
@@ -289,7 +300,7 @@ public class OpenMp extends DirectiveGenerator
             clauses += String.format("%s(%d) ", OPENMP_COLLAPSE, value);
         }
 
-        OpenMpConfiguration ompConfig = (OpenMpConfiguration) Context.get().getAcceleratorConfig();
+        OpenMpConfiguration ompConfig = (OpenMpConfiguration) context().getAcceleratorConfig();
         int chunkSize = ompConfig.getSchedulerChunkSize();
 
         String scheduler = "";
@@ -297,7 +308,7 @@ public class OpenMp extends DirectiveGenerator
         {
             scheduler = String.format("%s(%s, %d)", OPENMP_DIST_SCHEDULE, OPENMP_SCHEDULE_KIND, chunkSize);
         }
-        if (Context.isTarget(Target.GPU))
+        if (context().isTarget(Target.GPU))
         {
             // !$omp distribute [collapse(#)] [dist_schedule(static,#)]
             if (clauses.isEmpty())
@@ -324,7 +335,7 @@ public class OpenMp extends DirectiveGenerator
     @Override
     public String[] getEndLoopDirective()
     {
-        if (Context.isTarget(Target.GPU))
+        if (context().isTarget(Target.GPU))
         {
             // !$omp end distribute
             return new String[] { String.format(FORMAT3, OPENMP_PREFIX, OPENMP_END, OPENMP_DISTRIBUTE), };
@@ -361,9 +372,10 @@ public class OpenMp extends DirectiveGenerator
         {
             return new String[0];
         }
-        Message.debug(OPENMP_DEBUG_PREFIX + "generate update "
-                + (direction == DataMovement.HOST_TO_DEVICE ? OPENMP_TO : OPENMP_FROM) + " clause for: "
-                + String.join(",", vars));
+        Message.debug(context(),
+                OPENMP_DEBUG_PREFIX + "generate update "
+                        + (direction == DataMovement.HOST_TO_DEVICE ? OPENMP_TO : OPENMP_FROM) + " clause for: "
+                        + String.join(",", vars));
         String updates = String.format(FORMATPAR, direction == DataMovement.HOST_TO_DEVICE ? OPENMP_TO : OPENMP_FROM,
                 String.join(",", vars));
         return new String[] { String.format(FORMAT4, OPENMP_PREFIX, OPENMP_TARGET, OPENMP_UPDATE, updates) };

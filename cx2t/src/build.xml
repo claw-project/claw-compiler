@@ -1,24 +1,20 @@
 <!--
  This file is released under terms of BSD license
  See LICENSE file for more information
+ @author: not specified
 -->
 
 <!-- CLAW X2T build process -->
-<project name="claw" default="main" basedir=".">
+<project name="cx2t" default="main" basedir=".">
     <description>Build CX2T libraries</description>
 
-    <dirname property="antfile.dir" file="${ant.file}"/>
-
-    <import file="../common-targets.xml"/>
-    <property file="../claw.properties"/>
+    <!-- Value set externally-->
+    <property name="claw.properties.dir" value=""/>
+    <property file="${claw.properties.dir}/claw.properties"/>
 
     <!-- Java sources -->
-    <property name="src.translator.parser"
-              value="claw/wani/language/parser"/>
-    <property name="src.base" value="."/>
-
-    <!-- Java classes -->
-    <property name="build.dir" location="bin"/>
+    <property name="src.translator.parser.dir"
+              value="${gen.src.dir}/claw/wani/language/parser"/>
 
     <!-- Classpath for the CX2T Translator library -->
     <path id="build.path">
@@ -26,7 +22,7 @@
         <pathelement path="${antlr.dep}"/>
         <pathelement path="${antlr4.dep}"/>
         <pathelement path="${antlr4.runtime.dep}"/>
-        <pathelement path="${commoncli.dep}"/>
+        <pathelement path="${argparse4j.dep}"/>
         <pathelement path="${omni.xcodeml-common.dep}"/>
         <pathelement path="${toml.dep}"/>
     </path>
@@ -39,55 +35,63 @@
     </path>
 
     <!-- Initialization step -->
-    <target name="init" depends="common.bootstrap"
-            description="Initialize build directories">
+    <target name="init" description="Initialize build directories">
         <tstamp/>
-        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${src.translator.parser.dir}"/>
     </target>
 
     <!-- Check if parser is up-to-date or need to be re-generated -->
     <uptodate property="antlr.required"
-              targetfile="claw/wani/language/parser/Claw.g4">
-        <srcfiles dir="${src.translator.parser}" includes="*.java"/>
+              targetfile="${src.dir}/claw/wani/language/parser/Claw.g4" >
+        <srcfiles dir="${src.translator.parser.dir}" includes="*.java" erroronmissingdir="false" />
     </uptodate>
 
     <!-- Generate the CLAW parser from the ANTLR grammar file -->
-    <target name="antlr" depends="common.resolve" if="antlr.required"
-            description="Generate the parser from ANTLR grammar file">
-        <java classname="org.antlr.v4.Tool" fork="true" failonerror="true"
+    <target name="antlr" if="antlr.required" description="Generate the parser from ANTLR grammar file">
+        <java jvm="${java.exec}" classname="org.antlr.v4.Tool" fork="true" failonerror="true"
               classpathref="antlr.path">
+            <arg value="-o"/>
+            <arg value="${src.translator.parser.dir}"/>
             <arg value="-package"/>
             <arg value="claw.wani.language.parser"/>
-            <arg line="${src.translator.parser}/Claw.g4"/>
+            <arg line="${src.dir}/claw/wani/language/parser/Claw.g4"/>
         </java>
     </target>
 
     <!-- Compile the java code for the two libraries -->
-    <target name="compile" depends="common.resolve, antlr"
-            description="compile the source">
-        <javac includeantruntime="false" srcdir="${src.base}"
-               destdir="${build.dir}" classpathref="build.path" debug="on" />
+    <target name="compile" depends="antlr" description="compile the source">
+        <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir=""
+               destdir="${classes.dir}" classpathref="build.path" debug="on">
+            <src>
+                <pathelement path="${src.dir}"/>
+                <pathelement path="${gen.src.dir}"/>
+            </src>
+        </javac>
     </target>
 
-    <!-- Pacakge compiled files into their own library -->
+    <!-- Package compiled files into their own library -->
     <target name="jar" depends="compile" description="package, output to JAR">
         <mkdir dir="${dist.dir}"/>
         <!-- CLAW X2T TATSU -->
-        <jar jarfile="${dist.dir}/${claw.tatsu.jar}" basedir="${build.dir}"
+        <jar jarfile="${dist.dir}/${claw.tatsu.jar}" basedir="${classes.dir}"
              includes="claw/tatsu/**"/>
         <!-- CLAW X2T SHENRON -->
-        <jar jarfile="${dist.dir}/${claw.shenron.jar}" basedir="${build.dir}"
+        <jar jarfile="${dist.dir}/${claw.shenron.jar}" basedir="${classes.dir}"
              includes="claw/shenron/**"/>
         <!-- CLAW X2T WANI -->
-        <jar jarfile="${dist.dir}/${claw.wani.jar}" basedir="${build.dir}"
-             includes="claw/ClawX2T.class claw/ClawVersion.class claw/wani/**"/>
+        <jar jarfile="${dist.dir}/${claw.wani.jar}" basedir="${classes.dir}"
+             includes="claw/wani/**">
+            <zipfileset dir="${src.dir}/claw/config" includes="**/*.xml **/*.xsd"
+                prefix="claw/config"/>
+        </jar>
         <!-- -->
-        <jar jarfile="${dist.dir}/${external.jar}" basedir="${build.dir}"
+        <jar jarfile="${dist.dir}/${external.jar}" basedir="${classes.dir}"
              includes="external/**"/>
     </target>
 
     <target name="clean" description="clean up">
-        <delete dir="${build.dir}"/>
+        <delete dir="${classes.dir}"/>
         <delete file="${dist.dir}/${claw.tatsu.jar}"/>
         <delete file="${dist.dir}/${claw.shenron.jar}"/>
         <delete file="${dist.dir}/${claw.wani.jar}"/>
@@ -95,5 +99,5 @@
     </target>
 
     <!-- Default target -->
-    <target name="main" depends="init, compile, jar"/>
+    <target name="main" depends="init, antlr, compile, jar"/>
 </project>

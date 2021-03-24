@@ -4,13 +4,16 @@
  */
 package claw.tatsu.xcodeml.xnode;
 
-import claw.tatsu.xcodeml.abstraction.AssignStatement;
-import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
-import claw.tatsu.xcodeml.xnode.common.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,9 +21,17 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import claw.tatsu.xcodeml.abstraction.AssignStatement;
+import claw.tatsu.xcodeml.abstraction.HoistedNestedDoStatement;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
 
 /**
  * The class XnodeUtil contains only static method to help manipulating the raw
@@ -493,21 +504,24 @@ public class XnodeUtil
     /**
      * Read XML file.
      *
-     * @param input Xml file path.
+     * @param inputFilePath Xml file path.
      * @return Document if the XML file could be read. Null otherwise.
      */
-    public static Document readXmlFile(String input)
+    public static Document readXmlFile(Path inputFilePath)
     {
         try
         {
-            File fXmlFile = new File(input);
-            if (!fXmlFile.exists())
+            if (!Files.exists(inputFilePath))
             {
                 return null;
             }
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(fXmlFile);
+            Document doc;
+            try (InputStream in = Files.newInputStream(inputFilePath))
+            {
+                doc = dBuilder.parse(in);
+            }
             doc.getDocumentElement().normalize();
             return doc;
         } catch (Exception ignored)

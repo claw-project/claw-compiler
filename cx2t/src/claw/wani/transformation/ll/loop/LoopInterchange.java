@@ -4,6 +4,8 @@
  */
 package claw.wani.transformation.ll.loop;
 
+import java.util.List;
+
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.directive.common.Directive;
@@ -13,11 +15,9 @@ import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
-import claw.wani.language.ClawPragma;
 import claw.wani.language.ClawClause;
+import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
-
-import java.util.List;
 
 /**
  * A LoopInterchange transformation is a an independent transformation. It allow
@@ -58,7 +58,7 @@ public class LoopInterchange extends ClawTransformation
 
         analyze(xcodeml, translator);
 
-        Loop.reorder(_doStmts, _claw.values(ClawClause.INTERCHANGE_INDEXES));
+        Loop.reorder(xcodeml.context(), _doStmts, _claw.values(ClawClause.INTERCHANGE_INDEXES));
 
         // Generate directive pragmas if needed
         if (_claw.hasClause(ClawClause.ACC))

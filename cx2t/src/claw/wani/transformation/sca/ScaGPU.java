@@ -1,14 +1,21 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author: not specified
  */
 package claw.wani.transformation.sca;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.directive.common.Directive;
+import claw.tatsu.directive.configuration.AcceleratorConfiguration;
+import claw.tatsu.directive.configuration.AcceleratorLocalStrategy;
 import claw.tatsu.directive.generator.DirectiveGenerator;
 import claw.tatsu.primitive.Body;
 import claw.tatsu.primitive.Field;
@@ -23,14 +30,8 @@ import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
 import claw.wani.language.ClawPragma;
-import claw.tatsu.directive.configuration.AcceleratorConfiguration;
-import claw.tatsu.directive.configuration.AcceleratorLocalStrategy;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Specialized version of SCA transformation for GPU target.
@@ -94,7 +95,6 @@ public class ScaGPU extends Sca
     @Override
     public boolean analyze(XcodeProgram xcodeml, Translator translator)
     {
-
         if (!detectParentFunction(xcodeml))
         {
             return false;
@@ -122,7 +122,8 @@ public class ScaGPU extends Sca
      */
     private boolean analyzeStandard(XcodeProgram xcodeml, ClawTranslator translator)
     {
-        DirectiveGenerator dirGen = Context.get().getGenerator();
+        final Context context = xcodeml.context();
+        DirectiveGenerator dirGen = context.getGenerator();
 
         /*
          * Check if unsupported statements are located in the future parallel region.
@@ -130,8 +131,8 @@ public class ScaGPU extends Sca
         if (dirGen.getDirectiveLanguage() != CompilerDirective.NONE)
         {
             Xnode contains = _fctDef.body().matchSeq(Xcode.F_CONTAINS_STATEMENT);
-            Xnode parallelRegionStart = Directive.findParallelRegionStart(_fctDef, null);
-            Xnode parallelRegionEnd = Directive.findParallelRegionEnd(_fctDef, contains);
+            Xnode parallelRegionStart = Directive.findParallelRegionStart(context, _fctDef, null);
+            Xnode parallelRegionEnd = Directive.findParallelRegionEnd(context, _fctDef, contains);
 
             List<Xnode> unsupportedStatements = XnodeUtil.getNodes(parallelRegionStart, parallelRegionEnd,
                     dirGen.getUnsupportedStatements());
@@ -146,8 +147,15 @@ public class ScaGPU extends Sca
                         falsePositive.add(statement);
                     } else
                     {
-                        xcodeml.addError("Unsupported statement in parallel region: " + statement.opcode().fortran(),
-                                statement.lineNo());
+                        if (statement != null)
+                        {
+                            xcodeml.addError(
+                                    "Unsupported statement in parallel region: " + statement.opcode().fortran(),
+                                    statement.lineNo());
+                        } else
+                        {
+                            throw new NullPointerException("statement is null");
+                        }
                     }
                 }
                 // Only one return statement can be transformed at the moment.
@@ -165,7 +173,7 @@ public class ScaGPU extends Sca
 
         detectInductionVariables();
 
-        return analyzeDimension(xcodeml) && analyzeData(xcodeml, translator);
+        return analyzeDimension(translator.cfg(), xcodeml) && analyzeData(xcodeml, translator);
     }
 
     /**
@@ -198,7 +206,7 @@ public class ScaGPU extends Sca
     private boolean analyzeElemental(XcodeProgram xcodeml, ClawTranslator translator)
     {
         // Elemental needs model-data directive
-        if (!_claw.isScaModelConfig() || !Configuration.get().getModelConfig().isLoaded())
+        if (!_claw.isScaModelConfig() || !translator.cfg().getModelConfig().isLoaded())
         {
             xcodeml.addError("SCA applied in ELEMENTAL function/subroutine " + "requires model configuration!",
                     _claw.getPragma());
@@ -210,12 +218,13 @@ public class ScaGPU extends Sca
     @Override
     public void transform(XcodeProgram xcodeml, Translator translator, Transformation other) throws Exception
     {
+        ClawTranslator trans = (ClawTranslator) translator;
         if (_fctType.isElemental())
         {
-            transformElemental(xcodeml, translator);
+            transformElemental(xcodeml, trans);
         } else
         {
-            transformStandard(xcodeml, translator);
+            transformStandard(xcodeml, trans);
         }
     }
 
@@ -259,7 +268,7 @@ public class ScaGPU extends Sca
      * @param translator Current translator.
      * @throws Exception when transformation cannot by applied.
      */
-    private void transformStandard(XcodeProgram xcodeml, Translator translator) throws Exception
+    private void transformStandard(XcodeProgram xcodeml, ClawTranslator translator) throws Exception
     {
         transformReturnStatement(xcodeml);
 
@@ -267,7 +276,7 @@ public class ScaGPU extends Sca
         super.transform(xcodeml, translator, null);
 
         // Apply specific steps for GPU target
-        applySpecificTransformation(xcodeml);
+        applySpecificTransformation(translator.cfg(), xcodeml);
 
         // Finalize the common steps
         super.finalizeTransformation(xcodeml);
@@ -280,7 +289,7 @@ public class ScaGPU extends Sca
      * @param translator Current translator.
      * @throws IllegalTransformationException If transformation fails.
      */
-    private void transformElemental(XcodeProgram xcodeml, Translator translator) throws Exception
+    private void transformElemental(XcodeProgram xcodeml, ClawTranslator translator) throws Exception
     {
         /*
          * SCA in ELEMENTAL function. Only flag the function and leave the actual
@@ -297,7 +306,7 @@ public class ScaGPU extends Sca
                 _arrayFieldsInOut.add(_fctDef.getName());
             }
 
-            if (Configuration.get().getBooleanParameter(Configuration.SCA_ELEMENTAL_PROMOTION_ASSUMED))
+            if (translator.cfg().getBooleanParameter(Configuration.SCA_ELEMENTAL_PROMOTION_ASSUMED))
             {
                 forceAssumedShapedArrayPromotion = _fctType.isSubroutine()
                         || !(_arrayFieldsInOut.contains(_fctType.getResultName())
@@ -322,7 +331,7 @@ public class ScaGPU extends Sca
             removeAttributesWithWaring(xcodeml, _fctType, Xattr.IS_PURE);
 
             // Apply specific steps for GPU
-            applySpecificTransformation(xcodeml);
+            applySpecificTransformation(translator.cfg(), xcodeml);
 
             // Finalize the common steps
             super.finalizeTransformation(xcodeml);
@@ -335,9 +344,11 @@ public class ScaGPU extends Sca
      * @param xcodeml Current translation unit.
      * @throws IllegalTransformationException If any transformation fails.
      */
-    private void applySpecificTransformation(XcodeProgram xcodeml) throws IllegalTransformationException
+    private void applySpecificTransformation(Configuration cfg, XcodeProgram xcodeml)
+            throws IllegalTransformationException
     {
-        AcceleratorConfiguration config = Configuration.get().accelerator();
+        final Context context = xcodeml.context();
+        AcceleratorConfiguration config = cfg.accelerator();
 
         // TODO nodep passing!
         int collapse = Directive.generateLoopSeq(xcodeml, _fctDef, CompilerDirective.CLAW.getPrefix() + " nodep");
@@ -362,10 +373,10 @@ public class ScaGPU extends Sca
                         _claw.getPragma().lineNo());
             }
             PromotionInfo pi = _promotions.entrySet().iterator().next().getValue();
-            loops = new NestedDoStatement(_claw.getDefaultLayoutReversed(), pi, xcodeml);
+            loops = new NestedDoStatement(_claw.getDefaultLayoutReversed(cfg), pi, xcodeml);
         } else
         {
-            loops = new NestedDoStatement(_claw.getDefaultLayoutReversed(), xcodeml);
+            loops = new NestedDoStatement(_claw.getDefaultLayoutReversed(cfg), xcodeml);
         }
 
         /*
@@ -377,8 +388,8 @@ public class ScaGPU extends Sca
         if (contains != null)
         {
 
-            Xnode parallelRegionStart = Directive.findParallelRegionStart(_fctDef, null);
-            Xnode parallelRegionEnd = Directive.findParallelRegionEnd(_fctDef, contains);
+            Xnode parallelRegionStart = Directive.findParallelRegionStart(context, _fctDef, null);
+            Xnode parallelRegionEnd = Directive.findParallelRegionEnd(context, _fctDef, contains);
 
             Body.shiftIn(parallelRegionStart, parallelRegionEnd, loops.getInnerStatement().body(), true);
 
@@ -386,8 +397,8 @@ public class ScaGPU extends Sca
         } else
         {
             // No contains section, all the body is copied to the do statements.
-            Xnode parallelRegionStart = Directive.findParallelRegionStart(_fctDef, null);
-            Xnode parallelRegionEnd = Directive.findParallelRegionEnd(_fctDef, null);
+            Xnode parallelRegionStart = Directive.findParallelRegionStart(context, _fctDef, null);
+            Xnode parallelRegionEnd = Directive.findParallelRegionEnd(context, _fctDef, null);
 
             // Define a hook from where we can insert the new do statement
             Xnode hook = parallelRegionEnd != null ? parallelRegionEnd.nextSibling() : null;
@@ -414,7 +425,7 @@ public class ScaGPU extends Sca
             privateList = applyPrivateStrategy(xcodeml);
         } else if (config.getLocalStrategy() == AcceleratorLocalStrategy.PROMOTE)
         {
-            createList = applyPromoteStrategy(xcodeml);
+            createList = applyPromoteStrategy(cfg, xcodeml);
         }
 
         // Generate the data region
@@ -457,13 +468,15 @@ public class ScaGPU extends Sca
      * @return List of promoted variable requiring an allocation.
      * @throws IllegalTransformationException If promotion of variable fails.
      */
-    private List<String> applyPromoteStrategy(XcodeProgram xcodeml) throws IllegalTransformationException
+    private List<String> applyPromoteStrategy(Configuration cfg, XcodeProgram xcodeml)
+            throws IllegalTransformationException
     {
         List<String> createList = _fctDef.getLocalVariables(xcodeml, true);
         for (String arrayIdentifier : createList)
         {
             _arrayFieldsInOut.add(arrayIdentifier);
-            PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier, _claw.getLayoutForData(arrayIdentifier));
+            PromotionInfo promotionInfo = new PromotionInfo(arrayIdentifier,
+                    _claw.getLayoutForData(cfg, arrayIdentifier));
 
             Field.promote(promotionInfo, _fctDef, xcodeml);
             _promotions.put(arrayIdentifier, promotionInfo);

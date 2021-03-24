@@ -4,25 +4,33 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.error.XanalysisError;
-import claw.tatsu.xcodeml.xnode.Xname;
-import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import org.w3c.dom.Document;
-
 import java.io.BufferedInputStream;
-import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
+import org.w3c.dom.Document;
+
+import claw.tatsu.common.Context;
+import claw.tatsu.xcodeml.error.XanalysisError;
+import claw.tatsu.xcodeml.xnode.Xname;
+import claw.tatsu.xcodeml.xnode.XnodeUtil;
+
+/*-
  * The XcodeProgram represents the XcodeProgram (2) element in XcodeML
  * intermediate representation.
  *
- * Elements: ( typeTable, globalSymbols, globalDeclarations ) - Required: -
- * typeTable (XtypeTable) - globalSymbols (XsymbolTable) - globalDeclarations
- * (XglobalDeclTable) Attributes: - Optional: compiler-info (text), version
- * (text), time (time), language (text), source (text)
+ * Elements: ( typeTable, globalSymbols, globalDeclarations )
+ * - Required:
+ * - typeTable (XtypeTable)
+ * - globalSymbols (XsymbolTable)
+ * - globalDeclarations (XglobalDeclTable)
+ * Attributes:
+ * - Optional: compiler-info (text), version (text), time (time),
+ * language (text), source (text)
  *
  * @author clementval
  */
@@ -35,6 +43,12 @@ public class XcodeProgram extends XcodeML
     // XcodeProgram inner elements
     private XsymbolTable _globalSymbolsTable = null;
     private XglobalDeclTable _globalDeclarationsTable = null;
+    private Context _context;
+
+    public Context context()
+    {
+        return _context;
+    }
 
     /**
      * Default ctor used just to carry errors.
@@ -50,25 +64,19 @@ public class XcodeProgram extends XcodeML
      *
      * @param doc The XcodeML document.
      */
-    private XcodeProgram(Document doc)
+    private XcodeProgram(Document doc, Context context)
     {
         super(doc);
         _errors = new ArrayList<>();
         _warnings = new ArrayList<>();
+        _context = context;
     }
 
-    /**
-     * Create a XcodeProgram object from the standard input. Used when connected
-     * through pipe.
-     *
-     * @return An XcodeProgram object loaded with the information from the std
-     *         input. Null if the std input couldn't be read.
-     */
-    public static XcodeProgram createFromStdInput()
+    public static XcodeProgram createFromStream(InputStream in, Context context)
     {
-        BufferedInputStream bis = new BufferedInputStream(System.in);
+        BufferedInputStream bis = new BufferedInputStream(in);
         Document doc = readXmlStream(bis);
-        return createFromDocument(doc);
+        return createFromDocument(doc, context);
     }
 
     /**
@@ -78,7 +86,7 @@ public class XcodeProgram extends XcodeML
      * @return A XcodeProgram object loaded with the information from the file. null
      *         if the file couldn't be read.
      */
-    public static XcodeProgram createFromDocument(Document doc)
+    public static XcodeProgram createFromDocument(Document doc, Context context)
     {
         if (doc == null)
         {
@@ -86,7 +94,7 @@ public class XcodeProgram extends XcodeML
             program.addError("Unable to read input XcodeML/F");
             return program;
         }
-        XcodeProgram program = new XcodeProgram(doc);
+        XcodeProgram program = new XcodeProgram(doc, context);
         program.readDocumentInformation();
         if (!program.isXcodeMLvalid())
         {
@@ -102,10 +110,10 @@ public class XcodeProgram extends XcodeML
      * @return An XcodeProgram object loaded with the information from the file.
      *         Null if the file couldn't be read.
      */
-    public static XcodeProgram createFromFile(String input)
+    public static XcodeProgram createFromFile(Path input, Context context)
     {
         Document doc = XnodeUtil.readXmlFile(input);
-        return createFromDocument(doc);
+        return createFromDocument(doc, context);
     }
 
     /**
@@ -393,8 +401,7 @@ public class XcodeProgram extends XcodeML
         {
             return "";
         }
-        File f = new File(source);
-        return f.getName();
+        return Paths.get(source).getFileName().toString();
     }
 
     /**

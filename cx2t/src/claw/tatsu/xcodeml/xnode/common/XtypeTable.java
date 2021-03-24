@@ -4,15 +4,15 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
-import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
-import claw.tatsu.xcodeml.xnode.fortran.FortranType;
-import claw.tatsu.xcodeml.xnode.fortran.FstructType;
-
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.FstructType;
 
 /**
  * The XtypeTable represents the typeTable (3.1) element in XcodeML intermediate
@@ -63,6 +63,8 @@ public class XtypeTable extends Xnode
             case F_STRUCT_TYPE:
                 FstructType st = new FstructType(n);
                 _table.put(st.getType(), st);
+                break;
+            default:
                 break;
             }
         }
@@ -142,7 +144,7 @@ public class XtypeTable extends Xnode
      * @return True of the type is retrieved and is of given type. False in any
      *         other case.
      */
-    private boolean isType(Class typeClass, String hash)
+    private boolean isType(Class<?> typeClass, String hash)
     {
         if (hash == null || hash.isEmpty())
         {

@@ -4,13 +4,14 @@
  */
 package claw.tatsu.directive.generator;
 
+import java.util.Arrays;
+import java.util.List;
+
 import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
 import claw.tatsu.directive.common.DataMovement;
 import claw.tatsu.xcodeml.xnode.common.Xcode;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * OpenACC specific directive directive generator.
@@ -41,12 +42,20 @@ public class OpenAcc extends DirectiveGenerator
 
     private OpenAccExecutionMode _mode;
 
+    private final Context _context;
+
+    public Context context()
+    {
+        return _context;
+    }
+
     /**
      * Constructs a new object with the given target.
      */
-    public OpenAcc()
+    public OpenAcc(Context context)
     {
         super();
+        _context = context;
     }
 
     public void setExecutionMode(OpenAccExecutionMode mode)
@@ -110,8 +119,8 @@ public class OpenAcc extends DirectiveGenerator
         {
             return DirectiveGenerator.EMPTY;
         }
-        Message.debug(String.format("%s generate private clause for (%d variables): %s", OPENACC_DEBUG_PREFIX,
-                vars.size(), String.join(",", vars)));
+        Message.debug(context(), String.format("%s generate private clause for (%d variables): %s",
+                OPENACC_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
         return String.format(FORMATPAR, OPENACC_PRIVATE, String.join(",", vars));
     }
 
@@ -122,8 +131,8 @@ public class OpenAcc extends DirectiveGenerator
         {
             return DirectiveGenerator.EMPTY;
         }
-        Message.debug(String.format("%s generate present clause for (%d variables): %s", OPENACC_DEBUG_PREFIX,
-                vars.size(), String.join(",", vars)));
+        Message.debug(context(), String.format("%s generate present clause for (%d variables): %s",
+                OPENACC_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
         return String.format(FORMATPAR, OPENACC_PRESENT, String.join(",", vars));
     }
 
@@ -134,8 +143,8 @@ public class OpenAcc extends DirectiveGenerator
         {
             return DirectiveGenerator.EMPTY;
         }
-        Message.debug(String.format("%s generate pcreate clause for (%d variables): %s", OPENACC_DEBUG_PREFIX,
-                vars.size(), String.join(",", vars)));
+        Message.debug(context(), String.format("%s generate pcreate clause for (%d variables): %s",
+                OPENACC_DEBUG_PREFIX, vars.size(), String.join(",", vars)));
         return String.format(FORMATPAR, OPENACC_PCREATE, String.join(",", vars));
     }
 
@@ -251,9 +260,10 @@ public class OpenAcc extends DirectiveGenerator
         {
             return new String[0];
         }
-        Message.debug(OPENACC_DEBUG_PREFIX + "generate update "
-                + (direction == DataMovement.HOST_TO_DEVICE ? OPENACC_DEVICE : OPENACC_HOST) + " clause for: "
-                + String.join(",", vars));
+        Message.debug(context(),
+                OPENACC_DEBUG_PREFIX + "generate update "
+                        + (direction == DataMovement.HOST_TO_DEVICE ? OPENACC_DEVICE : OPENACC_HOST) + " clause for: "
+                        + String.join(",", vars));
         String updates = String.format(FORMATPAR,
                 direction == DataMovement.HOST_TO_DEVICE ? OPENACC_DEVICE : OPENACC_HOST, String.join(",", vars));
         return new String[] { String.format(FORMAT3, OPENACC_PREFIX, OPENACC_UPDATE, updates) };

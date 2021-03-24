@@ -4,11 +4,11 @@
  */
 package claw.tatsu.common;
 
+import java.io.PrintStream;
+import java.util.List;
+
 import claw.tatsu.xcodeml.error.XanalysisError;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
-import xcodeml.util.XmOption;
-
-import java.util.List;
 
 /**
  * Centralized compiler output messages.
@@ -31,11 +31,11 @@ public final class Message
      *
      * @param message Message to display.
      */
-    public static void debug(String message)
+    public static void debug(Context context, String message)
     {
-        if (XmOption.isDebugOutput())
+        if (context.getXmOption().isDebugOutput())
         {
-            System.err.println(message);
+            context.getErrorStream().println(message);
         }
     }
 
@@ -46,16 +46,18 @@ public final class Message
      * @param prefix       Prefix for the message.
      * @param messages     List of messages to display.
      */
-    private static void printMessages(String originalFile, String prefix, List<XanalysisError> messages)
+    private static void printMessages(Context context, String originalFile, String prefix,
+            List<XanalysisError> messages)
     {
         for (XanalysisError message : messages)
         {
+            PrintStream err = context.getErrorStream();
             if (message.getLine() == 0)
             {
-                System.err.println(String.format("%s:-:- %s %s", originalFile, prefix, message.getMessage()));
+                err.println(String.format("%s:-:- %s %s", originalFile, prefix, message.getMessage()));
             } else
             {
-                System.err.println(String.format("%s:%s:- %s %s", originalFile, message.getConcatLines(), prefix,
+                err.println(String.format("%s:%s:- %s %s", originalFile, message.getConcatLines(), prefix,
                         message.getMessage()));
             }
         }
@@ -67,11 +69,11 @@ public final class Message
      *
      * @param translationUnit Current translation unit.
      */
-    public static void warnings(XcodeProgram translationUnit)
+    public static void warnings(Context context, XcodeProgram translationUnit)
     {
         if (translationUnit != null)
         {
-            printMessages(translationUnit.getSourceFileOnly(), WARNING_PREFIX, translationUnit.getWarnings());
+            printMessages(context, translationUnit.getSourceFileOnly(), WARNING_PREFIX, translationUnit.getWarnings());
         }
     }
 
@@ -80,11 +82,11 @@ public final class Message
      *
      * @param translationUnit Current translation unit.
      */
-    public static void errors(XcodeProgram translationUnit)
+    public static void errors(Context context, XcodeProgram translationUnit)
     {
         if (translationUnit != null)
         {
-            printMessages(translationUnit.getSourceFileOnly(), ERROR_PREFIX, translationUnit.getErrors());
+            printMessages(context, translationUnit.getSourceFileOnly(), ERROR_PREFIX, translationUnit.getErrors());
         }
     }
 }

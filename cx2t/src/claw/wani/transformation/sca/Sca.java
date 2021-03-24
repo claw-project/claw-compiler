@@ -1,26 +1,48 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author clementval
  */
 package claw.wani.transformation.sca;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.common.*;
-import claw.tatsu.primitive.*;
+import claw.tatsu.common.Context;
+import claw.tatsu.common.Message;
+import claw.tatsu.common.Target;
+import claw.tatsu.common.Utility;
+import claw.tatsu.primitive.Field;
+import claw.tatsu.primitive.Function;
+import claw.tatsu.primitive.Xmod;
 import claw.tatsu.xcodeml.abstraction.DimensionDefinition;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.*;
-import claw.wani.language.ClawPragma;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.XstorageClass;
+import claw.tatsu.xcodeml.xnode.fortran.DeclarationPosition;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FmoduleDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 import claw.wani.language.ClawClause;
+import claw.wani.language.ClawPragma;
 import claw.wani.transformation.ClawTransformation;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.configuration.ModelConfig;
 import claw.wani.x2t.translator.ClawTranslator;
-
-import java.util.*;
 
 /**
  * The Single Column Abstraction (SCA) transformation transforms the code
@@ -30,7 +52,6 @@ import java.util.*;
  * This class holds the basic common elements for all targets. Specific
  * transformations are detailed in the children classes:
  *
- * @author clementval
  * @see claw.wani.transformation.sca.ScaGPU
  * @see claw.wani.transformation.sca.ScaCPUvectorizeGroup
  */
@@ -78,37 +99,38 @@ public class Sca extends ClawTransformation
      * @param candidateArrays List of candidate array variables for promotion.
      * @param scalars         List of candidate scalar variables for promotion.
      */
-    private void printDebugPromotionInfos(String name, List<String> candidateArrays, List<String> scalars)
+    private void printDebugPromotionInfos(Context context, String name, List<String> candidateArrays,
+            List<String> scalars)
     {
-        Message.debug("==========================================");
-        Message.debug("SCA automatic promotion deduction information for subroutine " + name);
-        Message.debug("  - Promoted arrays(" + _arrayFieldsInOut.size() + "):");
+        Message.debug(context, "==========================================");
+        Message.debug(context, "SCA automatic promotion deduction information for subroutine " + name);
+        Message.debug(context, "  - Promoted arrays(" + _arrayFieldsInOut.size() + "):");
         List<String> unsorted = new ArrayList<>(_arrayFieldsInOut);
         Collections.sort(unsorted);
         for (String array : unsorted)
         {
-            Message.debug("\t" + array);
+            Message.debug(context, "\t" + array);
         }
-        Message.debug("  - Excluded from promotion variables(" + _noPromotion.size() + "):");
+        Message.debug(context, "  - Excluded from promotion variables(" + _noPromotion.size() + "):");
         List<String> unsortedNoPromotions = new ArrayList<>(_noPromotion);
         Collections.sort(unsortedNoPromotions);
         for (String array : unsortedNoPromotions)
         {
-            Message.debug("\t" + array);
+            Message.debug(context, "\t" + array);
         }
-        Message.debug("  - Candidate arrays(" + candidateArrays.size() + "):");
+        Message.debug(context, "  - Candidate arrays(" + candidateArrays.size() + "):");
         Collections.sort(candidateArrays);
         for (String array : candidateArrays)
         {
-            Message.debug("\t" + array);
+            Message.debug(context, "\t" + array);
         }
-        Message.debug("  - Candidate scalars(" + scalars.size() + "):");
+        Message.debug(context, "  - Candidate scalars(" + scalars.size() + "):");
         Collections.sort(scalars);
         for (String array : scalars)
         {
-            Message.debug("\t" + array);
+            Message.debug(context, "\t" + array);
         }
-        Message.debug("==========================================");
+        Message.debug(context, "==========================================");
     }
 
     /**
@@ -150,10 +172,10 @@ public class Sca extends ClawTransformation
      * @param xcodeml Current XcodeML program unit to store the error message.
      * @return True if the analysis succeeded. False otherwise.
      */
-    boolean analyzeDimension(XcodeProgram xcodeml)
+    boolean analyzeDimension(Configuration cfg, XcodeProgram xcodeml)
     {
         if (!_claw.hasClause(ClawClause.DIMENSION)
-                && (_claw.isScaModelConfig() && Configuration.get().getModelConfig().getNbDimensions() == 0))
+                && (_claw.isScaModelConfig() && cfg.getModelConfig().getNbDimensions() == 0))
         {
             xcodeml.addError("No dimension defined for parallelization.", _claw.getPragma());
             return false;
@@ -205,7 +227,7 @@ public class Sca extends ClawTransformation
                 _arrayFieldsInOut.add(dataInfo.getKey());
 
                 String layoutName = dataInfo.getValue();
-                ModelConfig global = Configuration.get().getModelConfig();
+                ModelConfig global = trans.cfg().getModelConfig();
                 ModelConfig local = _claw.getLocalModelConfig();
 
                 if (layoutName != null && global.hasLayout(layoutName))
@@ -284,7 +306,7 @@ public class Sca extends ClawTransformation
         }
         _scalarFields.addAll(scalars);
 
-        printDebugPromotionInfos(_fctDef.getName(), candidateArrays, scalars);
+        printDebugPromotionInfos(xcodeml.context(), _fctDef.getName(), candidateArrays, scalars);
 
         return true;
     }
@@ -321,8 +343,11 @@ public class Sca extends ClawTransformation
     @Override
     public void transform(XcodeProgram xcodeml, Translator translator, Transformation other) throws Exception
     {
+        ClawTranslator trans = (ClawTranslator) translator;
+        final Configuration cfg = trans.cfg();
+        final Context context = trans.context();
         // Handle PURE function / subroutine
-        if (Configuration.get().isForcePure() && _fctType.isPure())
+        if (cfg.isForcePure() && _fctType.isPure())
         {
             throw new IllegalTransformationException("PURE specifier cannot be removed", _fctDef.lineNo());
         } else
@@ -331,12 +356,12 @@ public class Sca extends ClawTransformation
         }
 
         // Insert the declarations of variables to iterate over the new dimensions.
-        insertVariableToIterateOverDimension(xcodeml);
+        insertVariableToIterateOverDimension(cfg, xcodeml);
 
         // Promote all array fields with new dimensions.
-        promoteFields(xcodeml);
+        promoteFields(cfg, xcodeml);
 
-        boolean adaptedNakedArrayRef = Context.get().getTarget() == Target.GPU;
+        boolean adaptedNakedArrayRef = context.getTarget() == Target.GPU;
 
         // Adapt array references.
         if (_claw.hasClause(ClawClause.DATA_OVER))
@@ -367,8 +392,8 @@ public class Sca extends ClawTransformation
     {
         if (fctType.hasAttribute(attribute))
         {
-            Message.debug(String.format("%s attribute %s removed from function/subroutine %s", SCA_DEBUG_PREFIX,
-                    attribute.toStringForMsg(), _fctDef.getName()));
+            Message.debug(xcodeml.context(), String.format("%s attribute %s removed from function/subroutine %s",
+                    SCA_DEBUG_PREFIX, attribute.toStringForMsg(), _fctDef.getName()));
             fctType.removeAttribute(attribute);
         }
     }
@@ -408,13 +433,13 @@ public class Sca extends ClawTransformation
      * @throws IllegalTransformationException if elements cannot be created or
      *                                        elements cannot be found.
      */
-    private void promoteFields(XcodeProgram xcodeml) throws IllegalTransformationException
+    private void promoteFields(Configuration cfg, XcodeProgram xcodeml) throws IllegalTransformationException
     {
         if (_claw.hasClause(ClawClause.DATA_OVER))
         {
             for (String fieldId : _claw.getDataOverClauseValues())
             {
-                PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw.getLayoutForData(fieldId));
+                PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw.getLayoutForData(cfg, fieldId));
                 Field.promote(promotionInfo, _fctDef, xcodeml);
                 _promotions.put(fieldId, promotionInfo);
             }
@@ -423,7 +448,7 @@ public class Sca extends ClawTransformation
             // Promote all arrays in a similar manner
             for (String fieldId : _arrayFieldsInOut)
             {
-                PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw.getLayoutForData(fieldId));
+                PromotionInfo promotionInfo = new PromotionInfo(fieldId, _claw.getLayoutForData(cfg, fieldId));
                 if (forceAssumedShapedArrayPromotion)
                 {
                     promotionInfo.forceAssumedShape();
@@ -440,14 +465,14 @@ public class Sca extends ClawTransformation
      *
      * @param xcodeml Current XcodeML program unit in which element are created.
      */
-    private void insertVariableToIterateOverDimension(XcodeProgram xcodeml)
+    private void insertVariableToIterateOverDimension(Configuration cfg, XcodeProgram xcodeml)
     {
         // Create type and declaration for iterations over the new dimensions
         FbasicType bt = xcodeml.createBasicType(FortranType.INTEGER, Intent.IN);
         xcodeml.getTypeTable().add(bt);
 
         // For each dimension defined in the directive
-        for (DimensionDefinition dimension : _claw.getDefaultLayout())
+        for (DimensionDefinition dimension : _claw.getDefaultLayout(cfg))
         {
             if (!forceAssumedShapedArrayPromotion)
             {
@@ -475,37 +500,35 @@ public class Sca extends ClawTransformation
                     param.setBooleanAttribute(Xattr.IS_INSERTED, true);
                 }
 
-                // Create the parameter for the iteration lower bound
-                if (dimension.getIterationLowerBound().isVar())
-                {
-                    String itLowerBound = dimension.getIterationLowerBound().getValue();
-                    if (!itLowerBound.equals(dimension.getLowerBound().getValue()))
-                    {
-                        xcodeml.createIdAndDecl(itLowerBound, bt.getType(), XstorageClass.F_PARAM, _fctDef,
-                                DeclarationPosition.FIRST);
+        // Create the parameter for the iteration lower bound
+        if(dimension.getIterationLowerBound().isVar()) {
+	  String itLowerBound = dimension.getIterationLowerBound().getValue();
+	  if(!itLowerBound.equals(dimension.getLowerBound().getValue())) {
+	    xcodeml.createIdAndDecl(itLowerBound, bt.getType(),
+                XstorageClass.F_PARAM, _fctDef, DeclarationPosition.FIRST);
 
-                        // Add parameter to the local type table
-                        Xnode param = xcodeml.createAndAddParam(dimension.getIterationLowerBound().getValue(),
-                                bt.getType(), _fctType);
-                        param.setBooleanAttribute(Xattr.IS_INSERTED, true);
-                    }
-                }
+            // Add parameter to the local type table
+            Xnode param = xcodeml.createAndAddParam(
+                dimension.getIterationLowerBound().getValue(),
+                bt.getType(), _fctType);
+            param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+	  }
+        }
 
-                // Create parameter for the upper bound
-                if (dimension.getIterationUpperBound().isVar())
-                {
-                    String itUpperBound = dimension.getIterationUpperBound().getValue();
-                    if (!itUpperBound.equals(dimension.getUpperBound().getValue()))
-                    {
-                        xcodeml.createIdAndDecl(itUpperBound, bt.getType(), XstorageClass.F_PARAM, _fctDef,
-                                DeclarationPosition.FIRST);
+        // Create parameter for the upper bound
+        if(dimension.getIterationUpperBound().isVar()) {
+	  String itUpperBound = dimension.getIterationUpperBound().getValue();
+	  if(!itUpperBound.equals(dimension.getUpperBound().getValue())) {
+            xcodeml.createIdAndDecl(itUpperBound, bt.getType(),
+                XstorageClass.F_PARAM, _fctDef, DeclarationPosition.FIRST);
 
-                        // Add parameter to the local type table
-                        Xnode param = xcodeml.createAndAddParam(dimension.getIterationUpperBound().getValue(),
-                                bt.getType(), _fctType);
-                        param.setBooleanAttribute(Xattr.IS_INSERTED, true);
-                    }
-                }
+            // Add parameter to the local type table
+            Xnode param = xcodeml.createAndAddParam(
+                dimension.getIterationUpperBound().getValue(),
+                bt.getType(), _fctType);
+            param.setBooleanAttribute(Xattr.IS_INSERTED, true);
+          }
+        }
             }
             // Create induction variable declaration
             xcodeml.createIdAndDecl(dimension.getIdentifier(), FortranType.INTEGER, XstorageClass.F_LOCAL, _fctDef,

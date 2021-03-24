@@ -4,14 +4,23 @@
  */
 package claw.wani.serialization;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
-import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.Xscope;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
 import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.wani.x2t.configuration.Configuration;
-
-import java.util.*;
 
 /**
  * Helper class to insert serialization call in XcodeML/F
@@ -201,10 +210,10 @@ public class Serialization
      * @param savepointName Name of the savepoint.
      * @return Last inserted node.
      */
-    public static Xnode generateWriteSavepoint(XcodeProgram xcodeml, Xnode hook, Map<String, String> metadata,
-            List<String> fields, String savepointName, SerializationStep step)
+    public static Xnode generateWriteSavepoint(Configuration cfg, XcodeProgram xcodeml, Xnode hook,
+            Map<String, String> metadata, List<String> fields, String savepointName, SerializationStep step)
     {
-        return generateSavepoint(xcodeml, hook, metadata, fields, savepointName, step, SerializationMode.WRITE);
+        return generateSavepoint(cfg, xcodeml, hook, metadata, fields, savepointName, step, SerializationMode.WRITE);
     }
 
     /**
@@ -217,10 +226,10 @@ public class Serialization
      * @param savepointName Name of the savepoint.
      * @return Last inserted node.
      */
-    public static Xnode generateReadSavepoint(XcodeProgram xcodeml, Xnode hook, Map<String, String> metadata,
-            List<String> fields, String savepointName, SerializationStep step)
+    public static Xnode generateReadSavepoint(Configuration cfg, XcodeProgram xcodeml, Xnode hook,
+            Map<String, String> metadata, List<String> fields, String savepointName, SerializationStep step)
     {
-        return generateSavepoint(xcodeml, hook, metadata, fields, savepointName, step, SerializationMode.READ);
+        return generateSavepoint(cfg, xcodeml, hook, metadata, fields, savepointName, step, SerializationMode.READ);
     }
 
     /**
@@ -234,16 +243,17 @@ public class Serialization
      * @param savepointName Name of the savepoint.
      * @return Last inserted node.
      */
-    private static Xnode generateSavepoint(XcodeProgram xcodeml, Xnode hook, Map<String, String> metadata,
-            List<String> fields, String savepointName, SerializationStep step, SerializationMode mode)
+    private static Xnode generateSavepoint(Configuration cfg, XcodeProgram xcodeml, Xnode hook,
+            Map<String, String> metadata, List<String> fields, String savepointName, SerializationStep step,
+            SerializationMode mode)
     {
-        if (!Configuration.get().getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+        if (!cfg.getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
         {
             return hook;
         }
 
-        if ((Configuration.get().seriliazeRead() && mode != SerializationMode.READ)
-                || (Configuration.get().seriliazeWrite() && mode != SerializationMode.WRITE))
+        if ((cfg.seriliazeRead() && mode != SerializationMode.READ)
+                || (cfg.seriliazeWrite() && mode != SerializationMode.WRITE))
         {
             return hook;
         }
@@ -323,9 +333,9 @@ public class Serialization
      * @param xcodeml Current XcodeML/F translation unit.
      * @param fctDef  Function definition.
      */
-    public static void insertImports(XcodeProgram xcodeml, FfunctionDefinition fctDef)
+    public static void insertImports(Configuration cfg, XcodeProgram xcodeml, FfunctionDefinition fctDef)
     {
-        if (!Configuration.get().getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+        if (!cfg.getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
         {
             return;
         }

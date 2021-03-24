@@ -6,7 +6,6 @@ package claw.wani.transformation.ll.directive;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.common.Context;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.wani.ClawConstant;
@@ -71,7 +70,7 @@ public class DirectivePrimitive extends ClawTransformation
     public void transform(XcodeProgram xcodeml, Translator translator, Transformation transformation)
             throws IllegalTransformationException
     {
-        String prefix = Context.get().getGenerator().getDirectiveLanguage().getPrefix();
+        String prefix = xcodeml.context().getGenerator().getDirectiveLanguage().getPrefix();
         if (prefix == null)
         {
             return;
