@@ -11,7 +11,5 @@ package claw.tatsu.directive.common;
  * @author clementval
  */
 public enum DataMovement {
-  TWO_WAY,
-  HOST_TO_DEVICE,
-  DEVICE_TO_HOST
+    TWO_WAY, HOST_TO_DEVICE, DEVICE_TO_HOST
 }

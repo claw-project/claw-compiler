@@ -23,57 +23,61 @@ import java.util.*;
  *
  * @author clementval
  */
-public class ModelData extends ClawBlockTransformation {
+public class ModelData extends ClawBlockTransformation
+{
 
-  public ModelData(ClawPragma startDirective, ClawPragma endDirective) {
-    super(startDirective, endDirective);
-  }
-
-  @Override
-  public boolean analyze(XcodeProgram xcodeml, Translator translator) {
-    /* Discover variable part of the model configuration and the subroutine
-     * holding them */
-
-    if(!Configuration.get().getModelConfig().isLoaded()) {
-      xcodeml.addError(
-          "SCA model-data directive requires model configuration!",
-          _clawStart.getPragma());
+    public ModelData(ClawPragma startDirective, ClawPragma endDirective)
+    {
+        super(startDirective, endDirective);
     }
 
-    ClawTranslator trans = (ClawTranslator) translator;
+    @Override
+    public boolean analyze(XcodeProgram xcodeml, Translator translator)
+    {
+        /*
+         * Discover variable part of the model configuration and the subroutine holding
+         * them
+         */
 
-    // Locate the subroutine/function in which the directive is defined
-    FfunctionDefinition sub = getDirective().getPragma().findParentFunction();
+        if (!Configuration.get().getModelConfig().isLoaded())
+        {
+            xcodeml.addError("SCA model-data directive requires model configuration!", _clawStart.getPragma());
+        }
 
-    Map<String, String> modelVariables;
-    if(trans.hasElement(sub) != null) {
-      modelVariables = Utility.convertToMap(trans.hasElement(sub));
-    } else {
-      modelVariables = new HashMap<>();
+        ClawTranslator trans = (ClawTranslator) translator;
+
+        // Locate the subroutine/function in which the directive is defined
+        FfunctionDefinition sub = getDirective().getPragma().findParentFunction();
+
+        Map<String, String> modelVariables;
+        if (trans.hasElement(sub) != null)
+        {
+            modelVariables = Utility.convertToMap(trans.hasElement(sub));
+        } else
+        {
+            modelVariables = new HashMap<>();
+        }
+
+        for (String data : XnodeUtil.getAllVariables(getDirective().getPragma(), getEndDirective().getPragma()))
+        {
+            modelVariables.put(data, _clawStart.value(ClawClause.LAYOUT));
+        }
+
+        trans.storeElement(sub, modelVariables);
+
+        return true;
     }
 
-    for(String data : XnodeUtil.getAllVariables(getDirective().getPragma(),
-        getEndDirective().getPragma())) {
-      modelVariables.put(data, _clawStart.value(ClawClause.LAYOUT));
+    @Override
+    public boolean canBeTransformedWith(XcodeProgram xcodeml, Transformation other)
+    {
+        return false; // Independent transformation
     }
 
-    trans.storeElement(sub, modelVariables);
-
-    return true;
-  }
-
-  @Override
-  public boolean canBeTransformedWith(XcodeProgram xcodeml,
-                                      Transformation other)
-  {
-    return false; // Independent transformation
-  }
-
-  @Override
-  public void transform(XcodeProgram xcodeml, Translator translator,
-                        Transformation other)
-  {
-    // Analysis only transformation. All the work is done in SCA and SCAForward
-    removePragma();
-  }
+    @Override
+    public void transform(XcodeProgram xcodeml, Translator translator, Transformation other)
+    {
+        // Analysis only transformation. All the work is done in SCA and SCAForward
+        removePragma();
+    }
 }

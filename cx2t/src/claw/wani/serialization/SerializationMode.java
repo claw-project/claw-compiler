@@ -10,5 +10,5 @@ package claw.wani.serialization;
  * @author clementval
  */
 public enum SerializationMode {
-  READ, WRITE, PERTURB
+    READ, WRITE, PERTURB
 }

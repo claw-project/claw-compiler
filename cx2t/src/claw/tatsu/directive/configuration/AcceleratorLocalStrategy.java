@@ -10,28 +10,30 @@ package claw.tatsu.directive.configuration;
  * @author clementval
  */
 public enum AcceleratorLocalStrategy {
-  PRIVATE,
-  PROMOTE;
+    PRIVATE, PROMOTE;
 
-  static final String LOCAL_STRATEGY_PRIVATE = "private";
-  static final String LOCAL_STRATEGY_PROMOTE = "promote";
+    static final String LOCAL_STRATEGY_PRIVATE = "private";
+    static final String LOCAL_STRATEGY_PROMOTE = "promote";
 
-  /**
-   * Get enum value from configuration string.
-   *
-   * @param value String value from configuration.
-   * @return Enum value corresponding to the string. Default is PRIVATE.
-   */
-  public static AcceleratorLocalStrategy fromString(String value) {
-    if(value == null) {
-      return PRIVATE;
+    /**
+     * Get enum value from configuration string.
+     *
+     * @param value String value from configuration.
+     * @return Enum value corresponding to the string. Default is PRIVATE.
+     */
+    public static AcceleratorLocalStrategy fromString(String value)
+    {
+        if (value == null)
+        {
+            return PRIVATE;
+        }
+        switch (value)
+        {
+        case LOCAL_STRATEGY_PROMOTE:
+            return PROMOTE;
+        case LOCAL_STRATEGY_PRIVATE:
+        default:
+            return PRIVATE;
+        }
     }
-    switch(value) {
-      case LOCAL_STRATEGY_PROMOTE:
-        return PROMOTE;
-      case LOCAL_STRATEGY_PRIVATE:
-      default:
-        return PRIVATE;
-    }
-  }
 }

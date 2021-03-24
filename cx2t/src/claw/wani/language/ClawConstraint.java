@@ -10,6 +10,5 @@ package claw.wani.language;
  * @author clementval
  */
 public enum ClawConstraint {
-  NONE,
-  DIRECT
+    NONE, DIRECT
 }
