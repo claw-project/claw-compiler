@@ -1,3 +1,8 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: not specified
+-->
 <XcodeProgram source="basic_fortran.f90"
               language="Fortran"
               time="2016-10-21 15:25:40"

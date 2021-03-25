@@ -1,3 +1,8 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: not specified
+-->
 <transformations jar="claw-external-set.jar">
   <transformation name="add-print"
     type="independent" trigger="translation_unit"
