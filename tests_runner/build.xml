@@ -1,0 +1,71 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: Mikhail Zhigun
+-->
+
+<!-- CLAWFC build process -->
+<project name="claw-tests" default="main" basedir=".">
+    <description>Run tests on CLAWFC driver</description>
+
+    <!-- Value set externally-->
+    <property name="claw.properties.dir" value=""/>
+    <property file="${claw.properties.dir}/claw.properties"/>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${ant-contrib.dep}"/>
+
+    <!-- Classpath for the CX2T Translator library -->
+    <path id="build.path">
+        <pathelement path="${junit.dep}" />
+        <pathelement path="${st4.dep}"/>
+        <pathelement path="${antlr.dep}"/>
+        <pathelement path="${antlr4.dep}"/>
+        <pathelement path="${antlr4.runtime.dep}"/>
+        <pathelement path="${argparse4j.dep}"/>
+        <pathelement path="${jaxb-runtime.dep}"/>
+        <pathelement path="${driver.dep}"/>
+    </path>
+
+    <!-- Initialization step -->
+    <target name="init" description="Initialize build directories">
+        <tstamp/>
+        <mkdir dir="${claw.tests.classes.dir}"/>
+    </target>
+
+    <target name="compile" depends="init" description="compile the source">
+        <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir=""
+               destdir="${claw.tests.classes.dir}" classpathref="build.path" debug="on">
+            <src>
+                <pathelement path="${driver.test.utils.src.dir}"/>
+                <pathelement path="${claw.tests.src.dir}"/>
+                <pathelement path="${claw.tests.gen.src.dir}"/>
+            </src>
+        </javac>
+    </target>
+
+    <!-- Package compiled files into their own library -->
+    <target name="jar" depends="compile" description="package, output to JAR">
+        <mkdir dir="${claw.tests.dist.dir}"/>
+        <!-- Driver -->
+        <jar jarfile="${claw.tests.dep}" basedir="${claw.tests.classes.dir}"
+             includes="claw/**,clawfc/**">
+            <manifest>
+                <attribute name="Main-Class" value="claw.tests.Main"/>
+                <attribute name="Class-Path" value="${claw.tests.runtime.classpath}"/>
+            </manifest>
+        </jar>
+        <chmod file="${claw.tests.dep}" perm="a+x"/>
+    </target>
+
+    <target name="clean" description="clean up">
+        <delete dir="${claw.tests.classes.dir}"/>
+        <delete dir="${claw.tests.dist.dir}"/>
+    </target>
+
+    <target name="run" depends="jar" description="Run tests">
+        <java jar="${claw.tests.dep}" jvm="${java.exec}" fork="true" failonerror="true" output="${claw.tests.report}"/>
+    </target>
+
+    <!-- Default target -->
+    <target name="main" depends="init, compile, jar"/>
+</project>

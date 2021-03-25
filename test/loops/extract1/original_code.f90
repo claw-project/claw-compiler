@@ -5,7 +5,11 @@
 ! Simple program to test the loop-extract directive
 !
 
-PROGRAM LOOP_EXTRACT
+module mod
+
+  contains
+
+subroutine LOOP_EXTRACT
   INTEGER :: value1(10)
   INTEGER :: value2(10)
   INTEGER :: j
@@ -31,3 +35,10 @@ SUBROUTINE clawloop(value1, value2)
   END DO
 
 END
+end module mod
+
+program main
+  use mod
+
+  call LOOP_EXTRACT()
+end program main
