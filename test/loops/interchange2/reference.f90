@@ -1,7 +1,6 @@
-PROGRAM loop_interchange
-
- CALL clawloop ( )
-END PROGRAM loop_interchange
+PROGRAM LOOP_INTERCHANGE
+  CALL clawloop
+END
 
 SUBROUTINE clawloop ( )
 
