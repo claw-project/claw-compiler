@@ -12,15 +12,7 @@
 
 GIT_ROOT=$(git rev-parse --show-toplevel)
 
-# Run author checker
-if ! "${GIT_ROOT}"/scripts/check_author; then
-  echo "One of your source code files does not have @author information!"
-  exit 1
-fi
-
-# Run license checker
-if ! "${GIT_ROOT}"/scripts/check_license; then
-  echo "One of your source code files does not have license information!"
+if ! python "${GIT_ROOT}"/scripts/check_author_license.py; then
   exit 1
 fi
 
