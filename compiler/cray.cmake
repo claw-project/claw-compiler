@@ -16,3 +16,4 @@ set(OPENACC_FLAGS "-h acc,noomp")     # flags to compile with OpenACC support
 set(OPENMP_FLAGS "-h noacc,omp")      # flags to compile with OpenMP support
 set(OMNI_TARGET "")                   # Compilation of OMNI compiler
 set(COMPILER_MACRO "-D_CRAYFTN")      # predefined macro by compiler
+set(FC_VENDOR "cray")
