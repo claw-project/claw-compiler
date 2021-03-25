@@ -1,8 +1,3 @@
-!
-! This file is released under terms of BSD license
-! See LICENSE file for more information
-!
-
 module test_openacc_lib
 
 contains
