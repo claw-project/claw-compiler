@@ -1,0 +1,5 @@
+module mod%s
+#ifdef _CLAW
+integer, parameter :: bla%s = 10
+#endif
+end module mod%s

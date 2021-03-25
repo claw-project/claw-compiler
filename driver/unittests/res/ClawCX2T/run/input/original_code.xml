@@ -1,0 +1,370 @@
+<XcodeProgram source="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90"
+              language="Fortran"
+              time="2021-01-02 02:15:21"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+    <FfunctionType type="F56533ff54b20" return_type="Fvoid" is_program="true"/>
+    <FfunctionType type="F56533ff57c80" return_type="Fvoid"/>
+    <FfunctionType type="F56533ff5cb50" return_type="Fvoid">
+      <params>
+        <name type="I56533ff5e770">istart</name>
+        <name type="I56533ff5e8b0">iend</name>
+        <name type="I56533ff5e9f0">jstart</name>
+        <name type="I56533ff5eb30">jend</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="I56533ff5e770" intent="in" ref="Fint"/>
+    <FbasicType type="I56533ff5e8b0" intent="in" ref="Fint"/>
+    <FbasicType type="I56533ff5e9f0" intent="in" ref="Fint"/>
+    <FbasicType type="I56533ff5eb30" intent="in" ref="Fint"/>
+    <FbasicType type="A56533ff607e0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <Var type="I56533ff5e770" scope="local">istart</Var>
+        </lowerBound>
+        <upperBound>
+          <Var type="I56533ff5e8b0" scope="local">iend</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A56533ff60aa0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <Var type="I56533ff5e770" scope="local">istart</Var>
+        </lowerBound>
+        <upperBound>
+          <Var type="I56533ff5e8b0" scope="local">iend</Var>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <Var type="I56533ff5e770" scope="local">istart</Var>
+        </lowerBound>
+        <upperBound>
+          <Var type="I56533ff5e8b0" scope="local">iend</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A56533ff60ed0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <Var type="I56533ff5e770" scope="local">istart</Var>
+        </lowerBound>
+        <upperBound>
+          <Var type="I56533ff5e8b0" scope="local">iend</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="A56533ff610d0" ref="Freal">
+      <indexRange>
+        <lowerBound>
+          <Var type="I56533ff5e770" scope="local">istart</Var>
+        </lowerBound>
+        <upperBound>
+          <Var type="I56533ff5e8b0" scope="local">iend</Var>
+        </upperBound>
+      </indexRange>
+      <indexRange>
+        <lowerBound>
+          <Var type="I56533ff5e770" scope="local">istart</Var>
+        </lowerBound>
+        <upperBound>
+          <Var type="I56533ff5e8b0" scope="local">iend</Var>
+        </upperBound>
+      </indexRange>
+    </FbasicType>
+    <FfunctionType type="F56533ff59440" return_type="Freal" is_pure="true">
+      <params>
+        <name type="I56533ff5a850">i</name>
+        <name type="I56533ff5a990">j</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="I56533ff5a850" intent="in" ref="Fint"/>
+    <FbasicType type="I56533ff5a990" intent="in" ref="Fint"/>
+  </typeTable>
+  <globalSymbols>
+    <id type="F56533ff54b20" sclass="ffunc">
+      <name>claw_test</name>
+    </id>
+    <id type="F56533ff5cb50" sclass="ffunc">
+      <name>call_test</name>
+    </id>
+    <id type="F56533ff59440" sclass="ffunc">
+      <name>f</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FfunctionDefinition lineno="8" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+      <name type="F56533ff54b20">claw_test</name>
+      <symbols>
+        <id type="Fint" sclass="flocal">
+          <name>istart</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>iend</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>jstart</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>jend</name>
+        </id>
+        <id type="F56533ff57c80" sclass="ffunc">
+          <name>call_test</name>
+        </id>
+      </symbols>
+      <declarations>
+        <varDecl lineno="9" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="Fint">istart</name>
+          <value>
+            <FintConstant type="Fint">0</FintConstant>
+          </value>
+        </varDecl>
+        <varDecl lineno="10" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="Fint">iend</name>
+          <value>
+            <FintConstant type="Fint">10</FintConstant>
+          </value>
+        </varDecl>
+        <varDecl lineno="11" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="Fint">jstart</name>
+          <value>
+            <FintConstant type="Fint">0</FintConstant>
+          </value>
+        </varDecl>
+        <varDecl lineno="12" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="Fint">jend</name>
+          <value>
+            <FintConstant type="Fint">20</FintConstant>
+          </value>
+        </varDecl>
+      </declarations>
+      <body>
+        <exprStatement lineno="13" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <functionCall type="Fvoid">
+            <name type="F56533ff57c80">call_test</name>
+            <arguments>
+              <Var type="Fint" scope="local">istart</Var>
+              <Var type="Fint" scope="local">iend</Var>
+              <Var type="Fint" scope="local">jstart</Var>
+              <Var type="Fint" scope="local">jend</Var>
+            </arguments>
+          </functionCall>
+        </exprStatement>
+      </body>
+    </FfunctionDefinition>
+    <FfunctionDefinition lineno="16" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+      <name type="F56533ff59440">f</name>
+      <symbols>
+        <id type="F56533ff59440" sclass="ffunc">
+          <name>f</name>
+        </id>
+        <id type="I56533ff5a850" sclass="fparam">
+          <name>i</name>
+        </id>
+        <id type="I56533ff5a990" sclass="fparam">
+          <name>j</name>
+        </id>
+      </symbols>
+      <declarations>
+        <varDecl lineno="17" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="I56533ff5a850">i</name>
+        </varDecl>
+        <varDecl lineno="17" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="I56533ff5a990">j</name>
+        </varDecl>
+        <varDecl lineno="18" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="F56533ff59440">f</name>
+        </varDecl>
+      </declarations>
+      <body>
+        <FassignStatement lineno="19" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <Var type="Freal" scope="local">f</Var>
+          <mulExpr type="Freal">
+            <mulExpr type="Freal">
+              <FrealConstant type="Freal">1.0</FrealConstant>
+              <Var type="I56533ff5a850" scope="local">i</Var>
+            </mulExpr>
+            <Var type="I56533ff5a990" scope="local">j</Var>
+          </mulExpr>
+        </FassignStatement>
+      </body>
+    </FfunctionDefinition>
+    <FfunctionDefinition lineno="22" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+      <name type="F56533ff5cb50">call_test</name>
+      <symbols>
+        <id type="F56533ff5cb50" sclass="ffunc">
+          <name>call_test</name>
+        </id>
+        <id type="I56533ff5e770" sclass="fparam">
+          <name>istart</name>
+        </id>
+        <id type="I56533ff5e8b0" sclass="fparam">
+          <name>iend</name>
+        </id>
+        <id type="I56533ff5e9f0" sclass="fparam">
+          <name>jstart</name>
+        </id>
+        <id type="I56533ff5eb30" sclass="fparam">
+          <name>jend</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>i</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>j</name>
+        </id>
+        <id type="A56533ff60aa0" sclass="flocal">
+          <name>array6</name>
+        </id>
+        <id type="A56533ff610d0" sclass="flocal">
+          <name>array7</name>
+        </id>
+      </symbols>
+      <declarations>
+        <varDecl lineno="22" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="F56533ff5cb50">call_test</name>
+        </varDecl>
+        <varDecl lineno="23" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="I56533ff5e770">istart</name>
+        </varDecl>
+        <varDecl lineno="23" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="I56533ff5e8b0">iend</name>
+        </varDecl>
+        <varDecl lineno="23" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="I56533ff5e9f0">jstart</name>
+        </varDecl>
+        <varDecl lineno="23" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="I56533ff5eb30">jend</name>
+        </varDecl>
+        <varDecl lineno="24" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="Fint">i</name>
+        </varDecl>
+        <varDecl lineno="24" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="Fint">j</name>
+        </varDecl>
+        <varDecl lineno="25" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="A56533ff60aa0">array6</name>
+        </varDecl>
+        <varDecl lineno="25" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <name type="A56533ff610d0">array7</name>
+        </varDecl>
+      </declarations>
+      <body>
+        <FdoStatement lineno="27" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <Var type="Fint" scope="local">i</Var>
+          <indexRange>
+            <lowerBound>
+              <Var type="I56533ff5e770" scope="local">istart</Var>
+            </lowerBound>
+            <upperBound>
+              <Var type="I56533ff5e8b0" scope="local">iend</Var>
+            </upperBound>
+            <step>
+              <FintConstant type="Fint">1</FintConstant>
+            </step>
+          </indexRange>
+          <body>
+            <FdoStatement lineno="28" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+              <Var type="Fint" scope="local">j</Var>
+              <indexRange>
+                <lowerBound>
+                  <Var type="I56533ff5e9f0" scope="local">jstart</Var>
+                </lowerBound>
+                <upperBound>
+                  <Var type="I56533ff5eb30" scope="local">jend</Var>
+                </upperBound>
+                <step>
+                  <FintConstant type="Fint">1</FintConstant>
+                </step>
+              </indexRange>
+              <body>
+                <FassignStatement lineno="29" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+                  <FarrayRef type="Freal">
+                    <varRef type="A56533ff60aa0">
+                      <Var type="A56533ff60aa0" scope="local">array6</Var>
+                    </varRef>
+                    <arrayIndex>
+                      <Var type="Fint" scope="local">i</Var>
+                    </arrayIndex>
+                    <arrayIndex>
+                      <Var type="Fint" scope="local">j</Var>
+                    </arrayIndex>
+                  </FarrayRef>
+                  <mulExpr type="Freal">
+                    <mulExpr type="Freal">
+                      <FrealConstant type="Freal">1.0</FrealConstant>
+                      <Var type="Fint" scope="local">i</Var>
+                    </mulExpr>
+                    <Var type="Fint" scope="local">j</Var>
+                  </mulExpr>
+                </FassignStatement>
+              </body>
+            </FdoStatement>
+          </body>
+        </FdoStatement>
+        <FdoStatement lineno="33" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+          <Var type="Fint" scope="local">i</Var>
+          <indexRange>
+            <lowerBound>
+              <Var type="I56533ff5e770" scope="local">istart</Var>
+            </lowerBound>
+            <upperBound>
+              <Var type="I56533ff5e8b0" scope="local">iend</Var>
+            </upperBound>
+            <step>
+              <FintConstant type="Fint">1</FintConstant>
+            </step>
+          </indexRange>
+          <body>
+            <FdoStatement lineno="34" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+              <Var type="Fint" scope="local">j</Var>
+              <indexRange>
+                <lowerBound>
+                  <Var type="I56533ff5e9f0" scope="local">jstart</Var>
+                </lowerBound>
+                <upperBound>
+                  <Var type="I56533ff5eb30" scope="local">jend</Var>
+                </upperBound>
+                <step>
+                  <FintConstant type="Fint">1</FintConstant>
+                </step>
+              </indexRange>
+              <body>
+                <FpragmaStatement lineno="35" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">claw call array6=f(i,j)</FpragmaStatement>
+                <FassignStatement lineno="36" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/run/input/original_code.f90">
+                  <FarrayRef type="Freal">
+                    <varRef type="A56533ff610d0">
+                      <Var type="A56533ff610d0" scope="local">array7</Var>
+                    </varRef>
+                    <arrayIndex>
+                      <Var type="Fint" scope="local">i</Var>
+                    </arrayIndex>
+                    <arrayIndex>
+                      <Var type="Fint" scope="local">j</Var>
+                    </arrayIndex>
+                  </FarrayRef>
+                  <mulExpr type="Freal">
+                    <FarrayRef type="Freal">
+                      <varRef type="A56533ff60aa0">
+                        <Var type="A56533ff60aa0" scope="local">array6</Var>
+                      </varRef>
+                      <arrayIndex>
+                        <Var type="Fint" scope="local">i</Var>
+                      </arrayIndex>
+                      <arrayIndex>
+                        <Var type="Fint" scope="local">j</Var>
+                      </arrayIndex>
+                    </FarrayRef>
+                    <FrealConstant type="Freal">2.0</FrealConstant>
+                  </mulExpr>
+                </FassignStatement>
+              </body>
+            </FdoStatement>
+          </body>
+        </FdoStatement>
+      </body>
+    </FfunctionDefinition>
+  </globalDeclarations>
+</XcodeProgram>

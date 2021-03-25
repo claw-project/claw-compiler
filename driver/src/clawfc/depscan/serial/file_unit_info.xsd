@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: Mikhail Zhigun
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:element name='fortran_file_program_unit_info'>
+    <xs:complexType>
+    <xs:sequence>
+       <xs:element name = 'unit' type = 'FortranProgramUnitInfo' minOccurs = '0' maxOccurs = 'unbounded' />
+       <xs:element name = 'include' type = 'xs:anyURI' minOccurs = '0' maxOccurs = 'unbounded' />
+    </xs:sequence>
+    <xs:attribute name="src_path" type="xs:anyURI"/>
+    <xs:attribute name="pp_src_path" type="xs:anyURI"/>
+</xs:complexType>
+</xs:element>
+
+<xs:complexType name = "FortranProgramUnitInfo">
+  <xs:sequence>
+    <xs:element name = 'info' type = 'FortranStatementPosition' minOccurs = '1' maxOccurs = '1' />
+    <xs:element name="used_modules" minOccurs = '1' maxOccurs = '1'>
+      <xs:complexType>
+         <xs:sequence>
+           <xs:element name = 'use' type = 'FortranStatementPosition' minOccurs = '0' maxOccurs = 'unbounded' />
+         </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+  </xs:sequence>
+  <xs:attribute name="type" type="FortranProgramUnitType" use="required"/>
+  <xs:attribute name="uses_claw" type="xs:boolean" use="required"/>
+</xs:complexType>
+
+<xs:simpleType name="FortranProgramUnitType" final="restriction" >
+    <xs:restriction base="xs:string">
+        <xs:enumeration value="Program" />
+        <xs:enumeration value="Module" />
+        <xs:enumeration value="Function" />
+        <xs:enumeration value="Subroutine" />
+        <xs:enumeration value="BlockData" />
+    </xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name = "FortranStatementPosition">
+  <xs:complexContent>
+      <xs:extension base="FortranStatementBasicPosition">
+        <xs:attribute name="start_line_idx" type="xs:unsignedInt" use="required"/>
+        <xs:attribute name="end_line_idx" type="xs:unsignedInt" use="required"/>
+      </xs:extension>
+  </xs:complexContent>
+</xs:complexType>
+    
+<xs:complexType name = "FortranStatementBasicPosition">
+    <xs:attribute name="name" type="xs:string" use="required"/>
+	<xs:attribute name="start_char_idx" type="xs:unsignedInt" use="required"/>
+	<xs:attribute name="end_char_idx" type="xs:unsignedInt" use="required"/>
+</xs:complexType>
+
+</xs:schema>

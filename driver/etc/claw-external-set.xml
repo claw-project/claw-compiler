@@ -1,8 +1,0 @@
-<!--
-This file describes CLAW external transformation.
--->
-<transformations jar="claw-external-set.jar">
-  <transformation name="add-print"
-    type="independent" trigger="translation_unit"
-    class="external.transformation.AddPrint"/>
-</transformations>

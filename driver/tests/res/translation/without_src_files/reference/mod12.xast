@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<XcodeProgram compiler-info="XcodeML/Fortran-FrontEnd" language="Fortran" source="&lt;stdin&gt;" time="2021-01-03 22:46:13" version="1.0">
+  <typeTable>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc">
+      <name>mod12</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FmoduleDefinition file="&lt;stdin&gt;" lineno="1" name="mod12">
+      <symbols>
+      </symbols>
+      <declarations>
+        <FpragmaStatement file="&lt;stdin&gt;" lineno="2">claw ignore</FpragmaStatement>
+        <FpragmaStatement file="&lt;stdin&gt;" lineno="3">claw ignore |    implicit none|</FpragmaStatement>
+        <FpragmaStatement file="&lt;stdin&gt;" lineno="4">claw end ignore</FpragmaStatement>
+      </declarations>
+    </FmoduleDefinition>
+  </globalDeclarations>
+</XcodeProgram>
