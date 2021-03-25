@@ -1,0 +1,21 @@
+<XcodeProgram source="&lt;stdin&gt;"
+              language="Fortran"
+              time=""
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc">
+      <name>m1</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FmoduleDefinition name="m1" lineno="1" file="&lt;stdin&gt;">
+      <symbols>
+      </symbols>
+      <declarations>
+      </declarations>
+    </FmoduleDefinition>
+  </globalDeclarations>
+</XcodeProgram>

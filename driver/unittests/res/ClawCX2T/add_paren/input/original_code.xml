@@ -1,0 +1,69 @@
+<XcodeProgram source="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/add_paren/input/original_code.f90"
+              language="Fortran"
+              time="2021-01-02 22:54:27"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+    <FfunctionType type="F560ffae75b00" return_type="Fvoid" is_program="true"/>
+  </typeTable>
+  <globalSymbols>
+    <id type="F560ffae75b00" sclass="ffunc">
+      <name>add_paren</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FfunctionDefinition lineno="5" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/add_paren/input/original_code.f90">
+      <name type="F560ffae75b00">add_paren</name>
+      <symbols>
+        <id type="Fint" sclass="flocal">
+          <name>a</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>b</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>c</name>
+        </id>
+        <id type="Fint" sclass="flocal">
+          <name>res</name>
+        </id>
+      </symbols>
+      <declarations>
+        <varDecl lineno="6" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/add_paren/input/original_code.f90">
+          <name type="Fint">a</name>
+        </varDecl>
+        <varDecl lineno="6" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/add_paren/input/original_code.f90">
+          <name type="Fint">b</name>
+        </varDecl>
+        <varDecl lineno="6" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/add_paren/input/original_code.f90">
+          <name type="Fint">c</name>
+        </varDecl>
+        <varDecl lineno="6" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/add_paren/input/original_code.f90">
+          <name type="Fint">res</name>
+        </varDecl>
+      </declarations>
+      <body>
+        <FassignStatement lineno="8" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/add_paren/input/original_code.f90">
+          <Var type="Fint" scope="local">res</Var>
+          <plusExpr type="Fint">
+            <plusExpr type="Fint">
+              <Var type="Fint" scope="local">a</Var>
+              <Var type="Fint" scope="local">b</Var>
+            </plusExpr>
+            <Var type="Fint" scope="local">c</Var>
+          </plusExpr>
+        </FassignStatement>
+        <FassignStatement lineno="9" file="/data/src/claw-compiler/driver/unittests/res/ClawCX2T/add_paren/input/original_code.f90">
+          <Var type="Fint" scope="local">res</Var>
+          <plusExpr type="Fint">
+            <Var type="Fint" scope="local">a</Var>
+            <mulExpr type="Fint">
+              <Var type="Fint" scope="local">b</Var>
+              <Var type="Fint" scope="local">c</Var>
+            </mulExpr>
+          </plusExpr>
+        </FassignStatement>
+      </body>
+    </FfunctionDefinition>
+  </globalDeclarations>
+</XcodeProgram>

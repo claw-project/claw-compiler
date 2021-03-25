@@ -1,0 +1,100 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: Mikhail Zhigun
+-->
+
+<project name="clawfc-unit-tests" default="main" basedir="."
+         xmlns:jacoco="antlib:org.jacoco.ant">
+    <description>Build CLAWFC driver unit-tests</description>
+
+    <!-- Value set externally-->
+    <property name="claw.properties.dir" value=""/>
+    <property file="${claw.properties.dir}/claw.properties"/>
+
+    <!-- JaCoCo code coverage -->
+    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
+      <classpath>
+        <pathelement path="${jacoco.dep}"/>
+        <pathelement path="${jacoco-core.dep}"/>
+        <pathelement path="${jacoco-report.dep}"/>
+        <pathelement path="${jacoco-agent.dep}"/>
+        <pathelement path="${asm.dep}"/>
+        <pathelement path="${asm-commons.dep}"/>
+        <pathelement path="${asm-tree.dep}"/>
+      </classpath>
+    </taskdef>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${ant-contrib.dep}"/>
+
+    <!-- Classpath for the CX2T Translator library -->
+    <path id="build.path">
+          <fileset dir="${3rdparty.dist.dir}">
+            <include name="**/*.jar" />
+          </fileset>
+        <pathelement path="${driver.dep}"/>
+    </path>
+
+    <path id="antlr.path">
+        <pathelement path="${st4.dep}"/>
+        <pathelement path="${antlr.dep}"/>
+        <pathelement path="${antlr4.dep}"/>
+        <pathelement path="${antlr4.runtime.dep}"/>
+    </path>
+
+    <!-- Initialization step -->
+    <target name="init" description="Initialize build directories">
+        <tstamp/>
+        <mkdir dir="${driver.ut.classes.dir}"/>
+    </target>
+
+    <target name="compile" depends="init" description="compile the source">
+        <javac executable="${javac.exec}" fork="yes" includeantruntime="false" srcdir=""
+               destdir="${driver.ut.classes.dir}" classpathref="build.path" debug="on">
+            <src>
+                <pathelement path="${driver.test.utils.src.dir}"/>
+                <pathelement path="${driver.ut.src.dir}"/>
+                <pathelement path="${driver.ut.gen.src.dir}"/>
+            </src>
+        </javac>
+    </target>
+
+    <!-- Package compiled files into their own library -->
+    <target name="jar" depends="compile" description="package, output to JAR">
+        <mkdir dir="${driver.ut.dist.dir}"/>
+        <!-- Driver -->
+        <jar jarfile="${driver.ut.dep}" basedir="${driver.ut.classes.dir}"
+             includes="clawfc/**">
+            <manifest>
+                <attribute name="Main-Class" value="clawfc.ut.Main"/>
+                <attribute name="Class-Path" value="${driver.ut.runtime.classpath}"/>
+            </manifest>
+        </jar>
+        <chmod file="${driver.ut.dep}" perm="a+x"/>
+    </target>
+
+    <target name="clean" description="clean up">
+        <delete dir="${driver.ut.classes.dir}"/>
+        <delete file="${driver.ut.dep}"/>
+    </target>
+
+    <target name="run" depends="jar" description="Run unit tests">
+      <jacoco:coverage destfile="${driver.ut.code.coverage.report.bin}" append="false">
+        <java jar="${driver.ut.dep}" jvm="${java.exec}" fork="true" failonerror="true" output="${driver.ut.report}"/>
+      </jacoco:coverage>
+      <jacoco:report>
+        <executiondata>
+          <file file="${driver.ut.code.coverage.report.bin}"/>
+        </executiondata>
+        <structure name="clawfc">
+          <classfiles>
+            <fileset file="${driver.dep}"/>
+          </classfiles>
+        </structure>
+        <xml destfile="${driver.ut.code.coverage.report.xml}" encoding="UTF-8"/>
+      </jacoco:report>
+    </target>
+
+    <!-- Default target -->
+    <target name="main" depends="init, compile, jar"/>
+</project>
