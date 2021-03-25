@@ -9,11 +9,12 @@ A guide is available under `documentation/developer`.
 ### Coding Style Guide
 Indent with spaces. NO tabs!
 
-#### Java code
-* An IDEA format configuration is available here:
-[claw_code_style_idea.xml](./cx2t/config/claw_code_style_idea.xml)
-If IDEA IntelliJ is not used, the coding style should reflect this
-configuration.
+#Java Coding style
+Code should be compatible with automated formatting performed by Eclipse IDE. The rules are defined in file 
+[resources/eclipse/java-coding-style.xml](resources/eclipse/java-coding-style.xml), which can be imported into IDE. Note
+that by default Java Formatter will compress multiline comments. To avoid that, prefix them with “/*-”.
+
+Indent with spaces. NO tabs!
 
 #### Bash scripts
 In general, all bash scripts written for the CLAW Compiler projects
