@@ -1,0 +1,22 @@
+<XcodeProgram source="{filename}"
+              language="Fortran"
+              time="2020-12-27 21:09:43"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc">
+      <name>mod11</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FmoduleDefinition name="mod11" lineno="1" file="{filename}">
+      <symbols>
+      </symbols>
+      <declarations>
+        <FpragmaStatement lineno="2" file="{filename}">claw</FpragmaStatement>
+      </declarations>
+    </FmoduleDefinition>
+  </globalDeclarations>
+</XcodeProgram>

@@ -1,0 +1,5 @@
+module mod%s
+
+integer, parameter :: bla%s = 10
+
+end module mod%s

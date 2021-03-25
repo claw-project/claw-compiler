@@ -1,0 +1,13 @@
+# 1 "m e:vil.f90"
+# 2 "m e:vil.f90"
+# 1 "/data/tmp/dep-test/i nc/m.inc"
+# 1 "/data/tmp/dep-test/i nc/m.inc"
+# 1 "/data/tmp/dep-test/i nc/m1.inc"
+module m
+use mod1
+!$claw
+end module m
+# 2 "/data/tmp/dep-test/i nc/m.inc"
+# 3 "m e:vil.f90"
+# 4 "m e:vil.f90"
+include 'mf.inc'

@@ -1,0 +1,1 @@
+"/tmp/err.f90:m1", line 2: failed to import module 'm2'

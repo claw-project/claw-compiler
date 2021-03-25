@@ -1,0 +1,30 @@
+<XcodeProgram source="{filename}"
+              language="Fortran"
+              time="2020-12-27 21:09:43"
+              compiler-info="XcodeML/Fortran-FrontEnd"
+              version="1.0">
+  <typeTable>
+    <FfunctionType type="F55d9c37ee8c0" return_type="Fvoid" is_program="true"/>
+  </typeTable>
+  <globalSymbols>
+    <id type="F55d9c37ee8c0" sclass="ffunc">
+      <name>p1</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FfunctionDefinition lineno="18" file="{filename}">
+      <name type="F55d9c37ee8c0">p1</name>
+      <symbols>
+      </symbols>
+      <declarations>
+        <FuseDecl name="mod12" lineno="20" file="{filename}">
+        </FuseDecl>
+        <FuseDecl name="mod13" lineno="21" file="{filename}">
+        </FuseDecl>
+        <FpragmaStatement lineno="19" file="{filename}">claw</FpragmaStatement>
+      </declarations>
+      <body>
+      </body>
+    </FfunctionDefinition>
+  </globalDeclarations>
+</XcodeProgram>

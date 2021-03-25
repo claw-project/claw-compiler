@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<XcodeProgram compiler-info="XcodeML/Fortran-FrontEnd" language="Fortran" source="&lt;stdin&gt;" time="2021-01-03 22:46:13" version="1.0">
+  <typeTable>
+    <FfunctionType is_program="true" return_type="Fvoid" type="F55c12dc2a6a0"/>
+  </typeTable>
+  <globalSymbols>
+    <id sclass="ffunc" type="F55c12dc2a6a0">
+      <name>p1</name>
+    </id>
+  </globalSymbols>
+  <globalDeclarations>
+    <FfunctionDefinition file="&lt;stdin&gt;" lineno="1">
+      <name type="F55c12dc2a6a0">p1</name>
+      <symbols>
+      </symbols>
+      <declarations>
+        <FuseDecl file="&lt;stdin&gt;" lineno="2" name="mod12">
+        </FuseDecl>
+        <FuseDecl file="&lt;stdin&gt;" lineno="3" name="mod13">
+        </FuseDecl>
+      </declarations>
+      <body>
+        <FpragmaStatement file="&lt;stdin&gt;" lineno="4">claw ignore</FpragmaStatement>
+        <FpragmaStatement file="&lt;stdin&gt;" lineno="5">claw ignore |    integer :: pi|</FpragmaStatement>
+        <FpragmaStatement file="&lt;stdin&gt;" lineno="6">claw end ignore</FpragmaStatement>
+      </body>
+    </FfunctionDefinition>
+  </globalDeclarations>
+</XcodeProgram>

@@ -1,0 +1,15 @@
+module mod{i}1
+!$claw
+end module mod{i}1
+
+module mod{i}2
+end module mod{i}2
+
+module mod{i}3
+    use mod{i}2
+end module mod{i}3
+
+program p{i}
+    use mod{i}2
+    use mod{i}3
+end program p{i}
