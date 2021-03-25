@@ -1,3 +1,8 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: not specified
+-->
 <claw version="2.0">
   <global type="extension"/>
   <groups>
