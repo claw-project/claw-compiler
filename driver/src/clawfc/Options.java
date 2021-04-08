@@ -488,7 +488,7 @@ public class Options
                     .help("Add Xcode translator option");
             ArgumentGroup fcOpts = parser.addArgumentGroup("Fortran compiler options");
             final List<String> FC_COMPILER_VENDORS = Arrays.stream(FortranCompilerVendor.values())
-                    .map(val -> val.toString()).collect(Collectors.toList());
+                    .map(val -> val.toString().toLowerCase()).collect(Collectors.toList());
             fcOpts.addArgument("--fc-vendor").choices(FC_COMPILER_VENDORS).help("Fortran compiler type");
             fcOpts.addArgument("--fc-cmd").help("Fortran compiler cmd");
             cOpts.addArgument("-td", "--trans-path-dir").nargs("*").action(Arguments.append())
@@ -591,7 +591,9 @@ public class Options
         _exitOnPureFunction = parsedArgs.getBoolean("force_pure");
         _addParenToBinOpts = parsedArgs.getBoolean("add_paren");
         final String fcCompilerVendorStr = parsedArgs.getString("fc_vendor");
-        _fCompilerVendor = fcCompilerVendorStr != null ? FortranCompilerVendor.valueOf(fcCompilerVendorStr) : null;
+        _fCompilerVendor = fcCompilerVendorStr != null
+                ? FortranCompilerVendor.valueOf(fcCompilerVendorStr.toUpperCase())
+                : null;
         _fCompilerCmd = parsedArgs.getString("fc_cmd");
         _disableMP = parsedArgs.getBoolean("disable_mp");
         _genBuildInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");
