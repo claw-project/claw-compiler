@@ -65,7 +65,11 @@ public class ClawX2T
     {
         if (dirLang != null && !CompilerDirective.availableDirectiveLanguage().contains(dirLang))
         {
-            throw new Exception(format("Input accelerator directive language \"%s\" is not supported", dirLang));
+            CompilerDirective dirLangVal = CompilerDirective.fromString(dirLang);
+            if (dirLangVal.equals(CompilerDirective.NONE))
+            {
+                throw new Exception(format("Input accelerator directive language \"%s\" is not supported", dirLang));
+            }
         }
     }
 
