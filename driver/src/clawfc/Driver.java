@@ -81,7 +81,7 @@ public class Driver
         {
             if (!opts.verbose())
             {
-                Utils.log.setLevel(java.util.logging.Level.WARNING);
+                Utils.log.setLevel(java.util.logging.Level.SEVERE);
             }
             verifyOptions(opts);
             driver.execute(opts);
