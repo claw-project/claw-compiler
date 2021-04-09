@@ -70,10 +70,7 @@ public class FortranFrontEnd
         this.driverCfg = cfg;
         this.driverTempDir = driverTempDir;
         Set<Path> modDirs = new LinkedHashSet<Path>();
-        if (opts.fortranCompilerType() == null || (opts.fortranCompilerType() == cfg.defaultFortranCompilerVendor()))
-        {
-            modDirs.add(cfg.defaultStdXmodDir());
-        }
+        modDirs.add(cfg.defaultStdXmodDir());
         modDirs.addAll(opts.moduleIncludeDirs());
         Path outModDir = null;
         if (opts.xmodOutputDir() != null)
