@@ -258,6 +258,10 @@ public class Driver
                     info("Generating xmods...");
                     generateXmods(ffront, usedModules, targetModuleNames, false, enableMultiprocessing,
                             opts.showDebugOutput());
+                    if (opts.xmodOutputDir() != null)
+                    {
+                        saveXmods(usedModules, targetModuleNames, false, opts.xmodOutputDir(), true);
+                    }
                 } else
                 {
                     if (opts.generateModFiles())
@@ -265,11 +269,8 @@ public class Driver
                         info("Generating xmods for targets...");
                         generateXmods(ffront, usedModules, targetModuleNames, true, enableMultiprocessing,
                                 opts.showDebugOutput());
+                        saveXmods(usedModules, targetModuleNames, true, opts.xmodOutputDir(), true);
                     }
-                }
-                if (opts.xmodOutputDir() != null)
-                {
-                    saveXmods(usedModules, targetModuleNames, !opts.resolveDependencies(), opts.xmodOutputDir(), true);
                 }
                 if (opts.generateModFiles())
                 {
@@ -581,7 +582,7 @@ public class Driver
         BuildOrder buildOrder = Build.getParallelOrder(usedModules, targetModuleNames);
         for (String modName = buildOrder.next(); modName != null; modName = buildOrder.next())
         {
-            if (!(onlyForTargets && !targetModuleNames.contains(modName)))
+            if (!onlyForTargets || targetModuleNames.contains(modName))
             {
                 final ProgramUnitInfo modInfo = usedModules.get(modName);
                 if (modInfo.isModule())

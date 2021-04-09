@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import clawfc.depscan.FortranSemanticException;
+
 public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
 {
     FileTime touch(Path path) throws IOException
@@ -414,5 +416,47 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         {
             assertTrue(runRes.stderr.contains(unitName));
         }*/
+    }
+
+    public void testNoDep() throws Exception
+    {
+        final Path INPUT_FILEPATH = RES_DIR.resolve("xmod_generation/no_dep/input/m1.f90");
+        final Path INC_DIR = RES_DIR.resolve("xmod_generation/no_dep/input/inc");
+        final Path MOD_INC_DIR = RES_DIR.resolve("xmod_generation/no_dep/input/mod_inc");
+        final Path REF_MOD_DIR = RES_DIR.resolve("xmod_generation/no_dep/reference");
+        final Path OUT_MOD_DIR = TMP_DIR.resolve("mods"), INT_DIR = TMP_DIR.resolve("int");
+        final Path OUT_DIR = TMP_DIR.resolve("out");
+        List<String> modNames = Arrays.asList("m1.xmod");
+        try
+        {
+            String[] args = new String[] { "--no-dep", "--gen-mod-files", "-O", OUT_DIR.toString(), "--disable-mp",
+                    "--int-dir", INT_DIR.toString(), "-MO", OUT_MOD_DIR.toString(), INPUT_FILEPATH.toString() };
+            run(args);
+        } catch (FortranSemanticException e)
+        {
+            final String errMsg = e.getMessage();
+            assertTrue(errMsg.contains("Module \"m2\" used by MODULE m1"));
+            assertTrue(errMsg.contains("is not defined in any file under given search path"));
+        }
+        {// Source available, but it is forbidden to use it because of "--no-dep"
+            String[] args = new String[] { "--no-dep", "--gen-mod-files", "-O", OUT_DIR.toString(), "--disable-mp",
+                    "-SI", INC_DIR.toString(), "--int-dir", INT_DIR.toString(), "-MO", OUT_MOD_DIR.toString(),
+                    INPUT_FILEPATH.toString() };
+            Result res = run(args, false);
+            assertTrue(res.exception != null);
+            assertTrue(res.stderr.contains("Xmod generation: Error! Up to date xmod file for dependency module m2"));
+            assertTrue(res.stderr.contains("is not available"));
+        }
+        String[] args = new String[] { "--no-dep", "--gen-mod-files", "-O", OUT_DIR.toString(), "--disable-mp", "-MI",
+                MOD_INC_DIR.toString(), "--int-dir", INT_DIR.toString(), "-MO", OUT_MOD_DIR.toString(),
+                INPUT_FILEPATH.toString() };
+        run(args);
+        for (String modName : modNames)
+        {
+            Path resFilePath = OUT_MOD_DIR.resolve(modName);
+            Path refFilePath = REF_MOD_DIR.resolve(modName);
+            this.equalsTxtFiles(resFilePath, refFilePath);
+        }
+
     }
 }
