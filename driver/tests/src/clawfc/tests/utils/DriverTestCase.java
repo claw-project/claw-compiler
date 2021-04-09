@@ -49,11 +49,20 @@ public abstract class DriverTestCase extends TestCase
     {
         public final String stderr;
         public final String stdout;
+        public final Exception exception;
 
         public Result(String stderr, String stdout)
         {
             this.stderr = stderr;
             this.stdout = stdout;
+            this.exception = null;
+        }
+
+        public Result(String stderr, String stdout, Exception exception)
+        {
+            this.stderr = stderr;
+            this.stdout = stdout;
+            this.exception = exception;
         }
     }
 
@@ -68,6 +77,7 @@ public abstract class DriverTestCase extends TestCase
         Result res = null;
         ByteArrayIOStream stdErr = new ByteArrayIOStream();
         ByteArrayIOStream stdOut = new ByteArrayIOStream();
+        Exception ex = null;
         try
         {
             System.setErr(new PrintStream(stdErr));
@@ -75,6 +85,7 @@ public abstract class DriverTestCase extends TestCase
             Driver.run(args, null);
         } catch (Exception e)
         {
+            ex = e;
             if (rethrowException)
             {
                 copy(stdOut.getAsInputStreamUnsafe(), new FileOutputStream(FileDescriptor.out));
@@ -84,7 +95,7 @@ public abstract class DriverTestCase extends TestCase
         } finally
         {
             res = new Result(Utils.collectIntoString(stdErr.getAsInputStreamUnsafe()),
-                    Utils.collectIntoString(stdOut.getAsInputStreamUnsafe()));
+                    Utils.collectIntoString(stdOut.getAsInputStreamUnsafe()), ex);
             resetStdStreams();
         }
         return res;
