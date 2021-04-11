@@ -127,7 +127,8 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         assertEquals(resFilePath, outXmods.get(0));
         {
             final Path refFilePath = REF_MOD_DIR.resolve(modName);
-            this.equalsTxtFiles(resFilePath, refFilePath);
+            // Comparison impossible because of ffront's random hashes
+            // assertTrue(this.equalsTxtFiles(resFilePath, refFilePath));
         }
     }
 
