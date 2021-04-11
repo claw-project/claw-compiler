@@ -264,11 +264,11 @@ public class Driver
                     }
                 } else
                 {
+                    info("Generating xmods for targets...");
+                    generateXmods(ffront, usedModules, targetModuleNames, true, enableMultiprocessing,
+                            opts.showDebugOutput());
                     if (opts.generateModFiles())
                     {
-                        info("Generating xmods for targets...");
-                        generateXmods(ffront, usedModules, targetModuleNames, true, enableMultiprocessing,
-                                opts.showDebugOutput());
                         saveXmods(usedModules, targetModuleNames, true, opts.xmodOutputDir(), true);
                     }
                 }
@@ -451,7 +451,8 @@ public class Driver
         final FortranFrontEnd ffront;
         final Map<String, ProgramUnitInfo> usedModules;
         final Set<String> targetModuleNames;
-        final boolean onlyForTargets;
+        final Set<Path> targetSrcFiles;
+        final boolean onlyForTargetsOrSameFile;
         final boolean printDebugOutput;
 
         final BuildOrder buildOrder;
@@ -459,18 +460,30 @@ public class Driver
         public final Set<String> failed;
 
         public GenerateXmods(FortranFrontEnd ffront, Map<String, ProgramUnitInfo> usedModules,
-                Set<String> targetModuleNames, final boolean onlyForTargets, boolean enableMultiprocessing,
+                Set<String> targetModuleNames, final boolean onlyForTargetsOrSameFile, boolean enableMultiprocessing,
                 boolean printDebugOutput)
         {
             super(enableMultiprocessing);
             this.ffront = ffront;
             this.usedModules = usedModules;
             this.targetModuleNames = targetModuleNames;
-            this.onlyForTargets = onlyForTargets;
+            this.onlyForTargetsOrSameFile = onlyForTargetsOrSameFile;
             this.printDebugOutput = printDebugOutput;
             buildOrder = Build.getParallelOrder(usedModules, targetModuleNames);
             successful = Collections.synchronizedSet(new LinkedHashSet<String>());
             failed = Collections.synchronizedSet(new LinkedHashSet<String>());
+            targetSrcFiles = getTargetSrcFiles(usedModules, targetModuleNames);
+        }
+
+        static Set<Path> getTargetSrcFiles(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames)
+        {
+            Set<Path> targetSrcFiles = new HashSet<Path>();
+            for (String targetModName : targetModuleNames)
+            {
+                final Path srcPath = usedModules.get(targetModName).getSrcPath();
+                targetSrcFiles.add(srcPath);
+            }
+            return Collections.unmodifiableSet(targetSrcFiles);
         }
 
         void submitWaitingTasks()
@@ -520,7 +533,9 @@ public class Driver
                 return true;
             }
             final boolean isTarget = targetModuleNames.contains(modName);
-            if (onlyForTargets && !isTarget)
+            final Path modSrcFilePath = modInfo.getSrcPath();
+            final boolean isInTargetSrcFile = targetSrcFiles.contains(modSrcFilePath);
+            if (onlyForTargetsOrSameFile && !isTarget && !isInTargetSrcFile)
             {
                 error(sprintf("Xmod generation: Error! Up to date xmod file for dependency module %s is not available",
                         Build.moduleNameWithLocation(modInfo)));
@@ -560,10 +575,10 @@ public class Driver
     };
 
     static void generateXmods(FortranFrontEnd ffront, Map<String, ProgramUnitInfo> usedModules,
-            Set<String> targetModuleNames, final boolean onlyForTargets, boolean enableMultiprocessing,
+            Set<String> targetModuleNames, final boolean onlyForTargetsOrSameFile, boolean enableMultiprocessing,
             boolean printDebugOutput) throws Exception
     {
-        GenerateXmods genXmodTasks = new GenerateXmods(ffront, usedModules, targetModuleNames, onlyForTargets,
+        GenerateXmods genXmodTasks = new GenerateXmods(ffront, usedModules, targetModuleNames, onlyForTargetsOrSameFile,
                 enableMultiprocessing, printDebugOutput);
         genXmodTasks.run();
         final boolean res = genXmodTasks.failed.isEmpty() && (genXmodTasks.successful.size() == usedModules.size());

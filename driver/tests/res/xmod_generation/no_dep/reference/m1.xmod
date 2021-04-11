@@ -2,6 +2,7 @@
   <name>m1</name>
   <depends>
     <name>m2</name>
+    <name>m3</name>
   </depends>
   <typeTable>
   </typeTable>
