@@ -97,6 +97,7 @@ public class FortranFrontEnd
         {
             commonOpts.add("-no-module-cache");
         }
+        commonOpts.addAll(opts.OmniFFrontOptions());
         List<String> astOpts = new ArrayList<String>(commonOpts);
         List<String> xmodOpts = new ArrayList<String>(commonOpts);
         xmodOpts.add("-module-compile");
