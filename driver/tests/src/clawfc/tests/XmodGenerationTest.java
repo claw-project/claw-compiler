@@ -419,6 +419,28 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         }*/
     }
 
+    public void testStopOnFirstError() throws Exception
+    {
+        final Path INPUT_FILEPATH = RES_DIR.resolve("xmod_generation/stop_on_first_error/input/p1.f90");
+        final Path OUT_MOD_DIR = TMP_DIR.resolve("mods");
+        String[] args = new String[] { "--stop-xmod-gen", "--skip-pp", "--disable-mp", "-MO", OUT_MOD_DIR.toString(),
+                INPUT_FILEPATH.toString() };
+        final List<String> REF_UNIT_NAMES = Arrays.asList("p1", "m1", "m2", "m3");
+        boolean exCaught = false;
+        try
+        {
+            run(args, true);
+        } catch (Exception e)
+        {
+            exCaught = true;
+            final String errMsg = e.getMessage();
+            // m2 and m3 could be processed, but are aborted because of the prior error in
+            // m1
+            assertTrue(errMsg.contains("failed: only 0 out of 4 successful"));
+        }
+        assertTrue(exCaught);
+    }
+
     public void testNoDep() throws Exception
     {
         final Path INPUT_FILEPATH = RES_DIR.resolve("xmod_generation/no_dep/input/m1.f90");

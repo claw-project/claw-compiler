@@ -496,14 +496,17 @@ public class Driver
                 {
                     public Void call() throws Exception
                     {
-                        if (generateXmod(modInfo))
+                        if (failed.isEmpty())
                         {
-                            buildOrder.onProcessed(modName);
-                            successful.add(modName);
-                            submitWaitingTasks();
-                        } else
-                        {
-                            failed.add(modName);
+                            if (generateXmod(modInfo))
+                            {
+                                buildOrder.onProcessed(modName);
+                                successful.add(modName);
+                                submitWaitingTasks();
+                            } else
+                            {
+                                failed.add(modName);
+                            }
                         }
                         return null;
                     }
