@@ -51,11 +51,13 @@ public class Utils
     public static final String DEFAULT_TOP_TEMP_DIR = "/dev/shm";
     public static final Path STARTUP_DIR = Paths.get(System.getProperty("user.dir"));
     public static final Logger log = Logger.getLogger("CLAW");
+    public static final boolean USE_UNIX_SHELL_INSTEAD_OF_SUBPROCESS_BUILDER = true;
 
     public static String getCmdOutput(String... args) throws Exception
     {
         AsciiArrayIOStream stdout = new AsciiArrayIOStream();
-        final int retCode = Subprocess.call(Arrays.asList(args), STARTUP_DIR, stdout, null, null, null, true);
+        final int retCode = Subprocess.call(Arrays.asList(args), STARTUP_DIR, stdout, null, null, null, true, null,
+                USE_UNIX_SHELL_INSTEAD_OF_SUBPROCESS_BUILDER);
         if (retCode != 0)
         {
             throw new RuntimeException(
