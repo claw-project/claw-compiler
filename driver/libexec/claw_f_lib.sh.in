@@ -773,13 +773,13 @@ function claw::process_dependencies() {
       mv "${file_pp1}" "${file_pp}"
     else
       local preprocessor_output
-      preprocessor_output="$(basename "${file_pp%.*}")"
+      preprocessor_output="$(basename "${file_pp%.*}").i"
 
       # shellcheck disable=SC2086,SC2068
       ${OMNI_FPP_CMD} ${include_opt[@]} ${pp_add_opt[@]} ${OMNI_FPP_OPT} \
-        ${other_args[@]} "${file_pp1}"
+        ${other_args[@]} "${file_pp}"
 
-      mv "${preprocessor_output}.i" "${file_pp}"
+      mv "${preprocessor_output}" "${file_pp}"
     fi
 
     # Recurse to get dependencies in the right order
