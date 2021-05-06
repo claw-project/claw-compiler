@@ -6,9 +6,11 @@
 package clawfc;
 
 import static clawfc.Utils.copy;
+import static clawfc.Utils.dumpIntoFile;
 import static clawfc.Utils.getOrCreateDir;
 import static clawfc.Utils.replaceInLines;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,9 +19,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.Subprocess;
@@ -30,17 +30,14 @@ public class FortranFrontEnd
     class DirData
     {
         public final Path workingDir;
-        public final Path xmodOutDir;
 
         public DirData(Path topTempDir) throws IOException
         {
             workingDir = Files.createTempDirectory(topTempDir, "ffront");
-            xmodOutDir = Files.createTempDirectory(topTempDir, "ffront");
         }
     }
 
     final Configuration driverCfg;
-    final List<Path> modDirs;
     final List<String> astOpts;
     final List<String> xmodOpts;
     final ThreadLocal<DirData> dirData;
@@ -69,9 +66,15 @@ public class FortranFrontEnd
     {
         this.driverCfg = cfg;
         this.driverTempDir = driverTempDir;
-        Set<Path> modDirs = new LinkedHashSet<Path>();
-        modDirs.add(cfg.defaultStdXmodDir());
-        modDirs.addAll(opts.moduleIncludeDirs());
+        List<Path> stdXmods = new ArrayList<Path>();
+        for (File f : cfg.defaultStdXmodDir().toFile().listFiles())
+        {
+            String filename = f.getName();
+            if (filename.endsWith((".xmod")))
+            {
+                stdXmods.add(cfg.defaultStdXmodDir().resolve(filename));
+            }
+        }
         Path outModDir = null;
         if (opts.xmodOutputDir() != null)
         {
@@ -82,9 +85,14 @@ public class FortranFrontEnd
         }
         getOrCreateDir(outModDir);
         this.outModDir = outModDir;
-        modDirs.add(outModDir);
-        this.modDirs = Collections.unmodifiableList(new ArrayList<Path>(modDirs));
         List<String> commonOpts = new ArrayList<String>(opts.translatorOptions());
+        commonOpts.add("--in-memory-mode");
+        commonOpts.add("-no-time");
+        for (Path stdXmod : stdXmods)
+        {
+            commonOpts.add("-m");
+            commonOpts.add(stdXmod.toString());
+        }
         if (opts.debugOmniFFront())
         {
             commonOpts.add("-d");
@@ -111,11 +119,11 @@ public class FortranFrontEnd
      *             ignored.
      * @throws Exception
      */
-    public static boolean run(Configuration cfg, InputStream inputSrc, OutputStream output, OutputStream outputErr,
-            Collection<Path> inputModDirs, Path modOutDir, Path workingDir, Collection<String> options,
-            Path inputFilepath, List<String> args) throws Exception
+    public static boolean run(Configuration cfg, AsciiArrayIOStream inputSrc, Path outputFilePath,
+            OutputStream outputErr, Collection<Path> depXmodPaths, Path workingDir, Collection<String> options,
+            Path originalInputFilepath, List<String> args) throws Exception
     {
-        final String inputFilepathStr = inputFilepath != null ? inputFilepath.toString() : null;
+        // TODO: rewrite this with mapped files (i.e. shared memory IPC)
         if (args == null)
         {
             args = new ArrayList<String>();
@@ -124,93 +132,96 @@ public class FortranFrontEnd
             args.clear();
         }
         args.add(cfg.omniFrontEnd().toString());
-        args.add("-M" + modOutDir.toString());
-        // Current Omni compiler will add the default path anyway, no matter the input
-        // options
-        // args.add("-M" + cfg.omniDefaultStdXmodDir().toString());
-        for (Path modIncDir : inputModDirs)
+        Path inputFilePath = workingDir.resolve("stdin.txt");
+        dumpIntoFile(inputFilePath, inputSrc.getAsInputStreamUnsafe());
+        args.add(inputFilePath.toString());
+        for (Path depXmod : depXmodPaths)
         {
-            args.add("-M" + modIncDir.toString());
+            args.add("-m");
+            args.add(depXmod.toString());
         }
+        args.add("-so");
+        args.add(outputFilePath.toString());
         args.addAll(options);
         final AsciiArrayIOStream ppStdout = new AsciiArrayIOStream();
         final AsciiArrayIOStream ppStderr = new AsciiArrayIOStream();
-        final int retCode = Subprocess.call(args, workingDir, ppStdout, ppStderr, inputSrc);
+        final int retCode = Subprocess.call(args, workingDir, ppStdout, ppStderr);
+        if (ppStdout.size() > 0)
+        {
+            throw new Exception("stdout redirection didn't work");
+        }
         if (retCode == 0)
         {
-            try (InputStream pStdout = ppStdout.getAsInputStreamUnsafe())
-            {
-                if (inputFilepathStr != null)
-                {
-                    replaceInLines(pStdout, output, "&lt;stdin&gt;", inputFilepathStr);
-                } else
-                {
-                    copy(pStdout, output);
-                }
-            }
+            final String inFileStr = originalInputFilepath != null ? originalInputFilepath.toString() : "&lt;stdin&gt;";
+            AsciiArrayIOStream out = new AsciiArrayIOStream(outputFilePath);
+            AsciiArrayIOStream outWithRep = new AsciiArrayIOStream();
+            replaceInLines(out.getAsInputStreamUnsafe(), outWithRep, inputFilePath.toString(), inFileStr);
+            dumpIntoFile(outputFilePath, outWithRep.getAsInputStreamUnsafe());
             return true;
         } else
         {
+            final String inFileStr = originalInputFilepath != null ? originalInputFilepath.toString() : "<stdin>";
             try (InputStream pStderr = ppStderr.getAsInputStreamUnsafe())
             {
-                if (inputFilepathStr != null)
-                {
-                    replaceInLines(pStderr, outputErr, "<stdin>", inputFilepathStr);
-                } else
-                {
-                    copy(pStderr, outputErr);
-                }
+                replaceInLines(pStderr, outputErr, inputFilePath.toString(), inFileStr);
             }
             return false;
         }
     }
 
-    public static boolean run(Configuration cfg, InputStream inputSrc, OutputStream outputSrc, OutputStream outputErr,
-            Collection<Path> inputModDirs, Path modOutDir, Path workingDir, Collection<String> options,
-            Path inputFilepath) throws Exception
+    Path getWorkingDir() throws IOException
     {
-        return run(cfg, inputSrc, outputSrc, outputErr, inputModDirs, modOutDir, workingDir, options, inputFilepath,
-                null);
-    }
 
-    public static boolean run(Configuration cfg, InputStream inputSrc, OutputStream outputSrc, OutputStream outputErr,
-            Collection<Path> inputModDirs, Path modOutDir, Path workingDir, Collection<String> options) throws Exception
-    {
-        return run(cfg, inputSrc, outputSrc, outputErr, inputModDirs, modOutDir, workingDir, options, null, null);
-    }
-
-    void run(Path inputFilepath, InputStream inputSrc, OutputStream output, Collection<String> options) throws Exception
-    {
         DirData localTmp = dirData.get();
         if (localTmp == null)
         {
             localTmp = new DirData(driverTempDir);
             dirData.set(localTmp);
         }
+        return localTmp.workingDir;
+    }
+
+    void run(Path inputFilepath, AsciiArrayIOStream inputSrc, AsciiArrayIOStream output, Collection<Path> depXmodPaths,
+            Collection<String> options) throws Exception
+    {
         AsciiArrayIOStream stderr = new AsciiArrayIOStream();
         List<String> args = new ArrayList<String>();
+        final Path workingDir = getWorkingDir();
+        final Path stdoutFilePath = workingDir.resolve("ffront_jni_stdout.txt");
+        stdoutFilePath.toFile().deleteOnExit();
         try
         {
-            boolean res = run(driverCfg, inputSrc, output, stderr, modDirs, localTmp.xmodOutDir, localTmp.workingDir,
-                    options, inputFilepath, args);
-            if (!res)
+            boolean res = run(driverCfg, inputSrc, stdoutFilePath, stderr, depXmodPaths, workingDir, options,
+                    inputFilepath, args);
+            if (res)
+            {
+                try (InputStream f = Files.newInputStream(stdoutFilePath))
+                {
+                    copy(f, output);
+                }
+            } else
             {
                 throw new Exception("Call to FortranFrontEnd failed");
             }
         } catch (Exception e)
         {
             inputSrc.reset();
-            throw new Failed(args, inputSrc, stderr.getAsInputStreamUnsafe(), e);
+            throw new Failed(args, inputSrc.getAsInputStreamUnsafe(), stderr.getAsInputStreamUnsafe(), e);
+        } finally
+        {
+            Files.delete(stdoutFilePath);
         }
     }
 
-    void generateXmod(Path inputFilepath, InputStream inputSrc, OutputStream output) throws Exception
+    public void generateXmod(Path inputFilepath, AsciiArrayIOStream inputSrc, AsciiArrayIOStream output,
+            Collection<Path> depXmodPaths) throws Exception
     {
-        run(inputFilepath, inputSrc, output, xmodOpts);
+        run(inputFilepath, inputSrc, output, depXmodPaths, xmodOpts);
     }
 
-    void generateAST(Path inputFilepath, InputStream inputSrc, OutputStream output) throws Exception
+    public void generateAST(Path inputFilepath, AsciiArrayIOStream inputSrc, AsciiArrayIOStream output,
+            Collection<Path> depXmodPaths) throws Exception
     {
-        run(inputFilepath, inputSrc, output, astOpts);
+        run(inputFilepath, inputSrc, output, depXmodPaths, astOpts);
     }
 }

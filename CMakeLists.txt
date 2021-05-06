@@ -86,14 +86,6 @@ message(
   "Configure preprocessor with ${CMAKE_Fortran_COMPILER_ID} compiler"
 )
 
-# Option to build OMNI Compiler as a submodule. Should be ON as CLAW uses a
-# specific version of OMNI Compiler at the moment.
-option(OMNI_ENABLE_GNU_INTRINSIC "OMNI Compiler - Enable GNU intrinsic extensions" ON)
-
-if(OMNI_ENABLE_GNU_INTRINSIC)
-  list(APPEND OMNI_CONF_OPTION "--enable-gnu-extension")
-endif()
-
 add_custom_target(create_int_install_dir ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory ${INT_CLAW_HOME})
 
@@ -106,9 +98,12 @@ install(CODE "execute_process(COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT
 
 # Build OMNI compiler
 if(BUILD_OMNI_XCODEML_TOOLS)
-  find_package(LibXml2 REQUIRED)
-  get_filename_component(LIBXML2_LIB_DIR ${LIBXML2_LIBRARY} DIRECTORY)
   set(OMNI_COMPILER_SRC_DIR ${CMAKE_BINARY_DIR}/omni-compiler)
+  set(OMNI_COMPILER_BUILD_DIR ${CMAKE_BINARY_DIR}/omni-compiler-build)
+  set(OMNI_CMAKE_ARGS -S ${OMNI_COMPILER_SRC_DIR} -DCMAKE_INSTALL_PREFIX=${OMNI_HOME} -DCMAKE_BUILD_TYPE=Release)
+  if(DEFINED JAVA_HOME)
+    set(OMNI_CMAKE_ARGS ${OMNI_CMAKE_ARGS} -DJAVA_HOME=${JAVA_HOME})
+  endif()
   ExternalProject_Add(
     omni-compiler
     GIT_REPOSITORY ${OMNI_GIT_REPOSITORY}
@@ -117,22 +112,13 @@ if(BUILD_OMNI_XCODEML_TOOLS)
     GIT_PROGRESS ON
     GIT_REMOTE_UPDATE_STRATEGY CHECKOUT
     SOURCE_DIR ${OMNI_COMPILER_SRC_DIR}
+    BINARY_DIR ${OMNI_COMPILER_BUILD_DIR}
     INSTALL_DIR ${OMNI_HOME}
     CONFIGURE_COMMAND
       CC=${CMAKE_C_COMPILER}
-      ${OMNI_COMPILER_SRC_DIR}/configure
-      --without-native-fortran-compiler
-      --with-libxml2-include=${LIBXML2_INCLUDE_DIR}
-      --with-libxml2-lib=${LIBXML2_LIB_DIR}
-      --with-java=${Java_JAVA_EXECUTABLE}
-      --with-javac=${Java_JAVAC_EXECUTABLE}
-      --with-jar=${Java_JAR_EXECUTABLE}
-      --with-version-tag=${OMNI_GIT_COMMIT_HASH}
-      --prefix=${OMNI_HOME}
-      ${OMNI_CONF_OPTION}
-    BUILD_IN_SOURCE ON
-    BUILD_COMMAND make -j 1 # OMNI build is not thread safe
-    INSTALL_COMMAND make install
+      ${CMAKE_COMMAND} ${OMNI_CMAKE_ARGS}
+    BUILD_COMMAND make -j build-jni-install ffront-jni-driver
+    BUILD_IN_SOURCE OFF
   )
 else()
   function(get_xcodemltools_version_tag _output_version_tag)
