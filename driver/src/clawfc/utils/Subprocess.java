@@ -5,11 +5,10 @@
  */
 package clawfc.utils;
 
-import static clawfc.Utils.USE_UNIX_SHELL_INSTEAD_OF_SUBPROCESS_BUILDER;
+import static clawfc.Utils.DEFAULT_TOP_TEMP_DIR;
 import static clawfc.Utils.collectIntoString;
 import static clawfc.Utils.copy;
 import static clawfc.Utils.skip;
-import static clawfc.Utils.sprintf;
 
 import java.io.Closeable;
 import java.io.File;
@@ -19,7 +18,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.FileAttribute;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -117,80 +115,47 @@ public class Subprocess
         }
     }
 
-    static Path createTempFile(Path dir, String prefix, String suffix, FileAttribute<?>... attrs) throws IOException
-    {
-        Path path = Files.createTempFile(dir, prefix, suffix);
-        File f = path.toFile();
-        f.deleteOnExit();
-        return path;
-    }
-
     public static int call(final List<String> args, final Path workingDir, final OutputStream stdout,
             final OutputStream stderr, final InputStream input, Integer timeoutInSeconds,
-            final boolean redirectErrStream, Path tmpDirPath, final boolean useUnixShell) throws Exception
+            final boolean redirectErrStream) throws Exception
     {
-        if (tmpDirPath == null)
-        {
-            tmpDirPath = Paths.get(clawfc.Utils.DEFAULT_TOP_TEMP_DIR);
-        }
         if (timeoutInSeconds == null)
         {
             timeoutInSeconds = Integer.valueOf(DEFAULT_TIMEOUT_S);
         }
-        Path argsFilePath = null;
+        ProcessBuilder pb = new ProcessBuilder(args);
+        pb.redirectErrorStream(redirectErrStream);
+        pb.directory(workingDir.toFile());
+        Process p = null;
         Path inputFilePath = null;
         Path stdoutFilePath = null;
         Path stderrFilePath = null;
-        Process p = null;
         try
         {
             if (input != null)
             {
-                inputFilePath = createTempFile(tmpDirPath, "subprocess_input_", ".tmp");
+                inputFilePath = Files.createTempFile(Paths.get(DEFAULT_TOP_TEMP_DIR), "subprocess_input_", ".tmp");
+                final File inputFile = inputFilePath.toFile();
+                inputFile.deleteOnExit();
                 try (OutputStream pStdin = Files.newOutputStream(inputFilePath))
                 {
                     copy(input, pStdin);
                 }
+                pb.redirectInput(inputFile);
             }
-            stdoutFilePath = createTempFile(tmpDirPath, "subprocess_stdout_", ".tmp");
-            stderrFilePath = createTempFile(tmpDirPath, "subprocess_stderr_", ".tmp");
-            if (!useUnixShell)
+            stdoutFilePath = Files.createTempFile(Paths.get(DEFAULT_TOP_TEMP_DIR), "subprocess_stdout_", ".tmp");
             {
-                ProcessBuilder pb = new ProcessBuilder(args);
-                pb.redirectErrorStream(redirectErrStream);
-                if (inputFilePath != null)
-                {
-                    pb.redirectInput(inputFilePath.toFile());
-                }
-                pb.redirectOutput(stdoutFilePath.toFile());
-                pb.redirectError(stderrFilePath.toFile());
-                pb.directory(workingDir.toFile());
-                p = pb.start();
-            } else
-            {
-                // TODO: get rid of this E V I L
-                for (int i = 0, n = args.size(); i < n; ++i)
-                {
-                    args.set(i, "\"" + args.get(i) + "\"");
-                }
-                String argsStr = String.join(" ", args);
-                if (inputFilePath != null)
-                {
-                    argsStr += " < " + inputFilePath.toString();
-                }
-                argsStr = "(" + argsStr + ")";
-                if (redirectErrStream)
-                {
-                    argsStr = sprintf("%s &> %s", argsStr, stdoutFilePath);
-                } else
-                {
-                    argsStr = sprintf("%s 2> %s 1> %s", argsStr, stderrFilePath, stdoutFilePath);
-                }
-                argsFilePath = createTempFile(tmpDirPath, "subprocess_args_", ".sh");
-                clawfc.Utils.writeTextToFile(argsFilePath, argsStr);
-                p = java.lang.Runtime.getRuntime().exec("bash " + argsFilePath.toString());
+                final File stdoutFile = stdoutFilePath.toFile();
+                stdoutFile.deleteOnExit();
+                pb.redirectOutput(stdoutFile);
             }
-
+            stderrFilePath = Files.createTempFile(Paths.get(DEFAULT_TOP_TEMP_DIR), "subprocess_stderr_", ".tmp");
+            {
+                final File stderrFile = stderrFilePath.toFile();
+                stderrFile.deleteOnExit();
+                pb.redirectError(stderrFile);
+            }
+            p = pb.start();
             /*
              * try (final StreamGobbler stdoutReader = new StreamGobbler(p,
              * p.getInputStream(), stdout); final StreamGobbler stderrReader = new
@@ -217,22 +182,18 @@ public class Subprocess
                     throw new Exception("Subprocess call timed out");
                 }
                 final int retCode = p.exitValue();
-                try (InputStream stdoutFileStrm = Files.newInputStream(stdoutFilePath))
+                try (InputStream stdoutFile = Files.newInputStream(stdoutFilePath))
                 {
-                    copy(stdoutFileStrm, stdout);
+                    copy(stdoutFile, stdout);
                 }
-                try (InputStream stderrFileStrm = Files.newInputStream(stderrFilePath))
+                try (InputStream stderrFile = Files.newInputStream(stderrFilePath))
                 {
-                    copy(stderrFileStrm, stderr);
+                    copy(stderrFile, stderr);
                 }
                 return retCode;
             }
         } catch (Exception e)
         {
-            if (argsFilePath != null)
-            {
-                Files.delete(argsFilePath);
-            }
             if (inputFilePath != null)
             {
                 Files.delete(inputFilePath);
@@ -256,15 +217,13 @@ public class Subprocess
     public static int call(final List<String> args, final Path workingDir, final OutputStream stdout,
             final OutputStream stderr, final InputStream input) throws Exception
     {
-        return call(args, workingDir, stdout, stderr, input, null, false, null,
-                USE_UNIX_SHELL_INSTEAD_OF_SUBPROCESS_BUILDER);
+        return call(args, workingDir, stdout, stderr, input, null, false);
     }
 
     public static int call(final List<String> args, final Path workingDir, final OutputStream stdout,
             final OutputStream stderr) throws Exception
     {
-        return call(args, workingDir, stdout, stderr, null, null, false, null,
-                USE_UNIX_SHELL_INSTEAD_OF_SUBPROCESS_BUILDER);
+        return call(args, workingDir, stdout, stderr, null, null, false);
     }
 
     public static class CallResult
