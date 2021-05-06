@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -19,6 +20,11 @@ public class ByteArrayIOStream extends ByteArrayOutputStream
     public int getSize()
     {
         return count;
+    }
+
+    public ByteBuffer getBuf()
+    {
+        return ByteBuffer.wrap(buf, 0, count);
     }
 
     public ByteArrayIOStream()

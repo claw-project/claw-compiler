@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -50,7 +51,6 @@ import clawfc.depscan.FortranFileProgramUnitInfoDeserializer;
 import clawfc.depscan.FortranFileProgramUnitInfoSerializer;
 import clawfc.depscan.FortranProgramUnitInfo;
 import clawfc.utils.AsciiArrayIOStream;
-import clawfc.utils.ByteArrayIOStream;
 import clawfc.utils.FileInfo;
 import clawfc.utils.FileInfoImpl;
 import clawfc.utils.PathHashGenerator;
@@ -446,6 +446,16 @@ public class Driver
         }
     }
 
+    static Collection<Path> getDepXmods(ProgramUnitInfo modInfo, Map<String, ProgramUnitInfo> usedModules)
+    {
+        List<Path> depXmods = new ArrayList<Path>();
+        for (String depModName : modInfo.getUsedModules())
+        {
+            depXmods.add(usedModules.get(depModName).getXMod().getFilePath());
+        }
+        return depXmods;
+    }
+
     static class GenerateXmods extends ExecuteTasks
     {
         final FortranFrontEnd ffront;
@@ -550,11 +560,12 @@ public class Driver
                         Build.moduleNameWithLocation(modInfo)));
                 return true;
             }
-            ByteArrayIOStream xmodDataStrm = new ByteArrayIOStream();
+            AsciiArrayIOStream xmodDataStrm = new AsciiArrayIOStream();
             try
             {
                 AsciiArrayIOStream modPPSrc = modInfo.getPreprocessedSrc(true);
-                ffront.generateXmod(modInfo.getPPSrcPath(), modPPSrc.getAsInputStreamUnsafe(), xmodDataStrm);
+                Collection<Path> depXmods = getDepXmods(modInfo, usedModules);
+                ffront.generateXmod(modInfo.getPPSrcPath(), modPPSrc, xmodDataStrm, depXmods);
             } catch (FortranFrontEnd.Failed failed)
             {
                 final List<String> modIncStack = Build.getModuleIncludeStack(modName, usedModules, targetModuleNames);
@@ -659,8 +670,8 @@ public class Driver
                     modPPSrc = null;
                     try
                     {
-                        ffront.generateAST(modInfo.getPPSrcPath(), modPPSrcWithIgnore.getAsInputStreamUnsafe(),
-                                xastDataStrm);
+                        Collection<Path> depXmods = getDepXmods(modInfo, usedModules);
+                        ffront.generateAST(modInfo.getPPSrcPath(), modPPSrcWithIgnore, xastDataStrm, depXmods);
                     } catch (FortranFrontEnd.Failed failed)
                     {
                         String errMsg = sprintf("Xmod generation: Error! Call to Omni frontend for module %s failed",

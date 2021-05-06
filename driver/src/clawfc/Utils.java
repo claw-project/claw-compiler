@@ -13,6 +13,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -398,5 +401,21 @@ public class Utils
             res = str.lastIndexOf('\n');
         }
         return res;
+    }
+
+    public class MappedFile extends RandomAccessFile
+    {
+        public MappedFile(Path path, boolean readOnly) throws IOException
+        {
+            super(path.toFile(), "r");
+            this.path = path;
+            channel = getChannel();
+            final long size = channel.size();
+            buf = channel.map(readOnly ? FileChannel.MapMode.READ_ONLY : FileChannel.MapMode.READ_WRITE, 0, size);
+        }
+
+        final FileChannel channel;
+        MappedByteBuffer buf;
+        public final Path path;
     }
 }
