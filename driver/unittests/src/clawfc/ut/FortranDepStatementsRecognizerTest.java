@@ -296,11 +296,16 @@ public class FortranDepStatementsRecognizerTest extends TestCase
         acceptUseModule("use x,  ONLY: y1  =>  z1", "x");
         acceptUseModule("use x,  ONLY: y1  =>  z1  ", "x");
         acceptUseModule("use x,  ONLY: y1  =>  z1, y2 => z2, y3 => z3 ", "x");
+        acceptUseModule("use, intrinsic :: x", "x");
+        acceptUseModule("use, non_intrinsic :: x", "x");
+        acceptUseModule("use, intrinsic :: x, only: c_int", "x");
+        acceptUseModule("use, intrinsic :: x, only: op => assignment(=)", "x");
+        acceptUseModule("use, intrinsic :: x, only: op => operator(+)", "x");
         rejectLine("usex");
         rejectLine("use x,");
         rejectLine("use x y ");
         rejectLine("use x, y,");
-        rejectLine("use x, ONLY ");
+        // rejectLine("use x, ONLY ");
         rejectLine("use x, ONLY: x y");
         FortranDepStatementsRecognizer.UseModuleData res = acceptUseModule("use x", "x");
         assertFalse(res.useOnly);
