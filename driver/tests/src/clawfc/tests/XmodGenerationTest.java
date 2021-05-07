@@ -485,4 +485,36 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
         }
 
     }
+
+    public void testErrorDebug() throws Exception
+    {
+        final Path IN_DIR = RES_DIR.resolve("xmod_generation/error_debug/input");
+        final Path INC_DIR = IN_DIR.resolve("inc");
+        final Path INPUT_FILEPATH = IN_DIR.resolve("p.f90");
+        final Path OUT_DBG_DIR = TMP_DIR.resolve("dbg");
+        final Path DBG_DIR = OUT_DBG_DIR.resolve("ffront_1");
+        final Path OUT_MOD_DIR = TMP_DIR.resolve("mods");
+        String[] args = new String[] { "--gen-mod-files", "--force", "--skip-pp", "--disable-mp",
+                INPUT_FILEPATH.toString(), "--ffront-debug-dir", OUT_DBG_DIR.toString(), "-MI", INC_DIR.toString(),
+                "-MO", OUT_MOD_DIR.toString() };
+        final List<String> MOD_NAMES = Arrays.asList("mod11.xmod", "mod12.xmod");
+        run(args, false);
+        assertTrue(Files.exists(DBG_DIR) && Files.isDirectory(DBG_DIR));
+        assertTrue(collectIntoString(INPUT_FILEPATH).contains(collectIntoString(DBG_DIR.resolve("stdin.txt"))));
+        for (String modName : MOD_NAMES)
+        {
+            assertTrue(Files.exists(DBG_DIR.resolve(modName)));
+            assertEquals(collectIntoString(INC_DIR.resolve(modName)), collectIntoString(DBG_DIR.resolve(modName)));
+        }
+        final Path debugScript = DBG_DIR.resolve("debug.sh");
+        assertTrue(Files.exists(debugScript));
+
+        /*-TODO: This test only works in junit launch
+        assertTrue(runRes.stderr.contains("SEVERE: Xmod generation: Error! Call to Omni frontend for m3 "));
+        assertTrue(runRes.stderr.contains("Include stack:"));
+        for (String unitName : REF_UNIT_NAMES)
+        {
+            assertTrue(runRes.stderr.contains(unitName));
+        }*/
+    }
 }

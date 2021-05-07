@@ -73,7 +73,7 @@ public class FortranFrontEndTest extends TestCase
             List<String> opts2 = new ArrayList<String>(opts);
             opts2.addAll(Arrays.asList("--in-memory-mode", "-no-time"));
             boolean res = FortranFrontEnd.run(DRIVER_CFG, inStrm, outFilePath, stderr, incXmods, tmpDir, opts2,
-                    inFilename, null);
+                    inFilename, null, null);
 
             stdoutStr = Utils.collectIntoString(stdout.getAsInputStreamUnsafe());
             stderrStr = Utils.collectIntoString(stderr.getAsInputStreamUnsafe());
