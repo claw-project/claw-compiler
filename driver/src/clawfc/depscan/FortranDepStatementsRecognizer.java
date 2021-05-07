@@ -29,9 +29,10 @@ import clawfc.depscan.parser.FortranDepStatementsRecognizerParser;
 
 public class FortranDepStatementsRecognizer implements FortranProgramUnitStatementsRecognizer
 {
-    public static final Set<StatementType> SUPPORTED_TYPES = new HashSet<StatementType>(Arrays.asList(
-            StatementType.BLOCK_DATA_OPEN, StatementType.BLOCK_DATA_CLOSE, StatementType.MODULE_OPEN,
-            StatementType.MODULE_CLOSE, StatementType.PROGRAM_OPEN, StatementType.PROGRAM_CLOSE, StatementType.USE_MODULE));
+    public static final Set<StatementType> SUPPORTED_TYPES = new HashSet<StatementType>(
+            Arrays.asList(StatementType.BLOCK_DATA_OPEN, StatementType.BLOCK_DATA_CLOSE, StatementType.MODULE_OPEN,
+                    StatementType.MODULE_CLOSE, StatementType.PROGRAM_OPEN, StatementType.PROGRAM_CLOSE,
+                    StatementType.USE_MODULE));
 
     public static class RenamedSymbol
     {
@@ -72,7 +73,6 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         public List<RenamedSymbol> useRenamedSymbols = new ArrayList<RenamedSymbol>();
 
         String useSymName;
-        String useOnlySymName;
 
         public Exception error()
         {
@@ -165,7 +165,7 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         }
 
         @Override
-        public void enterOnly_list_stmt(FortranDepStatementsRecognizerParser.Only_list_stmtContext ctx)
+        public void enterOnly(FortranDepStatementsRecognizerParser.OnlyContext ctx)
         {
             try
             {
@@ -190,6 +190,10 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
             {
                 if (expectedType == StatementType.USE_MODULE)
                 {
+                    if (useSymName != null)
+                    {
+                        useSymbols.add(useSymName);
+                    }
                     useSymName = ctx.getText();
                 } else
                 {
@@ -211,6 +215,7 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
                 {
                     String from = ctx.getText();
                     useRenamedSymbols.add(new RenamedSymbol(from, useSymName));
+                    useSymName = null;
                 } else
                 {
                     expectedTypeMismatchError();
@@ -223,56 +228,15 @@ public class FortranDepStatementsRecognizer implements FortranProgramUnitStateme
         }
 
         @Override
-        public void exitUse_only_symbol_name(FortranDepStatementsRecognizerParser.Use_only_symbol_nameContext ctx)
+        public void exitUse_stmt(FortranDepStatementsRecognizerParser.Use_stmtContext ctx)
         {
             try
             {
                 if (expectedType == StatementType.USE_MODULE)
                 {
-                    useOnlySymName = ctx.getText();
-                } else
-                {
-                    expectedTypeMismatchError();
-                }
-            } catch (Exception e)
-            {
-                _error = e;
-                throw new CancellationException();
-            }
-        }
-
-        @Override
-        public void exitUse_only_symbol_name_from(
-                FortranDepStatementsRecognizerParser.Use_only_symbol_name_fromContext ctx)
-        {
-            try
-            {
-                if (expectedType == StatementType.USE_MODULE)
-                {
-                    String from = ctx.getText();
-                    useRenamedSymbols.add(new RenamedSymbol(from, useOnlySymName));
-                    useOnlySymName = null;
-                } else
-                {
-                    expectedTypeMismatchError();
-                }
-            } catch (Exception e)
-            {
-                _error = e;
-                throw new CancellationException();
-            }
-        }
-
-        @Override
-        public void exitOnly_stmt(FortranDepStatementsRecognizerParser.Only_stmtContext ctx)
-        {
-            try
-            {
-                if (expectedType == StatementType.USE_MODULE)
-                {
-                    if (useOnlySymName != null)
+                    if (useSymName != null)
                     {
-                        useSymbols.add(useOnlySymName);
+                        useSymbols.add(useSymName);
                     }
                 } else
                 {

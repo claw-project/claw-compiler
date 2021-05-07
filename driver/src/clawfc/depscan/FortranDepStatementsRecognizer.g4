@@ -28,22 +28,22 @@ program_open_name : identifier;
 program_close_stmt : ((END (PROGRAM program_close_name?)?) | (ENDPROGRAM program_close_name?)) EOF;
 program_close_name : identifier;
 
-use_stmt : USE use_module_name (',' (rename_list_stmt | only_list_stmt))? EOF;
+use_stmt : USE (',' module_nature)? '::'? use_module_name (',' (only ':')? rename_list_stmt?)? EOF;
 use_module_name : identifier;
 
+module_nature : MODULE_NATURE;
+only : ONLY;
+
 rename_list_stmt : rename_stmt (',' rename_stmt)*;
-rename_stmt : use_symbol_name '=>' use_symbol_name_from;
+rename_stmt : use_symbol_name ('=>' use_symbol_name_from)?;
 
-use_symbol_name : identifier;
-use_symbol_name_from : identifier;
+use_symbol_name : identifier | operator_name;
+use_symbol_name_from : identifier | operator_name;
 
-only_list_stmt : ONLY  ':'  only_stmt (','  only_stmt)*;
-only_stmt : use_only_symbol_name  ('=>'  use_only_symbol_name_from )?;
+operator_name : OPERATOR_NAME;
 
-use_only_symbol_name : identifier;
-use_only_symbol_name_from : identifier;
 
-// Lexer cannot differentiate between ambiguous keywords and identifiers 
+// Lexer cannot differentiate between ambiguous keywords and identifiers
 identifier : IDENTIFIER |
 BLOCKDATA | BLOCK |
 DATA |
@@ -53,7 +53,10 @@ FUNCTION  |
 MODULE  |
 ONLY  |
 PROGRAM  |
-USE;
+USE |
+MODULE_NATURE;
+
+MODULE_NATURE : INTRINSIC | NON_INTRINSIC;
 
 BLOCKDATA : B L O C K D A T A;
 BLOCK : B L O C K;
@@ -69,10 +72,16 @@ ONLY : O N L Y;
 PROGRAM : P R O G R A M;
 USE : U S E;
 
+OPERATOR_NAME : OPERATOR '(' (~[)\r\n])+ ')' | ASSIGNMENT '(' '=' ')';
+
 IDENTIFIER : LETTER (LETTER | DIGIT | '_')*;
 
-fragment LETTER : [a-zA-Z];
+fragment ASSIGNMENT : A S S I G N M E N T;
+fragment INTRINSIC : I N T R I N S I C ;
+fragment NON_INTRINSIC : N O N '_' I N T R I N S I C ;
 fragment DIGIT : [0-9];
+fragment LETTER : [a-zA-Z];
+fragment OPERATOR : O P E R A T O R;
 
 SEP : WS+ -> skip;
 fragment WS : [ \t];
