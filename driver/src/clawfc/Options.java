@@ -86,6 +86,7 @@ public class Options
     final FortranCompilerVendor _fCompilerVendor;
     final String _fCompilerCmd;
     final List<Path> _transSetPaths;
+    final Path _ffrontDebugDir;
 
     public List<Path> transSetPaths()
     {
@@ -377,6 +378,11 @@ public class Options
         return _fCompilerCmd;
     }
 
+    public Path ffrontDebugDir()
+    {
+        return _ffrontDebugDir;
+    }
+
     public static Options parseCmdlineArguments(String[] args) throws Exception
     {
         return parseCmdlineArguments(args, Utils.STARTUP_DIR);
@@ -493,6 +499,8 @@ public class Options
             fcOpts.addArgument("--fc-cmd").help("Fortran compiler cmd");
             cOpts.addArgument("-td", "--trans-path-dir").nargs("*").action(Arguments.append())
                     .help("Search directory for external transformation set");
+            parser.addArgument("--ffront-debug-dir")
+                    .help("Output directory to collect OMNI failures for easier debugging");
             parsedArgs = parser.parseArgs(args);
         } catch (HelpScreenException hse)
         {
@@ -599,6 +607,7 @@ public class Options
         _genBuildInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");
         _genModFiles = parsedArgs.getBoolean("gen_mod_files");
         _transSetPaths = getPathList(parsedArgs, "trans_path_dir");
+        _ffrontDebugDir = getOptionalPath(parsedArgs, "ffront_debug_dir");
     }
 
     String toString(List<Path> paths)
@@ -670,6 +679,7 @@ public class Options
         res.append(sprintf("Disable multiprocessing: %s\n", disableMultiprocessing()));
         res.append(sprintf("Generate dependencies info files: %s\n", generateBuildInfoFiles()));
         res.append(sprintf("Generate xmod files: %s\n", generateModFiles()));
+        res.append(sprintf("FFront Debug directory: \"%s\"\n", ffrontDebugDir()));
         return res.toString();
     }
 

@@ -9,10 +9,12 @@ import static clawfc.Utils.copy;
 import static clawfc.Utils.dumpIntoFile;
 import static clawfc.Utils.getOrCreateDir;
 import static clawfc.Utils.replaceInLines;
+import static clawfc.Utils.sprintf;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -29,10 +31,13 @@ public class FortranFrontEnd
     class DirData
     {
         public final Path workingDir;
+        public final Path debugDir;
 
-        public DirData(Path topTempDir) throws IOException
+        public DirData(Path topTempDir, Path topDebugDir, int threadID) throws IOException
         {
-            workingDir = Files.createTempDirectory(topTempDir, "ffront");
+            final String dirName = sprintf("ffront_%d", threadID);
+            workingDir = Files.createDirectory(topTempDir.resolve(dirName));
+            debugDir = topDebugDir != null ? topDebugDir.resolve(dirName) : null;
         }
     }
 
@@ -42,6 +47,8 @@ public class FortranFrontEnd
     final ThreadLocal<DirData> dirData;
     final Path outModDir;
     final Path driverTempDir;
+    int threadsCounter;
+    final Path debugDir;
 
     public Path getOutModDir()
     {
@@ -59,6 +66,11 @@ public class FortranFrontEnd
     public static Path intOutputDir(Path driverIntDir)
     {
         return driverIntDir.resolve("xmods");
+    }
+
+    synchronized int getNewThreadID()
+    {
+        return ++threadsCounter;
     }
 
     public FortranFrontEnd(Configuration cfg, Options opts, Path driverTempDir) throws Exception
@@ -97,6 +109,8 @@ public class FortranFrontEnd
         this.astOpts = Collections.unmodifiableList(astOpts);
         this.xmodOpts = Collections.unmodifiableList(xmodOpts);
         this.dirData = new ThreadLocal<DirData>();
+        debugDir = opts.ffrontDebugDir();
+        threadsCounter = 0;
     }
 
     /**
@@ -106,7 +120,7 @@ public class FortranFrontEnd
      */
     public static boolean run(Configuration cfg, AsciiArrayIOStream inputSrc, Path outputFilePath,
             OutputStream outputErr, Collection<Path> depXmodPaths, Path workingDir, Collection<String> options,
-            Path originalInputFilepath, List<String> args) throws Exception
+            Path originalInputFilepath, List<String> args, Path debugDir) throws Exception
     {
         // TODO: rewrite this with mapped files (i.e. shared memory IPC)
         if (args == null)
@@ -150,20 +164,62 @@ public class FortranFrontEnd
             {
                 replaceInLines(pStderr, outputErr, inputFilePath.toString(), inFileStr);
             }
+            if (debugDir != null)
+            {// Collect all input and args in one place to make debugging easier
+                createDebugDir(cfg, inputSrc, depXmodPaths, options, debugDir);
+            }
             return false;
         }
     }
 
-    Path getWorkingDir() throws IOException
+    static void createDebugDir(Configuration cfg, AsciiArrayIOStream inputSrc, Collection<Path> depXmodPaths,
+            Collection<String> options, Path debugDir)
+    {
+        try
+        {
+            Utils.recreateDir(debugDir);
+            Path inputFilePath = debugDir.resolve("stdin.txt");
+            dumpIntoFile(inputFilePath, inputSrc.getAsInputStreamUnsafe());
+            List<String> args = new ArrayList<String>();
+            args.add(cfg.omniFrontEnd().toString());
+            args.add("stdin.txt");
+            args.add("-so");
+            args.add("stdout.txt");
+            for (Path depXmod : depXmodPaths)
+            {
+                Files.copy(depXmod, debugDir.resolve(depXmod.getFileName()));
+                args.add("-m");
+                args.add(depXmod.getFileName().toString());
+            }
+            args.addAll(options);
+            Path debugScriptPath = debugDir.resolve("debug.sh");
+            try (AsciiArrayIOStream debugScript = new AsciiArrayIOStream())
+            {
+                try (PrintWriter writer = new PrintWriter(debugScript))
+                {
+                    writer.println("#!/bin/bash");
+                    writer.println("SCRIPT_DIR=\"$( cd \"$( dirname \"${BASH_SOURCE[0]}\" )\" &> /dev/null && pwd )\"");
+                    writer.println("cd ${SCRIPT_DIR}");
+                    writer.println(String.join(" ", args));
+                }
+                dumpIntoFile(debugScriptPath, debugScript.getAsInputStreamUnsafe());
+            }
+        } catch (Exception e)
+        { // This method should not throw
+        }
+
+    }
+
+    DirData getLocalDirData() throws IOException
     {
 
         DirData localTmp = dirData.get();
         if (localTmp == null)
         {
-            localTmp = new DirData(driverTempDir);
+            localTmp = new DirData(driverTempDir, debugDir, getNewThreadID());
             dirData.set(localTmp);
         }
-        return localTmp.workingDir;
+        return localTmp;
     }
 
     void run(Path inputFilepath, AsciiArrayIOStream inputSrc, AsciiArrayIOStream output, Collection<Path> depXmodPaths,
@@ -171,13 +227,13 @@ public class FortranFrontEnd
     {
         AsciiArrayIOStream stderr = new AsciiArrayIOStream();
         List<String> args = new ArrayList<String>();
-        final Path workingDir = getWorkingDir();
-        final Path stdoutFilePath = workingDir.resolve("ffront_jni_stdout.txt");
+        final DirData localDirData = getLocalDirData();
+        final Path stdoutFilePath = localDirData.workingDir.resolve("ffront_jni_stdout.txt");
         stdoutFilePath.toFile().deleteOnExit();
         try
         {
-            boolean res = run(driverCfg, inputSrc, stdoutFilePath, stderr, depXmodPaths, workingDir, options,
-                    inputFilepath, args);
+            boolean res = run(driverCfg, inputSrc, stdoutFilePath, stderr, depXmodPaths, localDirData.workingDir,
+                    options, inputFilepath, args, localDirData.debugDir);
             if (res)
             {
                 try (InputStream f = Files.newInputStream(stdoutFilePath))
@@ -186,7 +242,12 @@ public class FortranFrontEnd
                 }
             } else
             {
-                throw new Exception("Call to FortranFrontEnd failed");
+                String errMsg = "Call to FortranFrontEnd failed";
+                if (localDirData.debugDir != null)
+                {
+                    errMsg += sprintf("\nuse %s/debug.sh for debugging");
+                }
+                throw new Exception(errMsg);
             }
         } catch (Exception e)
         {
