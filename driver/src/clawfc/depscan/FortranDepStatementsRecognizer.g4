@@ -72,7 +72,7 @@ ONLY : O N L Y;
 PROGRAM : P R O G R A M;
 USE : U S E;
 
-OPERATOR_NAME : OPERATOR '(' (~[)\r\n])+ ')' | ASSIGNMENT '(' '=' ')';
+OPERATOR_NAME : OPERATOR SEP? '(' (~[)\r\n])+ ')' | ASSIGNMENT SEP? '(' SEP? '=' SEP? ')';
 
 IDENTIFIER : LETTER (LETTER | DIGIT | '_')*;
 
