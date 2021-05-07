@@ -145,12 +145,12 @@ public class FortranFrontEnd
         final AsciiArrayIOStream ppStdout = new AsciiArrayIOStream();
         final AsciiArrayIOStream ppStderr = new AsciiArrayIOStream();
         final int retCode = Subprocess.call(args, workingDir, ppStdout, ppStderr);
-        if (ppStdout.size() > 0)
-        {
-            throw new Exception("stdout redirection didn't work");
-        }
         if (retCode == 0)
         {
+            if (ppStdout.size() > 0)
+            {
+                throw new Exception("stdout redirection didn't work");
+            }
             final String inFileStr = originalInputFilepath != null ? originalInputFilepath.toString() : "&lt;stdin&gt;";
             AsciiArrayIOStream out = new AsciiArrayIOStream(outputFilePath);
             AsciiArrayIOStream outWithRep = new AsciiArrayIOStream();
@@ -163,6 +163,10 @@ public class FortranFrontEnd
             try (InputStream pStderr = ppStderr.getAsInputStreamUnsafe())
             {
                 replaceInLines(pStderr, outputErr, inputFilePath.toString(), inFileStr);
+            }
+            if (ppStdout.size() > 0)
+            {// For some reason java dumps JNI crash info into stdout
+                copy(ppStdout.getAsInputStreamUnsafe(), outputErr);
             }
             if (debugDir != null)
             {// Collect all input and args in one place to make debugging easier
