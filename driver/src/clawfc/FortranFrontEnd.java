@@ -10,7 +10,6 @@ import static clawfc.Utils.dumpIntoFile;
 import static clawfc.Utils.getOrCreateDir;
 import static clawfc.Utils.replaceInLines;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -66,15 +65,6 @@ public class FortranFrontEnd
     {
         this.driverCfg = cfg;
         this.driverTempDir = driverTempDir;
-        List<Path> stdXmods = new ArrayList<Path>();
-        for (File f : cfg.defaultStdXmodDir().toFile().listFiles())
-        {
-            String filename = f.getName();
-            if (filename.endsWith((".xmod")))
-            {
-                stdXmods.add(cfg.defaultStdXmodDir().resolve(filename));
-            }
-        }
         Path outModDir = null;
         if (opts.xmodOutputDir() != null)
         {
@@ -88,11 +78,6 @@ public class FortranFrontEnd
         List<String> commonOpts = new ArrayList<String>(opts.translatorOptions());
         commonOpts.add("--in-memory-mode");
         commonOpts.add("-no-time");
-        for (Path stdXmod : stdXmods)
-        {
-            commonOpts.add("-m");
-            commonOpts.add(stdXmod.toString());
-        }
         if (opts.debugOmniFFront())
         {
             commonOpts.add("-d");
