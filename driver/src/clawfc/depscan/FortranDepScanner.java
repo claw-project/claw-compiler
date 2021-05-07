@@ -136,7 +136,7 @@ public class FortranDepScanner
         if (e.getCharIdxInFile() == null && e.getLineIndex() != null)
         {
             AsciiArrayIOStream.LinesInfo linesInfo = strm.getLinesInfo();
-            int charIdxInFile = linesInfo.getLineStartByteIdx(e.getLineIndex() + e.getCharIdxInLine());
+            int charIdxInFile = linesInfo.getLineStartByteIdx(e.getLineIndex()) + e.getCharIdxInLine();
             e.setCharIdxInFile(charIdxInFile);
             e.setLineIndex(null);
             e.setCharIdxInLine(null);
