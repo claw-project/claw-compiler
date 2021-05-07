@@ -81,7 +81,7 @@ set(CLAW_TESTS_REPORT "${TEST_REPORTS_DIR}/claw.txt")
 #
 # OMNI Compiler variables
 #
-set(OMNI_GIT_COMMIT_HASH "c6339b832faa8eccbe87df68e8909c19f3c08b55" CACHE STRING
+set(OMNI_GIT_COMMIT_HASH "f0c3efcfc1e6ea36a0ff729e5731e943bb523c22" CACHE STRING
     "OMNI compiler tools GIT commit hash")
 set(OMNI_GIT_REPOSITORY "https://github.com/claw-project/xcodeml-tools.git" CACHE STRING
     "OMNI compiler tools GIT repository URL")
