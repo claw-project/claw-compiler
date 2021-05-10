@@ -57,7 +57,7 @@ public class Options
     final Path _configFile;
     final Path _modelConfigFile;
     final List<String> _cfgKeyOverrides;
-    final boolean _disableMP;
+    final Boolean _disableMP;
     final boolean _onlyPreprocess;
     final boolean _verbose;
     final boolean _keepComments;
@@ -79,6 +79,7 @@ public class Options
     final List<String> _ffrontOpts;
     final List<String> _transOpts;
     final Integer _maxFLineLength;
+    final Integer _maxNumMPJobs;
     final boolean _addPPLineDirectives;
     final boolean _dumpCX2TArgs;
     final boolean _exitOnPureFunction;
@@ -140,7 +141,7 @@ public class Options
 
     public boolean disableMultiprocessing()
     {
-        return _disableMP;
+        return _disableMP != null ? _disableMP.booleanValue() : false;
     }
 
     public List<Path> inputFiles()
@@ -383,6 +384,11 @@ public class Options
         return _ffrontDebugDir;
     }
 
+    public Integer maxNumMultiprocJobs()
+    {
+        return _maxNumMPJobs;
+    }
+
     public static Options parseCmdlineArguments(String[] args) throws Exception
     {
         return parseCmdlineArguments(args, Utils.STARTUP_DIR);
@@ -477,7 +483,10 @@ public class Options
                     .help("Override a configuration key:value pair from the command line. Higher "
                             + "priority over base configuration and user configuration");
             cOpts.addArgument("--dump-cx2t-args").action(Arguments.storeTrue()).help("Print arguments passed to CX2T");
-            cOpts.addArgument("--disable-mp").action(Arguments.storeTrue()).help("Disable multiprocessing");
+            MutuallyExclusiveGroup mpOpts = parser.addMutuallyExclusiveGroup("Compiler multiprocessing options");
+            mpOpts.addArgument("-mp", "--max-num-mp-jobs").type(Integer.class)
+                    .help("Maximum number of multiprocessing jobs");
+            mpOpts.addArgument("--disable-mp").action(Arguments.storeTrue()).help("Disable multiprocessing");
             ArgumentGroup dcOpts = parser.addArgumentGroup("Decompiler options");
             dcOpts.addArgument("--max-fortran-line-length", "-w").type(Integer.class).setDefault(Integer.valueOf(80))
                     .help("Set the number of columns for the output FORTRAN file (default: 80)");
@@ -604,6 +613,7 @@ public class Options
                 : null;
         _fCompilerCmd = parsedArgs.getString("fc_cmd");
         _disableMP = parsedArgs.getBoolean("disable_mp");
+        _maxNumMPJobs = parsedArgs.getInt("max_num_mp_jobs");
         _genBuildInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");
         _genModFiles = parsedArgs.getBoolean("gen_mod_files");
         _transSetPaths = getPathList(parsedArgs, "trans_path_dir");
@@ -677,6 +687,7 @@ public class Options
         res.append(sprintf("Fortran compiler type: %s\n", fortranCompilerType()));
         res.append(sprintf("Fortran compiler cmd: %s\n", fortranCompilerCmd()));
         res.append(sprintf("Disable multiprocessing: %s\n", disableMultiprocessing()));
+        res.append(sprintf("Maximum number of multiprocessing jobs: %s\n", maxNumMultiprocJobs()));
         res.append(sprintf("Generate dependencies info files: %s\n", generateBuildInfoFiles()));
         res.append(sprintf("Generate xmod files: %s\n", generateModFiles()));
         res.append(sprintf("FFront Debug directory: \"%s\"\n", ffrontDebugDir()));
