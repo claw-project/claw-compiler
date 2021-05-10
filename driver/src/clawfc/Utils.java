@@ -203,12 +203,11 @@ public class Utils
         }
     }
 
-    static ExecutorService createThreadPool(boolean useMultiProcessing)
+    static ExecutorService createThreadPool(int maxNumMPJobs)
     {
-        if (useMultiProcessing)
+        if (maxNumMPJobs > 1)
         {
-            int maxNumThreads = Runtime.getRuntime().availableProcessors();
-            return Executors.newFixedThreadPool(maxNumThreads);
+            return Executors.newFixedThreadPool(maxNumMPJobs);
         } else
         {
             return Executors.newSingleThreadExecutor();
@@ -220,9 +219,9 @@ public class Utils
         final ExecutorService es;
         final List<Future<Void>> taskFutures;
 
-        public ExecuteTasks(boolean useMultiProcessing)
+        public ExecuteTasks(int maxNumMPJobs)
         {
-            es = createThreadPool(useMultiProcessing);
+            es = createThreadPool(maxNumMPJobs);
             taskFutures = Collections.synchronizedList(new ArrayList<Future<Void>>());
         }
 
@@ -263,9 +262,9 @@ public class Utils
         }
     }
 
-    static void executeTasksUntilFirstError(List<Callable<Void>> tasks, boolean useMultiProcessing) throws Exception
+    static void executeTasksUntilFirstError(List<Callable<Void>> tasks, int maxNumMPJobs) throws Exception
     {
-        ExecuteTasks execTasks = new ExecuteTasks(useMultiProcessing);
+        ExecuteTasks execTasks = new ExecuteTasks(maxNumMPJobs);
         for (Callable<Void> task : tasks)
         {
             execTasks.submitTask(task);

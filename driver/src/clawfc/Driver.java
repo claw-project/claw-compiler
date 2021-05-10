@@ -137,6 +137,20 @@ public class Driver
         }
     }
 
+    int getMaxNumMPJobs(Options opts)
+    {
+        if (opts.disableMultiprocessing())
+        {
+            return 1;
+        } else if (opts.maxNumMultiprocJobs() != null)
+        {
+            return opts.maxNumMultiprocJobs();
+        } else
+        {
+            return Runtime.getRuntime().availableProcessors();
+        }
+    }
+
     void execute(Options opts) throws Exception
     {
         if (opts.printInstallCfg())
@@ -166,13 +180,13 @@ public class Driver
             Path tmpDir = null;
             try
             {
-                final boolean enableMultiprocessing = !opts.disableMultiprocessing();
+                final int maxNumMPJobs = getMaxNumMPJobs(opts);
                 Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath;
                 if (!opts.buildInfoIncludeDirs().isEmpty())
                 {
                     info("Loading input build information files...");
                     buildInfoBySrcPath = loadBuildInfoFromFiles(opts.buildInfoIncludeDirs(), opts.inputFiles(),
-                            opts.sourceIncludeDirs(), enableMultiprocessing);
+                            opts.sourceIncludeDirs(), maxNumMPJobs);
                 } else
                 {
                     buildInfoBySrcPath = new HashMap<Path, FortranFileProgramUnitInfoData>();
@@ -184,17 +198,16 @@ public class Driver
                 final Preprocessor pp = new Preprocessor(cfg(), opts, tmpDir);
                 info("Preprocessing input files...");
                 Map<Path, PreprocessedFortranSourceData> inputPPSrcFiles = preprocessFiles(opts.inputFiles(),
-                        buildInfoBySrcPath, pp, opts.skipPreprocessing(), enableMultiprocessing);
+                        buildInfoBySrcPath, pp, opts.skipPreprocessing(), maxNumMPJobs);
                 final UniquePathHashGenerator dirHashGen = new UniquePathHashGenerator();
                 precomputeDirHashes(dirHashGen, opts.inputFiles(), opts.preprocessorIncludeDirs());
                 final Map<Path, Path> ppSrcPathBySrcPath = savePreprocessedSources("input", opts.inputFiles(),
                         inputPPSrcFiles, opts.preprocessedSourcesOutputDir(), dirHashGen, opts.skipPreprocessing(),
-                        enableMultiprocessing);
+                        maxNumMPJobs);
                 if (!opts.stopAfterPreprocessing())
                 {
                     info("Scanning input files for build information...");
-                    scanFiles(opts.inputFiles(), buildInfoBySrcPath, inputPPSrcFiles, ppSrcPathBySrcPath,
-                            enableMultiprocessing);
+                    scanFiles(opts.inputFiles(), buildInfoBySrcPath, inputPPSrcFiles, ppSrcPathBySrcPath, maxNumMPJobs);
                     if (opts.buildInfoOutputDir() != null)
                     {
                         info("Verifying output buildinfo dir...");
@@ -202,11 +215,11 @@ public class Driver
                         if (!opts.generateBuildInfoFiles())
                         {
                             saveBuildInfo(opts.inputFiles(), buildInfoBySrcPath, opts.buildInfoOutputDir(), dirHashGen,
-                                    enableMultiprocessing);
+                                    maxNumMPJobs);
                         } else
                         {
                             saveBuildInfo(opts.inputFiles(), buildInfoBySrcPath, opts.buildInfoOutputDir(), null,
-                                    enableMultiprocessing);
+                                    maxNumMPJobs);
                             return;
                         }
                     }
@@ -220,21 +233,19 @@ public class Driver
                 final List<Path> includeFiles = createIncludeFilesList(opts.sourceIncludeDirs(), opts.inputFiles());
                 info("Preprocessing include files...");
                 Map<Path, PreprocessedFortranSourceData> incPPSrcFiles = preprocessFiles(includeFiles,
-                        buildInfoBySrcPath, pp, opts.skipPreprocessing(), enableMultiprocessing);
+                        buildInfoBySrcPath, pp, opts.skipPreprocessing(), maxNumMPJobs);
                 Map<Path, Path> ppIncSrcPathBySrcPath = savePreprocessedSources("include", includeFiles, incPPSrcFiles,
-                        opts.preprocessedSourcesOutputDir(), dirHashGen, opts.skipPreprocessing(),
-                        enableMultiprocessing);
+                        opts.preprocessedSourcesOutputDir(), dirHashGen, opts.skipPreprocessing(), maxNumMPJobs);
                 if (opts.stopAfterPreprocessing())
                 {
                     return;
                 }
                 info("Scanning include files for build information...");
-                scanFiles(includeFiles, buildInfoBySrcPath, incPPSrcFiles, ppIncSrcPathBySrcPath,
-                        enableMultiprocessing);
+                scanFiles(includeFiles, buildInfoBySrcPath, incPPSrcFiles, ppIncSrcPathBySrcPath, maxNumMPJobs);
                 if (opts.buildInfoOutputDir() != null)
                 {
                     saveBuildInfo(includeFiles, buildInfoBySrcPath, opts.buildInfoOutputDir(), dirHashGen,
-                            enableMultiprocessing);
+                            maxNumMPJobs);
                 }
                 if (opts.stopAfterDepScan())
                 {
@@ -256,8 +267,7 @@ public class Driver
                 if (opts.resolveDependencies())
                 {
                     info("Generating xmods...");
-                    generateXmods(ffront, usedModules, targetModuleNames, false, enableMultiprocessing,
-                            opts.showDebugOutput());
+                    generateXmods(ffront, usedModules, targetModuleNames, false, maxNumMPJobs, opts.showDebugOutput());
                     if (opts.xmodOutputDir() != null)
                     {
                         saveXmods(usedModules, targetModuleNames, false, opts.xmodOutputDir(), true);
@@ -265,8 +275,7 @@ public class Driver
                 } else
                 {
                     info("Generating xmods for targets...");
-                    generateXmods(ffront, usedModules, targetModuleNames, true, enableMultiprocessing,
-                            opts.showDebugOutput());
+                    generateXmods(ffront, usedModules, targetModuleNames, true, maxNumMPJobs, opts.showDebugOutput());
                     if (opts.generateModFiles())
                     {
                         saveXmods(usedModules, targetModuleNames, true, opts.xmodOutputDir(), true);
@@ -282,24 +291,24 @@ public class Driver
                 }
                 info("Generating XCodeML-AST...");
                 generateXast(ffront, usedModules, targetModuleNames, opts.showDebugOutput(), opts.skipPreprocessing(),
-                        enableMultiprocessing);
+                        maxNumMPJobs);
                 if (opts.xastOutputDir() != null)
                 {
-                    saveXast(usedModules, targetModuleNames, opts.xastOutputDir(), enableMultiprocessing);
+                    saveXast(usedModules, targetModuleNames, opts.xastOutputDir(), maxNumMPJobs);
                 }
                 if (opts.stopAfterXastGeneration())
                 {
                     return;
                 }
                 info("Translating XCodeML-AST...");
-                translate(usedModules, targetModuleNames, opts, ffront.getOutModDir(), enableMultiprocessing);
+                translate(usedModules, targetModuleNames, opts, ffront.getOutModDir(), maxNumMPJobs);
                 if (opts.transXastOutputDir() != null)
                 {
-                    saveTransXast(usedModules, targetModuleNames, opts.transXastOutputDir(), enableMultiprocessing);
+                    saveTransXast(usedModules, targetModuleNames, opts.transXastOutputDir(), maxNumMPJobs);
                 }
                 if (opts.transReportOutputDir() != null)
                 {
-                    saveTransReport(usedModules, targetModuleNames, opts.transReportOutputDir(), enableMultiprocessing);
+                    saveTransReport(usedModules, targetModuleNames, opts.transReportOutputDir(), maxNumMPJobs);
                 }
                 if (opts.stopAfterTranslation())
                 {
@@ -307,15 +316,15 @@ public class Driver
                 }
                 if (opts.transSrcOutputDir() != null)
                 {
-                    saveTransSrc(usedModules, targetModuleNames, opts.transSrcOutputDir(), enableMultiprocessing);
+                    saveTransSrc(usedModules, targetModuleNames, opts.transSrcOutputDir(), maxNumMPJobs);
                 }
                 if (opts.stopAfterDecompilation())
                 {
                     return;
                 }
                 final Map<Path, AsciiArrayIOStream> outSrcBySrcPath = generateOutputSrc(opts.inputFiles(),
-                        buildInfoBySrcPath, availModules, targetModuleNames, enableMultiprocessing);
-                saveOutputSrc(outSrcBySrcPath, opts.outputFile(), opts.outputDir(), enableMultiprocessing);
+                        buildInfoBySrcPath, availModules, targetModuleNames, maxNumMPJobs);
+                saveOutputSrc(outSrcBySrcPath, opts.outputFile(), opts.outputDir(), maxNumMPJobs);
             } finally
             {
                 if (tmpDir != null && !opts.keepIntermediateFiles())
@@ -345,8 +354,8 @@ public class Driver
 
     static Map<Path, AsciiArrayIOStream> generateOutputSrc(final List<Path> inputFiles,
             final Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath,
-            final Map<String, ProgramUnitInfo> usedModules, final Set<String> targetModuleNames,
-            boolean enableMultiprocessing) throws Exception
+            final Map<String, ProgramUnitInfo> usedModules, final Set<String> targetModuleNames, int maxNumMPJobs)
+            throws Exception
     {
         final int n = inputFiles.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
@@ -383,12 +392,12 @@ public class Driver
                 }
             });
         }
-        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        executeTasksUntilFirstError(tasks, maxNumMPJobs);
         return Collections.unmodifiableMap(outBySrcPath);
     }
 
     static void saveOutputSrc(final Map<Path, AsciiArrayIOStream> outSrcBySrcPath, Path outFilePath, Path outDirPath,
-            boolean enableMultiprocessing) throws Exception
+            int maxNumMPJobs) throws Exception
     {
         if (outDirPath == null)
         {
@@ -408,12 +417,12 @@ public class Driver
             }
         } else
         {
-            saveOutputSrc(outSrcBySrcPath, outDirPath, enableMultiprocessing);
+            saveOutputSrc(outSrcBySrcPath, outDirPath, maxNumMPJobs);
         }
     }
 
     static void saveOutputSrc(final Map<Path, AsciiArrayIOStream> outSrcBySrcPath, final Path outDirPath,
-            boolean enableMultiprocessing) throws Exception
+            int maxNumMPJobs) throws Exception
     {
         final int n = outSrcBySrcPath.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
@@ -431,7 +440,7 @@ public class Driver
                 }
             });
         }
-        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        executeTasksUntilFirstError(tasks, maxNumMPJobs);
     }
 
     static void precomputeDirHashes(UniquePathHashGenerator hashGen, List<Path> inputFiles, List<Path> includeDirs)
@@ -470,10 +479,10 @@ public class Driver
         public final Set<String> failed;
 
         public GenerateXmods(FortranFrontEnd ffront, Map<String, ProgramUnitInfo> usedModules,
-                Set<String> targetModuleNames, final boolean onlyForTargetsOrSameFile, boolean enableMultiprocessing,
+                Set<String> targetModuleNames, final boolean onlyForTargetsOrSameFile, int maxNumMPJobs,
                 boolean printDebugOutput)
         {
-            super(enableMultiprocessing);
+            super(maxNumMPJobs);
             this.ffront = ffront;
             this.usedModules = usedModules;
             this.targetModuleNames = targetModuleNames;
@@ -589,11 +598,11 @@ public class Driver
     };
 
     static void generateXmods(FortranFrontEnd ffront, Map<String, ProgramUnitInfo> usedModules,
-            Set<String> targetModuleNames, final boolean onlyForTargetsOrSameFile, boolean enableMultiprocessing,
+            Set<String> targetModuleNames, final boolean onlyForTargetsOrSameFile, int maxNumMPJobs,
             boolean printDebugOutput) throws Exception
     {
         GenerateXmods genXmodTasks = new GenerateXmods(ffront, usedModules, targetModuleNames, onlyForTargetsOrSameFile,
-                enableMultiprocessing, printDebugOutput);
+                maxNumMPJobs, printDebugOutput);
         genXmodTasks.run();
         final boolean res = genXmodTasks.failed.isEmpty() && (genXmodTasks.successful.size() == usedModules.size());
         if (!res)
@@ -628,8 +637,8 @@ public class Driver
     }
 
     static void generateXast(FortranFrontEnd ffront, Map<String, ProgramUnitInfo> usedModules,
-            Set<String> targetModuleNames, boolean printFfrontDebugOutput, final boolean skipPP,
-            boolean enableMultiprocessing) throws Exception
+            Set<String> targetModuleNames, boolean printFfrontDebugOutput, final boolean skipPP, int maxNumMPJobs)
+            throws Exception
     {
         final int n = targetModuleNames.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
@@ -688,7 +697,7 @@ public class Driver
                 }
             });
         }
-        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        executeTasksUntilFirstError(tasks, maxNumMPJobs);
     }
 
     static ConfigurationOptions toCX2TCfgOptions(final Options opts)
@@ -708,7 +717,7 @@ public class Driver
     }
 
     static void translate(final Map<String, ProgramUnitInfo> usedModules, final Set<String> targetModuleNames,
-            final Options opts, final Path outModDir, final boolean enableMultiprocessing) throws Exception
+            final Options opts, final Path outModDir, final int maxNumMPJobs) throws Exception
     {
         final ConfigurationOptions cfgOpts = toCX2TCfgOptions(opts);
         final boolean saveTransXast = opts.transXastOutputDir() != null;
@@ -828,12 +837,12 @@ public class Driver
                 }
             });
         }
-        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        executeTasksUntilFirstError(tasks, maxNumMPJobs);
     }
 
     static void saveModData(final String dataType, final String extension,
             Function<ProgramUnitInfo, AsciiArrayIOStream> getData, Map<String, ProgramUnitInfo> usedModules,
-            Set<String> targetModuleNames, final Path outDirPath, boolean enableMultiprocessing) throws Exception
+            Set<String> targetModuleNames, final Path outDirPath, int maxNumMPJobs) throws Exception
     {
         getOrCreateDir(outDirPath);
         final int n = targetModuleNames.size();
@@ -861,35 +870,35 @@ public class Driver
                 }
             });
         }
-        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        executeTasksUntilFirstError(tasks, maxNumMPJobs);
     }
 
     static void saveXast(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames, final Path outDirPath,
-            boolean enableMultiprocessing) throws Exception
+            int maxNumMPJobs) throws Exception
     {
         saveModData("XCodeML-AST", ".xast", (ProgramUnitInfo modInfo) -> modInfo.getXast(), usedModules,
-                targetModuleNames, outDirPath, enableMultiprocessing);
+                targetModuleNames, outDirPath, maxNumMPJobs);
     }
 
     static void saveTransXast(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames,
-            final Path outDirPath, boolean enableMultiprocessing) throws Exception
+            final Path outDirPath, int maxNumMPJobs) throws Exception
     {
         saveModData("translated XCodeML-AST", ".xast", (ProgramUnitInfo modInfo) -> modInfo.getTransXast(), usedModules,
-                targetModuleNames, outDirPath, enableMultiprocessing);
+                targetModuleNames, outDirPath, maxNumMPJobs);
     }
 
     static void saveTransSrc(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames,
-            final Path outDirPath, boolean enableMultiprocessing) throws Exception
+            final Path outDirPath, int maxNumMPJobs) throws Exception
     {
         saveModData("translated source", ".f90", (ProgramUnitInfo modInfo) -> modInfo.getTransSrc(), usedModules,
-                targetModuleNames, outDirPath, enableMultiprocessing);
+                targetModuleNames, outDirPath, maxNumMPJobs);
     }
 
     static void saveTransReport(Map<String, ProgramUnitInfo> usedModules, Set<String> targetModuleNames,
-            final Path outDirPath, boolean enableMultiprocessing) throws Exception
+            final Path outDirPath, int maxNumMPJobs) throws Exception
     {
         saveModData("transformation report", ".lst", (ProgramUnitInfo modInfo) -> modInfo.getTransReport(), usedModules,
-                targetModuleNames, outDirPath, enableMultiprocessing);
+                targetModuleNames, outDirPath, maxNumMPJobs);
     }
 
     static Map<String, ProgramUnitInfo> getAvailableModulesInfo(
@@ -1090,7 +1099,7 @@ public class Driver
 
     static Map<Path, PreprocessedFortranSourceData> preprocessFiles(List<Path> inputSrcFiles,
             final Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath, final Preprocessor pp,
-            final boolean skipPreprocessing, boolean enableMultiprocessing) throws Exception
+            final boolean skipPreprocessing, int maxNumMPJobs) throws Exception
     {
         final int n = inputSrcFiles.size();
         PreprocessedFortranSourceData[] ppSrcData = new PreprocessedFortranSourceData[n];
@@ -1120,7 +1129,7 @@ public class Driver
                 }
             });
         }
-        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        executeTasksUntilFirstError(tasks, maxNumMPJobs);
         Map<Path, PreprocessedFortranSourceData> ppSrcByPath = new LinkedHashMap<Path, PreprocessedFortranSourceData>();
         for (int i = 0; i < n; ++i)
         {
@@ -1131,7 +1140,7 @@ public class Driver
 
     static Map<Path, Path> savePreprocessedSources(String category, List<Path> srcPaths,
             Map<Path, PreprocessedFortranSourceData> ppSrcByPath, final Path outDirPath,
-            final PathHashGenerator pathHashGen, boolean skipPP, boolean enableMultiprocessing) throws Exception
+            final PathHashGenerator pathHashGen, boolean skipPP, int maxNumMPJobs) throws Exception
     {
         Map<Path, Path> ppSrcPathBySrcPath;
         if (outDirPath != null)
@@ -1139,8 +1148,7 @@ public class Driver
             info("Verifying output directory for preprocessed sources...");
             getOrCreateDir(outDirPath);
             info(sprintf("Saving preprocessed %s sources...", category));
-            ppSrcPathBySrcPath = savePreprocessedSources(srcPaths, ppSrcByPath, outDirPath, pathHashGen,
-                    enableMultiprocessing);
+            ppSrcPathBySrcPath = savePreprocessedSources(srcPaths, ppSrcByPath, outDirPath, pathHashGen, maxNumMPJobs);
         } else if (skipPP)
         {
             ppSrcPathBySrcPath = new HashMap<Path, Path>();
@@ -1160,7 +1168,7 @@ public class Driver
      */
     static Map<Path, Path> savePreprocessedSources(List<Path> srcPaths,
             Map<Path, PreprocessedFortranSourceData> ppSrcByPath, final Path outDirPath,
-            final PathHashGenerator pathHashGen, boolean enableMultiprocessing) throws Exception
+            final PathHashGenerator pathHashGen, int maxNumMPJobs) throws Exception
     {
         final int n = srcPaths.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>(n);
@@ -1181,7 +1189,7 @@ public class Driver
                 }
             });
         }
-        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        executeTasksUntilFirstError(tasks, maxNumMPJobs);
         Map<Path, Path> ppSrcBySrc = new LinkedHashMap<Path, Path>();
         for (int i = 0; i < n; ++i)
         {
@@ -1205,7 +1213,7 @@ public class Driver
     }
 
     static Map<Path, FortranFileProgramUnitInfoData> loadBuildInfoFromFiles(List<Path> binfoDirs, List<Path> inputFiles,
-            List<Path> includeDirs, boolean enableMultiprocessing) throws Exception
+            List<Path> includeDirs, int maxNumMPJobs) throws Exception
     {
         final List<Path> binfoFilePaths = createBuildInfoFilesList(binfoDirs);
         final int n = binfoFilePaths.size();
@@ -1258,7 +1266,7 @@ public class Driver
                 }
             });
         }
-        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        executeTasksUntilFirstError(tasks, maxNumMPJobs);
         Map<Path, FortranFileProgramUnitInfoData> res = new HashMap<Path, FortranFileProgramUnitInfoData>();
         for (FortranFileProgramUnitInfoData binfoData : data)
         {
@@ -1280,8 +1288,7 @@ public class Driver
     }
 
     static void saveBuildInfo(List<Path> srcPaths, Map<Path, FortranFileProgramUnitInfoData> binfoBySrcPath,
-            final Path outBuildInfoDir, final PathHashGenerator pathHashGen, boolean enableMultiprocessing)
-            throws Exception
+            final Path outBuildInfoDir, final PathHashGenerator pathHashGen, int maxNumMPJobs) throws Exception
     {
         final ThreadLocal<FortranFileProgramUnitInfoSerializer> serializer = new ThreadLocal<FortranFileProgramUnitInfoSerializer>();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
@@ -1304,12 +1311,12 @@ public class Driver
                 }
             });
         }
-        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        executeTasksUntilFirstError(tasks, maxNumMPJobs);
     }
 
     static void scanFiles(List<Path> inputFiles, Map<Path, FortranFileProgramUnitInfoData> binfoBySrcPath,
             Map<Path, PreprocessedFortranSourceData> ppSrcBySrcPath, Map<Path, Path> ppSrcPathBySrcPath,
-            boolean enableMultiprocessing) throws Exception
+            int maxNumMPJobs) throws Exception
     {
         final int n = inputFiles.size();
         List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
@@ -1378,7 +1385,7 @@ public class Driver
                 }
             });
         }
-        executeTasksUntilFirstError(tasks, enableMultiprocessing);
+        executeTasksUntilFirstError(tasks, maxNumMPJobs);
         for (int i = 0; i < n; ++i)
         {
             final FortranFileProgramUnitInfoData binfoData = binfoDataLst[i];
@@ -1448,6 +1455,11 @@ public class Driver
 
     static void verifyOptions(Options opts) throws Exception
     {
+        if (opts.maxNumMultiprocJobs() != null && opts.maxNumMultiprocJobs() < 1)
+        {
+            throw new Exception(sprintf("Maximum number of multiprocessing jobs \"%d \"must be positive",
+                    opts.maxNumMultiprocJobs()));
+        }
         {
             Map<Path, Path> fileNames = new HashMap<Path, Path>();
             for (Path inFilePath : opts.inputFiles())
