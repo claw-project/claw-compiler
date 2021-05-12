@@ -98,6 +98,8 @@ install(CODE "execute_process(COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT
 
 # Build OMNI compiler
 if(BUILD_OMNI_XCODEML_TOOLS)
+  enable_language(C)
+  enable_language(CXX)
   set(OMNI_COMPILER_SRC_DIR ${CMAKE_BINARY_DIR}/omni-compiler)
   set(OMNI_COMPILER_BUILD_DIR ${CMAKE_BINARY_DIR}/omni-compiler-build)
   set(OMNI_CMAKE_ARGS -S ${OMNI_COMPILER_SRC_DIR} -DCMAKE_INSTALL_PREFIX=${OMNI_HOME} -DCMAKE_BUILD_TYPE=Release)
