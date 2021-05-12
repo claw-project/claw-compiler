@@ -93,6 +93,7 @@ istack-commons-runtime.jar=istack-commons-runtime.jar
 istack-commons-runtime.dep=${3rdparty.dist.dir}/${istack-commons-runtime.jar}
 
 # OMNI compiler libraries and paths
+omni.install.classpath=@OMNI_INSTALL_CLASSPATH@
 omni.xcodeml-common.dep=@OMNI_JAR_TOOLS@
 omni.xcodeml-c-backend.dep=@OMNI_JAR_C_BACKEND@
 omni.xcodeml-f-backend.dep=@OMNI_JAR_F_BACKEND@
@@ -110,8 +111,9 @@ driver.jar=@CLAWFC_JAR@
 driver.dep=${driver.dist.dir}/${driver.jar}
 driver.libs.dir=../share/claw
 d.l.dir=${driver.libs.dir}
+o.l.dir=${omni.install.classpath}
 driver.runtime.classpath=${d.l.dir}/${claw.tatsu.jar} ${d.l.dir}/${claw.wani.jar} ${d.l.dir}/${claw.shenron.jar} \
-    ${omni.xcodeml-common.dep} ${omni.xcodeml-f-backend.dep} \
+    ${o.l.dir}/om-common.jar  ${o.l.dir}/om-f-back.jar \
     ${d.l.dir}/${commoncli.jar} ${d.l.dir}/${antlr4.jar} ${d.l.dir}/${antlr4.runtime.jar} ${d.l.dir}/${toml.jar} \
     ${d.l.dir}/${argparse4j.jar} ${d.l.dir}/${jaxb-runtime.jar} ${d.l.dir}/${jaxb-core.jar} \
     ${d.l.dir}/jakarta.xml.bind-api.jar ${d.l.dir}/${jakarta.activation.jar} ${d.l.dir}/${istack-commons-runtime.jar}
