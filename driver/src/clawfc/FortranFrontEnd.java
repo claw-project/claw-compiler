@@ -259,7 +259,7 @@ public class FortranFrontEnd
             throw new Failed(args, inputSrc.getAsInputStreamUnsafe(), stderr.getAsInputStreamUnsafe(), e);
         } finally
         {
-            Files.delete(stdoutFilePath);
+            Files.deleteIfExists(stdoutFilePath);
         }
     }
 
