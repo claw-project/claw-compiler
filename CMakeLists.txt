@@ -96,15 +96,18 @@ install(
 install(CODE "execute_process(COMMAND ${Ant_EXECUTABLE} -f ${ANT_SOLUTION} ${ANT_FLAGS} -Dclaw.properties.dir=${CX2T_PROPERTIES_DIR} install-driver)"
 )
 
+option(OMNI_LINK_STATIC_GNU_LIBSTDCXX "OMNI Link static libstdc++ when building OMNI with GNU compiler" OFF)
+
 # Build OMNI compiler
 if(BUILD_OMNI_XCODEML_TOOLS)
-  enable_language(C)
-  enable_language(CXX)
   set(OMNI_COMPILER_SRC_DIR ${CMAKE_BINARY_DIR}/omni-compiler)
   set(OMNI_COMPILER_BUILD_DIR ${CMAKE_BINARY_DIR}/omni-compiler-build)
   set(OMNI_CMAKE_ARGS -S ${OMNI_COMPILER_SRC_DIR} -DCMAKE_INSTALL_PREFIX=${OMNI_HOME} -DCMAKE_BUILD_TYPE=Release)
   if(DEFINED JAVA_HOME)
     set(OMNI_CMAKE_ARGS ${OMNI_CMAKE_ARGS} -DJAVA_HOME=${JAVA_HOME})
+  endif()
+  if(${OMNI_LINK_STATIC_GNU_LIBSTDCXX})
+    set(OMNI_CMAKE_ARGS ${OMNI_CMAKE_ARGS} -DLINK_STATIC_GNU_LIBSTDCXX=${OMNI_LINK_STATIC_GNU_LIBSTDCXX})
   endif()
   ExternalProject_Add(
     omni-compiler
