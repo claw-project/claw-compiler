@@ -97,6 +97,7 @@ omni.install.classpath=@OMNI_INSTALL_CLASSPATH@
 omni.xcodeml-common.dep=@OMNI_JAR_TOOLS@
 omni.xcodeml-c-backend.dep=@OMNI_JAR_C_BACKEND@
 omni.xcodeml-f-backend.dep=@OMNI_JAR_F_BACKEND@
+omni.jni.dep=@OMNI_JAR_JNI@
 
 # CLAW X2T libraries
 claw.wani.jar=claw-x2t-wani.jar

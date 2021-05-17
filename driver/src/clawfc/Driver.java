@@ -120,14 +120,7 @@ public class Driver
                             cfg().omniFrontEnd()));
         }
         {
-            String omniVersionTag = null;
-            try
-            {
-                omniVersionTag = Utils.getCmdOutput(new String[] { cfg().omniFrontEnd().toString(), "--version-tag" });
-            } catch (Exception e)
-            {
-                throw new RuntimeException("Failed to get OMNI XCodeML Tools version: " + e.getMessage());
-            }
+            final String omniVersionTag = xcodeml.f.util.AppConstants.PACKAGE_VERSION_TAG;
             if (!cfg().omniVersionTag().equals(omniVersionTag))
             {
                 throw new RuntimeException(

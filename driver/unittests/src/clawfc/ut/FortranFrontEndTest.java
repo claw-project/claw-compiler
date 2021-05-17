@@ -205,7 +205,6 @@ public class FortranFrontEndTest extends TestCase
             assertFalse(rRes.res);
             assertEquals("", rRes.stdout);
             assertTrue(rRes.stderr.startsWith(collectIntoString(ERR_IN_REF_FILEPATH)));
-            assertTrue(Files.exists(outXastPath) || collectIntoString(outXastPath).contentEquals(""));
         } finally
         {
             if (tmpModOutDirDir != null)
@@ -229,7 +228,6 @@ public class FortranFrontEndTest extends TestCase
             assertEquals("", rRes.stdout);
             assertTrue(rRes.stderr
                     .startsWith(collectIntoString(ERR_IN_REF_FILEPATH).replace("<stdin>", ERR_IN_FILEPATH.toString())));
-            assertTrue(Files.exists(outXastPath) || collectIntoString(outXastPath).contentEquals(""));
         } finally
         {
             if (tmpModOutDirDir != null)

@@ -45,6 +45,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="@OMNI_JAR_TOOLS@"/>
+	<classpathentry kind="lib" path="@OMNI_JAR_JNI@"/>
 	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_TATSU@.jar"/>
 	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_SHENRON@.jar"/>
 	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_WANI@.jar"/>
