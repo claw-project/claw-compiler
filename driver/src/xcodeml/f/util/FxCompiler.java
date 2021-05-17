@@ -130,7 +130,7 @@ public class FxCompiler
         if (opts != null)
         {
             checkCLIArgs(opts);
-            System.loadLibrary("ffront-jni");
+            System.loadLibrary("ffront-cpp");
             if (opts.native_in_mem_mode_enabled)
             {
                 try (IOCache filesCache = createCache(opts))

@@ -20,6 +20,7 @@
             <include name="**/*.jar" />
           </fileset>
         <pathelement path="${claw.wani.dep}"/>
+        <pathelement path="${omni.jni.dep}"/>
     </path>
 
     <path id="antlr.path">

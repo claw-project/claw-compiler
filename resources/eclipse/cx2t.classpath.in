@@ -33,5 +33,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="@OMNI_JAR_TOOLS@"/>
+	<classpathentry kind="lib" path="@OMNI_JAR_JNI@"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

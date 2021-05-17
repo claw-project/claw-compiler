@@ -165,7 +165,7 @@ public class FortranFrontEnd
                 replaceInLines(pStderr, outputErr, inputFilePath.toString(), inFileStr);
             }
             if (ppStdout.size() > 0)
-            {// For some reason java dumps JNI crash info into stdout
+            {
                 copy(ppStdout.getAsInputStreamUnsafe(), outputErr);
             }
             if (debugDir != null)
@@ -232,7 +232,7 @@ public class FortranFrontEnd
         AsciiArrayIOStream stderr = new AsciiArrayIOStream();
         List<String> args = new ArrayList<String>();
         final DirData localDirData = getLocalDirData();
-        final Path stdoutFilePath = localDirData.workingDir.resolve("ffront_jni_stdout.txt");
+        final Path stdoutFilePath = localDirData.workingDir.resolve("ffront_stdout.txt");
         stdoutFilePath.toFile().deleteOnExit();
         try
         {

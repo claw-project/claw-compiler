@@ -123,7 +123,7 @@ if(BUILD_OMNI_XCODEML_TOOLS)
       CC=${CMAKE_C_COMPILER}
       CXX=${CMAKE_CXX_COMPILER}
       ${CMAKE_COMMAND} ${OMNI_CMAKE_ARGS}
-    BUILD_COMMAND make -j build-jni-install ffront-jni-driver
+    BUILD_COMMAND make -j build-cpp-install build-jni-install
     BUILD_IN_SOURCE OFF
   )
 else()

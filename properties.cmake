@@ -81,7 +81,7 @@ set(CLAW_TESTS_REPORT "${TEST_REPORTS_DIR}/claw.txt")
 #
 # OMNI Compiler variables
 #
-set(OMNI_GIT_COMMIT_HASH "6a301f38e3699ad3418fa6470ca4b2ec4e656037" CACHE STRING
+set(OMNI_GIT_COMMIT_HASH "6a317fa038ad4eb9e34a23a8682a170cf011fd5c" CACHE STRING
     "OMNI compiler tools GIT commit hash")
 set(OMNI_GIT_REPOSITORY "https://github.com/claw-project/xcodeml-tools.git" CACHE STRING
     "OMNI compiler tools GIT repository URL")
@@ -110,11 +110,12 @@ set(OMNI_DRIVER_DIR "${OMNI_HOME}/libexec")
 set(OMNI_XMOD_GENERIC "${OMNI_HOME}/fincludes")
 set(OMNI_BIN_DIR_NAME "bin")
 set(OMNI_BIN_DIR "${OMNI_HOME}/${OMNI_BIN_DIR_NAME}")
-set(OMNI_F_FRONT_NAME "ffront-jni")
+set(OMNI_F_FRONT_NAME "ffront-cpp")
 set(OMNI_F_FRONT "${OMNI_BIN_DIR}/${OMNI_F_FRONT_NAME}")
 set(OMNI_JAR_TOOLS "${OMNI_CLASSPATH}/om-common.jar")
 set(OMNI_JAR_F_BACKEND "${OMNI_CLASSPATH}/om-f-back.jar")
 set(OMNI_JAR_C_BACKEND "${OMNI_CLASSPATH}/om-c-back.jar")
+set(OMNI_JAR_JNI "${OMNI_CLASSPATH}/ffront.jar")
 set(OMNI_F2X_FLAGS "")
 
 execute_process(
