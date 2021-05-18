@@ -28,7 +28,6 @@ public class FortranDepScanner
     FortranCommentsFilter commentsFilter;
     FortranLineBreaksFilter lineBreaksFilter;
     FortranDepParser parser;
-    FortranCLAWScanner clawScanner;
     FortranIncludeChecker incChecker;
     FortranIncludesResolver incResolver;
 
@@ -42,7 +41,6 @@ public class FortranDepScanner
         lineBreaksFilter = new FortranLineBreaksFilter();
         incChecker = new FortranIncludeChecker();
         parser = new FortranDepParser();
-        clawScanner = new FortranCLAWScanner();
         incResolver = new FortranIncludesResolver();
     }
 
