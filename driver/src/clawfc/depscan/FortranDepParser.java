@@ -35,6 +35,11 @@ import clawfc.depscan.parser.FortranDepScannerLexer;
 import clawfc.depscan.parser.FortranDepScannerParser;
 import clawfc.depscan.serial.FortranProgramUnitType;
 
+/**
+ * <code>FortranDepParser</code> wraps ANTLR-generated parsers for recognizing
+ * Fortran language constructs related to dependencies (module, use etc.).
+ *
+ */
 public class FortranDepParser
 {
     static String DEFAULT_PROGRAM_NAME = "_unnamed_program";

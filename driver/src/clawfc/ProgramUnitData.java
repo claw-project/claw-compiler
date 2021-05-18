@@ -18,6 +18,11 @@ import clawfc.depscan.FortranProgramUnitInfo;
 import clawfc.depscan.serial.FortranProgramUnitType;
 import clawfc.utils.AsciiArrayIOStream;
 
+/**
+ * <code>ProgramUnitData</code> is an implementation of
+ * <code>ProgramUnitInfo</code>.
+ *
+ */
 public class ProgramUnitData implements ProgramUnitInfo
 {
 

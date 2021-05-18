@@ -44,6 +44,11 @@ import clawfc.utils.FileInfo;
 import clawfc.utils.FileInfoImpl;
 import clawfc.utils.Subprocess;
 
+/**
+ * <code>Utils</code> is a collection of static utility functions commonly used
+ * in clawfc.
+ *
+ */
 public class Utils
 {
     public static final byte ASCII_NEWLINE_VALUE = (byte) '\n';

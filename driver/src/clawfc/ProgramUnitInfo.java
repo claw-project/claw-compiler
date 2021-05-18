@@ -10,9 +10,14 @@ import java.nio.file.Path;
 import java.util.Collection;
 
 import clawfc.depscan.FortranProgramUnitInfo;
-import clawfc.utils.AsciiArrayIOStream;
 import clawfc.depscan.serial.FortranProgramUnitType;
+import clawfc.utils.AsciiArrayIOStream;
 
+/**
+ * <code>ProgramUnitInfo</code> is an interface for accessing information about
+ * specific Fortran program unit (module or global function).
+ *
+ */
 public interface ProgramUnitInfo
 {
     public String getName();

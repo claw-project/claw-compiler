@@ -27,6 +27,11 @@ import clawfc.depscan.parser.FortranCommentsFilterLexer;
 import clawfc.depscan.parser.FortranCommentsFilterParser;
 import clawfc.utils.AsciiArrayIOStream;
 
+/**
+ * <code>TrailingBackslashCommentsFilter</code> is a text filter which handles
+ * trailing backslashes in Fortran comments.
+ *
+ */
 public class TrailingBackslashCommentsFilter
 {
     static class Listener extends FortranCommentsFilterBaseListener

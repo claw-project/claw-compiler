@@ -27,6 +27,12 @@ import clawfc.depscan.parser.FortranDepStatementsRecognizerBaseListener;
 import clawfc.depscan.parser.FortranDepStatementsRecognizerLexer;
 import clawfc.depscan.parser.FortranDepStatementsRecognizerParser;
 
+/**
+ * <code>FortranDepStatementsRecognizer</code> extracts information from
+ * individual Fortran language constructs related to dependencies (module, use
+ * etc.).
+ *
+ */
 public class FortranDepStatementsRecognizer implements FortranProgramUnitStatementsRecognizer
 {
     public static final Set<StatementType> SUPPORTED_TYPES = new HashSet<StatementType>(

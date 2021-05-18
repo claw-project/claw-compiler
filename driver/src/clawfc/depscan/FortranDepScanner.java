@@ -22,7 +22,11 @@ import java.util.stream.Collectors;
 import clawfc.depscan.FortranDepParser.StatementInfo;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.ByteArrayIOStream;
-
+/**
+ * <code>FortranDepScanner</code> retrieves module dependencies information from
+ * preprocessed Fortran source.
+ *
+ */
 public class FortranDepScanner
 {
     FortranCommentsFilter commentsFilter;

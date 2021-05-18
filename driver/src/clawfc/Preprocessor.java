@@ -29,6 +29,10 @@ import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.Subprocess;
 import clawfc.utils.SubprocessFailed;
 
+/**
+ * <code>Preprocessor</code> encapsulates details of calling C preprocessor.
+ *
+ */
 public class Preprocessor
 {
     public static class PreprocessorInfo

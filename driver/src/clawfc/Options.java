@@ -25,6 +25,11 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Namespace;
 
+/**
+ * <code>Options</code> is a container for clawfc application's CLI options,
+ * parsed with the help of argparse4j library.
+ *
+ */
 public class Options
 {
     final Path workingDir;

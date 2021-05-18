@@ -25,6 +25,11 @@ import clawfc.parsers.CLAWRemoveIgnoreScannerParser;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.ParserErrorListener;
 
+/**
+ * <code>RemoveIgnoreDirectiveFilter</code> wraps ANTLR-generated parser for
+ * removing CLAW ignore decorations and restoring correspondent Fortran code.
+ *
+ */
 public class RemoveIgnoreDirectiveFilter
 {
     static class Listener extends CLAWRemoveIgnoreScannerBaseListener

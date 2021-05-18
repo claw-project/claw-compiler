@@ -21,6 +21,11 @@ import clawfc.parsers.CLAWIgnoreLineRecognizerLexer;
 import clawfc.parsers.CLAWIgnoreLineRecognizerParser;
 import clawfc.utils.ParserErrorListener;
 
+/**
+ * <code>IgnoreDirectiveRecognizer</code> wraps ANTLR-generated parser for
+ * processing lines of Fortran code decorated with the CLAW ignore directive.
+ *
+ */
 public class IgnoreDirectiveRecognizer
 {
     static class Listener extends CLAWIgnoreLineRecognizerBaseListener

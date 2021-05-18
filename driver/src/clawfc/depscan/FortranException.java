@@ -5,6 +5,11 @@
  */
 package clawfc.depscan;
 
+/**
+ * <code>FortranException</code> encapsulates information about the error which
+ * occurred during parsing of Fortran source file.
+ *
+ */
 public class FortranException extends Exception
 {
     Integer _charIdxInFile;

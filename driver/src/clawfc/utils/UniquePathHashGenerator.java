@@ -12,6 +12,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * <code>UniquePathHashGenerator</code> adds thread-safety and hash conflict
+ * resolution to <code>SimplePathHashGenerator</code>.
+ *
+ */
 public class UniquePathHashGenerator extends SimplePathHashGenerator
 {
     final Map<Path, String> pathToHash;

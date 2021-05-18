@@ -26,6 +26,11 @@ import clawfc.parsers.CLAWAddIgnoreScannerLexer;
 import clawfc.parsers.CLAWAddIgnoreScannerParser;
 import clawfc.utils.ParserErrorListener;
 
+/**
+ * <code>AddIgnoreDirectiveFilter</code> wraps ANTLR-generated parser for
+ * decorating Fortran code with CLAW ignore.
+ *
+ */
 public class AddIgnoreDirectiveFilter
 {
     static class Listener extends CLAWAddIgnoreScannerBaseListener

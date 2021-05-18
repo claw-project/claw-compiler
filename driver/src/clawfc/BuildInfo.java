@@ -22,6 +22,11 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+/**
+ * <code>BuildInfo</code> is a collection of static routines which search
+ * filesystem for files relevant to the build.
+ *
+ */
 public class BuildInfo
 {
     public static final String[] BUILDINFO_FILE_EXTENSIONS = new String[] { "fif", "bif" };

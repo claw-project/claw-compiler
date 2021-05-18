@@ -21,6 +21,12 @@ import java.util.Set;
 import clawfc.depscan.FortranFileProgramUnitInfo;
 import clawfc.utils.AsciiArrayIOStream;
 
+/**
+ * <code>PreprocessedFortranSourceData</code> encapsulates access to Fortran
+ * source file preprocessed with C preprocessor and CLAW (only ignore and
+ * verbatim directives).
+ *
+ */
 public class PreprocessedFortranSourceData
 {
     AsciiArrayIOStream ppSrc;

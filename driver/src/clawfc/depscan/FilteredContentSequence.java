@@ -12,6 +12,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * <code>FilteredContentSequence</code> is a container for sequences of
+ * Add/Remove operations performed by the text filters.
+ *
+ */
 public class FilteredContentSequence
 {
     public enum OpType {

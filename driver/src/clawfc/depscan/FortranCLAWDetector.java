@@ -23,6 +23,11 @@ import clawfc.depscan.parser.FortranCLAWScannerBaseListener;
 import clawfc.depscan.parser.FortranCLAWScannerLexer;
 import clawfc.depscan.parser.FortranCLAWScannerParser;
 
+/**
+ * <code>FortranCLAWDetector</code> wraps ANTLR-generated parser for detecting
+ * presence of CLAW directives in Fortran source files.
+ *
+ */
 public class FortranCLAWDetector
 {
     static class Listener extends FortranCLAWScannerBaseListener

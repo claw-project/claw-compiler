@@ -21,6 +21,11 @@ import clawfc.parsers.CLAWVerbatimLineRecognizerLexer;
 import clawfc.parsers.CLAWVerbatimLineRecognizerParser;
 import clawfc.utils.ParserErrorListener;
 
+/**
+ * <code>VerbatimDirectiveRecognizer</code> wraps ANTLR-generated parser for
+ * processing extracting content decorated with CLAW verbatim.
+ *
+ */
 public class VerbatimDirectiveRecognizer
 {
     static class Listener extends CLAWVerbatimLineRecognizerBaseListener

@@ -8,6 +8,11 @@ package clawfc;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * <code>BuildOrder</code> is an interface for building collections of Fortran
+ * modules with interdependencies, which constrain possible order of processing.
+ *
+ */
 public interface BuildOrder
 {
     public Map<String, ProgramUnitInfo> getUsedModules();

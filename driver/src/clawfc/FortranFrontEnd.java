@@ -26,6 +26,12 @@ import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.Subprocess;
 import clawfc.utils.SubprocessFailed;
 
+/**
+ * <code>FortranFrontEnd</code> encapsulates details of calling Omni compiler
+ * Frontend application to convert Fortran modules to XCodeML (either XMod or
+ * XAST).
+ *
+ */
 public class FortranFrontEnd
 {
     class DirData

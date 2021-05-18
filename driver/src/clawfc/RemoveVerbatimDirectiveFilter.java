@@ -25,6 +25,11 @@ import clawfc.parsers.CLAWVerbatimScannerParser;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.ParserErrorListener;
 
+/**
+ * <code>RemoveVerbatimDirectiveFilter</code> is a text filter which removes
+ * CLAW verbatim decoration.
+ *
+ */
 public class RemoveVerbatimDirectiveFilter
 {
     static class Listener extends CLAWVerbatimScannerBaseListener
