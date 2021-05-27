@@ -1574,7 +1574,7 @@ public class Driver
 
     static void printVersion()
     {
-        String vStr = sprintf("%s %s \"%s\" %s ", cfg().name(), cfg().version(), cfg().commit(), cfg().omniVersion());
+        String vStr = sprintf("%s %s \"%s\" %s \n", cfg().name(), cfg().version(), cfg().commit(), cfg().omniVersion());
         print(vStr);
     }
 };
