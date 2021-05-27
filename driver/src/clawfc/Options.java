@@ -427,7 +427,7 @@ public class Options
             outOpts.addArgument("-O", "--output-dir").help("Output directory for transformed FORTRAN files");
             ArgumentGroup cOpts = parser.addArgumentGroup("Compiler options");
             cOpts.addArgument("-I", "--pp-include-dir").nargs("*").action(Arguments.append()).help(
-                    "Add the directory to the search path for include files reference in preprocessor directives");
+                    "Add the directory to the search path for include files reference in preprocessor directives and FORTRAN include statements");
             cOpts.addArgument("-PO", "--pp-output-dir").help("Output directory for preprocessed FORTRAN source files");
             cOpts.addArgument("-D", "--add-macro").nargs("*").action(Arguments.append()).help("Predefine macro");
             cOpts.addArgument("-SI", "--src-include-dir").nargs("*").action(Arguments.append())
