@@ -44,6 +44,7 @@ public class Options
     final boolean _genModFiles;
     final List<Path> _inputFiles;
     final Path _outputFile;
+    final Path _outputMakeDepFile;
     final Path _outputDir;
     final Path _ppOutDir;
     final Path _xmodOutDir;
@@ -157,6 +158,11 @@ public class Options
     public Path outputFile()
     {
         return _outputFile;
+    }
+
+    public Path outputMakeDepFile()
+    {
+        return _outputMakeDepFile;
     }
 
     public Path outputDir()
@@ -435,6 +441,8 @@ public class Options
             cOpts.addArgument("-M", "-MI", "--mod-include-dir").nargs("*").action(Arguments.append())
                     .help("Add directory to the search path for .xmod files.");
             cOpts.addArgument("-MO", "--mod-output-dir").help("Output directory for .xmod files.");
+            cOpts.addArgument("-MD", "--make-dep-file").nargs("?").setConst("")
+                    .help("Generate GNU Make dependency file. Default value is <output file>.d");
             cOpts.addArgument("-J").nargs("*").action(Arguments.append()).help(
                     "DEPRECATED Add directory to the search path for the source of referenced Fortran modules and .xmod files."
                             + " First given is also output directory for generated .xmod files");
@@ -540,6 +548,7 @@ public class Options
         _printCLAWFiles = parsedArgs.getBoolean("print_claw_files");
         _inputFiles = getPathList(parsedArgs, "fortran_file");
         _outputFile = getOptionalPath(parsedArgs, "output_file");
+        _outputMakeDepFile = getOptionalPath(parsedArgs, "make_dep_file");
         _outputDir = getOptionalPath(parsedArgs, "output_dir");
         _ppOutDir = getOptionalPath(parsedArgs, "pp_output_dir");
         _xastOutDir = getOptionalPath(parsedArgs, "xast_output_dir");
@@ -643,6 +652,7 @@ public class Options
         res.append("Module include directories: \n" + toString(moduleIncludeDirs()));
         res.append("Predefined macros: \n\t" + String.join("\n\t", predefinedMacros()) + "\n");
         res.append(sprintf("Output file: \"%s\"\n", outputFile()));
+        res.append(sprintf("Output GNU Make dependencies file: \"%s\"\n", outputMakeDepFile()));
         res.append(sprintf("Output directory: \"%s\"\n", outputDir()));
         res.append(sprintf("Output xmod directory: \"%s\"\n", xmodOutputDir()));
         res.append(sprintf("Output xast directory: \"%s\"\n", xastOutputDir()));
@@ -705,7 +715,13 @@ public class Options
         Path path = null;
         if (str != null)
         {
-            path = toAbsPath(str);
+            if (!str.isEmpty())
+            {
+                path = toAbsPath(str);
+            } else
+            {
+                path = Paths.get("");
+            }
         }
         return path;
     }

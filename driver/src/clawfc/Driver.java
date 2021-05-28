@@ -9,6 +9,7 @@ import static clawfc.Utils.ASCII_CARRIAGE_RETURN;
 import static clawfc.Utils.ASCII_NEWLINE_VALUE;
 import static clawfc.Utils.collectIntoString;
 import static clawfc.Utils.copy;
+import static clawfc.Utils.dumpIntoFile;
 import static clawfc.Utils.executeTasksUntilFirstError;
 import static clawfc.Utils.fileExists;
 import static clawfc.Utils.getOrCreateDir;
@@ -19,6 +20,7 @@ import static clawfc.Utils.sprintf;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,6 +52,7 @@ import clawfc.depscan.FortranFileProgramUnitInfo;
 import clawfc.depscan.FortranFileProgramUnitInfoDeserializer;
 import clawfc.depscan.FortranFileProgramUnitInfoSerializer;
 import clawfc.depscan.FortranProgramUnitInfo;
+import clawfc.depscan.serial.FortranProgramUnitType;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.FileInfo;
 import clawfc.utils.FileInfoImpl;
@@ -256,6 +259,16 @@ public class Driver
                         targetModuleNames);
                 info("Verifying input xmod files...");
                 setXmodData(usedModules, targetModuleNames, inputXmods);
+                if (opts.outputMakeDepFile() != null)
+                {
+                    info("Generating GNU Make dependency files...");
+                    if (onlyCLAWTargets)
+                    {
+                        Build.sanityCheck(availModules, getTargetModuleNames(availModules, false, false));
+                    }
+                    generateMakeDepFiles(opts.inputFiles(), opts.outputMakeDepFile(), opts.outputFile(),
+                            opts.outputDir(), availModules, buildInfoBySrcPath);
+                }
                 final FortranFrontEnd ffront = new FortranFrontEnd(cfg(), opts, tmpDir);
                 if (opts.resolveDependencies())
                 {
@@ -1390,6 +1403,135 @@ public class Driver
         }
     }
 
+    static class GetSourceFilesDependencies
+    {
+        public GetSourceFilesDependencies(List<Path> inputFiles,
+                Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath, Map<String, ProgramUnitInfo> modInfo)
+        {
+            this.inputFiles = inputFiles;
+            this.buildInfoBySrcPath = buildInfoBySrcPath;
+            this.modInfo = modInfo;
+            srcFileDeps = new HashMap<Path, Set<Path>>();
+            modDeps = new HashMap<String, Set<Path>>();
+        }
+
+        public Map<Path, Set<Path>> run()
+        {
+            Map<Path, Set<Path>> srcFileDeps = new HashMap<Path, Set<Path>>();
+            for (Path inFilePath : inputFiles)
+            {
+                srcFileDeps.put(inFilePath, getSrcFileDeps(inFilePath));
+            }
+            return Collections.unmodifiableMap(srcFileDeps);
+        }
+
+        Set<Path> getSrcFileDeps(Path srcFile)
+        {
+            Set<Path> res = srcFileDeps.get(srcFile);
+            if (res == null)
+            {
+                res = new HashSet<Path>();
+                srcFileDeps.put(srcFile, res);
+                res.add(srcFile);
+                final FortranFileProgramUnitInfo fileInfo = buildInfoBySrcPath.get(srcFile).getInfo();
+                res.addAll(fileInfo.getIncludes());
+                Set<String> srcFileMods = new HashSet<String>();
+                for (FortranProgramUnitInfo unitInfo : fileInfo.getUnits())
+                {
+                    if (unitInfo.getType() == FortranProgramUnitType.MODULE)
+                    {
+                        srcFileMods.add(unitInfo.getName());
+                    }
+                }
+                Set<String> visitedMods = new HashSet<String>();
+                for (FortranProgramUnitInfo unitInfo : fileInfo.getUnits())
+                {
+                    for (String usedModName : unitInfo.getUsedModuleNames())
+                    {
+                        if (!visitedMods.contains(usedModName) && !srcFileMods.contains(usedModName))
+                        {
+                            res.addAll(getModDeps(usedModName));
+                            visitedMods.add(usedModName);
+                        }
+                    }
+                }
+            }
+            return Collections.unmodifiableSet(res);
+        }
+
+        Set<Path> getModDeps(String modName)
+        {
+            Set<Path> res = modDeps.get(modName);
+            if (res == null)
+            {
+                res = new HashSet<Path>();
+                modDeps.put(modName, res);
+                final ProgramUnitInfo unitInfo = modInfo.get(modName);
+                if (unitInfo.hasSource())
+                {
+                    res.addAll(getSrcFileDeps(unitInfo.getSrcPath()));
+                } else
+                {
+                    res.add(unitInfo.getXMod().getFilePath());
+                }
+            }
+            return Collections.unmodifiableSet(res);
+        }
+
+        final List<Path> inputFiles;
+        final Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath;
+        final Map<String, ProgramUnitInfo> modInfo;
+        Map<Path, Set<Path>> srcFileDeps;
+        Map<String, Set<Path>> modDeps;
+    }
+
+    static void saveMakeDepfile(Path filePath, Collection<Path> depFilePaths, Path outFilePath) throws IOException
+    {
+        try (AsciiArrayIOStream txt = new AsciiArrayIOStream())
+        {
+            try (PrintWriter writer = new PrintWriter(txt))
+            {
+                writer.println(sprintf("%s: \\", outFilePath.toString()));
+                List<Path> sortedFilePaths = new ArrayList<Path>(depFilePaths);
+                sortedFilePaths.sort(Path::compareTo);
+                for (int i = 0, n = sortedFilePaths.size() - 1; i < n; ++i)
+                {
+                    writer.println(sprintf("    %s \\", sortedFilePaths.get(i)));
+                }
+                writer.println(sprintf("    %s", sortedFilePaths.get(sortedFilePaths.size() - 1)));
+            }
+            dumpIntoFile(filePath, txt.getAsInputStreamUnsafe());
+        }
+    }
+
+    static void generateMakeDepFiles(List<Path> inputFiles, Path outMakeDepFilePath, Path outFilePath,
+            final Path outDir, Map<String, ProgramUnitInfo> usedModules,
+            Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath) throws Exception
+    {
+        Map<Path, Set<Path>> srcFileDeps = (new GetSourceFilesDependencies(inputFiles, buildInfoBySrcPath, usedModules))
+                .run();
+
+        if (outFilePath != null)
+        {
+            if (outMakeDepFilePath.toString().isEmpty())
+            {
+                outMakeDepFilePath = outFilePath.getParent().resolve(outFilePath.getFileName().toString() + ".d");
+            }
+            getOrCreateDir(outMakeDepFilePath.getParent());
+            saveMakeDepfile(outMakeDepFilePath, srcFileDeps.get(inputFiles.get(0)), outFilePath);
+        } else
+        {
+            getOrCreateDir(outDir);
+            for (Path srcFilePath : inputFiles)
+            {
+
+                outFilePath = outDir.resolve(srcFilePath.getFileName());
+                outMakeDepFilePath = outDir.resolve(srcFilePath.getFileName().toString() + ".d");
+                saveMakeDepfile(outMakeDepFilePath, srcFileDeps.get(srcFilePath), outFilePath);
+            }
+        }
+    }
+
     static void print(String s)
     {
         System.out.print(s);
@@ -1443,6 +1585,23 @@ public class Driver
             Path tmpDirPath = Files.createTempDirectory(Paths.get(Utils.DEFAULT_TOP_TEMP_DIR), "clawfc");
             tmpDirPath.toFile().deleteOnExit();
             return tmpDirPath;
+        }
+    }
+
+    static void verifyOutputDir(final Options opts) throws Exception
+    {
+        if (opts.inputFiles().size() == 1)
+        {
+            if (opts.outputFile() == null && opts.outputDir() == null)
+            {
+                throw new Exception(sprintf("Either output file or output dir must be specified"));
+            }
+        } else if (opts.inputFiles().size() > 1)
+        {
+            if (opts.outputDir() == null)
+            {
+                throw new Exception(sprintf("Output dir must be specified when multiple input files are used"));
+            }
         }
     }
 
@@ -1525,6 +1684,15 @@ public class Driver
                 }
                 return;
             }
+            if (opts.outputMakeDepFile() != null)
+            {
+                verifyOutputDir(opts);
+                if (opts.inputFiles().size() > 1 && !opts.outputMakeDepFile().toString().isEmpty())
+                {
+                    throw new Exception(sprintf(
+                            "--make-dep-file / -MD must be specified without a value when multiple input files are used"));
+                }
+            }
             if (opts.generateModFiles())
             {
                 if (opts.xmodOutputDir() == null)
@@ -1535,40 +1703,25 @@ public class Driver
             }
             if (opts.stopAfterXmodGeneration())
             {
-            } else if (opts.stopAfterXastGeneration())
-            {
-
-            } else
-            {
-                ClawX2T.verifyDirectiveOption(opts.acceleratorDirectiveLanguage());
-                ClawX2T.verifyTargetOption(opts.targetPlatform());
-                ClawX2T.verifyConfigFile(opts.configFile());
-                ClawX2T.verifyModelConfigFile(opts.modelConfigFile());
-                if (opts.stopAfterTranslation())
-                {
-
-                } else if (opts.stopAfterDecompilation())
-                {
-
-                } else
-                {
-                    if (opts.inputFiles().size() == 1)
-                    {
-                        if (opts.outputFile() == null && opts.outputDir() == null)
-                        {
-                            throw new Exception(sprintf("Either output file or output dir must be specified"));
-                        }
-                    } else if (opts.inputFiles().size() > 1)
-                    {
-                        if (opts.outputDir() == null)
-                        {
-                            throw new Exception(
-                                    sprintf("Output dir must be specified when multiple input files are used"));
-                        }
-                    }
-                }
+                return;
             }
-
+            if (opts.stopAfterXastGeneration())
+            {
+                return;
+            }
+            ClawX2T.verifyDirectiveOption(opts.acceleratorDirectiveLanguage());
+            ClawX2T.verifyTargetOption(opts.targetPlatform());
+            ClawX2T.verifyConfigFile(opts.configFile());
+            ClawX2T.verifyModelConfigFile(opts.modelConfigFile());
+            if (opts.stopAfterTranslation())
+            {
+                return;
+            }
+            if (opts.stopAfterDecompilation())
+            {
+                return;
+            }
+            verifyOutputDir(opts);
         }
     }
 
