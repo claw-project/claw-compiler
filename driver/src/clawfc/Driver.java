@@ -56,6 +56,7 @@ import clawfc.depscan.serial.FortranProgramUnitType;
 import clawfc.utils.AsciiArrayIOStream;
 import clawfc.utils.FileInfo;
 import clawfc.utils.FileInfoImpl;
+import clawfc.utils.GMakeJobServerConnection;
 import clawfc.utils.PathHashGenerator;
 import clawfc.utils.UniquePathHashGenerator;
 
@@ -174,9 +175,19 @@ public class Driver
                 return;
             }
             Path tmpDir = null;
+            GMakeJobServerConnection gmakeConnection = null;
             try
             {
-                final int maxNumMPJobs = getMaxNumMPJobs(opts);
+                final int maxNumReqMPJobs = getMaxNumMPJobs(opts);
+                final int maxNumMPJobs;
+                if (maxNumReqMPJobs > 1 && opts.syncWithGMakeJobServer())
+                {
+                    gmakeConnection = new GMakeJobServerConnection();
+                    maxNumMPJobs = gmakeConnection.getSlots(maxNumReqMPJobs);
+                } else
+                {
+                    maxNumMPJobs = maxNumReqMPJobs;
+                }
                 Map<Path, FortranFileProgramUnitInfoData> buildInfoBySrcPath;
                 if (!opts.buildInfoIncludeDirs().isEmpty())
                 {
@@ -333,6 +344,10 @@ public class Driver
                 saveOutputSrc(outSrcBySrcPath, opts.outputFile(), opts.outputDir(), maxNumMPJobs);
             } finally
             {
+                if (gmakeConnection != null)
+                {
+                    gmakeConnection.close();
+                }
                 if (tmpDir != null && !opts.keepIntermediateFiles())
                 {
                     Utils.removeDir(tmpDir);

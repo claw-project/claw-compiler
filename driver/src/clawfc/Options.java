@@ -94,6 +94,7 @@ public class Options
     final String _fCompilerCmd;
     final List<Path> _transSetPaths;
     final Path _ffrontDebugDir;
+    final boolean _syncWithGMakeJobServer;
 
     public List<Path> transSetPaths()
     {
@@ -400,6 +401,11 @@ public class Options
         return _maxNumMPJobs;
     }
 
+    public boolean syncWithGMakeJobServer()
+    {
+        return _syncWithGMakeJobServer;
+    }
+
     public static Options parseCmdlineArguments(String[] args) throws Exception
     {
         return parseCmdlineArguments(args, Utils.STARTUP_DIR);
@@ -500,6 +506,8 @@ public class Options
             mpOpts.addArgument("-mp", "--max-num-mp-jobs").type(Integer.class)
                     .help("Maximum number of multiprocessing jobs");
             mpOpts.addArgument("--disable-mp").action(Arguments.storeTrue()).help("Disable multiprocessing");
+            cOpts.addArgument("-mj", "--sync-with-gmake").action(Arguments.storeTrue())
+                    .help("Synchronize number of threads with GNU Make job server");
             ArgumentGroup dcOpts = parser.addArgumentGroup("Decompiler options");
             dcOpts.addArgument("--max-fortran-line-length", "-w").type(Integer.class).setDefault(Integer.valueOf(80))
                     .help("Set the number of columns for the output FORTRAN file (default: 80)");
@@ -632,6 +640,7 @@ public class Options
         _genModFiles = parsedArgs.getBoolean("gen_mod_files");
         _transSetPaths = getPathList(parsedArgs, "trans_path_dir");
         _ffrontDebugDir = getOptionalPath(parsedArgs, "ffront_debug_dir");
+        _syncWithGMakeJobServer = parsedArgs.getBoolean("sync_with_gmake");
     }
 
     String toString(List<Path> paths)
@@ -703,6 +712,7 @@ public class Options
         res.append(sprintf("Fortran compiler cmd: %s\n", fortranCompilerCmd()));
         res.append(sprintf("Disable multiprocessing: %s\n", disableMultiprocessing()));
         res.append(sprintf("Maximum number of multiprocessing jobs: %s\n", maxNumMultiprocJobs()));
+        res.append(sprintf("Sync with GNU Make jobs server: %s\n", syncWithGMakeJobServer()));
         res.append(sprintf("Generate dependencies info files: %s\n", generateBuildInfoFiles()));
         res.append(sprintf("Generate xmod files: %s\n", generateModFiles()));
         res.append(sprintf("FFront Debug directory: \"%s\"\n", ffrontDebugDir()));
