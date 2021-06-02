@@ -36,7 +36,7 @@ def comment_lines(comment_style, lines):
 CS_BY_EXT = {'.java': CS.C, '.sh': CS.SH, '.xml': CS.XML, '.xsd': CS.XML, '.g4': CS.C, '.py': CS.SH}
 FILE_EXTENSIONS = {'.java', '.sh', '.xml', '.xsd', '.g4'}  # , '.py'}
 IGNORE_REL_PATHS = {'test', 'driver/tests/res', 'driver/unittests/res', 'cx2t/unittest/data',
-                    'sonar-scanner-4.6.0.2311-linux'}
+                    'sonar-scanner-4.6.0.2311-linux', 'xcodeml-tools'}
 MAX_HEADER_LINES = 50
 
 THIS_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
