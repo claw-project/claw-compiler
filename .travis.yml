@@ -57,6 +57,8 @@ matrix:
         - ant
         - ant-optional
 before_install:
+- git submodule init
+- git submodule update
 - wget https://dl.bintray.com/sonarsource/SonarQube/org/sonarsource/scanner/cli/sonar-scanner-cli/4.6.0.2311/sonar-scanner-cli-4.6.0.2311-linux.zip
 - unzip sonar-scanner-cli-4.6.0.2311-linux.zip
 - export PATH=$PATH:$TRAVIS_BUILD_DIR/sonar-scanner-4.6.0.2311-linux/bin

@@ -23,18 +23,12 @@ They can be packaged and built together with the CLAW Compiler.
 
 To build and install the CLAW Compiler, use the following commands.
 
-In source build:
-```bash
-git clone git@github.com:claw-project/claw-compiler.git
-cd claw-compiler
-cmake -DCMAKE_INSTALL_PREFIX=<install_path> .
-make
-make install
-```
-
 Out-of-source build:
 ```bash
 git clone git@github.com:claw-project/claw-compiler.git
+cd claw-compiler
+git submodule init
+git submodule update --remote
 export SRC_DIR="$(pwd)/claw-compiler"
 mkdir <build_path>
 cd <build_path>
@@ -45,7 +39,7 @@ make install
 
 ##### Specific Java version
 If you have several Java compiler version installed on your machine, you must
-set the cmake variable `JAVA_HOME` environment variable. E.g. 
+set the cmake variable `JAVA_HOME`. E.g. 
 ```cmake -DJAVA_HOME=<install_path> ... ```
 
 ##### External XCodeML tools at build-time
