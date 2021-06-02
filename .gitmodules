@@ -1,4 +1,3 @@
-[submodule "omni-compiler"]
-	path = omni-compiler
-	url = https://github.com/omni-compiler/xcodeml-tools.git
-	branch = master
+[submodule "xcodeml-tools"]
+	path = xcodeml-tools
+	url = https://github.com/claw-project/xcodeml-tools

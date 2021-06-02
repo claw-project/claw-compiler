@@ -1,0 +1,16 @@
+<OmniFortranModule version="1.0">
+  <name>mod13</name>
+  <depends>
+    <name>mod12</name>
+  </depends>
+  <typeTable>
+  </typeTable>
+  <identifiers>
+  </identifiers>
+  <declarations>
+  </declarations>
+  <interfaceDecls>
+  </interfaceDecls>
+  <aux_info>
+  </aux_info>
+</OmniFortranModule>

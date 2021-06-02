@@ -5,32 +5,23 @@
 The CLAW Compiler has the followings dependencies:
 * Java 1.8 or greater
 * Ant 1.9 or greater
-* yacc, lex (For OMNI Compiler)
-* C/C++ compiler (supports C99) (For OMNI Compiler)
-* Fortran compiler (supports Fortran 90) (For OMNI Compiler)
-* libxml2 (For OMNI Compiler)
 * cmake and make
+
+Additional dependencies, if built with XCodeML tools from OMNI Compiler: 
+* yacc, lex
+* C/C++ compiler (supports C99)
+* Fortran compiler (supports Fortran 90)
+* libxml2
 
 
 
 ### Build & install
 
-CLAW Compiler (clawfc) is built on the top of the [OMNI Compiler](http://www.omni-compiler.org).
-OMNI Compiler is packaged and built together with the CLAW Compiler.
+CLAW Compiler (clawfc) uses XCodeML tools (Fortran frontend and backend) from [OMNI Compiler](http://www.omni-compiler.org).
+They can be packaged and built together with the CLAW Compiler.
 
 
-To build the and install the CLAW Compiler, use the followings commands.
-
-In source build:
-```bash
-git clone git@github.com:claw-project/claw-compiler.git
-cd claw-compiler
-git submodule init
-git submodule update --remote
-cmake -DCMAKE_INSTALL_PREFIX=<install_path> .
-make
-make install
-```
+To build and install the CLAW Compiler, use the following commands.
 
 Out-of-source build:
 ```bash
@@ -38,17 +29,33 @@ git clone git@github.com:claw-project/claw-compiler.git
 cd claw-compiler
 git submodule init
 git submodule update --remote
-mkdir build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=<install_path> ..
+export SRC_DIR="$(pwd)/claw-compiler"
+mkdir <build_path>
+cd <build_path>
+cmake -DCMAKE_INSTALL_PREFIX=<install_path> -S ${SRC_DIR}
 make
 make install
 ```
 
 ##### Specific Java version
 If you have several Java compiler version installed on your machine, you must
-export the `JAVA_HOME` environment variable. This information will be picked
-by the build system for the entire project.
+set the cmake variable `JAVA_HOME`. E.g. 
+```cmake -DJAVA_HOME=<install_path> ... ```
+
+##### External XCodeML tools at build-time
+It is possible to build CLAW Compiler with already installed version of XCodeML tools. To do this, 
+set the cmake option `BUILD_OMNI_XCODEML_TOOLS` to `OFF` and specify the path to the XCodeML tools installation 
+directory in cmake variable `OMNI_HOME`.
+```cmake -DBUILD_OMNI_XCODEML_TOOLS=OFF -DOMNI_HOME=<xcodeml_tools_install_dir> ... ```
+
+Note however that each version of the CLAW Compiler is tightly bound to the specific version of the XCodeML tools, 
+therefore only the version from [CLAW repository](https://github.com/claw-project/xcodeml-tools) with the same GIT commit
+as the one specified in cmake variable 'OMNI_GIT_COMMIT_HASH' will be compatible.
+
+##### External XCodeML tools at runtime
+By default CLAW Compiler will add XCodeML tools to its install directory. This can be disabled by setting cmake 
+option `ADD_OMNI_XCODEML_TOOLS_TO_INSTALL` to `OFF`. Additionally, runtime path to the XCodeML tools can be overridden
+by setting the environment variable `OMNI_HOME` before running the CLAW compiler.
 
 ##### Offline build steps
 If your system has no network connection to the Internet, you need to get the
@@ -67,30 +74,9 @@ to your target system and add `OFFLINE` as a CMake option as follows:
 cmake -DOFFLINE=ON .
 ```
 
-##### Switch git submodule from `https` to `ssh`
-OMNI Compiler is referenced to this repository as a git submodule. The link
-to the repository is the `https` link to the official OMNI repository. If your
-network only allow ssh connection, you should change the `.gitmodules` file at
-the root of this repo.
-
-Git submodule configuration with `https` link to the OMNI Compiler repository:
-```
-[submodule "omni-compiler"]
-	path = omni-compiler
-	url = https://github.com/omni-compiler/omni-compiler.git
-	branch = master
-```
-
-Git submodule configuration with `ssh` link to the OMNI Compiler repository:
-```
-[submodule "omni-compiler"]
-	path = omni-compiler
-	url = git@github.com:omni-compiler/omni-compiler.git
-	branch = master
-```
-
-This must be done before the execution of the `git submodule` commands.
-
+##### Switch git checkout from `https` to `ssh`
+If you are building without external OMNI XCodeML tools and your network only allow ssh connection, set the cmake 
+variable `OMNI_GIT_REPOSITORY` to `git@github.com:claw-project/xcodeml-tools.git`
 
 ##### Specific steps for Piz Daint
 On Piz Daint, specific steps as to be performed in order to have a successful
@@ -106,8 +92,6 @@ following commands:
 ```bash
 git clone git@github.com:claw-project/claw-compiler.git
 cd claw-compiler
-git submodule init
-git submodule update --remote
 mkdir build
 cd build
 FC=ftn CC=cc CXX=CC cmake -DCMAKE_INSTALL_PREFIX=<install_path> -DOMNI_MPI_FC="MPI_FC=ftn" -DOMNI_MPI_CC="MPI_CC=cc" ..

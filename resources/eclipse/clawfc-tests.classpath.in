@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="driver-tests-src"/>
+	<classpathentry kind="src" path="driver-tests-gen-src"/>
+	<classpathentry kind="src" path="driver-tests-utils-src"/>
+	<classpathentry kind="src" path="cx2t-src"/>
+	<classpathentry kind="src" path="cx2t-gen-src"/>
+	<classpathentry kind="src" path="driver-src"/>
+	<classpathentry kind="src" path="driver-gen-src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/@ANTLR4_NAME@.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@ANTLR4_NAME@-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/@ANTLR4_RUNTIME_NAME@.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@ANTLR4_RUNTIME_NAME@-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/@TOML_NAME@.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@TOML_NAME@-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/@COMMON_CLI_NAME@.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@COMMON_CLI_NAME@-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/@ARGPARSE_NAME@.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/@ARGPARSE_NAME@-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/junit.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/junit-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/hamcrest-core.jar">
+	    <attributes>
+			<attribute name="javadoc_location" value="jar:file:@CX2T_3RDPARTY_DIST_DIR@/hamcrest-core-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/jaxb-runtime.jar"/>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/jaxb-core.jar"/>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/jakarta.xml.bind-api.jar"/>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/jakarta.activation.jar"/>
+	<classpathentry kind="lib" path="@CX2T_3RDPARTY_DIST_DIR@/istack-commons-runtime.jar"/>
+	<classpathentry kind="lib" path="@OMNI_JAR_TOOLS@"/>
+	<classpathentry kind="lib" path="@OMNI_JAR_JNI@"/>
+	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_TATSU@.jar"/>
+	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_SHENRON@.jar"/>
+	<classpathentry kind="lib" path="@CX2T_DIST_DIR@/@CLAW_X2T_WANI@.jar"/>
+	<classpathentry kind="lib" path="@INT_CLAW_HOME@/bin/@CLAWFC_JAR@"/>
+
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -15,3 +15,4 @@ set(TEST_BASE_FLAGS "")         # Base flags for test case compilation
 set(OPENACC_FLAGS "")           # flags to compile with OpenACC support
 set(OPENMP_FLAGS "-fopenmp")    # flags to compile with OpenMP support
 set(COMPILER_MACRO "-D_GNU")    # predefined macro by compiler
+set(FC_VENDOR "gnu")

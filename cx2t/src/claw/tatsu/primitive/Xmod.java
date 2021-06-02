@@ -4,17 +4,29 @@
  */
 package claw.tatsu.primitive;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+
+import org.w3c.dom.Document;
+
 import claw.tatsu.common.Context;
 import claw.tatsu.xcodeml.abstraction.PromotionInfo;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.*;
-import org.w3c.dom.Document;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xid;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.XstorageClass;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranModule;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
 
 /**
  * Primitive transformation and test and utility for XcodeML/F and CLAW enhanced
@@ -47,14 +59,14 @@ public final class Xmod
      * @return A FortranModule object representing the module if found. Null
      *         otherwise.
      */
-    private static FortranModule find(String moduleName, String moduleSuffix)
+    private static FortranModule find(Context context, String moduleName, String moduleSuffix)
     {
         if (moduleSuffix == null)
         {
             moduleSuffix = "";
         }
-        FortranModule clawModule = findModuleInPath(moduleName, moduleSuffix);
-        return clawModule != null ? clawModule : findModuleInPath(moduleName, XMOD_FILE_EXTENSION);
+        FortranModule clawModule = findModuleInPath(context, moduleName, moduleSuffix);
+        return clawModule != null ? clawModule : findModuleInPath(context, moduleName, XMOD_FILE_EXTENSION);
     }
 
     /**
@@ -65,13 +77,12 @@ public final class Xmod
      * @return A FortranModule object representing the module if found. Null
      *         otherwise.
      */
-    private static FortranModule findModuleInPath(String moduleName, String moduleSuffix)
+    private static FortranModule findModuleInPath(Context context, String moduleName, String moduleSuffix)
     {
-        for (String dir : Context.get().getModuleCache().getSearchPaths())
+        for (String dir : context.getModuleCache().getSearchPaths())
         {
-            String path = dir + "/" + moduleName + moduleSuffix;
-            File f = new File(path);
-            if (f.exists())
+            Path path = Paths.get(dir).resolve(moduleName + moduleSuffix);
+            if (Files.exists(path))
             {
                 Document doc = XnodeUtil.readXmlFile(path);
                 return doc != null ? new FortranModule(doc, moduleName, dir) : null;
@@ -87,9 +98,9 @@ public final class Xmod
      * @return A FortranModule object representing the module if found. Null
      *         otherwise.
      */
-    public static FortranModule find(String moduleName)
+    public static FortranModule find(Context context, String moduleName)
     {
-        return moduleName == null ? null : find(moduleName, XMOD_FILE_EXTENSION);
+        return moduleName == null ? null : find(context, moduleName, XMOD_FILE_EXTENSION);
     }
 
     /**
@@ -99,9 +110,9 @@ public final class Xmod
      * @return A FortranModule object representing the module if found. Null
      *         otherwise.
      */
-    public static FortranModule findClaw(String moduleName)
+    public static FortranModule findClaw(Context context, String moduleName)
     {
-        return find(moduleName, getSuffix());
+        return find(context, moduleName, getSuffix(context));
     }
 
     /**
@@ -110,17 +121,17 @@ public final class Xmod
      *
      * @return A formatted string for the CLAW module file name.
      */
-    public static String getSuffix()
+    public static String getSuffix(Context context)
     {
         StringBuilder str = new StringBuilder();
         str.append(".");
-        if (Context.get().getCompilerDirective() != null)
+        if (context.getCompilerDirective() != null)
         {
-            str.append(Context.get().getCompilerDirective()).append(".");
+            str.append(context.getCompilerDirective()).append(".");
         }
-        if (Context.get().getTarget() != null)
+        if (context.getTarget() != null)
         {
-            str.append(Context.get().getTarget()).append(".");
+            str.append(context.getTarget()).append(".");
         }
         str.append(CLAW_MOD_SUFFIX);
         str.append(XMOD_FILE_EXTENSION);
@@ -141,18 +152,19 @@ public final class Xmod
     public static void updateSignature(String moduleName, XcodeProgram xcodeml, FfunctionDefinition fctDef,
             FfunctionType fctType, boolean importFctType) throws IllegalTransformationException
     {
+        final Context context = xcodeml.context();
         FortranModule mod;
-        if (Context.get().getModuleCache().isModuleLoaded(moduleName))
+        if (context.getModuleCache().isModuleLoaded(moduleName))
         {
-            mod = Context.get().getModuleCache().get(moduleName);
+            mod = context.getModuleCache().get(moduleName);
         } else
         {
-            mod = fctDef.findContainingXmod();
+            mod = fctDef.findContainingXmod(context);
             if (mod == null)
             {
                 throw new IllegalTransformationException("Unable to locate module file for: " + moduleName);
             }
-            Context.get().getModuleCache().add(moduleName, mod);
+            context.getModuleCache().add(moduleName, mod);
         }
 
         FfunctionType fctTypeMod;

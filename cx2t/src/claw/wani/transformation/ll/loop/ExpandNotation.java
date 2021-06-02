@@ -1,8 +1,16 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
+ * @author clementval
  */
 package claw.wani.transformation.ll.loop;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
@@ -15,20 +23,23 @@ import claw.tatsu.xcodeml.abstraction.FunctionCall;
 import claw.tatsu.xcodeml.abstraction.Xblock;
 import claw.tatsu.xcodeml.exception.IllegalTransformationException;
 import claw.tatsu.xcodeml.xnode.XnodeUtil;
-import claw.tatsu.xcodeml.xnode.common.*;
-import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.Xcode;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
+import claw.tatsu.xcodeml.xnode.common.Xid;
+import claw.tatsu.xcodeml.xnode.common.Xnode;
+import claw.tatsu.xcodeml.xnode.common.Xscope;
+import claw.tatsu.xcodeml.xnode.common.XstorageClass;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
 import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
-import claw.wani.language.ClawPragma;
 import claw.wani.language.ClawClause;
+import claw.wani.language.ClawPragma;
 import claw.wani.serialization.Serialization;
 import claw.wani.serialization.SerializationStep;
 import claw.wani.transformation.ClawBlockTransformation;
 import claw.wani.x2t.configuration.Configuration;
 import claw.wani.x2t.translator.ClawTranslator;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * <pre>
@@ -43,7 +54,6 @@ import java.util.stream.Collectors;
  * END DO
  * </pre>
  *
- * @author clementval
  */
 public class ExpandNotation extends ClawBlockTransformation
 {
@@ -116,7 +126,7 @@ public class ExpandNotation extends ClawBlockTransformation
             return true;
         } else
         { // single transformation
-            // pragma must be followed by an assign statement
+          // pragma must be followed by an assign statement
             Xnode stmt = _clawStart.getPragma().matchSibling(Xcode.F_ASSIGN_STATEMENT);
             if (stmt == null)
             {
@@ -167,7 +177,8 @@ public class ExpandNotation extends ClawBlockTransformation
     @Override
     public void transform(XcodeProgram xcodeml, Translator translator, Transformation other) throws Exception
     {
-        ClawTranslator ct = (ClawTranslator) translator;
+        final ClawTranslator ct = (ClawTranslator) translator;
+        final Configuration cfg = ct.cfg();
 
         // 1. Find the function/module declaration TODO handle module/program ?
         FfunctionDefinition fctDef = _clawStart.getPragma().findParentFunction();
@@ -183,7 +194,7 @@ public class ExpandNotation extends ClawBlockTransformation
         Xblock doStmtsBlock = null;
         Xblock dataRegionBlock = null;
 
-        if (Context.isTarget(Target.GPU))
+        if (xcodeml.context().isTarget(Target.GPU))
         {
             Xblock crtBlock;
             for (int i = 0; i < _groupedAssignStmts.size(); ++i)
@@ -216,9 +227,10 @@ public class ExpandNotation extends ClawBlockTransformation
                         doStmtsBlock.getEnd(), clauses, _groupedAssignStmts.size());
 
                 if (_clawStart.hasClause(ClawClause.UPDATE)
-                        && Configuration.get().getBooleanParameter(Configuration.SCA_FORWARD_UPDATE_ENABLED))
+                        && cfg.getBooleanParameter(Configuration.SCA_FORWARD_UPDATE_ENABLED))
                 {
-                    updateRegionBlock = generateUpdateClause(xcodeml, parallelRegionBlock, readArrays, writtenArrays);
+                    updateRegionBlock = generateUpdateClause(cfg, xcodeml, parallelRegionBlock, readArrays,
+                            writtenArrays);
                 }
 
                 if (updateRegionBlock == null)
@@ -242,13 +254,13 @@ public class ExpandNotation extends ClawBlockTransformation
         }
 
         if (_clawStart.hasClause(ClawClause.SAVEPOINT)
-                && Configuration.get().getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
+                && cfg.getBooleanParameter(Configuration.SCA_SERIALIZATION_ENABLED))
         {
             if (dataRegionBlock == null)
             {
                 dataRegionBlock = doStmtsBlock;
             }
-            generateSavepoint(xcodeml, dataRegionBlock, readArrays, writtenArrays);
+            generateSavepoint(cfg, xcodeml, dataRegionBlock, readArrays, writtenArrays);
         }
 
         removePragma();
@@ -378,7 +390,7 @@ public class ExpandNotation extends ClawBlockTransformation
      * @param xcodeml Current XcodeML translation unit.
      * @param hook    Block around which directives are generated
      */
-    private Xblock generateUpdateClause(XcodeProgram xcodeml, Xblock hook, List<String> readArrays,
+    private Xblock generateUpdateClause(Configuration cfg, XcodeProgram xcodeml, Xblock hook, List<String> readArrays,
             List<String> writtenArrays)
     {
         Xnode startNode;
@@ -386,8 +398,7 @@ public class ExpandNotation extends ClawBlockTransformation
 
         // Generate host to device movement
         if ((_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
-                || _clawStart.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE)
-                && Configuration.get().updateAtInput())
+                || _clawStart.getUpdateClauseValue() == DataMovement.HOST_TO_DEVICE) && cfg.updateAtInput())
         {
             startNode = Directive.generateUpdate(xcodeml, hook.getStart(), readArrays, DataMovement.HOST_TO_DEVICE);
         } else
@@ -397,8 +408,7 @@ public class ExpandNotation extends ClawBlockTransformation
 
         // Generate device to host movement
         if ((_clawStart.getUpdateClauseValue() == DataMovement.TWO_WAY
-                || _clawStart.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST)
-                && Configuration.get().updateAtOutput())
+                || _clawStart.getUpdateClauseValue() == DataMovement.DEVICE_TO_HOST) && cfg.updateAtOutput())
         {
             endNode = Directive.generateUpdate(xcodeml, hook.getEnd(), writtenArrays, DataMovement.DEVICE_TO_HOST);
         } else
@@ -414,29 +424,30 @@ public class ExpandNotation extends ClawBlockTransformation
      * @param xcodeml Current XcodeML translation unit.
      * @param hook    Block around which serialization are generated
      */
-    private Xblock generateSavepoint(XcodeProgram xcodeml, Xblock hook, List<String> readArrays,
+    private Xblock generateSavepoint(Configuration cfg, XcodeProgram xcodeml, Xblock hook, List<String> readArrays,
             List<String> writtenArrays)
     {
-        Serialization.insertImports(xcodeml, hook.getStart().findParentFunction());
+        final Context context = xcodeml.context();
+        Serialization.insertImports(cfg, xcodeml, hook.getStart().findParentFunction());
 
         Xnode start = null;
         Xnode end;
 
-        if (Context.isTarget(Target.GPU))
+        if (context.isTarget(Target.GPU))
         {
             // Read inputs
-            start = Serialization.generateReadSavepoint(xcodeml, hook.getStart(), _clawStart.getMetadataMap(),
+            start = Serialization.generateReadSavepoint(cfg, xcodeml, hook.getStart(), _clawStart.getMetadataMap(),
                     readArrays, _clawStart.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
-        } else if (Context.isTarget(Target.CPU))
+        } else if (context.isTarget(Target.CPU))
         {
             // Write inputs
-            start = Serialization.generateWriteSavepoint(xcodeml, hook.getStart(), _clawStart.getMetadataMap(),
+            start = Serialization.generateWriteSavepoint(cfg, xcodeml, hook.getStart(), _clawStart.getMetadataMap(),
                     readArrays, _clawStart.value(ClawClause.SAVEPOINT), SerializationStep.SER_IN);
         }
 
         // Write outputs
-        end = Serialization.generateWriteSavepoint(xcodeml, hook.getEnd(), _clawStart.getMetadataMap(), writtenArrays,
-                _clawStart.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
+        end = Serialization.generateWriteSavepoint(cfg, xcodeml, hook.getEnd(), _clawStart.getMetadataMap(),
+                writtenArrays, _clawStart.value(ClawClause.SAVEPOINT), SerializationStep.SER_OUT);
 
         return new Xblock(start, end);
     }

@@ -4,16 +4,12 @@
  */
 package claw.tatsu.xcodeml.xnode.common;
 
-import claw.tatsu.TatsuConstant;
-import claw.tatsu.common.CompilerDirective;
-import claw.tatsu.primitive.Pragma;
-import claw.tatsu.xcodeml.abstraction.FunctionCall;
-import claw.tatsu.xcodeml.exception.IllegalTransformationException;
-import claw.tatsu.xcodeml.xnode.Xname;
-import claw.tatsu.xcodeml.xnode.fortran.*;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -23,12 +19,24 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import claw.tatsu.TatsuConstant;
+import claw.tatsu.common.CompilerDirective;
+import claw.tatsu.primitive.Pragma;
+import claw.tatsu.xcodeml.abstraction.FunctionCall;
+import claw.tatsu.xcodeml.exception.IllegalTransformationException;
+import claw.tatsu.xcodeml.xnode.Xname;
+import claw.tatsu.xcodeml.xnode.fortran.DeclarationPosition;
+import claw.tatsu.xcodeml.xnode.fortran.FbasicType;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
+import claw.tatsu.xcodeml.xnode.fortran.FfunctionType;
+import claw.tatsu.xcodeml.xnode.fortran.FortranType;
+import claw.tatsu.xcodeml.xnode.fortran.Intent;
+import claw.tatsu.xcodeml.xnode.fortran.Xintrinsic;
 
 /**
  * The XcodeML class represents the basic XcodeML file unit. Both XcodeProgram
@@ -294,13 +302,13 @@ public class XcodeML extends Xnode
     }
 
     /**
-     * Write the XcodeML to file or std out
+     * Write the XcodeML to output stream
      *
-     * @param outputFile Path of the output file or null to output on std out
-     * @param indent     Number of spaces used for the indentation
+     * @param outputStream Output stream
+     * @param indent       Number of spaces used for the indentation
      * @throws IllegalTransformationException if XML file cannot be written.
      */
-    public void write(String outputFile, int indent) throws IllegalTransformationException
+    public void write(OutputStream outputStream, int indent) throws IllegalTransformationException
     {
         try
         {
@@ -312,20 +320,11 @@ public class XcodeML extends Xnode
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(indent));
             DOMSource source = new DOMSource(this.getDocument());
-            if (outputFile == null)
-            {
-                // Output to console
-                StreamResult console = new StreamResult(System.out);
-                transformer.transform(source, console);
-            } else
-            {
-                // Output to file
-                StreamResult console = new StreamResult(new File(outputFile));
-                transformer.transform(source, console);
-            }
-        } catch (Exception ignored)
+            StreamResult streamResult = new StreamResult(outputStream);
+            transformer.transform(source, streamResult);
+        } catch (Exception e)
         {
-            throw new IllegalTransformationException("Cannot output file: " + outputFile, 0);
+            throw new IllegalTransformationException("Failed to transform XCodeML into text", e);
         }
     }
 

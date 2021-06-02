@@ -1,0 +1,70 @@
+<!--
+ This file is released under terms of BSD license
+ See LICENSE file for more information
+ @author: Mikhail Zhigun
+-->
+
+<!-- Combines all ant-projects used in CLAW -->
+<project name="solution" default="main" basedir=".">
+    <description>Build CLAW projects</description>
+
+    <!-- Value set externally-->
+    <property name="claw.properties.dir" value=""/>
+    <property file="${claw.properties.dir}/claw.properties"/>
+
+    <target name="prepare-int-dir">
+      <mkdir dir="${int.home.dir}"/>
+      <mkdir dir="${int.home.dir}/bin"/>
+    </target>
+
+    <target name="fetch-deps" depends="prepare-int-dir">
+        <ant antfile="${3rdparty-dependencies.proj}"/>
+    </target>
+
+    <target name="build-cx2t" depends="fetch-deps">
+        <ant antfile="${cx2t.proj}" />
+    </target>
+
+    <target name="build-driver" depends="build-cx2t">
+        <ant antfile="${driver.proj}" />
+    </target>
+
+    <target name="install-driver">
+        <ant antfile="${driver.proj}" target="post-install" />
+    </target>
+
+    <!-- Default target -->
+    <target name="main" depends="prepare-int-dir, fetch-deps, build-cx2t, build-driver"/>
+
+    <target name="build-driver-tests" depends="main">
+        <ant antfile="${driver-tests.proj}" target="main" />
+    </target>
+
+    <target name="run-driver-tests" depends="build-driver-tests">
+        <ant antfile="${driver-tests.proj}" target="run" />
+    </target>
+
+    <target name="build-driver-unit-tests" depends="main">
+        <ant antfile="${driver-ut.proj}" target="main" />
+    </target>
+
+    <target name="run-driver-unit-tests" depends="build-driver-unit-tests">
+        <ant antfile="${driver-ut.proj}" target="run" />
+    </target>
+
+    <target name="build-cx2t-unit-tests" depends="build-cx2t">
+        <ant antfile="${cx2t-unit-tests.proj}" />
+    </target>
+
+    <target name="run-cx2t-unit-tests" depends="build-cx2t-unit-tests">
+        <ant antfile="${cx2t-unit-tests.proj}" target="run" />
+    </target>
+
+    <target name="build-claw-tests" depends="main">
+        <ant antfile="${claw-tests.proj}" target="main" />
+    </target>
+
+    <target name="run-claw-tests" depends="build-claw-tests">
+        <ant antfile="${claw-tests.proj}" target="run" />
+    </target>
+</project>

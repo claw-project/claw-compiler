@@ -1,0 +1,848 @@
+<OmniFortranModule version="1.0">
+  <name>m_std</name>
+  <depends>
+    <name>iso_c_binding</name>
+  </depends>
+  <typeTable>
+    <FbasicType type="I1_m_std" is_parameter="true" ref="Fint"/>
+    <FbasicType type="I2_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I3_m_std" is_parameter="true" ref="I2_m_std"/>
+    <FbasicType type="I4_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I5_m_std" is_parameter="true" ref="I4_m_std"/>
+    <FbasicType type="I6_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I7_m_std" is_parameter="true" ref="I6_m_std"/>
+    <FbasicType type="I8_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I9_m_std" is_parameter="true" ref="I8_m_std"/>
+    <FbasicType type="I10_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I11_m_std" is_parameter="true" ref="I10_m_std"/>
+    <FbasicType type="I12_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I13_m_std" is_parameter="true" ref="I12_m_std"/>
+    <FbasicType type="I14_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I15_m_std" is_parameter="true" ref="I14_m_std"/>
+    <FbasicType type="I16_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I17_m_std" is_parameter="true" ref="I16_m_std"/>
+    <FbasicType type="I18_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I19_m_std" is_parameter="true" ref="I18_m_std"/>
+    <FbasicType type="I20_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I21_m_std" is_parameter="true" ref="I20_m_std"/>
+    <FbasicType type="I22_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I23_m_std" is_parameter="true" ref="I22_m_std"/>
+    <FbasicType type="I24_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I25_m_std" is_parameter="true" ref="I24_m_std"/>
+    <FbasicType type="I26_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I27_m_std" is_parameter="true" ref="I26_m_std"/>
+    <FbasicType type="I28_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I29_m_std" is_parameter="true" ref="I28_m_std"/>
+    <FbasicType type="I30_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I31_m_std" is_parameter="true" ref="I30_m_std"/>
+    <FbasicType type="I32_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I33_m_std" is_parameter="true" ref="I32_m_std"/>
+    <FbasicType type="I34_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I35_m_std" is_parameter="true" ref="I34_m_std"/>
+    <FbasicType type="I36_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I37_m_std" is_parameter="true" ref="I36_m_std"/>
+    <FbasicType type="I38_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I39_m_std" is_parameter="true" ref="I38_m_std"/>
+    <FbasicType type="I40_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I41_m_std" is_parameter="true" ref="I40_m_std"/>
+    <FbasicType type="I42_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I43_m_std" is_parameter="true" ref="I42_m_std"/>
+    <FbasicType type="I44_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I45_m_std" is_parameter="true" ref="I44_m_std"/>
+    <FbasicType type="I46_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I47_m_std" is_parameter="true" ref="I46_m_std"/>
+    <FbasicType type="I48_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I49_m_std" is_parameter="true" ref="I48_m_std"/>
+    <FbasicType type="I50_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I51_m_std" is_parameter="true" ref="I50_m_std"/>
+    <FbasicType type="I52_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I53_m_std" is_parameter="true" ref="I52_m_std"/>
+    <FbasicType type="I54_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I55_m_std" is_parameter="true" ref="I54_m_std"/>
+    <FbasicType type="I56_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I57_m_std" is_parameter="true" ref="I56_m_std"/>
+    <FbasicType type="C1_m_std" is_parameter="true" ref="Fcharacter"/>
+    <FbasicType type="C2_m_std" is_parameter="true" ref="Fcharacter"/>
+    <FbasicType type="C3_m_std" is_parameter="true" ref="Fcharacter"/>
+    <FbasicType type="C4_m_std" is_parameter="true" ref="Fcharacter"/>
+    <FbasicType type="C5_m_std" is_parameter="true" ref="Fcharacter"/>
+    <FbasicType type="C6_m_std" is_parameter="true" ref="Fcharacter"/>
+    <FbasicType type="C7_m_std" is_parameter="true" ref="Fcharacter"/>
+    <FbasicType type="C8_m_std" is_parameter="true" ref="Fcharacter"/>
+    <FstructType type="S1_m_std" imported_id="S1_iso_c_binding" is_internal_private="true">
+      <symbols>
+        <id type="I58_m_std">
+          <name>ptr</name>
+        </id>
+      </symbols>
+    </FstructType>
+    <FbasicType type="I59_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I60_m_std" is_parameter="true" ref="I59_m_std"/>
+    <FbasicType type="I58_m_std" ref="Fint">
+      <kind>
+        <Var type="I60_m_std" scope="local">c_intptr_t</Var>
+      </kind>
+    </FbasicType>
+    <FstructType type="S2_m_std" imported_id="S2_iso_c_binding" is_internal_private="true">
+      <symbols>
+        <id type="I61_m_std">
+          <name>ptr</name>
+        </id>
+      </symbols>
+    </FstructType>
+    <FbasicType type="I61_m_std" ref="Fint">
+      <kind>
+        <Var type="I60_m_std" scope="local">c_intptr_t</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="S3_m_std" imported_id="S3_iso_c_binding" ref="S1_m_std"/>
+    <FbasicType type="S4_m_std" imported_id="S4_iso_c_binding" is_parameter="true" ref="S3_m_std"/>
+    <FbasicType type="S5_m_std" imported_id="S6_iso_c_binding" ref="S2_m_std"/>
+    <FbasicType type="S6_m_std" imported_id="S7_iso_c_binding" is_parameter="true" ref="S5_m_std"/>
+    <FfunctionType type="F1_m_std" return_type="FnumericAll"/>
+    <FfunctionType type="F2_m_std" return_type="L1_m_std">
+      <params>
+        <name type="S7_m_std" imported_id="S13_iso_c_binding">c_ptr_1</name>
+        <name type="S8_m_std" imported_id="S14_iso_c_binding">c_ptr_2</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="L1_m_std" ref="Flogical">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FstructType type="S9_m_std" imported_id="S2_iso_c_binding" is_internal_private="true">
+      <symbols>
+        <id type="I62_m_std">
+          <name>ptr</name>
+        </id>
+      </symbols>
+    </FstructType>
+    <FbasicType type="I62_m_std" ref="Fint">
+      <kind>
+        <Var type="I60_m_std" scope="local">c_intptr_t</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="S10_m_std" imported_id="S15_iso_c_binding" ref="S9_m_std"/>
+    <FbasicType type="S7_m_std" imported_id="S13_iso_c_binding" ref="S10_m_std"/>
+    <FbasicType type="S11_m_std" imported_id="S16_iso_c_binding" ref="S9_m_std"/>
+    <FbasicType type="S8_m_std" imported_id="S14_iso_c_binding" is_optional="true" ref="S11_m_std"/>
+    <FfunctionType type="F3_m_std" return_type="L2_m_std">
+      <params>
+        <name type="S12_m_std" imported_id="S9_iso_c_binding">c_ptr_1</name>
+        <name type="S13_m_std" imported_id="S10_iso_c_binding">c_ptr_2</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="L2_m_std" ref="Flogical">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FstructType type="S14_m_std" imported_id="S1_iso_c_binding" is_internal_private="true">
+      <symbols>
+        <id type="I63_m_std">
+          <name>ptr</name>
+        </id>
+      </symbols>
+    </FstructType>
+    <FbasicType type="I63_m_std" ref="Fint">
+      <kind>
+        <Var type="I60_m_std" scope="local">c_intptr_t</Var>
+      </kind>
+    </FbasicType>
+    <FbasicType type="S15_m_std" imported_id="S11_iso_c_binding" ref="S14_m_std"/>
+    <FbasicType type="S12_m_std" imported_id="S9_iso_c_binding" ref="S15_m_std"/>
+    <FbasicType type="S16_m_std" imported_id="S12_iso_c_binding" ref="S14_m_std"/>
+    <FbasicType type="S13_m_std" imported_id="S10_iso_c_binding" is_optional="true" ref="S16_m_std"/>
+    <FfunctionType type="F4_m_std" return_type="Fvoid"/>
+    <FfunctionType type="F5_m_std" return_type="Fvoid">
+      <params>
+        <name type="I64_m_std">cptr</name>
+        <name type="I65_m_std">fptr</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="I66_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I64_m_std" intent="in" is_pointer="true" ref="I66_m_std"/>
+    <FbasicType type="I67_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I65_m_std" intent="out" is_pointer="true" ref="I67_m_std"/>
+    <FfunctionType type="F6_m_std" return_type="Fvoid">
+      <params>
+        <name type="S17_m_std" imported_id="S17_iso_c_binding">cptr</name>
+        <name type="A1_m_std">fptr</name>
+        <name type="A2_m_std">shape</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="S18_m_std" imported_id="S18_iso_c_binding" ref="S1_m_std"/>
+    <FbasicType type="S19_m_std" imported_id="S19_iso_c_binding" ref="S18_m_std"/>
+    <FbasicType type="S17_m_std" imported_id="S17_iso_c_binding" intent="in" ref="S19_m_std"/>
+    <FbasicType type="I68_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I69_m_std" intent="out" is_pointer="true" ref="I68_m_std"/>
+    <FbasicType type="I70_m_std" intent="out" is_pointer="true" ref="I69_m_std"/>
+    <FbasicType type="A1_m_std" intent="out" is_pointer="true" ref="I70_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="I71_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">1</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I72_m_std" intent="in" ref="I71_m_std"/>
+    <FbasicType type="I73_m_std" intent="in" ref="I72_m_std"/>
+    <FbasicType type="A2_m_std" intent="in" ref="I73_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="S20_m_std" imported_id="S18_iso_c_binding" ref="S14_m_std"/>
+    <FbasicType type="S21_m_std" imported_id="S19_iso_c_binding" ref="S20_m_std"/>
+    <FbasicType type="S22_m_std" imported_id="S17_iso_c_binding" intent="in" ref="S21_m_std"/>
+    <FbasicType type="I74_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I75_m_std" intent="out" is_pointer="true" ref="I74_m_std"/>
+    <FbasicType type="I76_m_std" intent="out" is_pointer="true" ref="I75_m_std"/>
+    <FbasicType type="A3_m_std" intent="out" is_pointer="true" ref="I76_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="I77_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">1</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I78_m_std" intent="in" ref="I77_m_std"/>
+    <FbasicType type="I79_m_std" intent="in" ref="I78_m_std"/>
+    <FbasicType type="A4_m_std" intent="in" ref="I79_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FfunctionType type="F7_m_std" return_type="Fvoid">
+      <params>
+        <name type="S23_m_std" imported_id="S20_iso_c_binding">cptr</name>
+        <name type="A5_m_std">fptr</name>
+        <name type="A6_m_std">shape</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="S24_m_std" imported_id="S21_iso_c_binding" ref="S1_m_std"/>
+    <FbasicType type="S25_m_std" imported_id="S22_iso_c_binding" ref="S24_m_std"/>
+    <FbasicType type="S23_m_std" imported_id="S20_iso_c_binding" intent="in" ref="S25_m_std"/>
+    <FbasicType type="I80_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I81_m_std" intent="out" is_pointer="true" ref="I80_m_std"/>
+    <FbasicType type="I82_m_std" intent="out" is_pointer="true" ref="I81_m_std"/>
+    <FbasicType type="A5_m_std" intent="out" is_pointer="true" ref="I82_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="I83_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">2</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I84_m_std" intent="in" ref="I83_m_std"/>
+    <FbasicType type="I85_m_std" intent="in" ref="I84_m_std"/>
+    <FbasicType type="A6_m_std" intent="in" ref="I85_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="S26_m_std" imported_id="S21_iso_c_binding" ref="S14_m_std"/>
+    <FbasicType type="S27_m_std" imported_id="S22_iso_c_binding" ref="S26_m_std"/>
+    <FbasicType type="S28_m_std" imported_id="S20_iso_c_binding" intent="in" ref="S27_m_std"/>
+    <FbasicType type="I86_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I87_m_std" intent="out" is_pointer="true" ref="I86_m_std"/>
+    <FbasicType type="I88_m_std" intent="out" is_pointer="true" ref="I87_m_std"/>
+    <FbasicType type="A7_m_std" intent="out" is_pointer="true" ref="I88_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="I89_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">2</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I90_m_std" intent="in" ref="I89_m_std"/>
+    <FbasicType type="I91_m_std" intent="in" ref="I90_m_std"/>
+    <FbasicType type="A8_m_std" intent="in" ref="I91_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FfunctionType type="F8_m_std" return_type="Fvoid">
+      <params>
+        <name type="S29_m_std" imported_id="S23_iso_c_binding">cptr</name>
+        <name type="A9_m_std">fptr</name>
+        <name type="A10_m_std">shape</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="S30_m_std" imported_id="S24_iso_c_binding" ref="S1_m_std"/>
+    <FbasicType type="S31_m_std" imported_id="S25_iso_c_binding" ref="S30_m_std"/>
+    <FbasicType type="S29_m_std" imported_id="S23_iso_c_binding" intent="in" ref="S31_m_std"/>
+    <FbasicType type="I92_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I93_m_std" intent="out" is_pointer="true" ref="I92_m_std"/>
+    <FbasicType type="I94_m_std" intent="out" is_pointer="true" ref="I93_m_std"/>
+    <FbasicType type="A9_m_std" intent="out" is_pointer="true" ref="I94_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="I95_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I96_m_std" intent="in" ref="I95_m_std"/>
+    <FbasicType type="I97_m_std" intent="in" ref="I96_m_std"/>
+    <FbasicType type="A10_m_std" intent="in" ref="I97_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="S32_m_std" imported_id="S24_iso_c_binding" ref="S14_m_std"/>
+    <FbasicType type="S33_m_std" imported_id="S25_iso_c_binding" ref="S32_m_std"/>
+    <FbasicType type="S34_m_std" imported_id="S23_iso_c_binding" intent="in" ref="S33_m_std"/>
+    <FbasicType type="I98_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I99_m_std" intent="out" is_pointer="true" ref="I98_m_std"/>
+    <FbasicType type="I100_m_std" intent="out" is_pointer="true" ref="I99_m_std"/>
+    <FbasicType type="A11_m_std" intent="out" is_pointer="true" ref="I100_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="I101_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I102_m_std" intent="in" ref="I101_m_std"/>
+    <FbasicType type="I103_m_std" intent="in" ref="I102_m_std"/>
+    <FbasicType type="A12_m_std" intent="in" ref="I103_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FfunctionType type="F9_m_std" return_type="Fvoid">
+      <params>
+        <name type="S35_m_std" imported_id="S26_iso_c_binding">cptr</name>
+        <name type="A13_m_std">fptr</name>
+        <name type="A14_m_std">shape</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="S36_m_std" imported_id="S27_iso_c_binding" ref="S1_m_std"/>
+    <FbasicType type="S37_m_std" imported_id="S28_iso_c_binding" ref="S36_m_std"/>
+    <FbasicType type="S35_m_std" imported_id="S26_iso_c_binding" intent="in" ref="S37_m_std"/>
+    <FbasicType type="I104_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I105_m_std" intent="out" is_pointer="true" ref="I104_m_std"/>
+    <FbasicType type="I106_m_std" intent="out" is_pointer="true" ref="I105_m_std"/>
+    <FbasicType type="A13_m_std" intent="out" is_pointer="true" ref="I106_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="I107_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">8</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I108_m_std" intent="in" ref="I107_m_std"/>
+    <FbasicType type="I109_m_std" intent="in" ref="I108_m_std"/>
+    <FbasicType type="A14_m_std" intent="in" ref="I109_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="S38_m_std" imported_id="S27_iso_c_binding" ref="S14_m_std"/>
+    <FbasicType type="S39_m_std" imported_id="S28_iso_c_binding" ref="S38_m_std"/>
+    <FbasicType type="S40_m_std" imported_id="S26_iso_c_binding" intent="in" ref="S39_m_std"/>
+    <FbasicType type="I110_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I111_m_std" intent="out" is_pointer="true" ref="I110_m_std"/>
+    <FbasicType type="I112_m_std" intent="out" is_pointer="true" ref="I111_m_std"/>
+    <FbasicType type="A15_m_std" intent="out" is_pointer="true" ref="I112_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FbasicType type="I113_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">8</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="I114_m_std" intent="in" ref="I113_m_std"/>
+    <FbasicType type="I115_m_std" intent="in" ref="I114_m_std"/>
+    <FbasicType type="A16_m_std" intent="in" ref="I115_m_std">
+      <indexRange is_assumed_shape="true">
+      </indexRange>
+    </FbasicType>
+    <FfunctionType type="F10_m_std" return_type="L3_m_std">
+      <params>
+        <name type="S41_m_std" imported_id="S9_iso_c_binding">c_ptr_1</name>
+        <name type="S42_m_std" imported_id="S10_iso_c_binding">c_ptr_2</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="L3_m_std" ref="Flogical">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="S43_m_std" imported_id="S11_iso_c_binding" ref="S1_m_std"/>
+    <FbasicType type="S41_m_std" imported_id="S9_iso_c_binding" ref="S43_m_std"/>
+    <FbasicType type="S44_m_std" imported_id="S12_iso_c_binding" ref="S1_m_std"/>
+    <FbasicType type="S42_m_std" imported_id="S10_iso_c_binding" is_optional="true" ref="S44_m_std"/>
+    <FfunctionType type="F11_m_std" return_type="L4_m_std">
+      <params>
+        <name type="S45_m_std" imported_id="S13_iso_c_binding">c_ptr_1</name>
+        <name type="S46_m_std" imported_id="S14_iso_c_binding">c_ptr_2</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="L4_m_std" ref="Flogical">
+      <kind>
+        <FintConstant type="Fint">4</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="S47_m_std" imported_id="S15_iso_c_binding" ref="S2_m_std"/>
+    <FbasicType type="S45_m_std" imported_id="S13_iso_c_binding" ref="S47_m_std"/>
+    <FbasicType type="S48_m_std" imported_id="S16_iso_c_binding" ref="S2_m_std"/>
+    <FbasicType type="S46_m_std" imported_id="S14_iso_c_binding" is_optional="true" ref="S48_m_std"/>
+    <FfunctionType type="F12_m_std" return_type="Fvoid">
+      <params>
+        <name type="I116_m_std">cptr</name>
+        <name type="I117_m_std">fptr</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="I118_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I116_m_std" intent="in" is_pointer="true" ref="I118_m_std"/>
+    <FbasicType type="I119_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I117_m_std" intent="out" is_pointer="true" ref="I119_m_std"/>
+    <FfunctionType type="F13_m_std" return_type="Fvoid">
+      <params>
+        <name type="I120_m_std">cptr</name>
+        <name type="I121_m_std">fptr</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="I122_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I120_m_std" intent="in" is_pointer="true" ref="I122_m_std"/>
+    <FbasicType type="I123_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I121_m_std" intent="out" is_pointer="true" ref="I123_m_std"/>
+    <FbasicType type="I124_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I125_m_std" intent="in" is_pointer="true" ref="I124_m_std"/>
+    <FbasicType type="I126_m_std" is_pointer="true" ref="Fint"/>
+    <FbasicType type="I127_m_std" intent="out" is_pointer="true" ref="I126_m_std"/>
+    <FfunctionType type="F14_m_std" return_type="S49_m_std">
+      <params>
+        <name type="Fint">x</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="S50_m_std" imported_id="S42_iso_c_binding" ref="S2_m_std"/>
+    <FbasicType type="S49_m_std" imported_id="S41_iso_c_binding" ref="S50_m_std"/>
+    <FfunctionType type="F15_m_std" return_type="S51_m_std">
+      <params>
+        <name type="Fint">x</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="S52_m_std" imported_id="S44_iso_c_binding" ref="S1_m_std"/>
+    <FbasicType type="S51_m_std" imported_id="S43_iso_c_binding" ref="S52_m_std"/>
+    <FfunctionType type="F16_m_std" return_type="I128_m_std">
+      <params>
+        <name type="S53_m_std" imported_id="S45_iso_c_binding">x</name>
+      </params>
+    </FfunctionType>
+    <FbasicType type="I128_m_std" ref="Fint">
+      <kind>
+        <FintConstant type="Fint">8</FintConstant>
+      </kind>
+    </FbasicType>
+    <FbasicType type="S53_m_std" imported_id="S45_iso_c_binding" intent="in" is_class="true"/>
+    <FbasicType type="S54_m_std" imported_id="S45_iso_c_binding" intent="in" is_class="true"/>
+  </typeTable>
+  <identifiers>
+    <id type="I1_m_std" sclass="flocal" original_name="pointer_len" declared_in="iso_c_binding">
+      <name>pointer_len</name>
+    </id>
+    <id type="I3_m_std" sclass="flocal" original_name="c_int" declared_in="iso_c_binding">
+      <name>c_int</name>
+    </id>
+    <id type="I5_m_std" sclass="flocal" original_name="c_short" declared_in="iso_c_binding">
+      <name>c_short</name>
+    </id>
+    <id type="I7_m_std" sclass="flocal" original_name="c_long" declared_in="iso_c_binding">
+      <name>c_long</name>
+    </id>
+    <id type="I9_m_std" sclass="flocal" original_name="c_long_long" declared_in="iso_c_binding">
+      <name>c_long_long</name>
+    </id>
+    <id type="I11_m_std" sclass="flocal" original_name="c_signed_char" declared_in="iso_c_binding">
+      <name>c_signed_char</name>
+    </id>
+    <id type="I13_m_std" sclass="flocal" original_name="c_size_t" declared_in="iso_c_binding">
+      <name>c_size_t</name>
+    </id>
+    <id type="I15_m_std" sclass="flocal" original_name="c_int8_t" declared_in="iso_c_binding">
+      <name>c_int8_t</name>
+    </id>
+    <id type="I17_m_std" sclass="flocal" original_name="c_int16_t" declared_in="iso_c_binding">
+      <name>c_int16_t</name>
+    </id>
+    <id type="I19_m_std" sclass="flocal" original_name="c_int32_t" declared_in="iso_c_binding">
+      <name>c_int32_t</name>
+    </id>
+    <id type="I21_m_std" sclass="flocal" original_name="c_int64_t" declared_in="iso_c_binding">
+      <name>c_int64_t</name>
+    </id>
+    <id type="I23_m_std" sclass="flocal" original_name="c_int_least8_t" declared_in="iso_c_binding">
+      <name>c_int_least8_t</name>
+    </id>
+    <id type="I25_m_std" sclass="flocal" original_name="c_int_least16_t" declared_in="iso_c_binding">
+      <name>c_int_least16_t</name>
+    </id>
+    <id type="I27_m_std" sclass="flocal" original_name="c_int_least32_t" declared_in="iso_c_binding">
+      <name>c_int_least32_t</name>
+    </id>
+    <id type="I29_m_std" sclass="flocal" original_name="c_int_least64_t" declared_in="iso_c_binding">
+      <name>c_int_least64_t</name>
+    </id>
+    <id type="I31_m_std" sclass="flocal" original_name="c_int_fast8_t" declared_in="iso_c_binding">
+      <name>c_int_fast8_t</name>
+    </id>
+    <id type="I33_m_std" sclass="flocal" original_name="c_int_fast16_t" declared_in="iso_c_binding">
+      <name>c_int_fast16_t</name>
+    </id>
+    <id type="I35_m_std" sclass="flocal" original_name="c_int_fast32_t" declared_in="iso_c_binding">
+      <name>c_int_fast32_t</name>
+    </id>
+    <id type="I37_m_std" sclass="flocal" original_name="c_int_fast64_t" declared_in="iso_c_binding">
+      <name>c_int_fast64_t</name>
+    </id>
+    <id type="I39_m_std" sclass="flocal" original_name="c_intmax_t" declared_in="iso_c_binding">
+      <name>c_intmax_t</name>
+    </id>
+    <id type="I41_m_std" sclass="flocal" original_name="c_intptr_t" declared_in="iso_c_binding">
+      <name>c_intptr_t</name>
+    </id>
+    <id type="I43_m_std" sclass="flocal" original_name="c_float" declared_in="iso_c_binding">
+      <name>c_float</name>
+    </id>
+    <id type="I45_m_std" sclass="flocal" original_name="c_double" declared_in="iso_c_binding">
+      <name>c_double</name>
+    </id>
+    <id type="I47_m_std" sclass="flocal" original_name="c_long_double" declared_in="iso_c_binding">
+      <name>c_long_double</name>
+    </id>
+    <id type="I49_m_std" sclass="flocal" original_name="c_float_complex" declared_in="iso_c_binding">
+      <name>c_float_complex</name>
+    </id>
+    <id type="I51_m_std" sclass="flocal" original_name="c_double_complex" declared_in="iso_c_binding">
+      <name>c_double_complex</name>
+    </id>
+    <id type="I53_m_std" sclass="flocal" original_name="c_long_double_complex" declared_in="iso_c_binding">
+      <name>c_long_double_complex</name>
+    </id>
+    <id type="I55_m_std" sclass="flocal" original_name="c_bool" declared_in="iso_c_binding">
+      <name>c_bool</name>
+    </id>
+    <id type="I57_m_std" sclass="flocal" original_name="c_char" declared_in="iso_c_binding">
+      <name>c_char</name>
+    </id>
+    <id type="C1_m_std" sclass="flocal" original_name="c_null_char" declared_in="iso_c_binding">
+      <name>c_null_char</name>
+    </id>
+    <id type="C2_m_std" sclass="flocal" original_name="c_alert" declared_in="iso_c_binding">
+      <name>c_alert</name>
+    </id>
+    <id type="C3_m_std" sclass="flocal" original_name="c_backspace" declared_in="iso_c_binding">
+      <name>c_backspace</name>
+    </id>
+    <id type="C4_m_std" sclass="flocal" original_name="c_form_feed" declared_in="iso_c_binding">
+      <name>c_form_feed</name>
+    </id>
+    <id type="C5_m_std" sclass="flocal" original_name="c_new_line" declared_in="iso_c_binding">
+      <name>c_new_line</name>
+    </id>
+    <id type="C6_m_std" sclass="flocal" original_name="c_carriage_return" declared_in="iso_c_binding">
+      <name>c_carriage_return</name>
+    </id>
+    <id type="C7_m_std" sclass="flocal" original_name="c_horizontal_tab" declared_in="iso_c_binding">
+      <name>c_horizontal_tab</name>
+    </id>
+    <id type="C8_m_std" sclass="flocal" original_name="c_vertical_tab" declared_in="iso_c_binding">
+      <name>c_vertical_tab</name>
+    </id>
+    <id type="S1_m_std" imported_id="S1_iso_c_binding" sclass="ftype_name" original_name="c_ptr" declared_in="iso_c_binding">
+      <name>c_ptr</name>
+    </id>
+    <id type="S2_m_std" imported_id="S2_iso_c_binding" sclass="ftype_name" original_name="c_funptr" declared_in="iso_c_binding">
+      <name>c_funptr</name>
+    </id>
+    <id type="S4_m_std" imported_id="S4_iso_c_binding" sclass="flocal" original_name="c_null_ptr" declared_in="iso_c_binding">
+      <name>c_null_ptr</name>
+    </id>
+    <id type="S6_m_std" imported_id="S7_iso_c_binding" sclass="flocal" original_name="c_null_funptr" declared_in="iso_c_binding">
+      <name>c_null_funptr</name>
+    </id>
+    <id type="F1_m_std" sclass="ffunc" original_name="c_associated" declared_in="iso_c_binding">
+      <name>c_associated</name>
+    </id>
+    <id type="F4_m_std" sclass="ffunc" original_name="c_f_pointer" declared_in="iso_c_binding">
+      <name>c_f_pointer</name>
+    </id>
+    <id type="F6_m_std" sclass="ffunc" original_name="c_f_pointer_array1" declared_in="iso_c_binding">
+      <name>c_f_pointer_array1</name>
+    </id>
+    <id type="F7_m_std" sclass="ffunc" original_name="c_f_pointer_array2" declared_in="iso_c_binding">
+      <name>c_f_pointer_array2</name>
+    </id>
+    <id type="F8_m_std" sclass="ffunc" original_name="c_f_pointer_array4" declared_in="iso_c_binding">
+      <name>c_f_pointer_array4</name>
+    </id>
+    <id type="F9_m_std" sclass="ffunc" original_name="c_f_pointer_array8" declared_in="iso_c_binding">
+      <name>c_f_pointer_array8</name>
+    </id>
+    <id type="F10_m_std" sclass="ffunc" original_name="c_associated_ptr" declared_in="iso_c_binding">
+      <name>c_associated_ptr</name>
+    </id>
+    <id type="F11_m_std" sclass="ffunc" original_name="c_associated_funptr" declared_in="iso_c_binding">
+      <name>c_associated_funptr</name>
+    </id>
+    <id type="F12_m_std" sclass="ffunc" original_name="c_f_pointer_scalar" declared_in="iso_c_binding">
+      <name>c_f_pointer_scalar</name>
+    </id>
+    <id type="F13_m_std" sclass="ffunc" original_name="c_f_procpointer" declared_in="iso_c_binding">
+      <name>c_f_procpointer</name>
+    </id>
+    <id type="F14_m_std" sclass="ffunc" original_name="c_funloc" declared_in="iso_c_binding">
+      <name>c_funloc</name>
+    </id>
+    <id type="F15_m_std" sclass="ffunc" original_name="c_loc" declared_in="iso_c_binding">
+      <name>c_loc</name>
+    </id>
+    <id type="F16_m_std" sclass="ffunc" original_name="c_sizeof" declared_in="iso_c_binding">
+      <name>c_sizeof</name>
+    </id>
+  </identifiers>
+  <declarations>
+    <varDecl>
+      <name type="I1_m_std">pointer_len</name>
+    </varDecl>
+    <varDecl>
+      <name type="I3_m_std">c_int</name>
+    </varDecl>
+    <varDecl>
+      <name type="I5_m_std">c_short</name>
+    </varDecl>
+    <varDecl>
+      <name type="I7_m_std">c_long</name>
+    </varDecl>
+    <varDecl>
+      <name type="I9_m_std">c_long_long</name>
+    </varDecl>
+    <varDecl>
+      <name type="I11_m_std">c_signed_char</name>
+    </varDecl>
+    <varDecl>
+      <name type="I13_m_std">c_size_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I15_m_std">c_int8_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I17_m_std">c_int16_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I19_m_std">c_int32_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I21_m_std">c_int64_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I23_m_std">c_int_least8_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I25_m_std">c_int_least16_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I27_m_std">c_int_least32_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I29_m_std">c_int_least64_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I31_m_std">c_int_fast8_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I33_m_std">c_int_fast16_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I35_m_std">c_int_fast32_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I37_m_std">c_int_fast64_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I39_m_std">c_intmax_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I41_m_std">c_intptr_t</name>
+    </varDecl>
+    <varDecl>
+      <name type="I43_m_std">c_float</name>
+    </varDecl>
+    <varDecl>
+      <name type="I45_m_std">c_double</name>
+    </varDecl>
+    <varDecl>
+      <name type="I47_m_std">c_long_double</name>
+    </varDecl>
+    <varDecl>
+      <name type="I49_m_std">c_float_complex</name>
+    </varDecl>
+    <varDecl>
+      <name type="I51_m_std">c_double_complex</name>
+    </varDecl>
+    <varDecl>
+      <name type="I53_m_std">c_long_double_complex</name>
+    </varDecl>
+    <varDecl>
+      <name type="I55_m_std">c_bool</name>
+    </varDecl>
+    <varDecl>
+      <name type="I57_m_std">c_char</name>
+    </varDecl>
+    <varDecl>
+      <name type="C1_m_std">c_null_char</name>
+    </varDecl>
+    <varDecl>
+      <name type="C2_m_std">c_alert</name>
+    </varDecl>
+    <varDecl>
+      <name type="C3_m_std">c_backspace</name>
+    </varDecl>
+    <varDecl>
+      <name type="C4_m_std">c_form_feed</name>
+    </varDecl>
+    <varDecl>
+      <name type="C5_m_std">c_new_line</name>
+    </varDecl>
+    <varDecl>
+      <name type="C6_m_std">c_carriage_return</name>
+    </varDecl>
+    <varDecl>
+      <name type="C7_m_std">c_horizontal_tab</name>
+    </varDecl>
+    <varDecl>
+      <name type="C8_m_std">c_vertical_tab</name>
+    </varDecl>
+    <varDecl>
+      <name type="S4_m_std" imported_id="S4_iso_c_binding">c_null_ptr</name>
+    </varDecl>
+    <varDecl>
+      <name type="S6_m_std" imported_id="S7_iso_c_binding">c_null_funptr</name>
+    </varDecl>
+  </declarations>
+  <interfaceDecls>
+  </interfaceDecls>
+  <aux_info>
+  </aux_info>
+</OmniFortranModule>

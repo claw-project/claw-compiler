@@ -1,0 +1,7 @@
+module m_indep_{i}
+end module m_indep_{i}
+
+module mod_dep_next_{i}
+    use m_indep_{i};
+    {use}
+end module mod_dep_next_{i}

@@ -4,12 +4,18 @@
  */
 package claw.tatsu.directive.common;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
 import claw.tatsu.common.Message;
 import claw.tatsu.directive.generator.DirectiveGenerator;
-
 import claw.tatsu.primitive.Function;
 import claw.tatsu.primitive.Pragma;
 import claw.tatsu.xcodeml.abstraction.FunctionCall;
@@ -21,12 +27,9 @@ import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 /**
- * The class Directive contains only static method to help the generation of the
- * directive related pragma during code transformations.
+ * The class Directive contains only static methods to help the generation of
+ * the directive related pragmas during code transformations.
  *
  * @author clementval
  */
@@ -57,7 +60,7 @@ public final class Directive
     public static int generateLoopSeq(XcodeProgram xcodeml, FfunctionDefinition fctDef, String noDependencyDirective)
     {
 
-        if (Context.get().getCompilerDirective() == CompilerDirective.NONE)
+        if (xcodeml.context().getCompilerDirective() == CompilerDirective.NONE)
         {
             return 0;
         }
@@ -71,7 +74,7 @@ public final class Directive
             if (noDependency == null)
             {
                 addPragmasBefore(xcodeml,
-                        Context.get().getGenerator().getStartLoopDirective(NO_COLLAPSE, true, true, ""), doStmt);
+                        xcodeml.context().getGenerator().getStartLoopDirective(NO_COLLAPSE, true, true, ""), doStmt);
             } else
             {
                 ++nodepCounter;
@@ -79,11 +82,13 @@ public final class Directive
             XnodeUtil.safeDelete(noDependency);
 
             // Debug logging
-            Message.debug(String.format("%s generated loop %s directive for loop at line: %d",
-                    Context.get().getGenerator().getPrefix(), (noDependency == null) ? "seq" : "", doStmt.lineNo()));
+            Message.debug(xcodeml.context(),
+                    String.format("%s generated loop %s directive for loop at line: %d",
+                            xcodeml.context().getGenerator().getPrefix(), (noDependency == null) ? "seq" : "",
+                            doStmt.lineNo()));
         }
 
-        return Context.get().getAcceleratorConfig().hasCollapseStrategy() ? nodepCounter : 0;
+        return xcodeml.context().getAcceleratorConfig().hasCollapseStrategy() ? nodepCounter : 0;
     }
 
     /**
@@ -99,7 +104,7 @@ public final class Directive
      */
     public static Xnode generateUpdate(XcodeProgram xcodeml, Xnode hook, List<String> vars, DataMovement direction)
     {
-        if (Context.get().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE)
+        if (xcodeml.context().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE)
         {
             return null;
         }
@@ -107,13 +112,13 @@ public final class Directive
         Xnode p = null;
         if (direction == DataMovement.HOST_TO_DEVICE || direction == DataMovement.TWO_WAY)
         {
-            p = addPragmasBefore(xcodeml, Context.get().getGenerator().getUpdateClause(
+            p = addPragmasBefore(xcodeml, xcodeml.context().getGenerator().getUpdateClause(
                     direction == DataMovement.TWO_WAY ? DataMovement.HOST_TO_DEVICE : direction, vars), hook);
 
         }
         if (direction == DataMovement.DEVICE_TO_HOST || direction == DataMovement.TWO_WAY)
         {
-            p = addPragmaAfter(xcodeml, Context.get().getGenerator().getUpdateClause(
+            p = addPragmaAfter(xcodeml, xcodeml.context().getGenerator().getUpdateClause(
                     direction == DataMovement.TWO_WAY ? DataMovement.DEVICE_TO_HOST : direction, vars), hook);
         }
         return p;
@@ -158,8 +163,8 @@ public final class Directive
     public static Xnode generateParallelRegion(XcodeProgram xcodeml, Xnode startStmt, Xnode endStmt)
     {
         return insertPragmas(xcodeml, startStmt, endStmt,
-                Context.get().getGenerator().getStartParallelDirective(NO_CLAUSES),
-                Context.get().getGenerator().getEndParallelDirective());
+                xcodeml.context().getGenerator().getStartParallelDirective(NO_CLAUSES),
+                xcodeml.context().getGenerator().getEndParallelDirective());
     }
 
     /**
@@ -178,12 +183,12 @@ public final class Directive
     public static Xblock generateParallelLoopClause(XcodeProgram xcodeml, List<String> privates, Xnode startStmt,
             Xnode endStmt, String extraDirective, int collapse)
     {
-        if (Context.get().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE)
+        if (xcodeml.context().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE)
         {
             return null;
         }
 
-        DirectiveGenerator dg = Context.get().getGenerator();
+        DirectiveGenerator dg = xcodeml.context().getGenerator();
         Xnode startBlock = addPragmasBefore(xcodeml, dg.getStartParallelDirective(null), startStmt);
         addPragmasBefore(xcodeml,
                 dg.getStartLoopDirective(collapse, false, false, format(dg.getPrivateClause(privates), extraDirective)),
@@ -219,8 +224,8 @@ public final class Directive
     public static void generateLoopDirectives(XcodeProgram xcodeml, Xnode startStmt, Xnode endStmt, int collapse)
     {
         insertPragmas(xcodeml, startStmt, endStmt,
-                Context.get().getGenerator().getStartLoopDirective(collapse, false, false, ""),
-                Context.get().getGenerator().getEndLoopDirective());
+                xcodeml.context().getGenerator().getStartLoopDirective(collapse, false, false, ""),
+                xcodeml.context().getGenerator().getEndLoopDirective());
     }
 
     /**
@@ -238,7 +243,7 @@ public final class Directive
     public static Xblock generateDataRegionClause(XcodeProgram xcodeml, List<String> presents, List<String> creates,
             Xblock hook)
     {
-        DirectiveGenerator generator = Context.get().getGenerator();
+        DirectiveGenerator generator = xcodeml.context().getGenerator();
         List<String> clauses = new ArrayList<>(
                 Arrays.asList(generator.getPresentClause(presents), generator.getCreateClause(creates)));
 
@@ -268,7 +273,7 @@ public final class Directive
          * TODO OpenACC and OpenMP loop construct are pretty different ... have to look
          * how to do that properly. See issue #22
          */
-        return addPragmasBefore(xcodeml, Context.get().getGenerator().getSingleDirective(accClause), startStmt);
+        return addPragmasBefore(xcodeml, xcodeml.context().getGenerator().getSingleDirective(accClause), startStmt);
     }
 
     /**
@@ -282,7 +287,7 @@ public final class Directive
      */
     public static void generateRoutineDirectives(XcodeProgram xcodeml, FfunctionDefinition fctDef)
     {
-        DirectiveGenerator dirGen = Context.get().getGenerator();
+        DirectiveGenerator dirGen = xcodeml.context().getGenerator();
         if (dirGen.getDirectiveLanguage() == CompilerDirective.NONE)
         {
             return; // Do nothing if "none" is selected for directive
@@ -308,8 +313,8 @@ public final class Directive
                 // TODO - Check that the directive is not present yet.
                 // TODO - Directive.hasDirectives(calledFctDef)
                 addPragmasBefore(xcodeml, dirGen.getRoutineDirective(true), calledFctDef.get().body().child(0));
-                Message.debug(dirGen.getPrefix() + "generated routine seq directive for " + fctCall.getFctName()
-                        + " subroutine/function.");
+                Message.debug(xcodeml.context(), dirGen.getPrefix() + "generated routine seq directive for "
+                        + fctCall.getFctName() + " subroutine/function.");
             } else
             {
                 // Could not generate directive for called function.
@@ -330,12 +335,12 @@ public final class Directive
      */
     public static void generatePrivateClause(XcodeProgram xcodeml, Xnode stmt, String var)
     {
-        if (Context.get().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE)
+        if (xcodeml.context().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE)
         {
             return;
         }
 
-        Xnode hook = Pragma.findPrevious(stmt, Context.get().getGenerator().getParallelKeyword());
+        Xnode hook = Pragma.findPrevious(stmt, xcodeml.context().getGenerator().getParallelKeyword());
         // TODO do it with loop as well if hook is null
 
         if (hook == null)
@@ -343,7 +348,7 @@ public final class Directive
             xcodeml.addWarning("No parallel construct found to attach private clause", stmt.lineNo());
         } else
         {
-            hook.setValue(hook.value() + " " + Context.get().getGenerator().getPrivateClause(var));
+            hook.setValue(hook.value() + " " + xcodeml.context().getGenerator().getPrivateClause(var));
         }
     }
 
@@ -392,7 +397,7 @@ public final class Directive
         Xnode retNode = null; // Returned node 1st for before/last for after
         for (String directive : directives)
         {
-            List<Xnode> pragmas = xcodeml.createPragma(directive, Context.get().getMaxColumns());
+            List<Xnode> pragmas = xcodeml.createPragma(directive, xcodeml.context().getMaxColumns());
             for (Xnode pragma : pragmas)
             {
                 if (after)
@@ -426,7 +431,7 @@ public final class Directive
     private static Xnode insertPragmas(XcodeProgram xcodeml, Xnode startStmt, Xnode endStmt, String[] startDirective,
             String[] endDirective)
     {
-        if (Context.get().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE)
+        if (xcodeml.context().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE)
         {
             return null;
         }
@@ -449,7 +454,7 @@ public final class Directive
     private static Xblock insertPragmas(XcodeProgram xcodeml, Xblock hook, String[] startDirective,
             String[] endDirective)
     {
-        if (Context.get().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE)
+        if (xcodeml.context().getGenerator().getDirectiveLanguage() == CompilerDirective.NONE)
         {
             return null;
         }
@@ -467,9 +472,9 @@ public final class Directive
      *                           from first element in function's body.
      * @return First element for the parallel region.
      */
-    public static Xnode findParallelRegionStart(Xnode functionDefinition, Xnode from)
+    public static Xnode findParallelRegionStart(Context context, Xnode functionDefinition, Xnode from)
     {
-        DirectiveGenerator dg = Context.get().getGenerator();
+        DirectiveGenerator dg = context.getGenerator();
         if (!Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION))
         {
             return null;
@@ -542,9 +547,9 @@ public final class Directive
      *                           from last element in function's body.
      * @return Last element for the parallel region.
      */
-    public static Xnode findParallelRegionEnd(Xnode functionDefinition, Xnode from)
+    public static Xnode findParallelRegionEnd(Context context, Xnode functionDefinition, Xnode from)
     {
-        DirectiveGenerator dg = Context.get().getGenerator();
+        DirectiveGenerator dg = context.getGenerator();
 
         if (!Xnode.isOfCode(functionDefinition, Xcode.F_FUNCTION_DEFINITION))
         {
@@ -596,9 +601,9 @@ public final class Directive
      * @return True if there is directive of the current chosen directive in the
      *         function definition. False otherwise.
      */
-    public static boolean hasDirectives(FfunctionDefinition fctDef)
+    public static boolean hasDirectives(Context context, FfunctionDefinition fctDef)
     {
-        String prefix = Context.get().getGenerator().getPrefix();
+        String prefix = context.getGenerator().getPrefix();
         return fctDef.body().matchAll(Xcode.F_PRAGMA_STATEMENT).stream().map(Xnode::value).map(String::toLowerCase)
                 .anyMatch(p -> p.startsWith(prefix));
     }

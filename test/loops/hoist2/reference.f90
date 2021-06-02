@@ -1,6 +1,5 @@
 PROGRAM claw_test
-
- CALL claw_hoist2 ( )
+  CALL claw_hoist2
 END PROGRAM claw_test
 
 SUBROUTINE claw_hoist2 ( )

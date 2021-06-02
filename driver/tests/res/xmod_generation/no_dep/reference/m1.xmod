@@ -1,0 +1,17 @@
+<OmniFortranModule version="1.0">
+  <name>m1</name>
+  <depends>
+    <name>m2</name>
+    <name>m3</name>
+  </depends>
+  <typeTable>
+  </typeTable>
+  <identifiers>
+  </identifiers>
+  <declarations>
+  </declarations>
+  <interfaceDecls>
+  </interfaceDecls>
+  <aux_info>
+  </aux_info>
+</OmniFortranModule>

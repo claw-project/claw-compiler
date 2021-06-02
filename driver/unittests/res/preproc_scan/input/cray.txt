@@ -1,0 +1,16 @@
+# 1 "m e:vil.f90"
+
+
+# 1 "/users/mzhigun/src/tmp/dep-test/i nc/m.inc" 1
+
+# 1 "/users/mzhigun/src/tmp/dep-test/i nc/m1.inc" 1
+# 1
+module m
+use mod1
+!$claw
+end module m
+# 3 "m e:vil.f90" 2
+# 3 "m e:vil.f90"
+
+# 4
+!include 'mf.inc'

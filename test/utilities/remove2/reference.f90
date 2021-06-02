@@ -1,6 +1,5 @@
 PROGRAM remove2
-
- CALL dummy ( )
+  CALL dummy
 END PROGRAM remove2
 
 SUBROUTINE dummy ( )

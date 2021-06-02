@@ -1,0 +1,190 @@
+# This file is released under terms of BSD license
+# See LICENSE file for more information
+
+# Property file used by Ant build.
+# Path are relative to build.xml files. So one level deeper than the current
+# file.
+
+# Java installation
+
+java.exec = @Java_JAVA_EXECUTABLE@
+javac.exec = @Java_JAVAC_EXECUTABLE@
+jar.exec = @Java_JAR_EXECUTABLE@
+
+# Common
+
+claw.java.target=@CLAW_JAVA_TARGET@
+
+common.dir=@CX2T_COMMON_DIR@
+3rdparty.dist.dir=@CX2T_3RDPARTY_DIST_DIR@
+src.dir=@CX2T_SRC_DIR@
+gen.src.dir=@CX2T_GEN_SRC_DIR@
+classes.dir=@CX2T_CLASSES_DIR@
+dist.dir=@CX2T_DIST_DIR@
+cx2t.dir=@CX2T_DIR@
+int.home.dir=@INT_CLAW_HOME@
+root.dir=@CMAKE_SOURCE_DIR@
+
+test.reports.dir=@TEST_REPORTS_DIR@
+
+# Unit tests
+ut.src.dir=@CX2T_UT_SRC_DIR@
+ut.gen.src.dir=@CX2T_UT_GEN_SRC_DIR@
+ut.classes.dir=@CX2T_UT_CLASSES_DIR@
+ut.dist.dir=@CX2T_UT_DIST_DIR@
+ut.reports.dir=@CX2T_UT_REPORTS_DIR@
+ut.code.coverage.report.bin=${test.reports.dir}/cx2t-unit-tests.jacoco.exec
+ut.code.coverage.report.xml=${test.reports.dir}/cx2t-unit-tests.jacoco.xml
+
+# Driver
+driver.src.dir=@CLAWFC_SRC_DIR@
+driver.classes.dir=@CLAWFC_CLASSES_DIR@
+driver.dist.dir=@CLAWFC_DIST_DIR@
+driver.conf.dir=@CLAW_X2T_CONFIG_DIR@
+driver.conf.file=@CLAWFC_CONF_FILE@
+driver.runtime.conf.file=@CLAWFC_RUNTIME_CONF_FILE@
+driver.gen.src.dir=@CLAWFC_GEN_SRC_DIR@
+
+# Third-party libraries
+ivy.dir=${3rdparty.dist.dir}
+st4.jar=ST4.jar
+st4.dep=${3rdparty.dist.dir}/${st4.jar}
+antlr.jar=antlr-runtime.jar
+antlr.dep=${3rdparty.dist.dir}/${antlr.jar}
+antlr4.jar=@ANTLR4_NAME@.jar
+antlr4.runtime.jar=antlr4-runtime.jar
+antlr4.dep=${3rdparty.dist.dir}/${antlr4.jar}
+antlr4.runtime.dep=${3rdparty.dist.dir}/${antlr4.runtime.jar}
+junit.dep=${3rdparty.dist.dir}/junit.jar
+hamcrest.dep=${3rdparty.dist.dir}/hamcrest-core.jar
+commoncli.jar=@COMMON_CLI_NAME@.jar
+commoncli.dep=${3rdparty.dist.dir}/${commoncli.jar}
+jacoco.jar=org.jacoco.ant.jar
+jacoco.dep=${3rdparty.dist.dir}/${jacoco.jar}
+jacoco-core.jar=org.jacoco.core.jar
+jacoco-core.dep=${3rdparty.dist.dir}/${jacoco-core.jar}
+jacoco-report.jar=org.jacoco.report.jar
+jacoco-report.dep=${3rdparty.dist.dir}/${jacoco-report.jar}
+jacoco-agent.jar=org.jacoco.agent.jar
+jacoco-agent.dep=${3rdparty.dist.dir}/${jacoco-agent.jar}
+asm.jar=asm.jar
+asm.dep=${3rdparty.dist.dir}/${asm.jar}
+asm-commons.dep=${3rdparty.dist.dir}/asm-commons.jar
+asm-tree.dep=${3rdparty.dist.dir}/asm-tree.jar
+toml.jar=cava-toml.jar
+toml.dep=${3rdparty.dist.dir}/${toml.jar}
+argparse4j.jar=argparse4j.jar
+argparse4j.dep=${3rdparty.dist.dir}/${argparse4j.jar}
+ant-contrib.jar=ant-contrib.jar
+ant-contrib.dep=${3rdparty.dist.dir}/${ant-contrib.jar}
+jaxb-runtime.jar=jaxb-runtime.jar
+jaxb-runtime.dep=${3rdparty.dist.dir}/${jaxb-runtime.jar}
+jaxb-xjc.jar=jaxb-xjc.jar
+jaxb-xjc.dep=${3rdparty.dist.dir}/${jaxb-xjc.jar}
+jaxb-core.jar=jaxb-core.jar
+jaxb-core.dep=${3rdparty.dist.dir}/${jaxb-core.jar}
+jaxb-core.jar=jaxb-core.jar
+jaxb-core.dep=${3rdparty.dist.dir}/${jaxb-core.jar}
+jakarta.activation.jar=jakarta.activation.jar
+jakarta.activation.dep=${3rdparty.dist.dir}/${jakarta.activation.jar}
+jakarta.xml.bind-api.jar=jakarta.xml.bind-api.jar
+jakarta.xml.bind-api.dep=${3rdparty.dist.dir}/${jakarta.xml.bind-api.jar}
+istack-commons-runtime.jar=istack-commons-runtime.jar
+istack-commons-runtime.dep=${3rdparty.dist.dir}/${istack-commons-runtime.jar}
+
+# OMNI compiler libraries and paths
+omni.install.classpath=@OMNI_INSTALL_CLASSPATH@
+omni.xcodeml-common.dep=@OMNI_JAR_TOOLS@
+omni.xcodeml-c-backend.dep=@OMNI_JAR_C_BACKEND@
+omni.xcodeml-f-backend.dep=@OMNI_JAR_F_BACKEND@
+omni.jni.dep=@OMNI_JAR_JNI@
+
+# CLAW X2T libraries
+claw.wani.jar=claw-x2t-wani.jar
+claw.wani.dep=${dist.dir}/${claw.wani.jar}
+claw.shenron.jar=claw-x2t-shenron.jar
+claw.shenron.dep=${dist.dir}/${claw.shenron.jar}
+claw.tatsu.jar=claw-x2t-tatsu.jar
+claw.tatsu.dep=${dist.dir}/${claw.tatsu.jar}
+
+# CLAW driver libraries
+driver.jar=@CLAWFC_JAR@
+driver.dep=${driver.dist.dir}/${driver.jar}
+driver.libs.dir=../share/claw
+d.l.dir=${driver.libs.dir}
+o.l.dir=${omni.install.classpath}
+driver.runtime.classpath=${d.l.dir}/${claw.tatsu.jar} ${d.l.dir}/${claw.wani.jar} ${d.l.dir}/${claw.shenron.jar} \
+    ${o.l.dir}/om-common.jar  ${o.l.dir}/om-f-back.jar \
+    ${d.l.dir}/${commoncli.jar} ${d.l.dir}/${antlr4.jar} ${d.l.dir}/${antlr4.runtime.jar} ${d.l.dir}/${toml.jar} \
+    ${d.l.dir}/${argparse4j.jar} ${d.l.dir}/${jaxb-runtime.jar} ${d.l.dir}/${jaxb-core.jar} \
+    ${d.l.dir}/jakarta.xml.bind-api.jar ${d.l.dir}/${jakarta.activation.jar} ${d.l.dir}/${istack-commons-runtime.jar}
+
+# CLAW X2T unittests libraries
+claw.wani.ut.jar=claw-x2t-wani-ut.jar
+claw.wani.ut.dep=${ut.dist.dir}/${claw.wani.ut.jar}
+claw.shenron.ut.jar=claw-x2t-shenron-ut.jar
+claw.shenron.ut.dep=${ut.dist.dir}/${claw.shenron.ut.jar}
+claw.tatsu.ut.jar=claw-x2t-tatsu-ut.jar
+claw.tatsu.ut.dep=${ut.dist.dir}/${claw.tatsu.ut.jar}
+
+# CLAW driver test utils
+driver.test.utils.src.dir=@CLAWFC_TEST_UTIL_SRC_DIR@
+
+# CLAW driver unit-tests
+driver.ut.jar=@CLAWFC_UT_JAR@
+driver.ut.dist.dir=@CLAWFC_UT_BIN_DIR@
+driver.ut.dep=${driver.ut.dist.dir}/${driver.ut.jar}
+driver.ut.src.dir=@CLAWFC_UT_SRC_DIR@
+driver.ut.gen.src.dir=@CLAWFC_UT_GEN_SRC_DIR@
+driver.ut.res.dir=@CLAWFC_UT_RES_DIR@
+driver.ut.classes.dir=@CLAWFC_UT_CLASSES_DIR@
+driver.ut.runtime.classpath=${driver.dep} \
+    ${d.l.dir}/${claw.tatsu.jar} ${d.l.dir}/${claw.wani.jar}  ${d.l.dir}/${claw.shenron.jar} \
+    ${omni.xcodeml-common.dep} ${omni.xcodeml-f-backend.dep} \
+    ${junit.dep} ${hamcrest.dep} ${jaxb-runtime.dep} ${jaxb-core.dep} ${jakarta.xml.bind-api.dep} \
+    ${jakarta.activation.dep} ${istack-commons-runtime.dep}
+driver.ut.report=@CLAWFC_UT_REPORT@
+driver.ut.code.coverage.report.bin=${test.reports.dir}/clawfc-unit-tests.jacoco.exec
+driver.ut.code.coverage.report.xml=${test.reports.dir}/clawfc-unit-tests.jacoco.xml
+
+# CLAW driver tests
+driver.tests.jar=@CLAWFC_TESTS_JAR@
+driver.tests.dist.dir=@CLAWFC_TESTS_BIN_DIR@
+driver.tests.dep=${driver.tests.dist.dir}/${driver.tests.jar}
+driver.tests.src.dir=@CLAWFC_TESTS_SRC_DIR@
+driver.tests.gen.src.dir=@CLAWFC_TESTS_GEN_SRC_DIR@
+driver.tests.res.dir=@CLAWFC_TESTS_RES_DIR@
+driver.tests.classes.dir=@CLAWFC_TESTS_CLASSES_DIR@
+driver.tests.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep}
+driver.tests.report=@CLAWFC_TESTS_REPORT@
+driver.tests.code.coverage.report.bin=${test.reports.dir}/clawfc-tests.jacoco.exec
+driver.tests.code.coverage.report.xml=${test.reports.dir}/clawfc-tests.jacoco.xml
+
+# CLAW tests
+claw.tests.jar=@CLAW_TESTS_JAR@
+claw.tests.dist.dir=@CLAW_TESTS_BIN_DIR@
+claw.tests.dep=${claw.tests.dist.dir}/${claw.tests.jar}
+claw.tests.src.dir=@CLAW_TESTS_SRC_DIR@
+claw.tests.gen.src.dir=@CLAW_TESTS_GEN_SRC_DIR@
+claw.tests.res.dir=@CLAW_TESTS_RES_DIR@
+claw.tests.classes.dir=@CLAW_TESTS_CLASSES_DIR@
+claw.tests.runtime.classpath=${driver.dep} ${junit.dep} ${hamcrest.dep}
+claw.tests.report=@CLAW_TESTS_REPORT@
+
+# External transformation set
+external.jar=claw-external-set.jar
+
+jacoco.file=jacoco.exec
+
+# Ant projects
+3rdparty-dependencies.proj=${root.dir}/cx2t/common-targets.xml
+cx2t.proj=${root.dir}/cx2t/src/build.xml
+cx2t-unit-tests.proj=${root.dir}/cx2t/unittest/build.xml
+driver.proj=${root.dir}/driver/src/build.xml
+driver-ut.proj=${root.dir}/driver/unittests/build.xml
+driver-tests.proj=${root.dir}/driver/tests/build.xml
+claw-tests.proj=${root.dir}/tests_runner/build.xml
+
+# Install
+claw.install.dir=@CMAKE_INSTALL_PREFIX@
+xcodeml-tools.install.dir=@OMNI_XCODEML_TOOLS_INSTALL_DIR@

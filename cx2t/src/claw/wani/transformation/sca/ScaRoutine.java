@@ -10,7 +10,8 @@ import claw.tatsu.common.Context;
 import claw.tatsu.common.Target;
 import claw.tatsu.directive.common.Directive;
 import claw.tatsu.directive.generator.DirectiveGenerator;
-import claw.tatsu.xcodeml.xnode.common.*;
+import claw.tatsu.xcodeml.xnode.common.Xattr;
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.wani.language.ClawPragma;
 
 /**
@@ -47,10 +48,11 @@ public class ScaRoutine extends Sca
     @Override
     public void transform(XcodeProgram xcodeml, Translator translator, Transformation other)
     {
-        if (Context.isTarget(Target.GPU))
+        Context context = xcodeml.context();
+        if (context.isTarget(Target.GPU))
         {
 
-            DirectiveGenerator dirGen = Context.get().getGenerator();
+            DirectiveGenerator dirGen = context.getGenerator();
 
             if (_fctType.isElemental())
             {
@@ -58,7 +60,7 @@ public class ScaRoutine extends Sca
                 _fctType.removeAttribute(Xattr.IS_ELEMENTAL);
             }
 
-            if (Directive.hasDirectives(_fctDef))
+            if (Directive.hasDirectives(context, _fctDef))
             {
                 xcodeml.addWarning(
                         String.format("%s %s", SCA_DEBUG_PREFIX,

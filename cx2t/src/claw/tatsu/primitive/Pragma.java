@@ -4,6 +4,10 @@
  */
 package claw.tatsu.primitive;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import claw.tatsu.TatsuConstant;
 import claw.tatsu.common.CompilerDirective;
 import claw.tatsu.common.Context;
@@ -16,10 +20,6 @@ import claw.tatsu.xcodeml.xnode.common.Xcode;
 import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 import claw.tatsu.xcodeml.xnode.common.Xnode;
 import claw.tatsu.xcodeml.xnode.fortran.FfunctionDefinition;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Primitive transformation and test applied to FpragmaStatement. This included:
@@ -120,11 +120,11 @@ public final class Pragma
             throw new IllegalTransformationException(TatsuConstant.ERROR_INCOMPATIBLE);
         }
         String allPragma = pragma.value().toLowerCase();
-        if (allPragma.length() > Context.get().getMaxColumns())
+        if (allPragma.length() > xcodeml.context().getMaxColumns())
         {
             allPragma = Pragma.dropEndingComment(allPragma);
             Xnode newlyInserted = pragma;
-            List<String> splittedPragmas = Pragma.split(allPragma, Context.get().getMaxColumns(), prefix);
+            List<String> splittedPragmas = Pragma.split(allPragma, xcodeml.context().getMaxColumns(), prefix);
 
             for (int i = 0; i < splittedPragmas.size(); ++i)
             {
@@ -198,7 +198,7 @@ public final class Pragma
      * @param pragma Pragma statement to be checked.
      * @return True if the pragma was previously continued.
      */
-    public static boolean fromClawPrimitive(Xnode pragma)
+    public static boolean fromClawPrimitive(Context context, Xnode pragma)
     {
         if (!Xnode.isOfCode(pragma, Xcode.F_PRAGMA_STATEMENT))
         {
@@ -206,8 +206,8 @@ public final class Pragma
         }
         String allPragma = pragma.value().toLowerCase();
 
-        String prefixCont = Context.get().getGenerator().getPrefixCont();
-        String prefix = Context.get().getGenerator().getPrefix();
+        String prefixCont = context.getGenerator().getPrefixCont();
+        String prefix = context.getGenerator().getPrefix();
 
         return allPragma.contains(prefixCont) || Utility.countOccurrences(allPragma, prefix + " ") > 1;
     }
@@ -262,7 +262,7 @@ public final class Pragma
             p.setLine(lineNo);
         }
 
-        String prefix = Context.get().getGenerator().getPrefix();
+        String prefix = xcodeml.context().getGenerator().getPrefix();
         value = value.trim().toLowerCase();
         boolean notStartWithPrefix = !value.startsWith(prefix);
 
