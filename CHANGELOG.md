@@ -1,6 +1,45 @@
 # Change Log
 All notable changes to the CLAW Compiler project are documented in this file.
 
+## [2.1] - 2021-06-03
+Build system
+* added out of source build
+* removed CMake-based tests 
+* made tests run on internal install directory
+* added CMake option `ANT_HOME` to explicitly specify `Apache Ant` installation
+* added CMake option `JAVA_HOME` to explicitly specify java installation
+* added centralised ant solution
+
+CX2T
+* moved config files inside jar 
+* removed static non-final variables
+* refactored CLI 
+* fixed various issues
+
+Driver
+* Removed bash-based driver
+* Added new java-based driver
+* Added tests and unit-tests coverage for the driver
+* Added CLI options '-MD' and '-mj' for better integration with GNU Make-based builds
+
+Development
+* added Eclipse IDE projects generation from templates
+* ported all tests to JUnit
+
+OMNI compiler
+* submodule now pointing to
+  omni-compiler/xcodeml-tools@0276bc017876cd8e02a4d54b36c3fe6d4d11c78a
+* Switched to CMake based build
+* Switched to C++ version of frontend (i.e. `ffront-cpp` instead of `F_Front`)
+* Added CMake option `BUILD_OMNI_XCODEML_TOOLS` to use pre-installed OMNI (when set to `OFF`)
+* Added CMake option `OMNI_LINK_STATIC_GNU_LIBSTDCXX` to build OMNI with static `libstdc++` library
+* Added CLI option `--ffront-debug-dir` to the CLAW driver for replicating failed calls to OMNI
+
+Other
+* updated install and developer documentation
+* updated sonar to new version
+* updated coding style
+
 ## [2.0.2] - 2020-07-27
 * OMNI Compiler submodule now pointing to
   omni-compiler/xcodeml-tools@3bbc8ec4caa31113a7f67ae7371e678c28d613fc
