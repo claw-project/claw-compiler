@@ -265,7 +265,14 @@ public class Driver
                 final Map<String, ProgramUnitInfo> availModules = getAvailableModulesInfo(buildInfoBySrcPath,
                         inputPPSrcFiles, incPPSrcFiles, inputXmods);
                 final boolean onlyCLAWTargets = !opts.forceTranslation();
-                final Set<String> targetModuleNames = getTargetModuleNames(availModules, false, onlyCLAWTargets);
+                final Set<String> targetModuleNames;
+                if (opts.generateModFiles() == null || opts.generateModFiles().isEmpty())
+                {
+                    targetModuleNames = getTargetModuleNames(availModules, false, onlyCLAWTargets);
+                } else
+                {
+                    targetModuleNames = opts.generateModFiles();
+                }
                 final Map<String, ProgramUnitInfo> usedModules = Build.removeUnreferencedModules(availModules,
                         targetModuleNames);
                 info("Verifying input xmod files...");
@@ -293,12 +300,12 @@ public class Driver
                 {
                     info("Generating xmods for targets...");
                     generateXmods(ffront, usedModules, targetModuleNames, true, maxNumMPJobs, opts.showDebugOutput());
-                    if (opts.generateModFiles())
+                    if (opts.generateModFiles() != null)
                     {
                         saveXmods(usedModules, targetModuleNames, true, opts.xmodOutputDir(), true);
                     }
                 }
-                if (opts.generateModFiles())
+                if (opts.generateModFiles() != null)
                 {
                     return;
                 }
@@ -1708,7 +1715,7 @@ public class Driver
                             "--make-dep-file / -MD must be specified without a value when multiple input files are used"));
                 }
             }
-            if (opts.generateModFiles())
+            if (opts.generateModFiles() != null)
             {
                 if (opts.xmodOutputDir() == null)
                 {

@@ -67,9 +67,18 @@ public class Build
 
         /**
          * @return List of visited modules
+         * @throws Exception
          */
-        public Set<String> run() throws FortranSemanticException
+        public Set<String> run() throws Exception
         {
+            for (String target : targetModuleNames)
+            {
+                if (!availModules.containsKey(target))
+                {
+                    throw new Exception(
+                            sprintf("Target module \"%s\" is not defined in any file under given search path", target));
+                }
+            }
             for (String target : targetModuleNames)
             {
                 startDFS(target);
@@ -165,14 +174,14 @@ public class Build
     }
 
     public static void sanityCheck(Map<String, ProgramUnitInfo> availModules, Set<String> targetModuleNames)
-            throws FortranSemanticException
+            throws Exception
     {
         SanityChecker checker = new SanityChecker(availModules, targetModuleNames);
         checker.run();
     }
 
     public static Map<String, ProgramUnitInfo> removeUnreferencedModules(Map<String, ProgramUnitInfo> availModules,
-            Set<String> targetModuleNames) throws FortranSemanticException
+            Set<String> targetModuleNames) throws Exception
     {
         SanityChecker checker = new SanityChecker(availModules, targetModuleNames);
         Set<String> visited = checker.run();
