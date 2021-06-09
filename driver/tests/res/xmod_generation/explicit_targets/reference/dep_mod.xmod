@@ -1,0 +1,15 @@
+<OmniFortranModule version="1.0">
+  <name>dep_mod</name>
+  <depends>
+  </depends>
+  <typeTable>
+  </typeTable>
+  <identifiers>
+  </identifiers>
+  <declarations>
+  </declarations>
+  <interfaceDecls>
+  </interfaceDecls>
+  <aux_info>
+  </aux_info>
+</OmniFortranModule>

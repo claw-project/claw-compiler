@@ -517,4 +517,25 @@ public class XmodGenerationTest extends clawfc.tests.utils.DriverTestCase
             assertTrue(runRes.stderr.contains(unitName));
         }*/
     }
+
+    public void testExplicitTargets() throws Exception
+    {
+        final Path IN_DIR = RES_DIR.resolve("xmod_generation/explicit_targets/input");
+        final Path INPUT_FILEPATH = IN_DIR.resolve("m.f90");
+        final Path INC_DIR = IN_DIR.resolve("inc");
+        final Path REF_MOD_DIR = RES_DIR.resolve("xmod_generation/explicit_targets/reference");
+        final Path OUT_MOD_DIR = TMP_DIR.resolve("mods");
+        List<String> modNames = Arrays.asList("dep_mod.xmod", "mod1.xmod", "mod2.xmod");
+        Files.createDirectory(OUT_MOD_DIR);
+        String[] args = new String[] { INPUT_FILEPATH.toString(), "--gen-mod-files", "mod1", "mod2", "-SI",
+                INC_DIR.toString(), "-MO", OUT_MOD_DIR.toString() };
+        run(args);
+        for (String modName : modNames)
+        {
+            Path resFilePath = OUT_MOD_DIR.resolve(modName);
+            Path refFilePath = REF_MOD_DIR.resolve(modName);
+            this.equalsTxtFiles(resFilePath, refFilePath);
+        }
+        assertFalse(Files.exists(OUT_MOD_DIR.resolve("not_target_mod.xmod")));
+    }
 }

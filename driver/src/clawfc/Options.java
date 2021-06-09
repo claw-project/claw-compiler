@@ -12,7 +12,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import clawfc.Configuration.FortranCompilerVendor;
@@ -41,7 +43,7 @@ public class Options
     final boolean _printOpts;
     final boolean _printCLAWFiles;
     final boolean _genBuildInfoFiles;
-    final boolean _genModFiles;
+    final Set<String> _genModFiles;
     final List<Path> _inputFiles;
     final Path _outputFile;
     final Path _outputMakeDepFile;
@@ -141,7 +143,7 @@ public class Options
         return _genBuildInfoFiles;
     }
 
-    public boolean generateModFiles()
+    public Set<String> generateModFiles()
     {
         return _genModFiles;
     }
@@ -496,8 +498,8 @@ public class Options
             sOpts.addArgument("--stop-dec").action(Arguments.storeTrue()).help("Stop after decompilation");
             cOpts.addArgument("--gen-buildinfo-files").action(Arguments.storeTrue())
                     .help("Generate build information files for input and then stop");
-            cOpts.addArgument("--gen-mod-files").action(Arguments.storeTrue())
-                    .help("Generate xmod files for input and then stop");
+            cOpts.addArgument("--gen-mod-files").nargs("*").action(Arguments.append()).setConst("").help(
+                    "Generate xmod files for input and then stop. List of target module names can be optionally supplied.");
             cOpts.addArgument("-x", "--override-cfg-key").nargs("*").action(Arguments.append())
                     .help("Override a configuration key:value pair from the command line. Higher "
                             + "priority over base configuration and user configuration");
@@ -637,7 +639,7 @@ public class Options
         _disableMP = parsedArgs.getBoolean("disable_mp");
         _maxNumMPJobs = parsedArgs.getInt("max_num_mp_jobs");
         _genBuildInfoFiles = parsedArgs.getBoolean("gen_buildinfo_files");
-        _genModFiles = parsedArgs.getBoolean("gen_mod_files");
+        _genModFiles = getOptionalStringSet(parsedArgs, "gen_mod_files");
         _transSetPaths = getPathList(parsedArgs, "trans_path_dir");
         _ffrontDebugDir = getOptionalPath(parsedArgs, "ffront_debug_dir");
         _syncWithGMakeJobServer = parsedArgs.getBoolean("sync_with_gmake");
@@ -714,7 +716,14 @@ public class Options
         res.append(sprintf("Maximum number of multiprocessing jobs: %s\n", maxNumMultiprocJobs()));
         res.append(sprintf("Sync with GNU Make jobs server: %s\n", syncWithGMakeJobServer()));
         res.append(sprintf("Generate dependencies info files: %s\n", generateBuildInfoFiles()));
-        res.append(sprintf("Generate xmod files: %s\n", generateModFiles()));
+        if (generateModFiles() != null)
+        {
+            res.append(sprintf("Generate xmod files: %s\n",
+                    String.join("\n\t", generateModFiles().stream().sorted().collect(Collectors.toList()))));
+        } else
+        {
+            res.append("Generate xmod files: \n");
+        }
         res.append(sprintf("FFront Debug directory: \"%s\"\n", ffrontDebugDir()));
         return res.toString();
     }
@@ -768,6 +777,26 @@ public class Options
             }
         }
         return Collections.unmodifiableList(res);
+    }
+
+    Set<String> getOptionalStringSet(Namespace parsedArgs, String name)
+    {
+        List<List<String>> strs = parsedArgs.<List<String>>getList(name);
+        if (strs != null)
+        {
+            Set<String> strSet = new HashSet<String>();
+            for (List<String> lstStr : strs)
+            {
+                for (String s : lstStr)
+                {
+                    strSet.add(s);
+                }
+            }
+            return Collections.unmodifiableSet(strSet);
+        } else
+        {
+            return null;
+        }
     }
 
     Path toAbsPath(String pathStr)
