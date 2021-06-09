@@ -39,9 +39,11 @@ jobs:
           ./run.shellcheck
           cd ..
       
-      - name: Build
+      - name: Configure
         run: | 
           mkdir build
           cd build
           cmake ..
-          make -j
+          
+      - name: Build
+        run: make -j
