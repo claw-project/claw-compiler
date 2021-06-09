@@ -38,3 +38,10 @@ jobs:
           cd scripts
           ./run.shellcheck
           cd ..
+      
+      - name: Build
+        run: | 
+          mkdir build
+          cd build
+          cmake ..
+          make -j
