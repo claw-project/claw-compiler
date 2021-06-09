@@ -46,6 +46,6 @@ jobs:
           cmake -DCMAKE_INSTALL_PREFIX=../install ..
           make -j
           make install
-          export CLAW_HOME=../install
-          export OMNI_HOME=../install
+          export CLAW_HOME=$(pwd)/../install
+          export OMNI_HOME=$(pwd)/../install
           make run-tests
