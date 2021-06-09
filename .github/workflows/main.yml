@@ -32,3 +32,9 @@ jobs:
 
       - name: Check author
         run: python "./scripts/check_author_license.py"
+        
+      - name: Check shellcheck
+        run: |
+          cd scripts
+          ./run.shellcheck
+          cd ..
