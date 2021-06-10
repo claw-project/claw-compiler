@@ -56,7 +56,7 @@ public class Utils
     public static final byte ASCII_SPACE_VALUE = (byte) ' ';
     public static final String[] FORTRAN_FILE_EXTENSIONS = new String[] { "f", "F", "f90", "F90", "f95", "F95", "f03",
             "F03" };
-    public static final String DEFAULT_TOP_TEMP_DIR = "/dev/shm";
+    public static final String DEFAULT_TOP_TEMP_DIR = System.getProperty("java.io.tmpdir");
     public static final Path STARTUP_DIR = Paths.get(System.getProperty("user.dir"));
     public static final Logger log = Logger.getLogger("CLAW");
 
