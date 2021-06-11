@@ -189,7 +189,7 @@ make run-cx2t-unit-test
     <td> 
 
 ```shell
-smake run-claw-tests
+make run-claw-tests
 ```
 </td>
   </tr>
