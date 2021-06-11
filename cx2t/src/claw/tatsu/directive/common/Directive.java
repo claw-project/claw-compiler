@@ -57,7 +57,7 @@ public final class Directive
      *                              dependency loop.
      * @return Number of independent flagged loop.
      */
-    public static int generateLoopSeq(XcodeProgram xcodeml, FfunctionDefinition fctDef, String noDependencyDirective)
+    public static int generateLoopSeq(XcodeProgram xcodeml, Xnode tree, String noDependencyDirective)
     {
 
         if (xcodeml.context().getCompilerDirective() == CompilerDirective.NONE)
@@ -66,7 +66,7 @@ public final class Directive
         }
 
         int nodepCounter = 0;
-        List<Xnode> doStmts = fctDef.matchAll(Xcode.F_DO_STATEMENT);
+        List<Xnode> doStmts = tree.matchAll(Xcode.F_DO_STATEMENT);
         for (Xnode doStmt : doStmts)
         {
             // Check if the nodep directive decorates the loop
@@ -494,7 +494,8 @@ public final class Directive
         } else
         {
             while (first.nextSibling() != null
-                    && ((dg.getSkippedStatementsInPreamble().contains(first.opcode())) || isClawDirective(first)))
+                    && ((dg.getSkippedStatementsInPreamble().contains(first.opcode()))
+                || (isClawDirective(first) && !first.value().contains("nodep"))))
             {
 
                 if (Xnode.isOfCode(first, Xcode.F_IF_STATEMENT))

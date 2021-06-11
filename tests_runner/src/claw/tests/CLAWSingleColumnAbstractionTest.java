@@ -120,6 +120,11 @@ public class CLAWSingleColumnAbstractionTest extends AdvancedTestCase
         run("sca_in_a_subroutine_with_contains");
     }
 
+    public void test_sca_region_start() throws Exception
+    {
+        run("sca_region_start");
+    }
+
     public void test_sca_with_automatic_promotion_std() throws Exception
     {
         run("sca_with_automatic_promotion_std");
