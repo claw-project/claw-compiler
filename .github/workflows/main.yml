@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Git submodule
+        run: |
+          git submodule init
+          git submodule update
+
+      - name: Check author
+        run: python "./scripts/check_author_license.py"
+        
+      - name: Check shellcheck
+        run: |
+          cd scripts
+          ./run.shellcheck
+          cd ..
+      
+      - name: Build + test
+        run: | 
+          mkdir build
+          cd build
+          cmake -DCMAKE_INSTALL_PREFIX=../install ..
+          make -j
+          make install
+          export CLAW_HOME=$(pwd)/../install
+          export OMNI_HOME=$(pwd)/../install
+          make run-tests
