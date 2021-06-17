@@ -1,14 +1,14 @@
 /*
  * This file is released under terms of BSD license
  * See LICENSE file for more information
- * @author: not specified
+ * @author: clementval
  */
 package claw.wani.transformation;
 
 import claw.wani.transformation.ClawTransformation;
 import claw.shenron.transformation.Transformation;
 import claw.shenron.translator.Translator;
-import claw.tatsu.xcodeml.xnode.common.XcodeProgram;  
+import claw.tatsu.xcodeml.xnode.common.XcodeProgram;
 
 /**
  * Simple transformation for documentation example
