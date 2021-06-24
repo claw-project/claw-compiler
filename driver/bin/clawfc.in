@@ -8,5 +8,10 @@
 # author: Mikhail Zhigun
 #
 
-THIS_DIR=$(dirname "$(readlink -f "$0")")
+# Use a different command on macos
+if [ "$(uname)" == "Darwin" ]; then
+  THIS_DIR=$(dirname "$(stat -f "$0")")
+else
+  THIS_DIR=$(dirname "$(readlink -f "$0")")
+fi
 @Java_JAVA_EXECUTABLE@ -jar ${THIS_DIR}/@CLAWFC_JAR@ $*
